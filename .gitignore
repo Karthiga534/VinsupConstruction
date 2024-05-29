@@ -15,7 +15,7 @@ migrations/
 migrations/[0-9]*.py
 /*/*/migrations/
 */migrations
-*.sqlite3
+# *.sqlite3
 .env2
 media
 mediafiles
