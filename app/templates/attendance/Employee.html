@@ -1,0 +1,900 @@
+{% extends "base.html" %} {% load static %} {% block header2 %}
+
+<div id="layout-wrapper">
+  <div class="main-content">
+    <div class="page-content">
+      <div class="container-fluid">
+        <!-- start page title -->
+        <div class="row">
+          <div class="col-12">
+            <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+              <h4 class="mb-sm-0">Employee Attendence Report</h4>
+              <div class="page-title-right">
+                <ol class="breadcrumb m-0">
+                  <li class="breadcrumb-item">
+                    <a href="javascript: void(0);">Dashboard</a>
+                  </li>
+                  <li class="breadcrumb-item active">Employee Attendence</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </div>
+    
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="card">
+              <div class="card-header">
+                <div class="row">
+                  <div class="col-xl-6 col-lg-6 col-md-6 col-12">
+                    <h2>Employee Attendence Management</h2>
+                  </div>
+                  <div class="col-xl-4 col-lg-4 col-md-4 col-12"></div>
+                </div>
+              </div>
+
+
+
+
+
+
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-xl-3 col-lg-3 col-md-3 col-xs-6 col-12">
+                    <label for="" class="form-label">Employee Name :</label>
+                    <select class="form-select mb-3" aria-label="Default select example" id="labourdropdown">
+
+                      <option value="0"> ------------ </option>
+                      <!-- <select id="contractor" class="form-control mb-3" data-live-search="true"> -->
+                      {% for i in projectsubcontractor %}
+                      <option value="{{i.id}}"> {{i.name}} </option>
+                      {% endfor %}
+                    </select>
+                  </div>
+
+                  <div class="col-xl-2 col-lg-2 col-md-2 col-xs-6 col-12">
+                    <label for="exampleInputdate" class="form-label">From Date</label>
+                    <input type="date" class="form-control" id="fromdate" />
+                  </div>
+
+                  <div class="col-xl-2 col-lg-2 col-md-2 col-xs-6 col-12">
+                    <label for="exampleInputdate" class="form-label">To Date</label>
+                    <input type="date" class="form-control" id="todate" />
+                  </div>
+
+                  <div class="col-xl-3 col-lg-3 col-md-3 col-xs-6 col-12">
+                    <br /><button type="button" class="btn btn-primary waves-effect waves-light mt-2">
+                      Get Report
+                    </button>
+                  </div>
+                </div>
+                <hr />
+                <table id="example" class="table table-bordered dt-responsive nowrap table-striped align-middle"
+                  style="width: 100%">
+                  <thead>
+                    <tr>
+                      <th data-ordering="false">SR No.</th>
+                      <th data-ordering="false"> Date </th>
+                      <th data-ordering="false">Project Name </th>
+                      <th data-ordering="false">Name</th>
+                      
+                      <th data-ordering="false">Clock In</th>
+                      <th data-ordering="false">Clock Out</th>
+
+                      <th data-ordering="false">Over Time</th>
+                      <th data-ordering="false">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id='modalTableBody'>
+
+                  </tbody>
+                </table>
+
+                <div id="pagination-container"></div>
+
+              </div>
+
+
+
+            </div>
+          </div>
+        </div>
+        <!-- container-fluid -->
+      </div>
+      <!-- End Page-content -->
+    </div>
+    <!-- end main content-->
+  </div>
+  <!-- END layout-wrapper -->
+</div>
+
+
+
+
+<!-- clockin -->
+<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" id="clockInModal"
+  aria-labelledby="myLargeModalLabel-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="myLargeModalLabel-1"></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+        </button>
+      </div>
+      <hr>
+      <form id="clocKInForm">
+        <div class="modal-body">
+
+          <div class="row">
+
+            <input type="date" class="form-control" id="date" name="date" hidden readonly>
+            <input type="number" class="form-control" id="labourid" name="labour" hidden readonly>
+
+            <div class="col-lg-6 col-md-6 col-xs-6 col-12">
+              <label for="" class="form-label">Select Project :</label>
+
+              <select class="form-select mt-2" aria-label="Default select example" name="project">
+                <option value=""> ----------- </option>
+                {% for i in project %}
+                <option value="{{i.id}}">{{i.display}} </option>
+                {% endfor %}
+              </select>
+              <span id="projectError" class="error-message"></span>
+            </div>
+            <div class="col-lg-6 col-md-6 col-xs-6 col-12">
+              <label for="" class="form-label mt-2"> Clock In Time :</label>
+              <input type="time" class="form-control" id="clock_in" name="clock_in">
+           
+              <span id="clock_inError" class="error-message"></span>
+            </div>
+          </div>
+
+
+
+          <div class="row">
+            <div class="col-lg-6 col-md-6 col-xs-6 col-12">
+              <label for="" class="form-label mt-2"> Clock Out Time :</label>
+              <input type="time" class="form-control" id="clock_out" name="clock_out">
+              <span id="clock_outError" class="error-message"></span>
+            </div>
+
+            <div class="col-lg-6 col-md-6 col-xs-6 col-12">
+              <label for="" class="form-label mt-2"> Over Time :</label>
+              <input type="number" class="form-control" id="over_time" name="over_time">
+              <span id="over_timeError" class="error-message"></span>
+            </div>
+
+          </div>
+
+
+
+
+        </div>
+
+      </form>
+
+      <hr>
+      <div class="modal-footer">
+        <button class="btn btn-link link-success fw-medium shadow-none" data-bs-dismiss="modal"><i
+            class="ri-close-line me-1 align-middle"></i> Close</button>
+        <button type="button" id="clock_insaveButton" class="btn btn-primary" id="payment-history-update"
+          data-target='clockInModal' onclick="makePresent(this)">Save </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<button onclick="topFunction()" class="btn btn-danger btn-icon" id="back-to-top">
+  <i class="ri-arrow-up-line"></i>
+</button>
+
+<div id="preloader">
+  <div id="status">
+    <div class="spinner-border text-primary avatar-sm" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+</div>
+
+<script>
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const viewButtons = document.querySelectorAll(".view-btn");
+    const editButtons = document.querySelectorAll(".edit-btn");
+    const delButtons = document.querySelectorAll(".del-btn");
+
+    viewButtons.forEach((button) => {
+      button.addEventListener("click", function () {
+        const modalId = this.getAttribute("data-target");
+        const modal = document.querySelector(modalId);
+        if (modal) {
+          $(modal).modal("show");
+        }
+      });
+    });
+
+    editButtons.forEach((button) => {
+      button.addEventListener("click", function () {
+        const modalId = this.getAttribute("data-target");
+        const modal = document.querySelector(modalId);
+        if (modal) {
+          $(modal).modal("show");
+        }
+      });
+    });
+
+    delButtons.forEach((button) => {
+      button.addEventListener("click", function () {
+        const modalId = this.getAttribute("data-target");
+        const modal = document.querySelector(modalId);
+        if (modal) {
+          $(modal).modal("show");
+        }
+      });
+    });
+  });
+
+  // create form
+
+  function createFunction(button) {
+    var formId = `createForm`; //change
+    var formElement = document.getElementById(formId);
+    clearErrors()
+
+    try {
+      disableButton(button);
+      var isValid = true;
+      var errors = {};
+      var formData = new FormData();
+
+      var requiredKeys = ["date"];
+
+      formData.append(
+        "date",
+        getValueOrDefault(formElement.querySelector('input[name="date"]').value)
+      );
+      formData.append(
+        "project",
+        getValueOrDefault(
+          formElement.querySelector('select[name="project"]').value
+        )
+      );
+      formData.append(
+        "labour",
+        getValueOrDefault(
+          formElement.querySelector('select[name="labour"]').value
+        )
+      );
+      formData.append(
+        "date",
+        getValueOrDefault(
+          formElement.querySelector('input[name="date"]').value
+        )
+      );
+
+      formData.append(
+        "over_time",
+        getValueOrDefault(
+          formElement.querySelector('input[name="over_time"]').value
+        )
+      );
+      clock_in = formElement.querySelector('input[name="clock_in"]').value
+      clock_out = formElement.querySelector('input[name="clock_out"]').value
+
+      if (clock_in) {
+        formData.append(
+          "clock_in",
+          getValueOrDefault(
+            formElement.querySelector('input[name="clock_in"]').value
+          )
+        );
+
+      }
+
+      if (clock_out) {
+
+        formData.append(
+          "clock_out",
+          getValueOrDefault(
+            formElement.querySelector('input[name="clock_out"]').value
+          )
+        );
+
+      }
+
+
+
+      requiredKeys.forEach(function (key) {
+        var value = formData.get(key);
+        if (!value.trim()) {
+          isValid = false;
+          errors[key] = ["This field may not be blank."];
+        }
+      });
+
+      if (!isValid) {
+        enableButton(button);
+        console.log(errors);
+        handleCreateErrors(errors);
+        return;
+      } else {
+        $(`#${formId} input, #${formId} button`).prop("disabled", true);
+      }
+
+      $.ajax({
+        url: "/add_companylabourattendance/", //change
+        type: "POST",
+        headers: {
+          "X-CSRFToken": csrftoken,
+        },
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (response, status, xhr) {
+          console.error(status);
+          if (xhr.status === 201) {
+            showToast(
+              successMesssage?.message,
+              "",
+              successMesssage?.bgColor,
+              true
+            );
+          } else {
+            console.error(error);
+            restoreForm(formId, button);
+          }
+        },
+        error: function (xhr, status, error) {
+          console.log(xhr, status, error);
+          console.log(xhr.status)
+          if (xhr.status === 400) {
+            // alert(1)
+            if (xhr?.responseJSON || xhr?.responseJSON?.errors) {
+              handleCreateErrors(transformErrors(xhr.responseJSON));
+              restoreForm(formId, button);
+            } else {
+              showToast(
+                errorAlertMessage?.message,
+                "",
+                errorAlertMessage?.bgColor
+              );
+              restoreForm(formId, button);
+            }
+          } else if (xhr.status === 401 || xhr.status === 404 || xhr.status === 409) {
+            // alert(2,xhr.status )
+            console.log(xhr.status)
+            showToast(
+              xhr?.responseJSON?.details,
+              "",
+              errorAlertMessage?.bgColor
+            );
+            restoreForm(formId, button);
+          } else {
+            // alert(3)
+            showToast(
+              errorAlertMessage?.message,
+              "",
+              errorAlertMessage?.bgColor
+            );
+            restoreForm(formId, button);
+          }
+        },
+      });
+    } catch (error) {
+      // alert()
+      showToast(errorOccured?.message, "", errorOccured?.bgColor);
+      restoreForm(formId, button);
+      console.error(error);
+    }
+
+
+
+
+  }
+
+
+
+</script>
+
+
+<script>
+
+  let activePage;
+
+  const existingPaginationContainer = document.getElementById(
+    "pagination-container"
+  );
+
+  const dropdown = document.getElementById("labourdropdown");
+  const tableBody = document.querySelector("#example tbody");
+
+  // from and to
+
+
+  console.log(dropdown, "ppppppppp"
+
+  )
+
+  const modalfromdate = document.getElementById("fromdate");
+  const modaltodate = document.getElementById("todate");
+
+  var qtyError = false;
+
+  var priceError = false;
+
+  var currentPage = 1;
+
+  document.addEventListener("DOMContentLoaded", function () {
+    // const dropdown = document.getElementById('fromsite');
+    // const tableBody = document.querySelector('#example tbody');
+
+    // on dom loaded
+    const initialSelectedValue = dropdown.value;
+    fetchData(1);
+
+    // fetch table data API
+    dropdown.addEventListener("change", function () {
+      activePage = null;
+      fetchData(currentPage);
+    });
+
+
+
+    modalfromdate.addEventListener("change", function () {
+      activePage = null;
+      fetchData(currentPage);
+    });
+
+    modaltodate.addEventListener("change", function () {
+      activePage = null;
+      fetchData(currentPage);
+    });
+  });
+
+  // fetch data
+  function fetchData(page) {
+    currentPage = page;
+    const selectedValue = dropdown.value;
+    const from = fromdate?.value || "";
+    const to = todate?.value || "";
+
+    try {
+      fetch(
+        `/labour-attendence-list/${selectedValue}/?page=${page}&start_date=${from}&end_date=${to}`
+      ) //CHANGE URL
+        .then((response) => {
+          if (response.status === 200) {
+            console.log("Data fetched");
+            return response.json();
+          } else if (response.status === 404) {
+            throw new Error("Resource not found");
+          } else if (response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          } else {
+            throw new Error("Network response was not ok");
+          }
+        })
+        .then((data) => {
+          tableBody.innerHTML = "";
+          renderDataOrMessage(tableBody, data, page);
+        })
+        .catch((error) => {
+          console.error("Error fetching data:", error);
+          showToast(errorAlertMessage?.message, "", errorAlertMessage?.bgColor);
+        });
+    } catch (error) {
+      console.error("Error in fetch operation:", error);
+    }
+  }
+
+  // render table or message
+
+  function renderDataOrMessage(tableBody, data, page) {
+    // Check if data is available and not empty
+    if (data && Array.isArray(data.results) && data.results.length > 0) {
+      // Render the data in the table
+
+      tdata = data?.results;
+
+      tdata.forEach((item, index) => {
+        const newRow = createTableRow(index + 1, item);
+        tableBody.appendChild(newRow);
+      });
+
+      renderPagination(data, page);
+    } else {
+      // Display a message indicating no data available
+      tableBody.innerHTML = '<tr><td colspan="6">No data available.</td></tr>';
+
+      existingPaginationContainer.innerHTML = ""; // Clear existing content
+    }
+  }
+
+
+  // MANIPULATE TABLE DATA
+  function createTableRow(serialNumber, data) {
+    const newRow = document.createElement("tr");
+    newRow.setAttribute("data-item-id", data.id);
+
+    //seriaal number
+    const td1 = document.createElement("td");
+    td1.textContent = serialNumber;
+    newRow.appendChild(td1);
+
+    // date
+    const td2 = document.createElement("td");
+    td2.textContent = get_value(data.date);
+    newRow.appendChild(td2);
+
+    // particular
+    const td3 = document.createElement("td");
+    td3.textContent = get_value(data.project_name);
+    td3.setAttribute('data-id', data.project ?? null)
+    newRow.appendChild(td3);
+
+    // From amount
+    const td4 = document.createElement("td");
+    td4.textContent = get_value(data.labour_name);
+    newRow.appendChild(td4);
+
+    // From amount
+    const td5 = document.createElement("td");
+    td5.textContent = get_value(data.clock_in);
+    newRow.appendChild(td5);
+
+    const td6 = document.createElement("td");
+    td6.textContent = get_value(data.clock_out);
+    newRow.appendChild(td6);
+
+    const td7 = document.createElement("td");
+    td7.textContent = get_value(data.over_time);
+    newRow.appendChild(td7);
+
+
+    // Transfer Items
+    const actionCell = document.createElement('td');
+    actionCell.innerHTML = `	 </button>
+                    <button class="btn btn-soft-secondary btn-sm dropdown" type="button"  data-id ="${data.atten_id}""   onclick="openHistoryModal('clockInModal')" >
+                      Check In
+                   </button>`
+
+
+    // if (data?.present) {
+    //   transferItemsCell.innerHTML = ` </button>
+    //                  <button class="btn btn-soft-secondary btn-sm dropdown" type="button"  onclick="" disabled>
+    //                   Clock In
+    //                 </button>
+    //           </button>
+    //                  <button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-id ="${data.atten_id}"   onclick="openHistoryModal('clockInModal')">
+    //                   Clock Out
+    //             </button>
+    //                                 `
+    // }
+    // else {
+    //   transferItemsCell.innerHTML = `	 </button>
+    //                  <button class="btn btn-soft-secondary btn-sm dropdown" type="button"  data-id ="${data.atten_id}""   onclick="openHistoryModal('clockInModal')" >
+    //                   Clock In
+    //                 </button>
+    //             </button>
+    //                  <button class="btn btn-soft-secondary btn-sm dropdown" type="button"  onclick="" disabled >
+    //                   Clock Out
+    //               </button>
+    //                       `
+    // }
+
+
+    actionCell.addEventListener('click', () => {
+
+      payModalData(data)
+    });
+
+    newRow.appendChild(actionCell);
+
+
+
+
+    return newRow;
+  }
+
+
+  // populate payment model data
+  function payModalData(data) {
+    const formId ='clocKInForm'
+    
+    const clockIn = document.querySelector('input[name="clock_in"]');
+    clockIn.value = data.clock_in;
+
+
+    const project = document.querySelector('select[name="project"]');
+    project.value = data.project;
+
+
+    const clockOut = document.querySelector('input[name="clock_out"]');
+    clockOut.value = data.clock_out;
+
+
+    const overTime = document.querySelector('input[name="over_time"]');
+    overTime.value = data.over_time;
+
+
+    // hidden
+    const date = document.querySelector('input[name="date"]');
+    date.value = data.date;
+
+    const labour = document.querySelector('input[name="labour"]');
+    labour.value = data.labour;
+
+    // Add event listener to Save button
+    const saveButton = document.querySelector('#clock_insaveButton');   //id change
+    saveButton.setAttribute("data-id", data.atten_id)
+
+  }
+
+
+
+
+
+
+
+  function get_value(value) {
+    return value || "Nill";
+  }
+
+  // -----------------------------> List Show ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+  // // close modal
+  // function closeHistoryModal(modalId) {
+  //   console.log(modalId)
+  //   var myModal = new bootstrap.Modal(document.getElementById(modalId));
+  //   myModal.hide();
+  // }
+
+
+
+
+  // // // openModal
+  // function openHistoryModal(modalId) {
+  //   // console.log(modalId)
+  //   const paymentHistoryModal = new bootstrap.Modal(document.getElementById(modalId));
+  //   // console.log(paymentHistoryModal)
+  //   paymentHistoryModal.show();
+  // }
+
+
+
+
+
+  function makePresent(button) {
+
+    var modalSelector = button.getAttribute('data-target');
+    const formId = "clocKInForm"
+
+    const saveId = button.getAttribute('data-id')
+    var formElement = document.getElementById(formId);
+
+    var formData = new FormData();
+    try {
+      disableButton(button);
+      var isValid = true;
+      var errors = {};
+      var formData = new FormData();
+
+      var requiredKeys = ['clock_in',];   //change
+
+
+      const clock_in = getValueOrDefault(formElement.querySelector('input[name="clock_in"]').value);
+      const project = getValueOrDefault(formElement.querySelector('select[name="project"]').value);
+      const clock_out = getValueOrDefault(formElement.querySelector('input[name="clock_out"]').value);
+      const over_time = getValueOrDefault(formElement.querySelector('input[name="over_time"]').value);
+
+      // hidden
+      const date = getValueOrDefault(formElement.querySelector('input[name="date"]').value);
+      const labour = getValueOrDefault(formElement.querySelector('input[name="labour"]').value);
+
+      
+      formData.append('clock_in', clock_in);
+      
+      
+      if(project){
+        formData.append('project', project);
+      }
+      
+      if (over_time){
+        formData.append('over_time', over_time);
+      }
+     
+      if(clock_out){
+        formData.append('clock_out', clock_out);
+
+      }
+      
+      formData.append('date', date)
+      formData.append('labour', labour)
+
+
+
+      requiredKeys.forEach(function (key) {
+        var value = formData.get(key);
+        if (!value.trim()) {
+          isValid = false;
+          errors[key] = ['This field is required.'];
+        }
+      });
+
+      if (!isValid) {
+        enableButton(button);
+        // console.log(errors);
+        handleCreateErrors(errors);
+        return;
+      } else {
+        $(`#${formId} input, #${formId} button`).prop('disabled', true);
+
+      }
+
+      $.ajax({
+        url: `/make-present/${saveId}/`,                //change
+        type: 'POST',
+        headers: {
+          'X-CSRFToken': csrftoken,
+        },
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (response, status, xhr) {
+          console.error(status);
+          if (xhr.status === 200) {
+
+            showToast(successMesssage?.message, '', successMesssage?.bgColor);
+            fetchData(currentPage, reload = true)
+            closeHistoryModal(modalSelector)
+            restoreForm(formId, button)
+
+          } else {
+
+            restoreForm(formId, button)
+            showToast(
+              errorAlertMessage?.message,
+              "",
+              errorAlertMessage?.bgColor
+            );
+
+          }
+        },
+        error: function (xhr, status, error) {
+          // console.log(xhr, status, error);
+          if (xhr.status === 400) {
+            if (xhr?.responseJSON || xhr?.responseJSON?.errors) {
+              handleCreateErrors(transformErrors(xhr.responseJSON));
+              restoreForm(formId, button)
+
+
+            } else {
+              showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+              restoreForm(formId, button)
+
+            }
+          }
+          else if (xhr.status === 401 || xhr.status ===  404) {
+
+            showToast(xhr?.responseJSON?.details || errorOccured.message, '', errorAlertMessage?.bgColor);
+            restoreForm(formId, button)
+
+
+          }
+          else {
+            // showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+            restoreForm(formId, button)
+
+          }
+        }
+      });
+    } catch (error) {
+      showToast(errorOccured?.message, '', errorOccured?.bgColor);
+      restoreForm(formId, button)
+      console.error(error);
+    }
+
+
+
+
+  }
+
+
+  function makeAbsent(button) {
+
+    const id = button.getAttribute('data-id')
+
+    var tr = button.closest('tr');
+    var tds = tr.getElementsByTagName('td');
+    var date = tds[1].innerText;
+
+    var project = tds[2].getAttribute('data-id')
+    var formData = new FormData();
+
+    formData.append('date', date)
+    if (project) {
+      formData.append("project", project)
+    }
+
+
+    try {
+      $.ajax({
+        url: `/make-present/${id}/`,
+        type: "POST",
+        headers: {
+          "X-CSRFToken": csrftoken,
+        },
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (response, status, xhr) {
+
+          if (xhr.status === 200) {
+            showToast(
+              successMesssage?.message,
+              "",
+              successMesssage?.bgColor,
+              true
+            );
+          }
+          else {
+            showToast(
+              errorAlertMessage?.message,
+              "",
+              errorAlertMessage?.bgColor
+            );
+          }
+        },
+        error: function (xhr, status, error) {
+          console.log(xhr, status, error);
+          console.log(xhr.status)
+          if (xhr.status === 400) {
+            // alert(1)
+            if (xhr?.responseJSON || xhr?.responseJSON?.errors) {
+              handleCreateErrors(transformErrors(xhr.responseJSON));
+
+            } else {
+              showToast(
+                errorAlertMessage?.message,
+                "",
+                errorAlertMessage?.bgColor
+              );
+
+            }
+          } else if (xhr.status === 401 || xhr.status === 404 || xhr.status === 409) {
+            // alert(2,xhr.status )
+
+            console.log(xhr.status)
+            showToast(
+              xhr?.responseJSON?.details ?? "Not Found",
+              "",
+              errorAlertMessage?.bgColor
+            );
+
+          } else {
+            // alert(3)
+            showToast(
+              errorAlertMessage?.message,
+              "",
+              errorAlertMessage?.bgColor
+            );
+
+          }
+        },
+      });
+    } catch (error) {
+      // alert()
+      showToast(errorOccured?.message, "", errorOccured?.bgColor);
+
+      console.log(error);
+    }
+
+  }
+
+
+
+</script>
+
+{% endblock header2 %}

@@ -1,0 +1,556 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block header2 %}
+<!-- Begin page -->
+<div id="layout-wrapper">
+
+	<div class="main-content">
+
+		<div class="page-content">
+			<div class="container-fluid">
+				<!-- start page title -->
+				<div class="row">
+					<div class="col-12">
+						<div class="page-title-box d-sm-flex align-items-center justify-content-between">
+							<h4 class="mb-sm-0">Subcontracts</h4>
+							<div class="page-title-right">
+								<ol class="breadcrumb m-0">
+									<li class="breadcrumb-item"><a href="javascript: void(0);">Subcontractor</a></li>
+									<li class="breadcrumb-item active">Create</li>
+								</ol>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- <div class="row">
+					<div class="col-lg-12">
+						<div class="card">
+							<div class="card-header">
+
+								<div class="row">
+									<div class="col-xl-6 col-lg-6 col-md-6 col-12">
+										<h4>Project Sub Contract Details</h4>
+									</div>
+									<div class="col-xl-4 col-lg-4 col-md-4 col-12"></div>
+									<div class="col-xl-2 col-lg-2 col-md-2 col-12">
+
+										<a href="{% url 'subcontractorlist' %}" type="button" class="btn btn-info mb-2"
+											style="float:right;">Back</a>
+
+									</div>
+
+								</div>
+							</div>
+						</div>
+					</div>
+
+				</div> -->
+
+
+				<div class="row card">
+					<div class="col-lg-12">
+
+
+						<div class="">
+							<div class="card-header">
+
+								<div class="row">
+									<div class="col-xl-6 col-lg-6 col-md-6 col-12">
+										<h4>Project Sub Contract Details</h4>
+									</div>
+									<div class="col-xl-4 col-lg-4 col-md-4 col-12"></div>
+									<div class="col-xl-2 col-lg-2 col-md-2 col-12">
+
+										<a href="{% url 'subcontractorlist' %}" type="button" class="btn btn-info mb-2"
+											style="float:right;">Back</a>
+
+									</div>
+
+								</div>
+							</div>
+						</div>
+
+
+						<form id="createForm" enctype="multipart/form-data">
+							{% csrf_token %}
+							<div class="card">
+								<div class="card-body">
+
+									<hr>
+									<div class="row">
+										<div class="col-md-4 mb-2">
+
+											<label for="" class="form-label">Name :</label>
+											<input type="text" class="form-control" id="name" name="name">
+											<span class="error-message" id="nameError"></span>
+										</div>
+										<div class="col-md-4 mb-2">
+											<label for="" class="form-label">Project :</label>
+											<select class="form-select" aria-label="Default select example" id="project"
+												name="project">
+												<option value="">---------------------</option>
+												{% for i in project %}
+												<option value="{{ i.id }}">{{ i.proj_name }}</option>
+												{% endfor %}
+											</select>
+											<span id="projectError" class="error-message"></span>
+										</div>
+
+
+
+										<div class="col-md-4 mb-2">
+											<label for="" class="form-label">Type :</label>
+											<select class="form-select" aria-label="Default select example" id="type"
+												name="type">
+												<option value="">---------------------</option>
+												{% for i in type %}
+												<option value="{{ i.id }}">{{ i.name }}</option>
+												{% endfor %}
+											</select>
+											<span id="typeError" class="error-message"></span>
+										</div>
+
+										<!-- --------------------- -->
+
+										<div class="col-md-4 mb-2">
+											<label for="" class="form-label">Contractor :</label>
+											<select class="form-select" aria-label="Default select example"
+												id="contractor" name="contractor">
+												<option value="">---------------------</option>
+												{% for i in contractor %}
+												<option value="{{ i.id }}">{{ i.name }}</option>
+												{% endfor %}
+											</select>
+											<span id="typeError" class="error-message"></span>
+										</div>
+
+										<div class="col-md-4 mb-2">
+											<label for="" class="form-label">Start Date :</label>
+											<input type="date" class="form-control" id="start_date" name="start_date">
+											<span class="error-message" id="start_dateError"></span>
+										</div>
+
+
+										<div class="col-md-4 mb-2">
+											<label for="" class="form-label">End Date :</label>
+											<input type="date" class="form-control" id="end_date" name="end_date">
+											<span class="error-message" id="end_dateError"></span>
+										</div>
+
+										<div class="col-md-4 mb-2">
+											<label for="" class="form-label">Amount :</label>
+											<input type="number" class="form-control" id="contract_amount"
+												name="contract_amount">
+											<span class="error-message" id="contract_amountError"></span>
+										</div>
+
+										<div class="col-md-4 mb-2">
+											<label for="" class="form-label">Payment Schedule :</label>
+											<select class="form-select" aria-label="Default select example"
+												id="payment_schedule" name="payment_schedule">
+												<option value="">---------------------</option>
+												{% for i in paymentschedule %}
+												<option value="{{ i.id }}">{{ i.days }}</option>
+												{% endfor %}
+											</select>
+											<span id="payment_scheduleError" class="error-message"></span>
+										</div>
+
+										<div class="col-md-6 mb-2">
+											<label for="" class="form-label">Description :</label>
+											<textarea rows="3" class="form-control" id="description"
+												name="description"></textarea>
+											<span class="error-message" id="descriptionError"></span>
+										</div>
+
+										<div class="col-md-6 mb-2">
+											<label for="" class="form-label">Terms & Condition :</label>
+											<textarea rows="3" class="form-control" id="terms_conditions"
+												name="terms_conditions"></textarea>
+											<span class="error-message" id="terms_conditionsError"></span>
+										</div>
+
+									</div>
+									<hr>
+
+
+									<h4>Service Rate's </h4>
+									<hr>
+									<div class="card-body">
+										<table id="tabl"
+											class="table table-bordered dt-responsive nowrap table-striped align-middle"
+											style="width:100%">
+											<thead>
+												<tr>
+													<!-- <th scope="col" style="width: 10px;">
+														<div class="form-check">
+															<input class="form-check-input fs-15" type="checkbox"
+																id="checkAll" value="option">
+														</div>
+													</th> -->
+													<th>S.No</th>
+													<th>Work</th>
+													<th>Unit</th>
+													<th>Rate</th>
+													<th>Qty</th>
+													<th>Amount</th>
+													<th>Action</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr>
+													<!-- <th scope="row">
+														<div class="form-check">
+															<input class="form-check-input fs-15" type="checkbox"
+																name="checkAll" value="option1">
+														</div>
+													</th> -->
+													<td>01</td>
+
+													<td><input type="text" class="form-control" name="work" id="work">
+														<span id="workError" class="error-message"></span>
+													</td>
+
+													<td>
+														<select class="form-select  form-control"
+															aria-label="Default select example" name="unit" id="unit">
+
+															<option value=""> ------------------</option>
+
+															{% for i in uom %}
+															<option value="{{i.id}}">{{i.name}} </option>
+															{% endfor %}
+														</select>
+														<span id="unitError" class="error-message"></span>
+													</td>
+
+													<td><input type="number" class="form-control" name="rate" id="rate">
+														<span id="rateError" class="error-message"></span>
+													</td>
+
+													<td><input type="number" class="form-control" name="total_qty"
+															id="total_qty">
+															<span id="total_qtyError" class="error-message"></span>
+														</td>
+
+													<td>
+														<input type="number" class="form-control" name="amount"
+															id="amount">
+															<span id="amountError" class="error-message"></span>
+													</td>
+													<td>
+														<div class="dropdown d-inline-block">
+															<button
+																class="btn btn-soft-secondary btn-sm dropdown add-row"
+																type="button" data-bs-toggle="dropdown"
+																aria-expanded="false">
+																<i class="ri-add-fill align-middle"></i>
+															</button>
+														</div>
+													</td>
+												</tr>
+											</tbody>
+										</table>
+										<hr>
+
+
+										<h4>Labour wages</h4>
+										<hr>
+										<div class="row">
+											<div class="col-md-6 mb-2">
+												<label for="" class="form-label">Maistry :</label>
+												<input type="number" class="form-control" name="maistry" id="maistry">
+												<span class="error-message" id="maistryError"></span>
+											</div>
+											<div class="col-md-6 mb-2">
+												<label for="" class="form-label">Maison :</label>
+												<input type="number" class="form-control" name="maison_cooli"
+													id="maison_cooli">
+												<span class="error-message" id="maison_cooliError"></span>
+											</div>
+											<div class="col-md-6 mb-2">
+												<label for="" class="form-label">Male skilled :</label>
+												<input type="number" class="form-control" name="male_skilled"
+													id="male_skilled">
+												<span class="error-message" id="male_skilledError"></span>
+											</div>
+											<div class="col-md-6 mb-2">
+												<label for="" class="form-label">Male Unskilled :</label>
+												<input type="number" class="form-control" name="male_unskilled"
+													id="male_unskilled">
+												<span class="error-message" id="male_unskilledError"></span>
+											</div>
+											<div class="col-md-6 mb-2">
+												<label for="" class="form-label">Female skilled :</label>
+												<input type="number" class="form-control" name="female_skilled"
+													id="female_skilled">
+												<span class="error-message" id="female_skilledError"></span>
+											</div>
+											<div class="col-md-6 mb-2">
+												<label for="" class="form-label">Female Unskilled :</label>
+												<input type="number" class="form-control" name="female_unskilled"
+													id="female_unskilled">
+												<span class="error-message" id="female_unskilledError"></span>
+											</div>
+										</div>
+
+										<hr>
+
+										<p class="text-center mt-2">
+											<a href="{% url 'subcontractorlist' %}"  type="button" class="btn btn-link link-success fw-medium shadow-none"
+												 onclick="clearErrors()">
+
+												<i class="ri-close-line me-1 align-middle">Cancel</i> </a>
+											<button type="button" class="btn btn-primary"
+												onclick="createFunction(this)">Save </button>
+										</p>
+									</div>
+								</div>	
+							</div>
+						</form>
+					</div>
+				</div>
+				<!-- container-fluid -->
+			</div>
+			<!-- End Page-content -->	
+
+			<footer class="footer">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-sm-6">
+							<script>
+								document.write(new Date().getFullYear())
+							</script>
+							© vinsup.
+						</div>
+						<div class="col-sm-6">
+							<div class="text-sm-end d-none d-sm-block">
+								Design & Develop by vinsup
+							</div>
+						</div>
+					</div>
+				</div>
+			</footer>
+		</div>
+		<!-- end main content-->
+
+	</div>
+	<!-- END layout-wrapper -->
+
+
+
+	<!--start back-to-top-->
+	<button onclick="topFunction()" class="btn btn-danger btn-icon" id="back-to-top">
+		<i class="ri-arrow-up-line"></i>
+	</button>
+	<!--end back-to-top-->
+
+	<!--preloader-->
+	<div id="preloader">
+		<div id="status">
+			<div class="spinner-border text-primary avatar-sm" role="status">
+				<span class="visually-hidden">Loading...</span>
+			</div>
+		</div>
+	</div>
+
+
+	<!-- JAVASCRIPT -->
+	<!-- <script src="assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+	<script src="assets/libs/simplebar/simplebar.min.js"></script>
+	<script src="assets/libs/node-waves/waves.min.js"></script>
+	<script src="assets/libs/feather-icons/feather.min.js"></script>
+	<script src="assets/js/pages/plugins/lord-icon-2.1.0.js"></script>
+	<script src="assets/js/plugins.js"></script>
+
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"
+		integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script> -->
+
+	<!--datatable js-->
+	<!-- <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+	<script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+	<script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
+	<script src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
+	<script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.print.min.js"></script>
+	<script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+
+	<script src="assets/js/pages/datatables.init.js"></script> -->
+	<!-- App js -->
+	<!-- <script src="assets/js/app.js"></script>
+
+
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
+	
+	<script type="text/javascript">
+		$(document).ready(function () {
+			var i = 0;
+
+			$(".add-row").click(function (event) {
+				event.preventDefault();
+				++i;
+
+				//var newRow = '<tr><th scope="row"><div class="form-check"><input class="form-check-input fs-15" type="checkbox" name="checkAll" value="option1"></div></th><td>02</td><td><input type="text" name="work" class="form-control"></td><td><input type="text" name="" class="form-control"></td><td><input type="text" name="" class="form-control"></td><td><input type="text" name="" class="form-control"></td><td><input type="text" name="" class="form-control"></td><td><button type="button" class="btn btn-danger btn-icon waves-effect waves-light remove-table-row"><i class="ri-delete-bin-5-line"></i></button></td></tr>';
+
+				var newRow = `<tr>
+						<th scope="row"><div class="form-check"><input class="form-check-input fs-15" type="checkbox" name="checkAll" value="option1"></div></th>
+						<td>02</td>
+						
+						<td><input type="text" class="form-control" id="work" name="work"></td>
+						<td><select class="form-select mb-3 form-control"  aria-label="Default select example" name="unit" id="unit">
+							<option value=""> ------------------</option>
+							{% for i in uom %}
+							<option value="{{i.id}}">{{i.name}} </option>
+							{% endfor %}
+						  </select>
+						  <span id="unitError" class="error-message"></span></td>
+						<td><input type="text" name="rate" class="form-control"></td>
+						<td><input type="text" name="total_qty" class="form-control"></td>
+						<td><input type="text" name="amount" class="form-control"></td>
+						<td><button type="button" class="btn btn-danger btn-icon waves-effect waves-light remove-table-row">
+							<i class="ri-delete-bin-5-line"></i></button></td>
+						</tr>`;
+
+				$("#tabl").append(newRow);
+			});
+
+			$(document).on('click', '.remove-table-row', function () {
+				$(this).parents('tr').remove();
+			});
+		});
+	</script>
+
+	<script>
+		// create form
+
+		function createFunction(button) {
+			var formId = `createForm`;   //change
+			var formElement = document.getElementById(formId);
+
+			try {
+				disableButton(button);
+				var isValid = true;
+				var errors = {};
+				var formData = new FormData();
+
+				var requiredKeys = ['name', 'male_unskilled', 'female_unskilled', 'female_skilled', 'male_skilled', 'maison_cooli', 'maistry', 'project', 'type', 'contractor', 'payment_schedule', 'start_date', 'end_date', 'contract_amount', 'description', 'terms_conditions']
+
+				formData.append('start_date', getValueOrDefault(formElement.querySelector('input[name="start_date"]').value));
+				formData.append('name', getValueOrDefault(formElement.querySelector('input[name="name"]').value));
+				formData.append('end_date', getValueOrDefault(formElement.querySelector('input[name="end_date"]').value));
+				formData.append('contract_amount', getValueOrDefault(formElement.querySelector('input[name="contract_amount"]').value));
+				formData.append('description', getValueOrDefault(formElement.querySelector('textarea[name="description"]').value));
+				formData.append('terms_conditions', getValueOrDefault(formElement.querySelector('textarea[name="terms_conditions"]').value));
+				formData.append('project', getValueOrDefault(formElement.querySelector('select[name="project"]').value));
+				formData.append('type', getValueOrDefault(formElement.querySelector('select[name="type"]').value));
+				formData.append('contractor', getValueOrDefault(formElement.querySelector('select[name="contractor"]').value));
+				formData.append('payment_schedule', getValueOrDefault(formElement.querySelector('select[name="payment_schedule"]').value));
+
+
+				formData.append('maistry', getValueOrDefault(formElement.querySelector('input[name="maistry"]').value));
+				formData.append('maison_cooli', getValueOrDefault(formElement.querySelector('input[name="maison_cooli"]').value));
+				formData.append('male_skilled', getValueOrDefault(formElement.querySelector('input[name="male_skilled"]').value));
+				formData.append('male_unskilled', getValueOrDefault(formElement.querySelector('input[name="male_unskilled"]').value));
+				formData.append('female_skilled', getValueOrDefault(formElement.querySelector('input[name="female_skilled"]').value));
+				formData.append('female_unskilled', getValueOrDefault(formElement.querySelector('input[name="female_unskilled"]').value));
+
+
+				var tableData = [];
+				$('#tabl tbody tr').each(function () {
+					console.log(this)
+
+					var rowData = {};
+					//rowData['item'] = $(this).find('select[name^="item"]').val();
+					rowData['work'] = $(this).find('input[name^="work"]').val();
+					rowData['unit'] = $(this).find('select[name^="unit"]').val();
+					rowData['rate'] = $(this).find('input[name^="rate"]').val();
+					rowData['total_qty'] = $(this).find('input[name^="total_qty"]').val();
+					rowData['amount'] = $(this).find('input[name^="amount"]').val();
+					tableData.push(rowData);
+				});
+
+				console.log(tableData)
+
+
+				requiredKeys.forEach(function (key) {
+					var value = formData.get(key);
+					if (!value.trim()) {
+						isValid = false;
+						errors[key] = ['This field may not be blank.'];
+					}
+				});
+
+				if (!isValid) {
+					enableButton(button);
+					console.log(errors);
+					handleCreateErrors(errors);
+					return;
+				} else {
+					$(`#${formId} input, #${formId} button`).prop('disabled', true);
+				}
+
+
+				formData.append("table", JSON.stringify(tableData))
+
+				$.ajax({
+					url: '/add_subcontadd/',                //change
+					type: 'POST',
+					headers: {
+						'X-CSRFToken': csrftoken,
+					},
+					data: formData,
+					processData: false,
+					contentType: false,
+					success: function (response, status, xhr) {
+						console.error(status);
+						if (xhr.status === 201) {
+							showToast(successMesssage?.message, '', successMesssage?.bgColor, true);
+						} else {
+							console.error(error);
+							restoreForm(formId, button)
+
+						}
+					},
+					error: function (xhr, status, error) {
+						console.log(xhr, status, error);
+						if (xhr.status === 400) {
+							if (xhr?.responseJSON || xhr?.responseJSON?.errors) {
+								handleCreateErrors(transformErrors(xhr.responseJSON));
+								restoreForm(formId, button)
+
+							} else {
+								showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+								restoreForm(formId, button)
+
+							}
+						}
+						else if (xhr.status === 401 || 404) {
+							showToast(xhr?.responseJSON?.details, '', errorAlertMessage?.bgColor);
+							restoreForm(formId, button)
+
+						}
+						else {
+							showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+							restoreForm(formId, button)
+
+						}
+					}
+
+				});
+			} catch (error) {
+				showToast(errorOccured?.message, '', errorOccured?.bgColor);
+				restoreForm(formId, button)
+				console.error(error);
+			}
+		}
+
+
+
+
+	</script>
+	{% endblock header2 %}

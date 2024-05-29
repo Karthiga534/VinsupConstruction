@@ -1,0 +1,696 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block header2 %}
+<div class="main-content">
+    <div class="page-content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                        <h4 class="mb-sm-0">Dashboard </h4>
+                        <div class="page-title-right">
+                            <ol class="breadcrumb m-0">
+                                <li class="breadcrumb-item">
+                                    <a href="javascript: void(0);">Dashboards</a>
+                                </li>
+                                <li class="breadcrumb-item active">Entry</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xxl-12">
+                    <div class="d-flex flex-column h-100">
+                        <div class="row h-100">
+
+                            <!-- end col-->
+                        </div>
+                        <!-- end row-->
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="card card-animate">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between">
+                                            <div>
+                                                <p class="fw-medium text-muted mb-0">Total Projects</p>
+                                                <h2 class="mt-4 ff-secondary fw-semibold">
+                                                    <span id="project_count">{{ project_count }}</span>
+                                                </h2>
+                                                <p class="mb-0 text-muted">
+                                                    <span class="badge bg-light text-success mb-0">
+                                                        <i class="ri-arrow-up-line align-middle"></i>
+
+                                                        {{ previous_month_project_count }} </span> vs. previous month
+                                                </p>
+                                            </div>
+                                            <div>
+                                                <div class="avatar-sm flex-shrink-0">
+                                                    <span class="avatar-title bg-primary rounded-circle fs-2">
+                                                        <i data-feather="users"></i>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- end card body -->
+                                </div>
+                                <!-- end card-->
+                            </div>
+
+
+
+                            <!-- end col-->
+                            <div class="col-md-3">
+                                <div class="card card-animate">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between">
+                                            <div>
+                                                <p class="fw-medium text-muted mb-0">Ongoing Projects</p>
+                                                <h2 class="mt-4 ff-secondary fw-semibold">
+                                                    <span id="project_count">{{ ongoing_project_count }}</span>
+                                                </h2>
+                                                <p class="mb-0 text-muted">
+                                                    <span class="badge bg-light text-danger mb-0">
+                                                        <i class="ri-arrow-down-line align-middle"></i>
+                                                        {{ previous_month_ongoing_project_count }}
+                                                    </span> vs. previous month
+                                                </p>
+                                            </div>
+                                            <div>
+                                                <div class="avatar-sm flex-shrink-0">
+                                                    <span class="avatar-title bg-danger rounded-circle fs-2">
+                                                        <i data-feather="activity"></i>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- end card body -->
+                                </div>
+                                <!-- end card-->
+                            </div>
+                            <!-- end col-->
+
+                            <div class="col-md-3">
+                                <div class="card card-animate">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between">
+                                            <div>
+                                                <p class="fw-medium text-muted mb-0">Completed Projects</p>
+                                                <h2 class="mt-4 ff-secondary fw-semibold">
+                                                    <span id="project_count">{{ completed_project_count }}</span>
+                                                </h2>
+                                                <p class="mb-0 text-muted">
+                                                    <span class="badge bg-light text-danger mb-0">
+                                                        <i class="ri-arrow-down-line align-middle"></i>
+                                                        {{ previous_month_completed_project_count }}
+                                                    </span> vs. previous month
+                                                </p>
+                                            </div>
+                                            <div>
+                                                <div class="avatar-sm flex-shrink-0">
+                                                    <span class="avatar-title bg-danger rounded-circle fs-2">
+                                                        <i data-feather="activity"></i>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- end card body -->
+                                </div>
+                                <!-- end card-->
+                            </div>
+                            <!-- end col-->
+
+
+
+
+                            <div class="col-md-3">
+                                <div class="card card-animate">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between">
+                                            <div>
+                                                <p class="fw-medium text-muted mb-0">Contractors</p>
+                                                <h2 class="mt-4 ff-secondary fw-semibold">
+                                                    <span id="contractor-count">{{ contractor_count }}</span>
+                                                </h2>
+                                                <p class="mb-0 text-muted">
+                                                    <span class="badge bg-light text-success mb-0">
+                                                        <i class="ri-arrow-up-line align-middle"></i>
+                                                        {{ previous_month_contractor_count }}
+                                                    </span> vs. previous month
+                                                </p>
+                                            </div>
+                                            <div>
+                                                <div class="avatar-sm flex-shrink-0">
+                                                    <span class="avatar-title bg-success rounded-circle fs-2">
+                                                        <i data-feather="external-link"></i>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- end card body -->
+                                </div>
+                                <!-- end card-->
+
+                            </div>
+                            <!-- end col-->
+                        </div>
+                        <!-- end row-->
+                        <div class="row">
+
+
+                            <div class="col-md-3">
+                                <div class="card card-animate">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between">
+                                            <div>
+                                                <p class="fw-medium text-muted mb-0">Quatation</p>
+                                                <h2 class="mt-4 ff-secondary fw-semibold">
+                                                    <span id="quatation-count" data-target="">{{ quatation_count  }}</span>
+                                                       
+                                                </h2>
+                                                <p class="mb-0 text-muted">
+                                                    <span class="badge bg-light text-danger mb-0">
+                                                        <i class="ri-arrow-down-line align-middle"></i>
+                                                        {{ previous_month_quatation_count }}
+                                                    </span> vs. previous month
+                                                </p>
+                                            </div>
+                                            <div>
+                                                <div class="avatar-sm flex-shrink-0">
+                                                    <span class="avatar-title bg-danger rounded-circle fs-2">
+                                                        <i data-feather="activity"></i>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- end card body -->
+                                </div>
+                                <!-- end card-->
+                            </div>
+                            <!-- end col-->
+
+                            <div class="col-md-3">
+                                <div class="card card-animate">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between">
+                                            <div>
+                                                <p class="fw-medium text-muted mb-0">Project Sub Contractor</p>
+                                                <h2 class="mt-4 ff-secondary fw-semibold">
+                                                    <span id="projectsubcontract-count" data-target="">
+                                                        {{ projectsubcontract_count }}</span>
+                                                </h2>
+                                                <p class="mb-0 text-muted">
+                                                    <span class="badge bg-light text-danger mb-0">
+                                                        <i class="ri-arrow-down-line align-middle"></i>
+                                                        {{ previous_month_projectsubcontract_count }}
+                                                    </span> vs. previous month
+                                                </p>
+                                            </div>
+                                            <div>
+                                                <div class="avatar-sm flex-shrink-0">
+                                                    <span class="avatar-title bg-danger rounded-circle fs-2">
+                                                        <i data-feather="activity"></i>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- end card body -->
+                                </div>
+                                <!-- end card-->
+                            </div>
+                            <!-- end col-->
+
+
+                            <!-- <div class="col-md-3">
+                                        <div class="card card-animate">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between">
+                                                    <div>
+                                                        <p class="fw-medium text-muted mb-0">Pro Subcontract Attendance</p>
+                                                        <h2 class="mt-4 ff-secondary fw-semibold">
+                                                            <span id="attendance-count" >{{ proattendance_count }}</span>
+                                                        </h2>
+                                                        <p class="mb-0 text-muted">
+                                                            <span class="badge bg-light text-success mb-0">
+                                                                    <i class="ri-arrow-up-line align-middle"></i>
+                                                                    {{ previous_month_proattendance_count }}
+                                                                </span> vs. previous month
+                                                        </p>
+                                                    </div>
+                                                    <div>
+                                                        <div class="avatar-sm flex-shrink-0">
+                                                            <span class="avatar-title bg-success rounded-circle fs-2">
+                                                                    <i data-feather="external-link"></i>
+                                                                </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                           
+                                        </div>
+
+                                    </div> -->
+
+                            <!-- <div class="col-md-3">
+                                        <div class="card card-animate">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between">
+                                                    <div>
+                                                        <p class="fw-medium text-muted mb-0">Vendor Registration</p>
+                                                        <h2 class="mt-4 ff-secondary fw-semibold">
+                                                            <span id="vendorregistration-count" >{{ vendorregistration_count }}</span>
+                                                        </h2>
+                                                        <p class="mb-0 text-muted">
+                                                            <span class="badge bg-light text-success mb-0">
+                                                                    <i class="ri-arrow-up-line align-middle"></i>
+                                                                    {{ previous_month_vendorregistration_count }}
+                                                                </span> vs. previous month
+                                                        </p>
+                                                    </div>
+                                                    <div>
+                                                        <div class="avatar-sm flex-shrink-0">
+                                                            <span class="avatar-title bg-success rounded-circle fs-2">
+                                                                    <i data-feather="external-link"></i>
+                                                                </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                        </div>
+
+                                    </div> -->
+
+
+
+                            <!-- <div class="col-md-3">
+                                        <div class="card card-animate">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between">
+                                                    <div>
+                                                        <p class="fw-medium text-muted mb-0">Vendor Quatation</p>
+                                                        <h2 class="mt-4 ff-secondary fw-semibold">
+                                                            <span id="vendorquatation-count" >{{ vendorquatation_count }}</span>
+                                                        </h2>
+                                                        <p class="mb-0 text-muted">
+                                                            <span class="badge bg-light text-success mb-0">
+                                                                    <i class="ri-arrow-up-line align-middle"></i>
+                                                                    {{ previous_month_vendorquatation_count }}
+                                                                </span> vs. previous month
+                                                        </p>
+                                                    </div>
+                                                    <div>
+                                                        <div class="avatar-sm flex-shrink-0">
+                                                            <span class="avatar-title bg-success rounded-circle fs-2">
+                                                                    <i data-feather="external-link"></i>
+                                                                </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                           
+                                        </div>
+
+                                    </div> -->
+
+                            <!-- <div class="col-md-3">
+                                        <div class="card card-animate">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between">
+                                                    <div>
+                                                        <p class="fw-medium text-muted mb-0">Purchase List</p>
+                                                        <h2 class="mt-4 ff-secondary fw-semibold">
+                                                            <span id="purchaselist-count" >{{ purchaselist_count }}</span>
+                                                        </h2>
+                                                        <p class="mb-0 text-muted">
+                                                            <span class="badge bg-light text-success mb-0">
+                                                                    <i class="ri-arrow-up-line align-middle"></i>
+                                                                    {{ previous_month_purchaselist_count }}
+                                                                </span> vs. previous month
+                                                        </p>
+                                                    </div>
+                                                    <div>
+                                                        <div class="avatar-sm flex-shrink-0">
+                                                            <span class="avatar-title bg-success rounded-circle fs-2">
+                                                                    <i data-feather="external-link"></i>
+                                                                </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div> -->
+
+
+
+                            <!-- <div class="col-md-3">
+                                        <div class="card card-animate">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between">
+                                                    <div>
+                                                        <p class="fw-medium text-muted mb-0">UOM</p>
+                                                        <h2 class="mt-4 ff-secondary fw-semibold">
+                                                            <span id="uom-count" >{{ uom_count }}</span>
+                                                        </h2>
+                                                        <p class="mb-0 text-muted">
+                                                            <span class="badge bg-light text-success mb-0">
+                                                                    <i class="ri-arrow-up-line align-middle"></i>
+                                                                    {{ previous_month_uom_count }}
+                                                                </span> vs. previous month
+                                                        </p>
+                                                    </div>
+                                                    <div>
+                                                        <div class="avatar-sm flex-shrink-0">
+                                                            <span class="avatar-title bg-success rounded-circle fs-2">
+                                                                    <i data-feather="external-link"></i>
+                                                                </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                           
+                                        </div>
+
+                                    </div> -->
+
+
+
+
+                            <!-- <div class="col-md-3">
+                                        <div class="card card-animate">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between">
+                                                    <div>
+                                                        <p class="fw-medium text-muted mb-0">Material Library</p>
+                                                        <h2 class="mt-4 ff-secondary fw-semibold">
+                                                            <span id="materiallibrary-count" >{{ materiallibrary_count }}</span>
+                                                        </h2>
+                                                        <p class="mb-0 text-muted">
+                                                            <span class="badge bg-light text-success mb-0">
+                                                                    <i class="ri-arrow-up-line align-middle"></i>
+                                                                    {{ previous_month_materiallibrary_count }}
+                                                                </span> vs. previous month
+                                                        </p>
+                                                    </div>
+                                                    <div>
+                                                        <div class="avatar-sm flex-shrink-0">
+                                                            <span class="avatar-title bg-success rounded-circle fs-2">
+                                                                    <i data-feather="external-link"></i>
+                                                                </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                           
+                                        </div>
+
+                                    </div> -->
+
+
+                            <!-- <div class="col-md-3">
+                                        <div class="card card-animate">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between">
+                                                    <div>
+                                                        <p class="fw-medium text-muted mb-0">Machinary Charges</p>
+                                                        <h2 class="mt-4 ff-secondary fw-semibold">
+                                                            <span id="machinarycharges-count" >{{ machinarycharges_count }}</span>
+                                                        </h2>
+                                                        <p class="mb-0 text-muted">
+                                                            <span class="badge bg-light text-success mb-0">
+                                                                    <i class="ri-arrow-up-line align-middle"></i>
+                                                                    {{ previous_month_machinarycharges_count }}
+                                                                </span> vs. previous month
+                                                        </p>
+                                                    </div>
+                                                    <div>
+                                                        <div class="avatar-sm flex-shrink-0">
+                                                            <span class="avatar-title bg-success rounded-circle fs-2">
+                                                                    <i data-feather="external-link"></i>
+                                                                </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                           
+                                        </div>
+
+                                    </div> -->
+
+                            <!-- <div class="col-md-3">
+                                        <div class="card card-animate">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between">
+                                                    <div>
+                                                        <p class="fw-medium text-muted mb-0">Labour Roles & Salary</p>
+                                                        <h2 class="mt-4 ff-secondary fw-semibold">
+                                                            <span id="labourrolesandsalary-count" >{{ labourrolesandsalary_count }}</span>
+                                                        </h2>
+                                                        <p class="mb-0 text-muted">
+                                                            <span class="badge bg-light text-success mb-0">
+                                                                    <i class="ri-arrow-up-line align-middle"></i>
+                                                                    {{ previous_month_labourrolesandsalary_count }}
+                                                                </span> vs. previous month
+                                                        </p>
+                                                    </div>
+                                                    <div>
+                                                        <div class="avatar-sm flex-shrink-0">
+                                                            <span class="avatar-title bg-success rounded-circle fs-2">
+                                                                    <i data-feather="external-link"></i>
+                                                                </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                           
+                                        </div>
+
+                                    </div> -->
+
+                            <div class="col-md-3">
+                                <div class="card card-animate">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between">
+                                            <div>
+                                                <p class="fw-medium text-muted mb-0">Company Labour</p>
+                                                <h2 class="mt-4 ff-secondary fw-semibold">
+                                                    <span id="companylabour-count">{{ companylabour_count }}</span>
+                                                </h2>
+                                                <p class="mb-0 text-muted">
+                                                    <span class="badge bg-light text-success mb-0">
+                                                        <i class="ri-arrow-up-line align-middle"></i>
+                                                        {{ previous_month_companylabour_count }}
+                                                    </span> vs. previous month
+                                                </p>
+                                            </div>
+                                            <div>
+                                                <div class="avatar-sm flex-shrink-0">
+                                                    <span class="avatar-title bg-success rounded-circle fs-2">
+                                                        <i data-feather="external-link"></i>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+
+                            <!-- <div class="col-md-3">
+                                        <div class="card card-animate">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between">
+                                                    <div>
+                                                        <p class="fw-medium text-muted mb-0">Inventory Stock Management</p>
+                                                        <h2 class="mt-4 ff-secondary fw-semibold">
+                                                            <span id="inventorystock-count" >{{ inventorystock_count }}</span>
+                                                        </h2>
+                                                        <p class="mb-0 text-muted">
+                                                            <span class="badge bg-light text-success mb-0">
+                                                                    <i class="ri-arrow-up-line align-middle"></i>
+                                                                    {{ previous_month_inventorystock_count }}
+                                                                </span> vs. previous month
+                                                        </p>
+                                                    </div>
+                                                    <div>
+                                                        <div class="avatar-sm flex-shrink-0">
+                                                            <span class="avatar-title bg-success rounded-circle fs-2">
+                                                                    <i data-feather="external-link"></i>
+                                                                </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div> -->
+
+
+
+                            <div class="col-md-3">
+                                <div class="card card-animate">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between">
+                                            <div>
+                                                <p class="fw-medium text-muted mb-0">Expense</p>
+                                                <h2 class="mt-4 ff-secondary fw-semibold">
+                                                    <span id="expense-count">{{ expense_count }}</span>
+                                                </h2>
+                                                <p class="mb-0 text-muted">
+                                                    <span class="badge bg-light text-success mb-0">
+                                                        <i class="ri-arrow-up-line align-middle"></i>
+                                                        {{ previous_month_expense_count }}
+                                                    </span> vs. previous month
+                                                </p>
+                                            </div>
+                                            <div>
+                                                <div class="avatar-sm flex-shrink-0">
+                                                    <span class="avatar-title bg-success rounded-circle fs-2">
+                                                        <i data-feather="external-link"></i>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+                            <!-- <div class="col-md-3">
+                                        <div class="card card-animate">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between">
+                                                    <div>
+                                                        <p class="fw-medium text-muted mb-0">Site Stock</p>
+                                                        <h2 class="mt-4 ff-secondary fw-semibold">
+                                                            <span id="sitestock-count" >{{ sitestock_count }}</span>
+                                                        </h2>
+                                                        <p class="mb-0 text-muted">
+                                                            <span class="badge bg-light text-success mb-0">
+                                                                    <i class="ri-arrow-up-line align-middle"></i>
+                                                                    {{ previous_month_sitestock_count }}
+                                                                </span> vs. previous month
+                                                        </p>
+                                                    </div>
+                                                    <div>
+                                                        <div class="avatar-sm flex-shrink-0">
+                                                            <span class="avatar-title bg-success rounded-circle fs-2">
+                                                                    <i data-feather="external-link"></i>
+                                                                </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div> -->
+
+
+                            <!-- <div class="col-md-3">
+                                        <div class="card card-animate">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between">
+                                                    <div>
+                                                        <p class="fw-medium text-muted mb-0">Transfer List</p>
+                                                        <h2 class="mt-4 ff-secondary fw-semibold">
+                                                            <span id="transferlist-count" >{{ transferlist_count }}</span>
+                                                        </h2>
+                                                        <p class="mb-0 text-muted">
+                                                            <span class="badge bg-light text-success mb-0">
+                                                                    <i class="ri-arrow-up-line align-middle"></i>
+                                                                    {{ previous_month_transferlist_count }}
+                                                                </span> vs. previous month
+                                                        </p>
+                                                    </div>
+                                                    <div>
+                                                        <div class="avatar-sm flex-shrink-0">
+                                                            <span class="avatar-title bg-success rounded-circle fs-2">
+                                                                    <i data-feather="external-link"></i>
+                                                                </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div> -->
+
+
+
+                            <div class="col-md-3">
+                                <div class="card card-animate">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between">
+                                            <div>
+                                                <p class="fw-medium text-muted mb-0">Employee</p>
+                                                <h2 class="mt-4 ff-secondary fw-semibold">
+                                                    <span id="employee-count">{{ employee_count }}</span>
+                                                </h2>
+                                                <p class="mb-0 text-muted">
+                                                    <span class="badge bg-light text-danger mb-0">
+                                                        <i class="ri-arrow-down-line align-middle"></i>
+
+                                                        {{ previous_month_employee_count }}
+                                                    </span> vs. previous month
+                                                </p>
+                                            </div>
+
+                                            <div>
+                                                <div class="avatar-sm flex-shrink-0">
+                                                    <span class="avatar-title bg-warning rounded-circle fs-2">
+                                                        <i data-feather="clock"></i>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</div>
+
+</div>
+<!-- END layout-wrapper -->
+
+
+
+<!--start back-to-top-->
+<button onclick="topFunction()" class="btn btn-danger btn-icon" id="back-to-top">
+    <i class="ri-arrow-up-line"></i>
+</button>
+<!--end back-to-top-->
+<!--preloader-->
+<div id="preloader">
+    <div id="status">
+        <div class="spinner-border text-primary avatar-sm" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock header2 %}

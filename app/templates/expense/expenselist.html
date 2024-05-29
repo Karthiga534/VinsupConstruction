@@ -1,0 +1,305 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block header2 %}
+
+    <!-- Begin page -->
+    <div id="layout-wrapper">
+
+        <div class="main-content">
+
+            <div class="page-content">
+                <div class="container-fluid">
+
+                    <!-- start page title -->
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                                <h4 class="mb-sm-0">View Expenses </h4>
+
+                                <div class="page-title-right">
+                                    <ol class="breadcrumb m-0">
+                                        <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
+                                        <li class="breadcrumb-item active">List</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- end page title -->
+                    
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    
+									<div class="row">
+									<div class="col-xl-6 col-lg-6 col-md-6 col-12">
+										<h4>Expenses List</h4>
+									</div>
+									<div class="col-xl-4 col-lg-4 col-md-4 col-12"></div>
+									<div class="col-xl-2 col-lg-2 col-md-2 col-12">
+										
+									</div>
+								</div>
+                                </div>
+                                <div class="card-body">
+									<div class="row">
+										<div class="col-xl-3 col-lg-3 col-md-3 col-xs-6 col-12">
+                                            <label for="fromsite" class="form-label">Site Name:</label>
+                                            <select class="form-select mb-3" id="fromsite" name="site_name" aria-label="Default select example">
+                                               
+												<option value="0">  -----------------  </option>
+                                                {% for site in site_locations %}
+                                                    <option value="{{ site.id }}">{{ site.site_location }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+										<div class="col-xl-3 col-lg-3 col-md-3 col-xs-6 col-12">
+											<label for="exampleInputdate" class="form-label" id="">From Date</label>
+                                            <input type="date" class="form-control" id="fromdate">
+										</div>
+										<div class="col-xl-3 col-lg-3 col-md-3 col-xs-6 col-12">
+											<label for="exampleInputdate" class="form-label">To Date</label>
+                                            <input type="date" class="form-control" id="todate">
+										</div>
+										<div class="col-xl-3 col-lg-3 col-md-3 col-xs-6 col-12">
+											<br><button type="button" class="btn btn-primary waves-effect waves-light mt-2">Get Report</button>
+										</div>
+									</div>
+									<hr>
+									<div class="card">
+									<div class="card-body">
+                                    <table id="example" class="table table-bordered dt-responsive nowrap table-striped align-middle" style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <!-- <th scope="col" style="width: 10px;">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input fs-15" type="checkbox" id="checkAll" value="option">
+                                                    </div>
+                                                </th> -->
+                                                <th data-ordering="false">S No.</th>
+                                                <th data-ordering="false">Date</th>
+                                                <th data-ordering="false">Particular</th>
+                                                <th data-ordering="false">Amount</th>                                                                           
+                                                <th data-ordering="false">Attachment</th>                                                                           
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <!-- <tr>
+                                                <th scope="row">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input fs-15" type="checkbox" name="checkAll" value="option1">
+                                                    </div>
+                                                </th>
+                                                <td>01</td>
+												<td>07-01-2024</td>
+                                                <td>Tea</td>
+                                                <td>150</td>                                               
+                                                <td>img</td>                                               
+                                              
+                                            </tr>
+                                             -->
+                                        </tbody>
+                                    </table>
+
+                                    
+								<div id="results-container"></div>
+								<div id="pagination-container"></div>
+
+
+
+
+									</div>
+									</div>
+								</div>
+                            </div>
+                        </div>
+                    </div>
+<!-- container-fluid -->
+            </div>
+            <!-- End Page-content -->
+
+            
+        </div>
+        <!-- end main content-->
+
+    </div>
+    <!-- END layout-wrapper -->
+
+
+
+    <!--start back-to-top-->
+    <button onclick="topFunction()" class="btn btn-danger btn-icon" id="back-to-top">
+        <i class="ri-arrow-up-line"></i>
+    </button>
+    <!--end back-to-top-->
+
+    <!--preloader-->
+    <div id="preloader">
+        <div id="status">
+            <div class="spinner-border text-primary avatar-sm" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    </div>
+
+
+
+	<script>
+
+		const existingPaginationContainer = document.getElementById('pagination-container');
+
+		const dropdown = document.getElementById('fromsite');   
+		const tableBody = document.querySelector('#example tbody');
+
+
+		// from and to
+		const fromdate = document.getElementById('fromdate');
+		const todate = document.getElementById('todate');
+
+		var qtyError = false;
+
+		var priceError = false;
+
+		var currentPage = 1;
+
+		document.addEventListener('DOMContentLoaded', function () {
+
+			// const dropdown = document.getElementById('fromsite');
+			// const tableBody = document.querySelector('#example tbody');
+
+			// on dom loaded 
+			const initialSelectedValue = dropdown.value;
+			fetchData( 1);
+
+			// fetch table data API
+			dropdown.addEventListener('change', function () {
+	
+				fetchData( currentPage);
+			});
+
+			todate.addEventListener('change', function () {
+	
+				fetchData(currentPage);
+			});
+
+			fromdate.addEventListener('change', function () {
+				
+				fetchData(currentPage);
+			});
+
+		});
+
+
+		// fetch data
+		function fetchData(page) {
+			currentPage = page
+			const selectedValue = dropdown.value;
+			const from = fromdate?.value || ""
+			const to = todate?.value || ""
+			console.log(fromdate ,todate)
+			try {
+				fetch(`/expense_list/${selectedValue}/?page=${page}&start_date=${from}&end_date=${to}`)  //CHANGE URL
+					.then(response => {
+						if (response.status === 200) {
+							console.log('Data fetched');
+							return response.json();
+						} else if (response.status === 404) {
+							throw new Error('Resource not found');
+						} else if (response.ok) {
+							throw new Error(`HTTP error! Status: ${response.status}`);
+						} else {
+							throw new Error('Network response was not ok');
+						}
+					})
+					.then(data => {
+						tableBody.innerHTML = '';
+						renderDataOrMessage(tableBody, data, page)
+					})
+					.catch(error => {
+						console.error('Error fetching data:', error);
+						showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+					});
+			} catch (error) {
+				console.error('Error in fetch operation:', error);
+			}
+		}
+
+
+
+		// render table or message
+
+		function renderDataOrMessage(tableBody, data, page) {
+
+			// Check if data is available and not empty
+			if (data && Array.isArray(data.results) && data.results.length > 0) {
+				// Render the data in the table
+
+				tdata = data?.results
+
+				tdata.forEach((item, index) => {
+					const newRow = createTableRow(index + 1, item);
+					tableBody.appendChild(newRow);
+				});
+
+				renderPagination(data, page)
+
+			} else {
+				// Display a message indicating no data available
+				tableBody.innerHTML = '<tr><td colspan="6">No data available.</td></tr>';
+
+				existingPaginationContainer.innerHTML = ''; // Clear existing content
+			}
+		}
+
+
+		// MANIPULATE TABLE DATA
+		function createTableRow(serialNumber, data) {
+			const newRow = document.createElement('tr');
+			newRow.setAttribute('data-item-id', data.id);
+
+            //seriaal number
+			const td1 = document.createElement('td');
+			td1.textContent =serialNumber;
+			newRow.appendChild(td1);
+
+
+			// date
+			const td2 = document.createElement('td');
+			td2.textContent = get_value(data.date)
+			newRow.appendChild(td2);
+
+			// particular
+			const td3 = document.createElement('td');
+			td3.textContent = get_value(data.particular)
+			newRow.appendChild(td3);
+
+			// From amount
+			const td4 = document.createElement('td');
+			td4.textContent = get_value(data.amount)
+			newRow.appendChild(td4);
+
+			// To attachment
+			const td5 = document.createElement('td');
+			//td5.textContent = get_value(data.attachment)
+          td5.innerHTML=`  <a href="${data.attachment }">${get_filename(data.attachment) }</a>`
+			newRow.appendChild(td5);
+
+
+
+	
+			return newRow;
+		}
+
+
+        function get_value(value){
+
+            return  value || "Nill"
+        }
+
+	</script>
+
+
+    {% endblock header2 %}

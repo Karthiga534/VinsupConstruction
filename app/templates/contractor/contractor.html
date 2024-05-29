@@ -1,0 +1,1160 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block header2 %}
+
+<!-- Begin page -->
+<div id="layout-wrapper">
+
+    <div class="main-content">
+
+        <div class="page-content">
+            <div class="container-fluid">
+
+                <!-- start page title -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                            <h4 class="mb-sm-0">Contractor</h4>
+
+                            <div class="page-title-right">
+                                <ol class="breadcrumb m-0">
+                                    <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
+                                    <li class="breadcrumb-item active">contractor</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-header">
+
+                                <div class="row">
+                                    <div class="col-xl-6 col-lg-6 col-md-6 col-12">
+                                        <h4>Contractor Management </h4>
+                                    </div>
+                                    <div class="col-xl-4 col-lg-4 col-md-4 col-12"></div>
+                                    <div class="col-xl-2 col-lg-2 col-md-2 col-12">
+                                        <button type="button" class="btn btn-info" style="float:right;"
+                                            data-bs-toggle="modal" data-bs-target=".bs-example-modal-lg">Add
+                                            Contractor</button>
+                                        <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog"
+                                            aria-labelledby="myLargeModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog modal-lg">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="myLargeModalLabel">Add Contractor
+                                                        </h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                            aria-label="Close" onclick="clearErrors()">
+                                                        </button>
+                                                    </div>
+                                                    <hr>
+
+                                                    
+
+                                                    <div class="modal-body">
+                                                        <form id="createForm" enctype="multipart/form-data">
+                                                            {% csrf_token %}
+                                                          
+                                                            <div class="row">
+                                                                <div class="col-md-6">
+                                                                    <label
+                                                                        for="contractor_name"
+                                                                        class="form-label">Contractor
+                                                                        Name:</label>
+                                                                    <input type="text"
+                                                                        class="form-control"
+                                                                        id="contractor_name"
+                                                                        name="name"
+                                                                        value="{{ i.name }}" />
+                                                                    <span
+                                                                        id="contractor_nameError"
+                                                                        class="error-message"></span>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <label for="contact_no"
+                                                                        class="form-label">Contact
+                                                                        No:</label>
+                                                                    <input type="text"
+                                                                        class="form-control"
+                                                                        id="contact_no"
+                                                                        name="contact_no"
+                                                                        value="{{ i.contact_no }}" />
+                                                                    <span
+                                                                        id="  
+                                                                        contact_noError"
+                                                                        class="error-message"></span
+                                                                         >
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-6 mt-2">
+                                                                    <label for="{{ i.id }}_address"
+                                                                        class="form-label">Address:</label>
+                                                                    <input type="text"
+                                                                        class="form-control"
+                                                                        id="{{ i.id }}_address"
+                                                                        name="address"
+                                                                        value="{{ i.address }}" />
+                                                                    <span id="{{ i.id }}_addressError"
+                                                                        class="error-message"></span>
+                                                                </div>
+
+                                                                
+                                                                    <div class="col-md-6 mt-2">
+                                                                        <label for="{{ i.id }}_category"
+                                                                            class="form-label">Category:</label>
+                                                                        <select class="form-select"
+                                                                            id="{{ i.id }}_category"
+                                                                            name="category">
+                                                                            <option
+                                                                                value="{{ i.category.id }}"
+                                                                                selected>{{ i.category.name }}</option>
+                                                                                
+                                                                            <!-- Populate options with categories from your database -->
+                                                                            {% for category in categories %}
+                                                                            <option
+                                                                                value="{{ category.id }}">{{category.name }}</option>
+                                                                            {% endfor %}
+                                                                        </select>
+                                                                        <span id="{{ i.id }}_categoryError"
+                                                                            class="error-message"></span>
+                                                                    </div>
+                                                               
+                                                                <!-- <div class="col-md-6">
+                                                                    <label for="{{ i.id }}_area"
+                                                                        class="form-label">Area:</label>
+                                                                    <input type="text"
+                                                                        class="form-control"
+                                                                        id="{{ i.id }}_area" name="area"
+                                                                        value="{{ i.area }}" />
+                                                                    <span id="{{ i.id }}_areaError"
+                                                                        class="error-message"></span>
+                                                                </div> -->
+
+
+                                                            </div>
+                                                            <hr>
+                                                            <div class="row">
+
+                                                                
+                                                                <div class="col-md-6 mt-2">
+                                                                    <label for="{{ i.id }}_unit"
+                                                                        class="form-label">Select Unit:</label>
+                                                                    <select class="form-select" id="{{i.id}}_unit" name="unit">
+                                                                        <option value="{{i.unit.id}}">{{i.unit.name}}</option>
+                                                                        {% for unit in uom %}
+                                                                            <option value="{{ unit.id }}">{{ unit.name }}</option>
+                                                                        {% endfor %}
+                                                                    </select>
+                                                                <span id="{{i.id}}_unitError" class="error-message"></span>
+
+                                                                </div>
+
+
+                                                                <div class="col-md-6 mt-2">
+                                                                    <label for="{{ i.id }}_rate"
+                                                                        class="form-label">Rate:</label>
+                                                                    <input type="text"
+                                                                        class="form-control"
+                                                                        id="{{ i.id }}_rate" name="rate"
+                                                                        value="{{ i.rate }}" />
+                                                                    <span id="{{ i.id }}_rateError"
+                                                                        class="error-message"></span>
+                                                                </div>
+
+                                                            </div>
+                                                            <hr>
+                                                            <div class="row">
+                                                                <div class="col-md-6 mt-2">
+                                                                    <label for="{{ i.id }}_maistry"
+                                                                        class="form-label">Maistry:</label>
+                                                                    <input type="text"
+                                                                        class="form-control"
+                                                                        id="{{ i.id }}_maistry"
+                                                                        name="maistry"
+                                                                        value="{{ i.maistry }}" />
+                                                                    <span id="{{ i.id }}_maistryError"
+                                                                        class="error-message"></span>
+                                                                </div>
+
+                                                                <div class="col-md-6 mt-2">
+                                                                    
+                                                                </div>
+
+                                                                <div class="col-md-6 mt-2">
+                                                                    <label for="{{ i.id }}_male_skilled"
+                                                                        class="form-label">Male
+                                                                        Skilled:</label>
+                                                                    <input type="text"
+                                                                        class="form-control"
+                                                                        id="{{ i.id }}_male_skilled"
+                                                                        name="male_skilled"
+                                                                        value="{{ i.male_skilled }}" />
+                                                                    <span
+                                                                        id="{{ i.id }}_male_skilledError"
+                                                                        class="error-message"></span>
+                                                                </div>
+                                                                <div class="col-md-6 mt-2">
+                                                                    <label
+                                                                        for="{{ i.id }}_male_unskilled"
+                                                                        class="form-label">Male
+                                                                        Unskilled:</label>
+                                                                    <input type="text"
+                                                                        class="form-control"
+                                                                        id="{{ i.id }}_male_unskilled"
+                                                                        name="male_unskilled"
+                                                                        value="{{ i.male_unskilled }}" />
+                                                                    <span
+                                                                        id="{{ i.id }}_male_unskilledError"
+                                                                        class="error-message"></span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-6 mt-2">
+                                                                    <label
+                                                                        for="{{ i.id }}_female_skilled"
+                                                                        class="form-label">Female
+                                                                        Skilled:</label>
+                                                                    <input type="text"
+                                                                        class="form-control"
+                                                                        id="{{ i.id }}_female_skilled"
+                                                                        name="female_skilled"
+                                                                        value="{{ i.female_skilled }}" />
+                                                                    <span
+                                                                        id="{{ i.id }}_female_skilledError"
+                                                                        class="error-message"></span>
+                                                                </div>
+                                                                <div class="col-md-6 mt-2">
+                                                                    <label
+                                                                        for="{{ i.id }}_female_unskilled"
+                                                                        class="form-label">Female
+                                                                        Unskilled:</label>
+                                                                    <input type="text"
+                                                                        class="form-control"
+                                                                        id="{{ i.id }}_female_unskilled"
+                                                                        name="female_unskilled"
+                                                                        value="{{ i.female_unskilled }}" />
+                                                                    <span
+                                                                        id="{{ i.id }}_female_unskilledError"
+                                                                        class="error-message"></span>
+                                                                </div>
+                                                            </div>
+
+
+                                                            
+
+                                                            <hr>
+                                                            <div class="modal-footer">
+                                                                <button
+                                                                    class="btn btn-link link-success fw-medium shadow-none"
+                                                                    data-bs-dismiss="modal" onclick="clearErrors()"><i
+                                                                        class="ri-close-line me-1 align-middle"></i>
+                                                                    Close</button>
+                                                                <button type="button" class="btn btn-primary"
+                                                                    onclick="createFunction(this)">Save</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                    <!-- /.modal-content -->
+                                                </div>
+                                                <!-- /.modal-dialog -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+
+                                    <div class="row">
+                                        {% include "search.html" %}
+                                    </div>
+
+                                    
+                                    <div class="">
+                                        <table id="example" class="table table-bordered table-striped align-middle"
+                                            style="width:100%">
+                                            <thead>
+                                                <tr>
+
+                                                    <th data-ordering="false">SR No.</th>
+                                                    <th data-ordering="false">Date</th>
+                                                    <th data-ordering="false">Contractor Name</th>
+                                                    <th data-ordering="false">Category</th>
+                                                    <th data-ordering="false">Contact No</th>
+                                                    <!-- <th data-ordering="false">Address</th> -->
+                                                    <th data-ordering="false">Unit</th>
+                                                    <th data-ordering="false">Rate</th>
+                                                    <!-- <th data-ordering="false">Amount</th> -->
+                                                    <th data-ordering="false">Maistry</th>
+                                                    <th data-ordering="false">Male Skilled</th>
+                                                    <!-- <th data-ordering="false">Male Unskilled</th> -->
+                                                    <th data-ordering="false">Female Skilled</th>
+                                                    <!-- <th data-ordering="false">Female Unskilled</th> -->
+                                                    
+                                                    <th data-ordering="false">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for i in queryset %}
+                                                <tr>
+
+                                                    <td>{{ forloop.counter }}</td>
+                                                    <td>{{ i.start_date }}</td>
+                                                    <td>{{ i.name}}</td>
+                                                    <td>{{ i.category }}</td>
+                                                    <td>{{ i.contact_no }}</td>
+                                                    <!-- <td>{{ i.address }}</td> -->
+                                                    <td>{{ i.unit.name }}</td>
+                                                    <td>{{ i.rate }}</td>
+                                                    <!-- <td>{{ i.amount }}</td> -->
+                                                    <td>{{ i.maistry }}</td>
+                                                    <td>{{ i.male_skilled }}</td>
+                                                    <!-- <td>{{ i.male_unskilled }}</td> -->
+                                                    <td>{{ i.female_skilled }}</td>
+                                                    <!-- <td>{{ i.female_unskilled }}</td> -->
+                                                
+
+                                                    <td>
+                                                        <div class="dropdown d-inline-block">
+                                                            <button class="btn btn-soft-secondary btn-sm dropdown"
+                                                                type="button" data-bs-toggle="dropdown"
+                                                                aria-expanded="false">
+                                                                <i class="ri-more-fill align-middle"></i>
+                                                            </button>
+                                                            <ul class="dropdown-menu dropdown-menu-end">
+                                                                <!-- <li><a href="#!" class="dropdown-item view-btn"
+                                                                        data-bs-toggle="modal"
+                                                                        data-bs-target="#procatview"><i
+                                                                            class="ri-eye-fill align-bottom me-2 text-muted"></i>
+                                                                        View</a></li> -->
+                                                                        <li><a class="dropdown-item edit-item-btn"
+                                                                            data-bs-toggle="modal" href="#!"
+                                                                            onclick="openModal('viewModal','{{ i.id }}')"><i
+                                                                                class="ri-pencil-fill align-bottom me-2 text-muted"></i>
+                                                                            View</a></li>
+                                                                <li><a class="dropdown-item edit-item-btn"
+                                                                        data-bs-toggle="modal" href="#!"
+                                                                        onclick="openModal('editModal','{{ i.id }}')"><i
+                                                                            class="ri-pencil-fill align-bottom me-2 text-muted"></i>
+                                                                        Edit</a></li>
+                                                                <li>
+                                                                    <a class="dropdown-item remove-item-btn del-btn"
+                                                                        href="#!" data-target="#deleteModal{{ i.id}}">
+                                                                        <i
+                                                                            class="ri-delete-bin-fill align-bottom me-2 text-muted"></i>
+                                                                        Delete
+                                                                    </a>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+
+
+
+                                                        <div class="modal fade" id="editModal_{{ i.id }}" tabindex="-1"
+                                                            aria-labelledby="editModalLabel" aria-hidden="true"
+                                                            data-bs-backdrop="static" data-bs-keyboard="false">
+                                                            <div class="modal-dialog modal-lg">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header">
+                                                                        <h5 class="modal-title" id="editModalLabel">Edit
+                                                                            Contractor</h5>
+                                                                        <button type="button" class="btn-close"
+                                                                            data-bs-dismiss="modal" aria-label="Close"
+                                                                            onclick="CloseModel('editModal','{{ i.id }}')"></button>
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                                        <form id="editForm{{ i.id }}"
+                                                                            enctype="multipart/form-data">
+                                                                            {% csrf_token %}
+                                                                            <div class="row">
+                                                                                <div class="col-md-6">
+                                                                                    <label
+                                                                                        for="{{ i.id }}_contractor_name"
+                                                                                        class="form-label">Contractor
+                                                                                        Name:</label>
+                                                                                    <input type="text"
+                                                                                        class="form-control"
+                                                                                        id="{{ i.id }}_contractor_name"
+                                                                                        name="name"
+                                                                                        value="{{ i.name }}" />
+                                                                                    <span
+                                                                                        id="{{ i.id }}_contractor_nameError"
+                                                                                        class="error-message"></span>
+                                                                                </div>
+                                                                                <div class="col-md-6">
+                                                                                    <label for="{{ i.id }}_contact_no"
+                                                                                        class="form-label">Contact
+                                                                                        No:</label>
+                                                                                    <input type="text"
+                                                                                        class="form-control"
+                                                                                        id="{{ i.id }}_contact_no"
+                                                                                        name="contact_no"
+                                                                                        value="{{ i.contact_no }}" />
+                                                                                    <span
+                                                                                        id="{{ i.id }}_contact_noError"
+                                                                                        class="error-message"></span>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row">
+                                                                                <div class="col-md-6 mt-2">
+                                                                                    <label for="{{ i.id }}_address"
+                                                                                        class="form-label">Address:</label>
+                                                                                    <input type="text"
+                                                                                        class="form-control"
+                                                                                        id="{{ i.id }}_address"
+                                                                                        name="address"
+                                                                                        value="{{ i.address }}" />
+                                                                                    <span id="{{ i.id }}_addressError"
+                                                                                        class="error-message"></span>
+                                                                                </div>
+
+                                                                                
+                                                                                    <div class="col-md-6 mt-2">
+                                                                                        <label for="{{ i.id }}_category"
+                                                                                            class="form-label">Category:</label>
+                                                                                        <select class="form-select"
+                                                                                            id="{{ i.id }}_category"
+                                                                                            name="category">
+                                                                                            <option
+                                                                                                value="{{ i.category.id }}"
+                                                                                                selected>{{ i.category.name }}</option>
+                                                                                                
+                                                                                            <!-- Populate options with categories from your database -->
+                                                                                            {% for category in categories %}
+                                                                                            <option
+                                                                                                value="{{ category.id }}">{{category.name }}</option>
+                                                                                            {% endfor %}
+                                                                                        </select>
+                                                                                        <span id="{{ i.id }}_categoryError"
+                                                                                            class="error-message"></span>
+                                                                                    </div>
+                                                                               
+                                                                                <!-- <div class="col-md-6">
+                                                                                    <label for="{{ i.id }}_area"
+                                                                                        class="form-label">Area:</label>
+                                                                                    <input type="text"
+                                                                                        class="form-control"
+                                                                                        id="{{ i.id }}_area" name="area"
+                                                                                        value="{{ i.area }}" />
+                                                                                    <span id="{{ i.id }}_areaError"
+                                                                                        class="error-message"></span>
+                                                                                </div> -->
+
+
+                                                                            </div>
+                                                                            <hr>
+                                                                            <div class="row">
+
+                                                                                
+                                                                                <div class="col-md-6 mt-2">
+                                                                                    <label for="{{ i.id }}_unit"
+                                                                                        class="form-label">Select Unit:</label>
+                                                                                    <select class="form-select" id="{{i.id}}_unit" name="unit">
+                                                                                        <option value="{{i.unit.id}}">{{i.unit.name}}</option>
+                                                                                        {% for unit in uom %}
+                                                                                            <option value="{{ unit.id }}">{{ unit.name }}</option>
+                                                                                        {% endfor %}
+                                                                                    </select>
+                                                                                <span id="{{i.id}}_unitError" class="error-message"></span>
+
+                                                                                </div>
+
+
+                                                                                <div class="col-md-6 mt-2">
+                                                                                    <label for="{{ i.id }}_rate"
+                                                                                        class="form-label">Rate:</label>
+                                                                                    <input type="text"
+                                                                                        class="form-control"
+                                                                                        id="{{ i.id }}_rate" name="rate"
+                                                                                        value="{{ i.rate }}" />
+                                                                                    <span id="{{ i.id }}_rateError"
+                                                                                        class="error-message"></span>
+                                                                                </div>
+
+                                                                            </div>
+                                                                            <hr>
+                                                                            <div class="row">
+                                                                                <div class="col-md-6 mt-2">
+                                                                                    <label for="{{ i.id }}_maistry"
+                                                                                        class="form-label">Maistry:</label>
+                                                                                    <input type="text"
+                                                                                        class="form-control"
+                                                                                        id="{{ i.id }}_maistry"
+                                                                                        name="maistry"
+                                                                                        value="{{ i.maistry }}" />
+                                                                                    <span id="{{ i.id }}_maistryError"
+                                                                                        class="error-message"></span>
+                                                                                </div>
+
+                                                                                <div class="col-md-6 mt-2">
+                                                                                    
+                                                                                </div>
+
+                                                                                <div class="col-md-6 mt-2">
+                                                                                    <label for="{{ i.id }}_male_skilled"
+                                                                                        class="form-label">Male
+                                                                                        Skilled:</label>
+                                                                                    <input type="text"
+                                                                                        class="form-control"
+                                                                                        id="{{ i.id }}_male_skilled"
+                                                                                        name="male_skilled"
+                                                                                        value="{{ i.male_skilled }}" />
+                                                                                    <span
+                                                                                        id="{{ i.id }}_male_skilledError"
+                                                                                        class="error-message"></span>
+                                                                                </div>
+                                                                                <div class="col-md-6 mt-2">
+                                                                                    <label
+                                                                                        for="{{ i.id }}_male_unskilled"
+                                                                                        class="form-label">Male
+                                                                                        Unskilled:</label>
+                                                                                    <input type="text"
+                                                                                        class="form-control"
+                                                                                        id="{{ i.id }}_male_unskilled"
+                                                                                        name="male_unskilled"
+                                                                                        value="{{ i.male_unskilled }}" />
+                                                                                    <span
+                                                                                        id="{{ i.id }}_male_unskilledError"
+                                                                                        class="error-message"></span>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row">
+                                                                                <div class="col-md-6 mt-2">
+                                                                                    <label
+                                                                                        for="{{ i.id }}_female_skilled"
+                                                                                        class="form-label">Female
+                                                                                        Skilled:</label>
+                                                                                    <input type="text"
+                                                                                        class="form-control"
+                                                                                        id="{{ i.id }}_female_skilled"
+                                                                                        name="female_skilled"
+                                                                                        value="{{ i.female_skilled }}" />
+                                                                                    <span
+                                                                                        id="{{ i.id }}_female_skilledError"
+                                                                                        class="error-message"></span>
+                                                                                </div>
+                                                                                <div class="col-md-6 mt-2">
+                                                                                    <label
+                                                                                        for="{{ i.id }}_female_unskilled"
+                                                                                        class="form-label">Female
+                                                                                        Unskilled:</label>
+                                                                                    <input type="text"
+                                                                                        class="form-control"
+                                                                                        id="{{ i.id }}_female_unskilled"
+                                                                                        name="female_unskilled"
+                                                                                        value="{{ i.female_unskilled }}" />
+                                                                                    <span
+                                                                                        id="{{ i.id }}_female_unskilledError"
+                                                                                        class="error-message"></span>
+                                                                                </div>
+                                                                            </div>
+                                                                          
+                                                                        </form>
+                                                                    </div>
+                                                                    <div class="modal-footer">
+                                                                        <button type="button" class="btn btn-secondary"
+                                                                            data-bs-dismiss="modal"
+                                                                            onclick="CloseModel('editModal','{{ i.id }}')">Cancel</button>
+                                                                        <button type="button" class="btn btn-primary"
+                                                                            onclick="updateFunction(this, '{{ i.id }}')">Save</button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+
+
+                                                        <div class="modal fade" id="viewModal_{{ i.id }}" tabindex="-1"
+                                                            aria-labelledby="viewModalLabel" aria-hidden="true">
+                                                            <div class="modal-dialog modal-lg">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header">
+                                                                        <h5 class="modal-title" id="viewModalLabel">View
+                                                                            Contractor</h5>
+                                                                        <button type="button" class="btn-close"
+                                                                            data-bs-dismiss="modal"
+                                                                            aria-label="Close"></button>
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <label for="{{ i.id }}_contractor_name"
+                                                                                    class="form-label">Contractor
+                                                                                    Name:</label>
+                                                                                <input type="text" class="form-control"
+                                                                                    id="{{ i.id }}_contractor_name"
+                                                                                    name="name" value="{{ i.name }}"
+                                                                                    disabled />
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                <label for="{{ i.id }}_contact_no"
+                                                                                    class="form-label">Contact
+                                                                                    No:</label>
+                                                                                <input type="text" class="form-control"
+                                                                                    id="{{ i.id }}_contact_no"
+                                                                                    name="contact_no"
+                                                                                    value="{{ i.contact_no }}"
+                                                                                    disabled />
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <label for="{{ i.id }}_address"
+                                                                                    class="form-label">Address:</label>
+                                                                                <input type="text" class="form-control"
+                                                                                    id="{{ i.id }}_address"
+                                                                                    name="address"
+                                                                                    value="{{ i.address }}" disabled />
+                                                                            </div>
+
+                                                                            <div class="col-md-6">
+                                                                                <label for="{{ i.id }}_category"
+                                                                                    class="form-label">Category:</label>
+                                                                                <input type="text" class="form-control"
+                                                                                    id="{{ i.id }}_category"
+                                                                                    name="category"
+                                                                                    value="{{ i.category.name }}"
+                                                                                    disabled />
+                                                                            </div>
+                                                                           
+                                                                        </div>
+
+                                                                        <hr>
+
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <label for="{{ i.id }}_area"
+                                                                                    class="form-label">Unit:</label>
+                                                                                <input type="text" class="form-control"
+                                                                                    id="{{ i.id }}_area" name="area"
+                                                                                    value="{{ i.unit.name }}" disabled />
+                                                                            </div>
+
+                                                                            <div class="col-md-6">
+                                                                                <label for="{{ i.id }}_rate"
+                                                                                    class="form-label">Rate:</label>
+                                                                                <input type="text" class="form-control"
+                                                                                    id="{{ i.id }}_rate" name="rate"
+                                                                                    value="{{ i.rate }}" disabled />
+                                                                            </div>
+
+                                                                            
+                                                                        </div>
+                                                                        <hr>
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <label for="{{ i.id }}_maistry"
+                                                                                    class="form-label">Maistry:</label>
+                                                                                <input type="text" class="form-control"
+                                                                                    id="{{ i.id }}_maistry"
+                                                                                    name="maistry"
+                                                                                    value="{{ i.maistry }}" disabled />
+                                                                            </div>
+
+                                                                            <div class="col-md-6">
+                                                                               
+                                                                            </div>
+
+                                                                            <div class="col-md-6">
+                                                                                <label for="{{ i.id }}_male_skilled"
+                                                                                    class="form-label">Male
+                                                                                    Skilled:</label>
+                                                                                <input type="text" class="form-control"
+                                                                                    id="{{ i.id }}_male_skilled"
+                                                                                    name="male_skilled"
+                                                                                    value="{{ i.male_skilled }}"
+                                                                                    disabled />
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                <label for="{{ i.id }}_male_unskilled"
+                                                                                    class="form-label">Male
+                                                                                    Unskilled:</label>
+                                                                                <input type="text" class="form-control"
+                                                                                    id="{{ i.id }}_male_unskilled"
+                                                                                    name="male_unskilled"
+                                                                                    value="{{ i.male_unskilled }}"
+                                                                                    disabled />
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <label for="{{ i.id }}_female_skilled"
+                                                                                    class="form-label">Female
+                                                                                    Skilled:</label>
+                                                                                <input type="text" class="form-control"
+                                                                                    id="{{ i.id }}_female_skilled"
+                                                                                    name="female_skilled"
+                                                                                    value="{{ i.female_skilled }}"
+                                                                                    disabled />
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                <label for="{{ i.id }}_female_unskilled"
+                                                                                    class="form-label">Female
+                                                                                    Unskilled:</label>
+                                                                                <input type="text" class="form-control"
+                                                                                    id="{{ i.id }}_female_unskilled"
+                                                                                    name="female_unskilled"
+                                                                                    value="{{ i.female_unskilled }}"
+                                                                                    disabled />
+                                                                            </div>
+                                                                        </div>
+                                                                        <!-- <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <label for="{{ i.id }}_category"
+                                                                                    class="form-label">Category:</label>
+                                                                                <input type="text" class="form-control"
+                                                                                    id="{{ i.id }}_category"
+                                                                                    name="category"
+                                                                                    value="{{ i.category.name }}"
+                                                                                    disabled />
+                                                                            </div>
+                                                                        </div> -->
+                                                                    </div>
+                                                                    <div class="modal-footer">
+                                                                        <button type="button" class="btn btn-secondary"
+                                                                            data-bs-dismiss="modal">Close</button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+
+
+                                                        <div class="modal fade" id="deleteModal{{ i.id }}" tabindex="-1"
+                                                            aria-labelledby="deleteModalLabel-{{ forloop.counter }}"
+                                                            aria-hidden="true">
+                                                            <div class="modal-dialog">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header">
+                                                                        <h5 class="modal-title"
+                                                                            id="deleteModalLabel-{{ forloop.counter }}">
+                                                                            Delete Contractor</h5>
+                                                                        <button type="button" class="btn-close"
+                                                                            data-bs-dismiss="modal"
+                                                                            aria-label="Close"></button>
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                                        <p>Are you sure you want to delete "{{ i.name }}"?</p>
+                                                                    </div>
+                                                                    <div class="modal-footer">
+                                                                        <button type="button" class="btn btn-secondary"
+                                                                            data-bs-dismiss="modal">Cancel</button>
+                                                                        <button type="button"
+                                                                            onclick="deleteFunction(this,'{{ i.id }}')"
+                                                                            class="btn btn-danger">Delete</button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+
+
+
+
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+
+                                        <div class="row">
+                                            {% include 'pagination.html' %}
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function delFunction(dataId) {
+        $.ajax({
+            url: "/delete-contractor/" + dataId + "/",
+            type: "DELETE",
+            headers: {
+                "X-CSRFToken": csrftoken,
+            },
+            success: function (response, status, xhr) {
+                if (xhr.status === 204) {
+                    console.log("Data deleted successfully");
+                    location.reload();
+                } else {
+                    console.error("Unexpected response status:", xhr.status);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("Error:", error);
+            },
+        });
+    }
+
+
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+
+        const viewButtons = document.querySelectorAll('.view-btn');
+        const editButtons = document.querySelectorAll('.edit-btn');
+        const delButtons = document.querySelectorAll('.del-btn');
+
+        viewButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const modalId = this.getAttribute('data-target');
+                const modal = document.querySelector(modalId);
+                if (modal) {
+                    $(modal).modal('show');
+                }
+            });
+        });
+
+
+        editButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const modalId = this.getAttribute('data-target');
+                const modal = document.querySelector(modalId);
+                if (modal) {
+                    $(modal).modal('show');
+                }
+            });
+        });
+
+
+        delButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const modalId = this.getAttribute('data-target');
+                const modal = document.querySelector(modalId);
+                if (modal) {
+                    $(modal).modal('show');
+                }
+            });
+        });
+
+
+    });
+
+
+
+
+    function createFunction(button) {
+        try {
+            disableButton(button);
+            var isValid = true;
+            var errors = {};
+            var formData = new FormData();
+
+            var requiredKeys = [
+                //change
+                "start_date",
+                "name",
+                "contact_no",
+                "address",
+                "unit",
+                "rate",
+         
+                "maistry",
+                "maison_cooli",
+                "male_skilled",
+                "male_unskilled",
+                "female_skilled",
+                "female_unskilled",
+                "category"
+            ];
+
+            formData.append(
+                "name",
+                getValueOrDefault($('#createForm input[name="name"]').val())
+            );     
+
+            formData.append(
+            "start_date",
+            getValueOrDefault($('#createForm input[name="start_date"]').val())
+          );
+
+            formData.append(
+                "contact_no",
+                getValueOrDefault($('#createForm input[name="contact_no"]').val())
+            );
+            formData.append(
+                "address",
+                getValueOrDefault($('#createForm input[name="address"]').val())
+            );
+            formData.append(
+                "unit",
+                getValueOrDefault($('#createForm select[name="unit"]').val())
+            );
+            formData.append(
+                "rate",
+                getValueOrDefault($('#createForm input[name="rate"]').val())
+            );
+            // formData.append(
+            //     "amount",
+            //     getValueOrDefault($('#createForm input[name="amount"]').val())
+            // );
+            formData.append(
+                "maison_cooli",
+                getValueOrDefault($('#createForm input[name="maison_cooli"]').val())
+            );
+
+            formData.append(
+                "maistry",
+                getValueOrDefault($('#createForm input[name="maistry"]').val())
+            );
+
+            formData.append(
+                "male_skilled",
+                getValueOrDefault($('#createForm input[name="male_skilled"]').val())
+            );
+            formData.append(
+                "male_unskilled",
+                getValueOrDefault($('#createForm input[name="male_unskilled"]').val())
+            );
+            formData.append(
+                "female_skilled",
+                getValueOrDefault($('#createForm input[name="female_skilled"]').val())
+            );
+            formData.append(
+                "female_unskilled",
+                getValueOrDefault($('#createForm input[name="female_unskilled"]').val())
+            );
+            formData.append(
+                "category",
+                getValueOrDefault($('#createForm select[name="category"]').val())
+            );
+
+
+            console.log("FormData:", formData);
+
+            requiredKeys.forEach(function (key) {
+                var value = formData.get(key);
+                if (!value.trim()) {
+                    isValid = false;
+                    errors[key] = ["This field may not be blank."];
+                }
+            });
+
+            if (!isValid) {
+                enableButton(button);
+                console.log(errors);
+                handleCreateErrors(errors);
+                return;
+            } else {
+                $("#createForm input, #createForm button").prop(
+                    //change form id
+                    "disabled",
+                    true
+                );
+
+            }
+
+            $.ajax({
+                url: "/add-contractor/", //change
+                type: "POST", //change
+                headers: {
+                    "X-CSRFToken": csrftoken,
+                },
+                data: formData, //data
+                processData: false,
+                contentType: false,
+                success: function (response, status, xhr) {
+                    console.error(status);
+                    if (xhr.status === 201) {
+                        //through 201 status
+                        showToast("Successfully Updated", "", "bg-success", true);
+                    } else {
+
+                        enableButton(button);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log(xhr, status, error);
+                    if (xhr.status === 400) {
+                        if (xhr?.responseJSON || xhr?.responseJSON?.errors) {
+                            handleCreateErrors(transformErrors(xhr.responseJSON));
+                            enableButton(button);
+                        } else {
+                            showToast("something went wrong", "", "bg-danger");
+                            enableButton(button);
+                        }
+                    } else {
+                        showToast("something went wrong", "", "bg-danger");
+                        enableButton(button);
+                    }
+                },
+            });
+        } catch (error) {
+            showToast("An error occurred", "", "bg-danger");
+            enableButton(button);
+            console.error(error);
+        }
+    }
+
+    function updateFunction(button, saveId) {
+        try {
+            disableButton(button);
+            clearErrors();
+
+            const formData = new FormData();
+
+            
+
+            formData.append(
+                "name",
+                getValueOrDefault($(`#editForm${saveId} input[name="name"]`).val()));
+            formData.append(
+                "contact_no",
+                getValueOrDefault($(`#editForm${saveId} input[name="contact_no"]`).val()));
+
+            formData.append(
+                "address",
+                getValueOrDefault($(`#editForm${saveId} input[name="address"]`).val()));
+
+            formData.append(
+                "unit",
+                getValueOrDefault($(`#editForm${saveId} select  [name="unit"]`).val()));
+
+
+            formData.append(
+                "rate",
+                getValueOrDefault($(`#editForm${saveId} input[name="rate"]`).val()));
+
+            // formData.append(
+            //     "amount",
+            //     getValueOrDefault($(`#editForm${saveId} input[name="amount"]`).val()));
+
+            formData.append(
+                "maistry",
+                getValueOrDefault($(`#editForm${saveId} input[name="maistry"]`).val()));
+
+            formData.append(
+                "male_skilled",
+                getValueOrDefault($(`#editForm${saveId} input[name="male_skilled"]`).val()));
+
+            formData.append(
+                "male_unskilled",
+                getValueOrDefault($(`#editForm${saveId} input[name="male_unskilled"]`).val()));
+
+            formData.append(
+                "female_skilled",
+                getValueOrDefault($(`#editForm${saveId} input[name="female_skilled"]`).val()));
+
+            formData.append(
+                "female_unskilled",
+                getValueOrDefault($(`#editForm${saveId} input[name="female_unskilled"]`).val()));
+
+            formData.append(
+                "category",
+                getValueOrDefault($(`#editForm${saveId} select[name="category"]`).val()));
+
+
+
+            console.log(csrftoken);
+            $.ajax({
+                url: "/update-contractor/" + saveId + "/", //change
+                type: "PUT", //method
+                headers: {
+                    "X-CSRFToken": csrftoken,
+                },
+                processData: false,
+                contentType: false,
+                data: formData,
+                success: function (response, status, xhr) {
+                    if (xhr.status === 200) {
+                        //through 200 status
+                        showToast("Successfully Updated", "", "bg-success", true);
+                    } else {
+                        showToast("something went wrong", "", "bg-danger");
+                        enableButton(button);
+
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log(xhr, status, error);
+                    if (xhr.status === 400) {
+                        if (xhr?.responseJSON || xhr?.responseJSON?.errors) {
+                            handleUpdateErrors(saveId, transformErrors(xhr.responseJSON));
+                            enableButton(button);
+                        } else {
+                            showToast("something went wrong", "", "bg-danger");
+                            enableButton(button);
+                        }
+                    } else {
+                        showToast("something went wrong", "", "bg-danger");
+                        enableButton(button);
+                    }
+                },
+            });
+        } catch (error) {
+            showToast("An error occurred", "", "bg-danger");
+            enableButton(button);
+            console.error(error);
+        }
+    }
+
+
+
+    function deleteFunction(button, saveId) {
+        try {
+            disableButton(button);
+
+            $.ajax({
+                url: '/delete-contractor/' + saveId + '/',
+                type: 'DELETE',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                },
+                processData: false,
+                contentType: false,
+                success: function (response, status, xhr) {
+                    if (xhr.status === 204) {
+                        showToast(deleteMessage?.message, '', deleteMessage?.bgColor, true);
+                        enableButton(button);
+
+                    } else {
+                        showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+                        enableButton(button);
+
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log(xhr, status, error);
+                    if (xhr.status === 400) {
+                        if (xhr?.responseJSON || xhr?.responseJSON?.errors) {
+                            showToast(xhr?.responseJSON?.details, '', errorAlertMessage?.bgColor);
+                            enableButton(button);
+                        } else {
+                            showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+                            enableButton(button);
+                        }
+                    }
+                    else if (xhr.status === 401 || 404) {
+                        showToast(xhr?.responseJSON?.details, '', errorAlertMessage?.bgColor);
+                        enableButton(button);
+                    }
+                    else {
+
+                        showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+                        enableButton(button);
+                    }
+                }
+            });
+        } catch (error) {
+            showToast(errorOccured?.message, '', errorOccured?.bgColor);
+            console.error(error);
+        }
+    }
+
+
+</script>
+
+{% endblock header2 %}

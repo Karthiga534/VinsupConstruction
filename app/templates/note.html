@@ -1,0 +1,385 @@
+<span class="file-span"> <a  target="_blank" href="{{ i.modeldesign.url}}" >{{i.modeldesign |filename }}</a></span>
+
+
+requiredKeys.forEach(function (key) {
+    var value = formData.get(key);
+    if (value === null || value === undefined || value === '') {
+        isValid = false;
+        errors[key] = ['This field may not be blank.'];
+    } else if (!value.trim()) {
+        isValid = false;
+        errors[key] = ['This field may not be blank.'];
+    }
+})
+
+
+
+
+
+
+
+
+
+
+<div id="pagination-container"></div>
+
+<div class="row">
+    <div class="col-lg-4 col-md-4 col-xs-6 col-12">
+        <label for="id_contractor_name"
+            class="form-label">Contractor Name
+            :</label>
+        <input type="text" name="name" class="form-control"
+            id="name">
+        <span id="contractor_nameError"
+            class="error-message"></span>
+    </div>
+
+    <div class="col-lg-4 col-md-4 col-xs-6 col-12">
+        <label for="id_contact_no"
+            class="form-label">Contact No
+            :</label>
+        <input type="number" name="contact_no"
+            class="form-control" id="contact_no">
+        <span id="contact_noError"
+            class="error-message"></span>
+
+    </div>
+
+    <div class="col-lg-4 col-md-4 col-xs-6 col-12">
+        <label for="id_address"
+            class="form-label">Address</label>
+        <input type="text" name="address"
+            class="form-control" id="address">
+        <span id="addressError"
+            class="error-message"></span>
+    </div>
+
+
+    <div class="col-lg-4 col-md-4 col-xs-6 col-12">
+        <label for="category"
+            class="form-label mt-2">Category Name:</label>
+        <select class="form-select" id="{{ i.id }}_category"
+            name="category">
+            <option value=""> ------- </option>
+            <!-- Populate options with categories from your database -->
+            {% for category in categories %}
+            <option value="{{ category.id }}">{{ category.name }}</option>
+                
+            {% endfor %}
+        </select>
+        <span id="categoryError"
+            class="error-message"></span>
+
+    </div> 
+
+
+    <!-- <div class="col-lg-4 col-md-4 col-xs-6 col-12">
+        <label for="id_area" class="form-label mt-2">Area in
+            Sqrt
+            :</label>
+        <input type="text" name="area" class="form-control"
+            id="area">
+        <span id="areaError" class="error-message"></span>
+
+    </div> -->
+
+    <hr>
+
+    <div class="col-md-6 mt-2">
+        <label for="{{ i.id }}_unit"
+            class="form-label">Select Unit:</label>
+        <select class="form-select" id="unit" name="unit">
+            <option value="{{i.unit.id}}">{{i.unit.name}}</option>
+            {% for unit in uom %}
+                <option value="{{ unit.id }}">{{ unit.name }}</option>
+            {% endfor %}
+        </select>
+        <span id="unitError" class="error-message"></span>
+    </div>
+
+
+    <div class="col-lg-4 col-md-4 col-xs-6 col-12">
+        <label for="id_area" class="form-label mt-2">Rate
+            :</label>
+        <input type="text" name="rate" class="form-control"
+            id="rate">
+        <span id="rateError" class="error-message"></span>
+
+    </div>
+
+    <!-- <div class="col-lg-4 col-md-4 col-xs-6 col-12">
+        <label for="id_amount"
+            class="form-label mt-2">Amount:</label>
+        <input type="number" name="amount"
+            class="form-control" id="amount">
+        <span id="amountError" class="error-message"></span>
+
+    </div> -->
+
+    <hr>
+
+    <div class="col-lg-4 col-md-4 col-xs-6 col-12">
+        <label for="id_maistry"
+            class="form-label mt-2">Maistry
+            :</label>
+        <input type="number" name="maistry"
+            class="form-control" id="maistry">
+        <span id="maistryError"
+            class="error-message"></span>
+    </div>
+
+    <div class="col-lg-4 col-md-4 col-xs-6 col-12"></div>
+
+    <div class="col-lg-4 col-md-4 col-xs-6 col-12">
+        <label for="id_maison_cooli"
+            class="form-label mt-2">Maison cooli
+            :</label>
+        <input type="number" name="maison_cooli"
+            class="form-control" id="maison_cooli">
+        <span id="maison_cooliError"
+            class="error-message"></span>
+
+    </div>
+
+    <div class="col-lg-4 col-md-4 col-xs-6 col-12">
+        <label for="id_male_skilled"
+            class="form-label mt-2">Male Skilled
+            :</label>
+        <input type="number" name="male_skilled"
+            class="form-control" id="male_skilled" required>
+        <span id="male_skilledError"
+            class="error-message"></span>
+    </div>
+
+    <div class="col-lg-4 col-md-4 col-xs-6 col-12">
+        <label for="id_male_unskilled"
+            class="form-label mt-2">Male
+            Unskilled:</label>
+        <input type="number" name="male_unskilled"
+            class="form-control" id="male_unskilled"
+            required>
+        <span id="male_unskilledError"
+            class="error-message"></span>
+    </div>
+
+    <div class="col-lg-4 col-md-4 col-xs-6 col-12">
+        <label for="id_female_skilled"
+            class="form-label mt-2">Female Skilled
+            :</label>
+        <input type="number" name="female_skilled"
+            class="form-control" id="female_skilled"
+            required>
+        <span id="female_skilledError"
+            class="error-message"></span>
+    </div>
+
+    <div class="col-lg-4 col-md-4 col-xs-6 col-12">
+        <label for="id_female_unskilled"
+            class="form-label mt-2">Female
+            Unskilled</label>
+        <input type="number" name="female_unskilled"
+            class="form-control" id="female_unskilled"
+            required>
+        <span id="female_unskilledError"
+            class="error-message"></span>
+    </div>
+
+
+    <!-- <div class="col-lg-4 col-md-4 col-xs-6 col-12">
+        <label for="category"
+            class="form-label mt-2">Category Name:</label>
+        <select class="form-select" id="{{ i.id }}_category"
+            name="category">
+            <option value=""> ------- </option>
+           
+            {% for category in categories %}
+            <option value="{{ category.id }}">{{ category.name }}</option>
+                
+            {% endfor %}
+        </select>
+        <span id="categoryError"
+            class="error-message"></span>
+
+    </div>  -->
+
+    <div class="col-lg-4 col-md-4 col-xs-6 col-12">
+        <label for="" class="form-label">Starting Date :</label>
+        <input type="date" class="form-control" id="start_date"
+          name="start_date">
+        <span id="start_dateError" class="error-message"></span>
+
+      </div>
+    
+    
+
+</div>
+
+
+
+
+<script>
+
+    let activePage;
+
+    // fetch url
+    let fetchUrl = "profit-loss"
+
+    // pagination
+    const existingPaginationContainer = document.getElementById('pagination-container');
+
+    // table
+    const tableBody = document.querySelector('#example tbody');
+
+    // filters 
+    const firstDropdown = document.getElementById('filterdropdown1');
+    const fromdate = document.getElementById('fromDate');
+    // const todate = document.getElementById('toDate');
+
+    var currentPage = 1;
+
+    document.addEventListener('DOMContentLoaded', function () {
+
+        // on dom loaded 
+        const initialSelectedValue = firstDropdown.value;
+        fetchData(1);
+
+        // fetch table data API
+        firstDropdown.addEventListener('change', function () {
+
+            activePage = null
+            fetchData(currentPage);
+        });
+
+        // todate.addEventListener('change', function () {
+        //     activePage = null
+        //     fetchData(currentPage);
+        // });
+
+        fromdate.addEventListener('change', function () {
+            activePage = null
+            fetchData(currentPage);
+        });
+
+
+    });
+
+
+    // fetch data
+    function fetchData(page) {
+
+        if (activePage === page) {
+            return
+        }
+        const selectedValue = firstDropdown?.value || 0;
+        const from = fromdate?.value ? `${fromdate?.value}-15` : ""
+        const to = ""
+        try {
+            fetch(`/${fetchUrl}/${selectedValue}/?page=${page}&salary_date=${from}&end_date=${to}`)
+                .then(response => {
+                    if (response.status === 200) {
+                        console.log('Data fetched');
+                        return response.json();
+                    } else if (response.status === 404) {
+                        throw new Error('Resource not found');
+                    } else if (response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    } else {
+                        throw new Error('Network response was not ok');
+                    }
+                })
+                .then(data => {
+                    tableBody.innerHTML = '';
+                    renderDataOrMessage(tableBody, data, page)
+                    activePage = page
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                    showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+                });
+        } catch (error) {
+            console.error('Error in fetch operation:', error);
+        }
+    }
+
+
+
+
+
+    // MANIPULATE TABLE DATA
+    function createTableRow(serialNumber, data) {
+
+        const newRow = document.createElement('tr');
+        newRow.setAttribute('data-item-id', data.id);
+
+        const idCell = createSerialCell(serialNumber);
+        newRow.appendChild(idCell);
+
+        // const td2 = createTableCell(get_value(data.created_at));
+        // newRow.appendChild(td2);
+
+        const td3 = createTableCell(get_value(data.name));
+        newRow.appendChild(td3);
+
+        const td4 = createTableCell(get_value(data.start_date));
+        newRow.appendChild(td4);
+
+        const td5 = createTableCell(get_value(data.end_date));
+        newRow.appendChild(td5);
+
+        const td6 = createAmountCell(get_value(data.salary));
+        newRow.appendChild(td6);
+
+        // const td7 = createTableCell(get_value(data.pending));
+        // newRow.appendChild(td7);
+
+
+
+        // actioncell
+        const actionCell = createPayActionCell('invoiceHistoryModalAdd');
+        newRow.appendChild(actionCell);
+
+        // click event
+        actionCell.addEventListener('click', () => {
+            populateModalData(data)
+        });
+
+        return newRow;
+    }
+
+
+
+
+    // nested table
+    function populateModalData(data) {
+        const form = document.getElementById('dataEditForm');
+        if (!form) {
+            console.error("Form element not found.");
+            return;
+        }
+
+        setModalInputValue(form, 'name', data.name);
+        setModalInputValue(form, 'payment_period_start', data.start_date);
+        setModalInputValue(form, 'payment_period_end', data.end_date);
+        // alert(data.paid_amount)
+        setModalInputValue(form, 'amount', data.salary);
+
+        // setModalInputValue(form, 'hidden_paid_amount', data.paid_amount);
+
+        setModalInputValue(form, 'paid', data.paid);
+        setModalInputValue(form, 'pending', data.pending);
+       
+ 
+
+        const saveButton = form.querySelector('#saveButton');
+        if (saveButton) {
+            saveButton.setAttribute("data-id", data.id);
+        } else {
+            console.error("Save button not found in the form.");
+        }
+
+    }
+
+
+
+
+</script>

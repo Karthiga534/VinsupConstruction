@@ -1,0 +1,475 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block header2 %}
+    <!-- Begin page -->
+    <div id="layout-wrapper">
+
+        <div class="main-content">
+
+            <div class="page-content">
+                <div class="container-fluid">
+                    <!-- start page title -->
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                                <h4 class="mb-sm-0">Subcontractor</h4>
+                                <div class="page-title-right">
+                                    <ol class="breadcrumb m-0">
+                                        <li class="breadcrumb-item"><a href="javascript: void(0);">Subcontractor</a></li>
+                                        <li class="breadcrumb-item active">Create</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+						<div class="col-xl-5 col-lg-5 col-md-6 col-xs-6 col-12">
+							View Subcontractor 
+						</div>
+						<div class="col-xl-5 col-lg-4 col-md-3 col-xs-6 col-12"></div>
+						<div class="col-xl-2 col-lg-3 col-md-3 col-xs-6 col-12">
+							<a href="{% url 'subcontractorlist' %}" type="button" class="btn btn-info mb-2" style="float:right;" >Back</a>
+														
+						</div>
+					</div>
+                    <div class="row">
+                        <div class="col-lg-12">
+							
+                            <div class="card">
+                                <div class="card-body">
+                                    <h4>{{subcontractor.display }} Details</h4>
+									<hr>
+									<div class="row">
+                                        <div class="col-md-4 mb-2">
+                                            <label for="{{i.id}}_name" class="form-label">Name :</label>
+                                            <input type="text" class="form-control" id="{{i.id}}_name" name="name" value="{{ subcontractor.name }}" readonly>
+                                        </div>
+										<div class="col-md-4 mb-2">
+                                            <label for="{{i.id}}_project" class="form-label">Project :</label>
+                                            <input type="text" class="form-control" id="{{i.id}}_project" name="project" value="{{ subcontractor.project }}" readonly>
+                                        </div>
+                                        <div class="col-md-4 mb-2">
+                                            <label for="{{i.id}}_type" class="form-label">Type :</label>
+                                            <input type="text" class="form-control" id="{{i.id}}_type" name="type" value="{{ subcontractor.type }}" readonly>
+                                        </div>
+                                        <div class="col-md-4 mb-2">
+                                            <label for="{{i.id}}_contractor" class="form-label">Contractor :</label>
+                                            <input type="text" class="form-control" id="{{i.id}}_contractor" name="contractor" value="{{ subcontractor.contractor }}" readonly>
+                                        </div>
+                                        <div class="col-md-4 mb-2">
+                                            <label for="{{i.id}}_start_date" class="form-label">Start Date :</label>
+                                            <input type="text" class="form-control" id="{{i.id}}_start_date" name="start_date" value="{{ subcontractor.start_date }}" readonly>
+                                        </div>
+                                        <div class="col-md-4 mb-2">
+                                            <label for="{{i.id}}_end_date" class="form-label">End Date :</label>
+                                            <input type="text" class="form-control" id="{{i.id}}_end_date" name="end_date" value="{{ subcontractor.end_date }}" readonly>
+                                        </div>
+                                        <div class="col-md-4 mb-2">
+                                            <label for="{{i.id}}_contract_amount" class="form-label">Amount :</label>
+                                            <input type="text" class="form-control" id="{{i.id}}_contract_amount" name="contract_amount" value="{{ subcontractor.contract_amount }}" readonly>
+                                        </div>
+                                        <div class="col-md-4 mb-2">
+                                            <label for="{{i.id}}_payment_schedule" class="form-label">Payment Schedule :</label>
+                                            <input type="text" class="form-control" id="{{i.id}}_payment_schedule" name="payment_schedule" value="{{ subcontractor.payment_schedule.days }}" readonly>
+                                        </div>
+                                        <div class="col-md-4 mb-2">
+                                            <label for="{{i.id}}_description" class="form-label">Description :</label>
+                                            <input type="text" class="form-control" id="{{i.id}}_description" name="description" value="{{ subcontractor.description }}" readonly>
+                                        </div>
+                                        <div class="col-md-4 mb-2">
+                                            <label for="{{i.id}}_terms_conditions" class="form-label">Terms & Condition :</label>
+                                            <input type="text" class="form-control" id="{{i.id}}_terms_conditions" name="terms_conditions" value="{{ subcontractor.terms_conditions }}" readonly>
+                                        </div>
+									</div>   
+									<hr>
+								
+									<h4>Service Rate's </h4>
+
+									<hr>
+
+									<div class="card-body">
+
+										<table id="tabl" class="table table-bordered dt-responsive nowrap table-striped align-middle" style="width:100%">
+											
+                                            <thead>
+
+												<tr>
+													
+													<th>S.No</th>
+													<th>Work</th>
+													<th>Unit</th>                                              
+													<th>Rate</th>                                                
+													<th>Qty</th>                                                
+													<th>Amount</th>                                                
+													                                               
+												</tr>
+
+											</thead>
+
+											<tbody>
+                                                
+												{% for i in subcontractor.get_service_rates %}
+
+                                                <tr>
+                
+                                                    <td>{{ forloop.counter }}</td>
+                                                    <td>{{ i.work }}</td>
+                                                    <td>{{ i.unit }}</td>
+                                                    <td>{{ i.rate }}</td>
+                                                    <td>{{ i.total_qty }}</td>
+                                                    <td>{{ i.amount }}</td>
+                
+                                                </tr> 
+
+                                                {% endfor %}
+                                                                                       
+			                                </tbody>
+
+				                        </table>
+
+										<hr>									
+								
+										<h4>Labour wages</h4>
+
+										<hr>
+                                        
+                                        <div class="row">
+   
+                                            <div class="col-md-6 mb-2">
+                                                
+                                                <label for="" class="form-label">Maistry :</label>
+                                               
+                                                <input type="text" class="form-control" name="maistry" id="maistry" value="{{ subcontractor.get_labour_rates.maistry }}" readonly>
+       
+                                            </div>
+
+                                            <div class="col-md-6 mb-2">
+
+                                                <label for="" class="form-label">Maison :</label>
+
+                                                <input type="text" class="form-control" name="maison_cooli" id="maison_cooli" value="{{ subcontractor.get_labour_rates.maison_cooli }}" readonly>
+       
+                                            </div>
+                                            <div class="col-md-6 mb-2">
+                                                
+                                                <label for="" class="form-label">Male skilled :</label>
+                                                
+                                                <input type="text" class="form-control" name="male_skilled" id="male_skilled" value="{{ subcontractor.get_labour_rates.male_skilled }}" readonly>
+       
+                                            </div>
+                                            
+                                            <div class="col-md-6 mb-2">
+       
+                                                <label for="" class="form-label">Male Unskilled :</label>
+          
+                                                <input type="text" class="form-control" name="male_unskilled" id="male_unskilled" value="{{ subcontractor.get_labour_rates.male_unskilled }}" readonly>
+           
+                                            </div>
+   
+                                            <div class="col-md-6 mb-2">
+        
+                                                <label for="" class="form-label">Female skilled :</label>
+        
+                                                <input type="text" class="form-control" name="female_skilled" id="female_skilled" value="{{ subcontractor.get_labour_rates.female_skilled }}" readonly>
+       
+   
+                                            </div>
+   
+                                            <div class="col-md-6 mb-2">
+        
+                                                <label for="" class="form-label">Female Unskilled :</label>
+       
+                                                <input type="text" class="form-control" name="female_unskilled" id="female_unskilled" value="{{ subcontractor.get_labour_rates.female_unskilled }}" readonly>
+        
+                                            </div>
+   
+                                        </div>
+
+                                        <hr> 
+
+										
+
+                                        <p class="text-center mt-2">
+
+                                            <a href="{% url 'subcontractorlist' %}" type="button" class="btn btn-link link-success fw-medium shadow-none" id="" >
+                                                Cancel 
+                                            </a>
+	
+                                           
+        
+                                        </p>
+									
+                                    </div>
+								                               
+                                </div>
+
+                            </div>
+                        
+                        </div>
+                  
+                    </div>
+				    <!-- container-fluid -->
+                </div>
+                <!-- End Page-content -->
+
+                <footer class="footer">
+                
+                    <div class="container-fluid">
+                   
+                        <div class="row">
+                        
+                            <div class="col-sm-6">
+                           
+                                <script>
+                               
+                                    document.write(new Date().getFullYear())
+                           
+                                </script>
+                           
+                                © vinsup.
+                        
+                            </div>
+                       
+                            <div class="col-sm-6">
+                            
+                                <div class="text-sm-end d-none d-sm-block">
+                               
+                                    Design & Develop by vinsup
+                           
+                                </div>
+                        
+                            </div>
+                    
+                        </div>
+               
+                    </div>
+           
+                </footer>
+        
+            </div>
+       
+            <!-- end main content-->
+   
+        </div>
+   
+        <!-- END layout-wrapper -->
+  
+        <!--start back-to-top-->
+    
+        <button onclick="topFunction()" class="btn btn-danger btn-icon" id="back-to-top">
+            <i class="ri-arrow-up-line"></i>
+        </button>
+    
+        <!--end back-to-top-->
+
+        <!--preloader-->
+   
+        <div id="preloader">
+            <div id="status">
+                <div class="spinner-border text-primary avatar-sm" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        </div>
+
+   
+    <!-- JAVASCRIPT -->
+    <!-- <script src="assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/libs/simplebar/simplebar.min.js"></script>
+    <script src="assets/libs/node-waves/waves.min.js"></script>
+    <script src="assets/libs/feather-icons/feather.min.js"></script>
+    <script src="assets/js/pages/plugins/lord-icon-2.1.0.js"></script>
+    <script src="assets/js/plugins.js"></script> -->
+
+    <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script> -->
+
+    <!--datatable js-->
+    <!-- <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.print.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script> -->
+
+    <!-- <script src="assets/js/pages/datatables.init.js"></script> -->
+    <!-- App js -->
+    <!-- <script src="assets/js/app.js"></script> -->
+	
+	
+	<!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
+
+	<script type="text/javascript">
+            $(document).ready(function() {
+                var i = 0;
+
+                $(".add-row").click(function(event) {
+                    event.preventDefault();
+                    ++i;
+
+                   
+
+                    //var newRow = '<tr><th scope="row"><div class="form-check"><input class="form-check-input fs-15" type="checkbox" name="checkAll" value="option1"></div></th><td>02</td><td><input type="text" name="work" class="form-control"></td><td><input type="text" name="" class="form-control"></td><td><input type="text" name="" class="form-control"></td><td><input type="text" name="" class="form-control"></td><td><input type="text" name="" class="form-control"></td><td><button type="button" class="btn btn-danger btn-icon waves-effect waves-light remove-table-row"><i class="ri-delete-bin-5-line"></i></button></td></tr>';
+                    
+					var newRow = `<tr>
+						<th scope="row"><div class="form-check"><input class="form-check-input fs-15" type="checkbox" name="checkAll" value="option1"></div></th>
+						<td>02</td>
+						
+						<td><input type="text" class="form-control" id="work" name="work"></td>
+						<td><select class="form-select mb-3 form-control"  aria-label="Default select example" name="unit" id="unit">
+							<option value=""> ------------------</option>
+							{% for i in uom %}
+							<option value="{{i.id}}">{{i.name}} </option>
+							{% endfor %}
+						  </select>
+						  <span id="unitError" class="error-message"></span></td>
+						<td><input type="text" name="rate" class="form-control"></td>
+						<td><input type="text" name="total_qty" class="form-control"></td>
+						<td><input type="text" name="amount" class="form-control"></td>
+						<td><button type="button" class="btn btn-danger btn-icon waves-effect waves-light remove-table-row">
+							<i class="ri-delete-bin-5-line"></i></button></td>
+						</tr>`;
+
+                    $("#tabl").append(newRow);
+                });
+
+                $(document).on('click', '.remove-table-row', function() {
+                    $(this).parents('tr').remove();
+                });
+            });
+        </script>
+
+		<script>
+			// create form
+		 
+			function createFunction(button) {
+				var formId = `createForm`;   //change
+				var formElement = document.getElementById(formId);
+
+				try {
+					disableButton(button);
+					var isValid = true;
+					var errors = {};
+					var formData = new FormData();
+					
+					var requiredKeys = ['name','start_date','end_date','contract_amount','description','terms_conditions']
+	
+	                formData.append('start_date', getValueOrDefault(formElement.querySelector('input[name="start_date"]').value));
+                    formData.append('name', getValueOrDefault(formElement.querySelector('input[name="name"]').value));
+					formData.append('end_date', getValueOrDefault(formElement.querySelector('input[name="end_date"]').value));
+					formData.append('contract_amount', getValueOrDefault(formElement.querySelector('input[name="contract_amount"]').value));
+					formData.append('description', getValueOrDefault(formElement.querySelector('textarea[name="description"]').value));
+					formData.append('terms_conditions', getValueOrDefault(formElement.querySelector('textarea[name="terms_conditions"]').value));
+					formData.append('project', getValueOrDefault(formElement.querySelector('select[name="project"]').value));
+					formData.append('type',getValueOrDefault(formElement.querySelector('select[name="type"]').value));
+					formData.append('contractor',getValueOrDefault(formElement.querySelector('select[name="contractor"]').value));
+					formData.append('payment_schedule',getValueOrDefault(formElement.querySelector('select[name="payment_schedule"]').value));
+
+
+					formData.append('maistry',getValueOrDefault(formElement.querySelector('input[name="maistry"]').value));
+					formData.append('maison_cooli',getValueOrDefault(formElement.querySelector('input[name="maison_cooli"]').value));
+					formData.append('male_skilled',getValueOrDefault(formElement.querySelector('input[name="male_skilled"]').value));
+					formData.append('male_unskilled',getValueOrDefault(formElement.querySelector('input[name="male_unskilled"]').value));
+					formData.append('female_skilled',getValueOrDefault(formElement.querySelector('input[name="female_skilled"]').value));
+					formData.append('female_unskilled',getValueOrDefault(formElement.querySelector('input[name="female_unskilled"]').value));
+
+
+					var tableData = [];
+					$('#tabl tbody tr').each(function () {
+						console.log(this)
+					
+						var rowData = {};
+						//rowData['item'] = $(this).find('select[name^="item"]').val();
+						rowData['work'] = $(this).find('input[name^="work"]').val();
+						rowData['unit'] = $(this).find('select[name^="unit"]').val();
+						rowData['rate'] = $(this).find('input[name^="rate"]').val();
+						rowData['total_qty'] = $(this).find('input[name^="total_qty"]').val();
+						rowData['amount'] = $(this).find('input[name^="amount"]').val();
+						tableData.push(rowData);
+					});
+					
+					console.log(tableData)
+		
+		
+					requiredKeys.forEach(function (key) {
+						var value = formData.get(key);
+						if (!value.trim()) {
+							isValid = false;
+							errors[key] = ['This field may not be blank.'];
+						}
+					});
+		
+					if (!isValid) {
+						enableButton(button);
+						console.log(errors);
+						handleCreateErrors(errors);
+						return;
+					} else {
+						$(`#${formId} input, #${formId} button`).prop('disabled', true);
+						
+		
+					}
+
+	
+					formData.append("table", JSON.stringify(tableData))
+		
+					$.ajax({
+						url: '/add_subcontadd/',                //change
+						type: 'POST',
+						headers: {
+							'X-CSRFToken': csrftoken,
+						},
+						data: formData,
+						processData: false,
+						contentType: false,
+						success: function (response, status, xhr) {
+							console.error(status);
+							if (xhr.status === 201) {
+								showToast(successMesssage?.message, '', successMesssage?.bgColor, true);
+							} else {
+								console.error(error);
+								restoreForm(formId, button)
+		
+							}
+						},
+						error: function (xhr, status, error) {
+							console.log(xhr, status, error);
+							if (xhr.status === 400) {
+								if (xhr?.responseJSON || xhr?.responseJSON?.errors) {
+									handleCreateErrors(transformErrors(xhr.responseJSON));
+									restoreForm(formId, button)
+		
+								} else {
+									showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+									restoreForm(formId, button)
+		
+								}
+							}
+							else if (xhr.status === 401 || 404) {
+								showToast(xhr?.responseJSON?.details, '', errorAlertMessage?.bgColor);
+								restoreForm(formId, button)
+		
+							}
+							else {
+								showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+								restoreForm(formId, button)
+		
+							}
+						}
+						
+					});
+				} catch (error) {
+					showToast(errorOccured?.message, '', errorOccured?.bgColor);
+					restoreForm(formId, button)
+					console.error(error);
+				}
+			}
+	
+		</script>
+
+
+        {% endblock header2 %}

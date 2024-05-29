@@ -1,0 +1,668 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block header2 %}
+    <!-- Begin page -->
+    <div id="layout-wrapper">       
+        
+        <div class="main-content">
+
+            <div class="page-content">
+                <div class="container-fluid">
+                    <!-- start page title -->
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                                <h4 class="mb-sm-0">Subcontractor</h4>
+                                <div class="page-title-right">
+                                    <ol class="breadcrumb m-0">
+                                        <li class="breadcrumb-item"><a href="javascript: void(0);">Subcontractor</a></li>
+                                        <li class="breadcrumb-item active">Create</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row card">
+                        <div class="col-lg-12">
+                            <div class="    ">
+                                <div class="card-header">
+    
+                                    <div class="row">
+                                        <div class="col-xl-6 col-lg-6 col-md-6 col-12">
+                                            <h4>{{subcontractor.display }} Details</h4>
+                                        </div>
+                                        <div class="col-xl-4 col-lg-4 col-md-4 col-12"></div>
+                                        <div class="col-xl-2 col-lg-2 col-md-2 col-12">
+    
+                                            <a href="{% url 'subcontractorlist' %}" type="button" class="btn btn-info mb-2"
+                                                style="float:right;">Back</a>
+    
+                                        </div>
+    
+                                    </div>
+                                </div>  
+                            </div>
+                        </div>
+    
+                    </div>
+                    
+                    <div class="row card">
+                        <div class="col-lg-12">
+							<form id="editForm{{ subcontractor.id }}" enctype="multipart/form-data" >
+                            <div class="card">
+                                <div class="card-body">
+									
+									<hr>
+									<div class="row">			
+                                        
+                                        <!-- <div class="col-md-4 mb-2">
+                                            <label for="edit_name">Name:</label>
+                                            <input type="text" class="form-control" id="{{subcontractor.id}}_name" name="name"
+                                              value="{{ subcontractor.display }}">
+                                            <span id="{{subcontractor.id}}_nameError" class="error-message"></span>
+                                        </div> -->
+
+                                        <div class="col-md-4 mb-2">
+                                            <label for="edit_project" class="form-label">Project :</label>
+                                            <select class="form-select" aria-label="Default select example" id="{{subcontractor.id}}_project" name="project">
+
+                                                <option value="{{subcontractor.project.id}}" selected>{{subcontractor.project.proj_name}} </option>
+                                                {% for j in project %}
+                                                <option value="{{j.id}}">{{j.proj_name}} </option>
+                                                {% endfor %}    
+                                            </select>
+                                            <span id="{{subcontractor.id}}_projectError" class="error-message"></span>
+                                        </div>
+                                        
+
+                                        <div class="col-md-4 mb-2">
+                                            <label for="edit_type" class="form-label">Type:</label>
+                                            <select class="form-select" aria-label="Default select example" id="{{subcontractor.id}}_type" name="type">
+
+                                                <option value="{{subcontractor.type.id}}" selected>{{subcontractor.type.name}} </option>
+                                                {% for j in type %}
+                                                <option value="{{j.id}}">{{j.name}} </option>
+                                                {% endfor %}    
+                                            </select>
+                                            <span id="{{subcontractor.id}}_typeError" class="error-message"></span>
+                                        </div>
+                                        
+
+                                        <div class="col-md-4 mb-2">
+                                            <label for="edit_contractor" class="form-label">Contractor:</label>
+                                            <select class="form-select" aria-label="Default select example" id="{{subcontractor.id}}_contractor" name="contractor">
+
+                                                <option value="{{subcontractor.contractor.id}}" selected>{{subcontractor.contractor.name}} </option>
+                                                {% for j in contractor %}
+                                                <option value="{{j.id}}">{{j.name}} </option>
+                                                {% endfor %}    
+                                            </select>
+                                            <span id="{{subcontractor.id}}_contractorError" class="error-message"></span>
+                                        </div>
+
+                                        
+                                        <div class="col-md-4 mb-2">
+                                            <label for="editcontract_amount">Amount:</label>
+                                            <input type="text" class="form-control" id="{{subcontractor.id}}_contract_amount" name="contract_amount"
+                                              value="{{ subcontractor.contract_amount }}">
+                                            <span id="{{subcontractor.id}}_contract_amountError" class="error-message"></span>
+                                        </div>
+                                       
+                                        <div class="col-md-4 mb-2">
+                                            <label for="edit_payment_schedule" class="form-label">Payment Schedule:</label>
+                                            <select class="form-select" aria-label="Default select example" id="{{subcontractor.id}}_payment_schedule" name="payment_schedule">
+
+                                                <option value="{{subcontractor.payment_schedule.id}}" selected>{{subcontractor.payment_schedule.days}} </option>
+                                                {% for j in paymentschedule %}
+                                                <option value="{{j.id}}">{{j.days}} </option>
+                                                {% endfor %}    
+                                            </select>
+                                            <span id="{{subcontractor.id}}_payment_scheduleError" class="error-message"></span>
+                                        </div>
+                                        <div class="col-md-4 mb-2">
+                                            <label for="editdescription">Description:</label>
+                                            <input type="text" class="form-control" id="{{subcontractor.id}}_description" name="description"
+                                              value="{{ subcontractor.description }}">
+                                            <span id="{{subcontractor.id}}_descriptionError" class="error-message"></span>
+                                        </div>
+                                        
+                                        <div class="col-md-4 mb-2">
+                                            <label for="editterms_conditions">Terms & Condition:</label>
+                                            <input type="text" class="form-control" id="{{subcontractor.id}}_terms_conditions" name="terms_conditions"
+                                              value="{{ subcontractor.terms_conditions }}">
+                                            <span id="{{subcontractor.id}}_terms_conditionsError" class="error-message"></span>
+                                        </div>
+									</div>
+									<hr>
+								
+							
+									<h4>Service Rate's </h4>
+									<hr>
+									<div class="card-body">
+										<table id="tabl" class="table table-bordered dt-responsive nowrap table-striped align-middle" style="width:100%">		
+                                            <thead>
+                                                <tr>
+                                                    <th>S.No</th>
+                                                    <th>Work</th>
+                                                    <th>Unit</th>
+                                                    <th>Rate</th>
+                                                    <th>Qty</th>
+                                                    <th>Amount</th>
+                                                    {% comment %} <th>Action</th> {% endcomment %}
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for i in subcontractor.get_service_rates %}
+                                                 <tr>
+                                                    <td>{{ forloop.counter }}</td> 
+                                                    {% comment %} <td>
+                                                        <input type="text" class="form-control" name="work_id" hidden
+                                                            value="{{ i.id }}">
+                                                        <span id="{{subcontractor.id}}_workError" class="error-message"></span>
+                                                    </td> {% endcomment %}
+                                                    <td>
+                                                        <input type="text" class="form-control" id="{{subcontractor.id}}_work" name="work"
+                                                            value="{{ i.work }}">
+                                                        <span id="{{subcontractor.id}}_workError" class="error-message"></span>
+                                                    </td>
+
+
+                                                    {% comment %} <td>{{ i.unit }}</td> {% endcomment %}
+
+                                                   
+
+                                                    <td>
+                                                        <select class="form-select" id="{{subcontractor.id}}_unit" name="unit">
+                                                            <option value="">Select Unit</option>
+                                                            {% for unit in uom %}
+                                                                <option value="{{ unit.id }}" {% if unit.id == i.unit.id %} selected {% endif %}>{{ unit.name }}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                        <span id="{{subcontractor.id}}_unitError" class="error-message"></span>
+                                                    </td>
+
+                                                    
+                                                    <td>
+                                                        <input type="text" class="form-control" id="{{subcontractor.id}}_rate" name="rate"
+                                                            value="{{ i.rate }}">
+                                                        <span id="{{subcontractor.id}}_rateError" class="error-message"></span>
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" class="form-control" id="{{subcontractor.id}}_total_qty" name="total_qty"
+                                                            value="{{ i.total_qty }}">
+                                                        <span id="{{subcontractor.id}}_total_qtyError" class="error-message"></span>
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" class="form-control" id="{{subcontractor.id}}_amount" name="amount"
+                                                            value="{{ i.amount }}">
+                                                        <span id="{{subcontractor.id}}_amountError" class="error-message"></span>
+                                                    </td>
+                                                    {% comment %} <td>
+                                                        <!-- Add an action button here -->
+                                                    </td> {% endcomment %}
+                                                </tr> 
+
+                                                {% endfor %}
+                                            </tbody>
+                                            
+										</table>
+										<hr>
+									
+										<h4>Labour wages</h4>
+										<hr>
+
+                                        <div class="row">                                            
+
+                                            <div class="col-md-6 mb-2">
+                                                <label for="edit_maistry" class="form-label">Maistry:</label>
+                                                <input type="text" class="form-control" name="maistry" id="maistry" value="{{ subcontractor.get_labour_rates.maistry }}">
+                                                <span id="{{subcontractor.id}}_maistryError" class="error-message"></span>
+                                            </div>
+                                            
+                                            <div class="col-md-6 mb-2">
+                                                <label for="" class="form-label">Maison:</label>
+                                                <input type="text" class="form-control" name="maison_cooli" id="maison_cooli" value="{{ subcontractor.get_labour_rates.maison_cooli }}">
+                                                <span id="{{subcontractor.id}}_maison_cooliError" class="error-message"></span>
+                                            </div>
+                                        
+                                            <div class="col-md-6 mb-2">
+                                                <label for="" class="form-label">Male skilled:</label>
+                                                <input type="text" class="form-control" name="male_skilled" id="male_skilled" value="{{ subcontractor.get_labour_rates.male_skilled }}">
+                                                <span id="{{subcontractor.id}}_male_skilledError" class="error-message"></span>
+                                            </div>
+                                        
+                                            <div class="col-md-6 mb-2">
+                                                <label for="" class="form-label">Male Unskilled:</label>
+                                                <input type="text" class="form-control" name="male_unskilled" id="male_unskilled" value="{{ subcontractor.get_labour_rates.male_unskilled }}">
+                                                <span id="{{subcontractor.id}}_male_unskilledError" class="error-message"></span>
+                                            </div>
+                                        
+                                            <div class="col-md-6 mb-2">
+                                                <label for="" class="form-label">Female skilled:</label>
+                                                <input type="text" class="form-control" name="female_skilled" id="female_skilled" value="{{ subcontractor.get_labour_rates.female_skilled }}">
+                                                <span id="{{subcontractor.id}}_female_skilledError" class="error-message"></span>
+                                            </div>
+                                          
+                                            <div class="col-md-6 mb-2">
+                                                <label for="editfemale_unskilled" >Female Unskilled:</label>
+                                                <input type="text" class="form-control" name="female_unskilled" id="{{subcontractor.id}}_female_unskilled"
+                                                 value="{{ subcontractor.get_labour_rates.female_unskilled }}">
+                                                <span id="{{subcontractor.id}}_female_unskilledError" class="error-message"></span>
+                                            </div>
+
+                                        </div>                                                     
+
+                                        <p class="text-center mt-2">
+                                            <a href="{% url 'subcontractorlist' %}" type="button" class="btn btn-secondary" id="" >
+                                                Cancel 
+                                            </a>
+    
+                                            <button type="button" class="btn btn-primary" id="saveuom" onclick="updateFunction(this,'{{subcontractor.id}}')" > 
+                                                Save
+                                            </button>
+
+                                        </p>
+									
+                                    </div>
+								
+                                </div>
+                           
+                            </div>
+                                                  
+                        </form>
+                        
+                    </div>
+                    
+                </div>
+				<!-- container-fluid -->
+            </div>
+            <!-- End Page-content -->
+
+
+
+            <footer class="footer">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <script>
+                                document.write(new Date().getFullYear())
+                            </script>
+                            © vinsup.
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="text-sm-end d-none d-sm-block">
+                                Design & Develop by vinsup
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+        <!-- end main content-->
+
+    </div>
+    <!-- END layout-wrapper -->
+
+
+
+    <!--start back-to-top-->
+    <button onclick="topFunction()" class="btn btn-danger btn-icon" id="back-to-top">
+        <i class="ri-arrow-up-line"></i>
+    </button>
+    <!--end back-to-top-->
+
+    <!--preloader-->
+    <div id="preloader">
+        <div id="status">
+            <div class="spinner-border text-primary avatar-sm" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    </div>
+
+   
+    <!-- JAVASCRIPT -->
+    <!-- <script src="assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/libs/simplebar/simplebar.min.js"></script>
+    <script src="assets/libs/node-waves/waves.min.js"></script>
+    <script src="assets/libs/feather-icons/feather.min.js"></script>
+    <script src="assets/js/pages/plugins/lord-icon-2.1.0.js"></script>
+    <script src="assets/js/plugins.js"></script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script> -->
+
+    <!--datatable js-->
+    <!-- <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.print.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+
+    <script src="assets/js/pages/datatables.init.js"></script> -->
+    <!-- App js -->
+    <!-- <script src="assets/js/app.js"></script>
+	
+	
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
+
+
+    
+	<script type="text/javascript">
+            $(document).ready(function() {
+                var i = 0;
+
+                $(".add-row").click(function(event) {
+                    event.preventDefault();
+                    ++i;
+    
+                   
+
+                    //var newRow = '<tr><th scope="row"><div class="form-check"><input class="form-check-input fs-15" type="checkbox" name="checkAll" value="option1"></div></th><td>02</td><td><input type="text" name="work" class="form-control"></td><td><input type="text" name="" class="form-control"></td><td><input type="text" name="" class="form-control"></td><td><input type="text" name="" class="form-control"></td><td><input type="text" name="" class="form-control"></td><td><button type="button" class="btn btn-danger btn-icon waves-effect waves-light remove-table-row"><i class="ri-delete-bin-5-line"></i></button></td></tr>';
+                    
+					var newRow = `<tr>
+						<th scope="row"><div class="form-check"><input class="form-check-input fs-15" type="checkbox" name="checkAll" value="option1"></div></th>
+						<td>02</td>
+						
+						<td><input type="text" class="form-control" id="work" name="work"></td>
+						<td><select class="form-select mb-3 form-control"  aria-label="Default select example" name="unit" id="unit">
+							<option value=""> ------------------</option>
+							{% for i in uom %}
+							<option value="{{i.id}}">{{i.name}} </option>
+							{% endfor %}
+						  </select>
+						  <span id="unitError" class="error-message"></span></td>
+						<td><input type="text" name="rate" class="form-control"></td>
+						<td><input type="text" name="total_qty" class="form-control"></td>
+						<td><input type="text" name="amount" class="form-control"></td>
+						<td><button type="button" class="btn btn-danger btn-icon waves-effect waves-light remove-table-row">
+							<i class="ri-delete-bin-5-line"></i></button></td>
+						</tr>`;
+
+                    $("#tabl").append(newRow);
+                });
+
+                $(document).on('click', '.remove-table-row', function() {
+                    $(this).parents('tr').remove();
+                });
+            });
+        </script>
+
+
+		<script>
+			// create form		 
+			function createFunction(button) {
+				var formId = `createForm`;   //change
+				var formElement = document.getElementById(formId);
+
+				try {
+					disableButton(button);
+					var isValid = true;
+					var errors = {};
+					var formData = new FormData();
+					
+					var requiredKeys = ['name','start_date','end_date','contract_amount','description','terms_conditions']
+	
+	                formData.append('start_date', getValueOrDefault(formElement.querySelector('input[name="start_date"]').value));
+                    formData.append('name', getValueOrDefault(formElement.querySelector('input[name="name"]').value));
+					formData.append('end_date', getValueOrDefault(formElement.querySelector('input[name="end_date"]').value));
+					formData.append('contract_amount', getValueOrDefault(formElement.querySelector('input[name="contract_amount"]').value));
+					formData.append('description', getValueOrDefault(formElement.querySelector('textarea[name="description"]').value));
+					formData.append('terms_conditions', getValueOrDefault(formElement.querySelector('textarea[name="terms_conditions"]').value));
+					formData.append('project', getValueOrDefault(formElement.querySelector('select[name="project"]').value));
+					formData.append('type',getValueOrDefault(formElement.querySelector('select[name="type"]').value));
+					formData.append('contractor',getValueOrDefault(formElement.querySelector('select[name="contractor"]').value));
+					formData.append('payment_schedule',getValueOrDefault(formElement.querySelector('select[name="payment_schedule"]').value));
+
+					formData.append('maistry',getValueOrDefault(formElement.querySelector('input[name="maistry"]').value));
+					formData.append('maison_cooli',getValueOrDefault(formElement.querySelector('input[name="maison_cooli"]').value));
+					formData.append('male_skilled',getValueOrDefault(formElement.querySelector('input[name="male_skilled"]').value));
+					formData.append('male_unskilled',getValueOrDefault(formElement.querySelector('input[name="male_unskilled"]').value));
+					formData.append('female_skilled',getValueOrDefault(formElement.querySelector('input[name="female_skilled"]').value));
+					formData.append('female_unskilled',getValueOrDefault(formElement.querySelector('input[name="female_unskilled"]').value));
+
+
+					var tableData = [];
+					$('#tabl tbody tr').each(function () {
+						console.log(this)
+					
+						var rowData = {};
+						//rowData['item'] = $(this).find('select[name^="item"]').val();
+						rowData['work'] = $(this).find('input[name^="work"]').val();
+						rowData['unit'] = $(this).find('select[name^="unit"]').val();
+						rowData['rate'] = $(this).find('input[name^="rate"]').val();
+						rowData['total_qty'] = $(this).find('input[name^="total_qty"]').val();
+						rowData['amount'] = $(this).find('input[name^="amount"]').val();
+						tableData.push(rowData);
+					});
+					
+					console.log(tableData)
+		
+		
+					requiredKeys.forEach(function (key) {
+						var value = formData.get(key);
+						if (!value.trim()) {
+							isValid = false;
+							errors[key] = ['This field may not be blank.'];
+						}
+					});
+		
+					if (!isValid) {
+						enableButton(button);
+						console.log(errors);
+						handleCreateErrors(errors);
+						return;
+					} else {
+						$(`#${formId} input, #${formId} button`).prop('disabled', true);
+						
+		
+					}
+
+	
+					formData.append("table", JSON.stringify(tableData))
+		
+					$.ajax({
+						url: '/add_subcontadd/',                //change
+						type: 'POST',
+						headers: {
+							'X-CSRFToken': csrftoken,
+						},
+						data: formData,
+						processData: false,
+						contentType: false,
+						success: function (response, status, xhr) {
+							console.error(status);
+							if (xhr.status === 201) {
+								showToast(successMesssage?.message, '', successMesssage?.bgColor, true);
+							} else {
+								console.error(error);
+								restoreForm(formId, button)
+		
+							}
+						},
+						error: function (xhr, status, error) {
+							console.log(xhr, status, error);
+							if (xhr.status === 400) {
+								if (xhr?.responseJSON || xhr?.responseJSON?.errors) {
+									handleCreateErrors(transformErrors(xhr.responseJSON));
+									restoreForm(formId, button)
+		
+								} else {
+									showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+									restoreForm(formId, button)
+		
+								}
+							}
+							else if (xhr.status === 401 || 404) {
+								showToast(xhr?.responseJSON?.details, '', errorAlertMessage?.bgColor);
+								restoreForm(formId, button)
+		
+							}
+							else {
+								showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+								restoreForm(formId, button)
+		
+							}
+						}
+						
+					});
+				} catch (error) {
+					showToast(errorOccured?.message, '', errorOccured?.bgColor);
+					restoreForm(formId, button)
+					console.error(error);
+				}
+			}
+
+            function updateFunction(button, saveId) {
+
+                var formId = `editForm${saveId}`;   //change  editForm
+                var formElement = document.getElementById(formId);
+
+                var isValid = true;
+                var errors = {};
+
+                try {
+                    disableButton(button);
+                    clearErrors();
+
+                    var requiredKeys = ['contract_amount','description','terms_conditions','maistry','maison_cooli'
+                ,'male_skilled','male_unskilled','female_skilled','female_unskilled'];   //change
+                
+
+                    const formData = new FormData();
+
+                    // formData.append('name', getValueOrDefault(formElement.querySelector('input[name="name"]').value));
+
+                    formData.append('contract_amount', getValueOrDefault(formElement.querySelector('input[name="contract_amount"]').value));              //change
+                    formData.append('description', getValueOrDefault(formElement.querySelector('input[name="description"]').value));
+                    formData.append('terms_conditions', getValueOrDefault(formElement.querySelector('input[name="terms_conditions"]').value));
+                    formData.append('project', getValueOrDefault(formElement.querySelector('select[name="project"]').value));
+					formData.append('type', getValueOrDefault(formElement.querySelector('select[name="type"]').value));
+					formData.append('contractor', getValueOrDefault(formElement.querySelector('select[name="contractor"]').value));
+                    formData.append('payment_schedule', getValueOrDefault(formElement.querySelector('select[name="payment_schedule"]').value));
+                    
+                    formData.append('maistry',getValueOrDefault(formElement.querySelector('input[name="maistry"]').value));
+					formData.append('maison_cooli',getValueOrDefault(formElement.querySelector('input[name="maison_cooli"]').value));
+					formData.append('male_skilled',getValueOrDefault(formElement.querySelector('input[name="male_skilled"]').value));
+					formData.append('male_unskilled',getValueOrDefault(formElement.querySelector('input[name="male_unskilled"]').value));
+					formData.append('female_skilled',getValueOrDefault(formElement.querySelector('input[name="female_skilled"]').value));
+					formData.append('female_unskilled',getValueOrDefault(formElement.querySelector('input[name="female_unskilled"]').value));
+                  
+                    var tableData = [];
+                    $('#tabl tbody tr').each(function () {
+                        var rowData = {};
+                            rowData['id'] = $(this).find('input[name^="work_id"]').val();
+                            rowData['work'] = $(this).find('input[name^="work"]').val();
+                            rowData['unit'] = $(this).find('select[name^="unit"]').val();
+                            rowData['rate'] = $(this).find('input[name^="rate"]').val();
+                            rowData['total_qty'] = $(this).find('input[name^="total_qty"]').val();
+                            rowData['amount'] = $(this).find('input[name^="amount"]').val();
+                        tableData.push(rowData);
+                    } );
+
+                    console.log(tableData);
+
+                    formData.append("table", JSON.stringify(tableData))
+		
+
+                    // requiredKeys.forEach(function (key) {
+                    //     var value = formData.get(key);
+                    //     if (!value.trim()) {
+                    //         isValid = false;
+                    //         errors[key] = ['This field may not be blank.'];
+                    //     }
+                    // });
+
+                    requiredKeys.forEach(function (key) {
+                var value = formData.get(key);
+                if (value === null || value === undefined || value === '') {
+                    isValid = false;
+                    errors[key] = ['This field may not be blank.'];
+                } else if (!value.trim()) {
+                    isValid = false;
+                    errors[key] = ['This field may not be blank.'];
+                }
+            })
+
+
+
+                    if (!isValid) {
+                        enableButton(button);
+                        console.log(errors);
+                        handleUpdateErrors(saveId, transformErrors(errors));
+                        return;
+                    } else {
+                        $(`#${formId} input, #${formId} button`).prop('disabled', true);
+
+                    }
+                    
+
+                    console.log(csrftoken);
+                    $.ajax({
+                        url: '/update_subcontractor/' + saveId + '/',   //change
+                        //url: '/update_subcontractor/' +  {{ pk }} + '/',
+                        type: 'PUT',
+                        headers: {
+                            'X-CSRFToken': csrftoken,
+                        },
+
+
+                        
+
+                        processData: false,
+                        contentType: false,
+                        data: formData,
+                        success: function (response, status, xhr) {
+                            if (xhr.status === 200) {
+                                showToast(updateMessage?.message, '', updateMessage?.bgColor, );
+                                restoreForm(formId, button)
+                            } else {
+                                showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+                                restoreForm(formId, button)
+
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            console.log(xhr, status, error);
+                            if (xhr.status === 400) {
+                                if (xhr?.responseJSON || xhr?.responseJSON?.errors) {
+                                    handleUpdateErrors(saveId, transformErrors(xhr.responseJSON));
+                                    restoreForm(formId, button)
+                                } else {
+
+                                    showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+                                    restoreForm(formId, button)
+
+                                }
+                            }
+                            else if (xhr.status === 401 || 404) {
+                                showToast(xhr?.responseJSON?.details, '', errorAlertMessage?.bgColor);
+                                restoreForm(formId, button)
+
+                            }
+                            else {
+
+                                showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+                                restoreForm(formId, button)
+
+                            }
+                        }
+                    });
+                } catch (error) {
+                    showToast(errorOccured?.message, '', errorOccured?.bgColor);
+                    restoreForm(formId, button)
+                    console.error(error);
+                }
+            }
+
+	
+		</script>
+
+
+        {% endblock header2 %}

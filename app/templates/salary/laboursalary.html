@@ -1,0 +1,1367 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block header2 %}
+
+<!-- Begin page -->
+<div id="layout-wrapper">
+
+    <div class="main-content">
+
+        <div class="page-content">
+            <div class="container-fluid">
+
+                <!-- start page title -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                            <h4 class="mb-sm-0">Salary </h4>
+
+                            <div class="page-title-right">
+                                <ol class="breadcrumb m-0">
+                                    <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
+                                    <li class="breadcrumb-item active">pending</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- end page title -->
+
+                <!-- end page title 
+
+                    <div class="alert alert-danger" role="alert">
+                        This is <strong>Datatable</strong> page in wihch we have used <b>jQuery</b> with cnd link!
+                    </div> -->
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-header">
+
+                                <div class="row">
+                                    <div class="col-xl-6 col-lg-6 col-md-6 col-12">
+                                        <h4>Labour Payment </h4>
+                                    </div>
+                                    <div class="col-xl-4 col-lg-4 col-md-4 col-12"></div>
+                                    <div class="col-xl-2 col-lg-2 col-md-2 col-12">
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+
+                                    <div class="col-xl-3 col-lg-3 col-md-3 col-xs-6 col-12">
+
+                                        <label for="" class="form-label">Labour Name :</label>
+                                        <select class="form-select mb-3" aria-label="Default select example"
+                                            id="contractor">
+
+                                            <option value="0"> ------------ </option>
+                                            <!-- <select id="contractor" class="form-control mb-3" data-live-search="true"> -->
+                                            {% for i in employees %}
+                                            <option value="{{i.id}}"> {{i.name}} </option>
+                                            {% endfor %}
+                                        </select>
+
+                                    </div>
+
+                                    <!-- <div class="col-xl-2 col-lg-2 col-md-2 col-xs-6 col-12">
+                                        <label for="exampleInputdate" class="form-label">From Date</label>
+                                        <input type="date" class="form-control" id="fromdate">
+                                    </div>
+
+                                    <div class="col-xl-2 col-lg-2 col-md-2 col-xs-6 col-12">
+                                        <label for="exampleInputdate" class="form-label">To Date</label>
+                                        <input type="date" class="form-control" id="todate">
+                                    </div> -->
+
+                                    <div class="col-xl-2 col-lg-2 col-md-2 col-xs-6 col-12">
+                                        <br><button type="button"
+                                            class="btn btn-primary waves-effect waves-light mt-2">Get Report</button>
+                                    </div>
+                                </div>
+                                <hr>
+                                <table id="example"
+                                    class="table table-bordered dt-responsive nowrap table-striped align-middle"
+                                    style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <!-- <th scope="col" style="width: 10px;">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input fs-15" type="checkbox" id="checkAll" value="option">
+                                                    </div>
+                                                </th> -->
+                                            <th data-ordering="false">S No.</th>
+                                            <!-- <th data-ordering="false">Date</th> -->
+                                            <th data-ordering="false">contractor Name</th>
+                                            <th data-ordering="false">From Date</th>
+                                            <th data-ordering="false">To date</th>
+                                            <th data-ordering="false">days</th>
+                                            <th data-ordering="false">Amount</th>
+                                            <th data-ordering="false">Status</th>
+                                            <!-- <th data-ordering="false">paid Amount</th>                                               
+                                                <th data-ordering="false">Pending Amount</th>                                                -->
+                                            <th data-ordering="false">Action</th>
+
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+
+
+                                    </tbody>
+                                </table>
+
+
+                                <div id="pagination-container"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- container-fluid -->
+            </div>
+            <!-- End Page-content -->
+
+
+        </div>
+        <!-- end main content-->
+
+    </div>
+    <!-- END layout-wrapper -->
+
+
+
+    <!-- nested table  -->
+    <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+        id="invoiceHistoryModal" data-bs-keyboard="false" data-bs-backdrop="static" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="myLargeModalLabel">Invoice History </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>S.no</th>
+                                    <th>Date</th>
+                                    <th>Invoice Id</th>
+                                    <th>From date</th>
+                                    <th>To date</th>
+                                    <th>Amount</th>
+                                    <th>Paid</th>
+                                    <!-- <th>Pending</th> -->
+                                    <th>Payment Mode</th>
+                                    <!-- <th>Status</th> -->
+
+                                    <!-- <th>Action</th> -->
+
+                                </tr>
+                            </thead>
+                            <tbody id="modalTableBody">
+                                <!-- Modal table body will be populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-link link-success fw-medium shadow-none" data-bs-dismiss="modal"><i
+                            class="ri-close-line me-1 align-middle"></i> Close</button>
+                    <!-- <button type="button" class="btn btn-primary">Save</button> -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--  make payment model -->
+
+    <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+        id="invoiceHistoryModalAdd" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="myLargeModalLabel">Create Invoice</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    </button>
+                </div>
+                <hr>
+                <form id="createForm">
+
+                    <div class="modal-body">
+                        <div class="row">
+
+                            <div class="col-lg-6 col-md-6 col-xs-6 col-12">
+                                <label for="" class="form-label">Contractor Name :</label>
+                                <input type="text" class="form-control" id="" name="name" readonly disabled>
+                            </div>
+
+                            <div class="col-lg-6 col-md-6 col-xs-6 col-12">
+                                <label for="" class="form-label">Payment Mode:</label>
+
+                                <select class="form-select mb-3" aria-label="Default select example"
+                                    name="payment_method">
+                                    {% for i in paymode %}
+
+                                    <option value="{{i.id}}">{{i.name}} </option>
+
+                                    {% endfor %}
+                                </select>
+
+                                <span id="payment_methodError" class="error-message"></span>
+
+                            </div>
+
+                            <div class="col-lg-6 col-md-6 col-xs-6 col-12">
+                                <label for="" class="form-label">From Date :</label>
+                                <input type="date" class="form-control" id="payment_period_start"
+                                    name="payment_period_start" readonly disabled>
+                                <span id="from_dateError" class="error-message"></span>
+                            </div>
+
+                            <div class="col-lg-6 col-md-6 col-xs-6 col-12">
+                                <label for="" class="form-label">To Date :</label>
+                                <input type="date" class="form-control" id="payment_period_end"
+                                    name='payment_period_end' readonly disabled>
+                                <span id="to_dateError" class="error-message"></span>
+                            </div>
+
+                            <hr class="mt-2">
+
+                            <input type="number" class="form-control" id="hidden_total_amount"
+                                name="hidden_total_amount" hidden>
+
+                            <div class="col-lg-4 col-md-4 col-xs-6 col-12">
+                                <label for="" class="form-label mt-2">Total Amount :</label>
+                                <input type="number" class="form-control" id="amount" name="amount"
+                                    onchange="updatePendingAmount(this)" readonly disabled>
+                                <span id="amountError" class="error-message"></span>
+                            </div>
+
+                            <div class="col-lg-4 col-md-4 col-xs-6 col-12">
+                                <label for="" class="form-label mt-2">Paid Amount :</label>
+                                <input type="number" class="form-control" id="amount_paid" name="amount_paid"
+                                    onchange="updatePendingAmount(this)">
+                                <span id="paid_amountError" class="error-message"></span>
+                            </div>
+
+                            <div class="col-lg-4 col-md-4 col-xs-6 col-12">
+                                <label for="" class="form-label mt-2">Pending Amount :</label>
+                                <input type="text" class="form-control" id="pending_amount" name="pending_amount"
+                                    readonly disabled>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </form>
+
+                <hr>
+                <div class="modal-footer">
+                    <button class="btn btn-link link-success fw-medium shadow-none" data-bs-dismiss="modal"><i
+                            class="ri-close-line me-1 align-middle"></i> Close</button>
+                    <button type="button" class="btn btn-primary" id="payment-update"
+                        data-target="invoiceHistoryModalAdd" onclick="updateFunction(this)">Save </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- nested table  for payment history -->
+    <div class="modal fade bs-example-modal-lg" id="paymentHistoryModal" tabindex="-1" role="dialog"
+        aria-labelledby="myLargeModalLabel" aria-hidden="true">
+
+
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="myLargeModalLabel-0">Payment History </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <!-- <button type="button" class="btn btn-close" 
+                            onclick="closeModal('myLargeModalLabel-0')"
+                             aria-label="Close"></button> -->
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>S.no</th>
+                                    <th>Date</th>
+                                    <th>Payment Id</th>
+                                    <!-- <th>From date</th>
+                                    <th>To date</th> -->
+                                    <!-- <th>Amount</th> -->
+                                    <th>Paid</th>
+                                    <!-- <th>Pending</th> -->
+                                    <th>Payment Mode</th>
+
+
+                                </tr>
+                            </thead>
+                            <tbody id="submodalTableBody">
+                                <!-- Modal table body will be populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-link link-success fw-medium shadow-none" data-bs-dismiss="modal"><i
+                            class="ri-close-line me-1 align-middle"></i> Close</button>
+                    <!-- <button type="button" class="btn btn-primary">Save</button> -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--  make payment model for payment history -->
+
+    <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" id="paymentHistoryModalAdd"
+        aria-labelledby="myLargeModalLabel-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="myLargeModalLabel-1">Make payment</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    </button>
+                </div>
+                <hr>
+                <form id="createPaymentHistoryForm">
+
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-lg-6 col-md-6 col-xs-6 col-12">
+                                <label for="" class="form-label">Payment Mode:</label>
+
+                                <select class="form-select mb-3" aria-label="Default select example"
+                                    name="payment_method">
+                                    {% for i in paymode %}
+
+                                    <option value="{{i.id}}">{{i.name}} </option>
+
+                                    {% endfor %}
+                                </select>
+
+                                <span id="payment_methodError" class="error-message"></span>
+
+                            </div>
+
+                            <hr class="mt-2">
+                            <div class="col-lg-4 col-md-4 col-xs-6 col-12">
+                                <label for="" class="form-label mt-2"> Invoice Pending Amount :</label>
+                                <input type="text" class="form-control" id="pending_pay_amount"
+                                    name="pending_pay_amount" readonly>
+                            </div>
+
+                            <div class="col-lg-4 col-md-4 col-xs-6 col-12">
+                                <label for="" class="form-label mt-2">Paid Amount :</label>
+                                <input type="number" class="form-control" id="amount_paid" name="amount_paid">
+                                <!-- onchange="updatePendingAmount(this)"> -->
+                                <span id="amount_paidError" class="error-message"></span>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </form>
+
+                <hr>
+                <div class="modal-footer">
+                    <button class="btn btn-link link-success fw-medium shadow-none" data-bs-dismiss="modal"><i
+                            class="ri-close-line me-1 align-middle"></i> Close</button>
+                    <button type="button" class="btn btn-primary" id="payment-history-update"
+                        data-target='paymentHistoryModalAdd' onclick="updateInvoiceFunction(this)">Save </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--start back-to-top-->
+    <button onclick="topFunction()" class="btn btn-danger btn-icon" id="back-to-top">
+        <i class="ri-arrow-up-line"></i>
+    </button>
+    <!--end back-to-top-->
+
+    <!--preloader-->
+    <div id="preloader">
+        <div id="status">
+            <div class="spinner-border text-primary avatar-sm" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        let activePage;
+
+        const existingPaginationContainer = document.getElementById('pagination-container');
+
+        const dropdown = document.getElementById('contractor');
+        const tableBody = document.querySelector('#example tbody');
+
+
+        // from and to
+        const fromdate = document.getElementById('fromdate');
+        const todate = document.getElementById('todate');
+
+        // tablemodal
+        // const modalTableBody = document.getElementById('modalTableBody');   
+        // const submodalTableBody = document.getElementById('submodalTableBody');
+
+
+        console.log(modalTableBody, submodalTableBody, "pppppppppppppp")
+
+        const modalfromdate = document.getElementById('from_date');
+        const modaltodate = document.getElementById('to_date');
+
+        var qtyError = false;
+
+        var priceError = false;
+
+        var currentPage = 1;
+
+
+        document.addEventListener('DOMContentLoaded', function () {
+
+            // const dropdown = document.getElementById('fromsite');
+            // const tableBody = document.querySelector('#example tbody');
+
+            // on dom loaded 
+            const initialSelectedValue = dropdown.value;
+            fetchData(1);
+
+            // fetch table data API
+            dropdown.addEventListener('change', function () {
+
+                activePage = null
+                fetchData(currentPage);
+            });
+
+            todate.addEventListener('change', function () {
+                activePage = null
+                fetchData(currentPage);
+            });
+
+            fromdate.addEventListener('change', function () {
+                activePage = null
+                fetchData(currentPage);
+            });
+
+
+            // modalfromdate.addEventListener('change', function () {
+            //     // fetchPaymentData(currentPage);
+            // });
+
+            // modaltodate.addEventListener('change', function () {
+            //     // fetchPaymentData(currentPage);
+            // });
+
+        });
+
+        // fetch payment data
+        function fetchPaymentData() {
+
+            const saveButton = document.querySelector('#payment-update');
+            const id = saveButton.getAttribute('data-id')
+
+            const from = modalfromdate?.value || ""
+            const to = modaltodate?.value || ""
+
+            try {
+                fetch(`/contractor-payment-date/${id}/?start_date=${from}&end_date=${to}`)
+                    .then(response => {
+                        if (response.status === 200) {
+                            console.log('Data fetched');
+                            return response.json();
+                        } else if (response.status === 404) {
+                            throw new Error('Resource not found');
+                        } else if (response.ok) {
+                            throw new Error(`HTTP error! Status: ${response.status}`);
+                        } else {
+                            throw new Error('Network response was not ok');
+                        }
+                    })
+                    .then(data => {
+                        changeModalAmount(data)
+                    })
+                    .catch(error => {
+                        console.error('Error fetching data:', error);
+                        showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+                    });
+            } catch (error) {
+                console.error('Error in fetch operation:', error);
+            }
+        }
+
+        function changeModalAmount(data) {
+
+            // Populate Salary Amount (assuming data has a 'salaryAmount' field)
+            const amount = document.querySelector('input[name="amount"]');
+            amount.value = data.pending_invoice_amount;
+
+            // Populate Pending Amount (assuming data has a 'pendingAmount' field)
+            const pendingAmountInput = document.querySelector('input[name="pending_amount"]');
+            pendingAmountInput.value = data.pending_invoice_amount;
+
+        }
+
+        // fetch data
+        function fetchData(page, reload = false) {
+            if (reload === false) {
+                if (activePage === page) {
+                    return
+                }
+            }
+
+            const selectedValue = dropdown.value;
+            const from = fromdate?.value || ""
+            const to = todate?.value || ""
+            // console.log(fromdate, todate)
+            try {
+                fetch(`/labour-salary-list/${selectedValue}/?page=${page}&start_date=${from}&end_date=${to}`)
+                    .then(response => {
+                        if (response.status === 200) {
+                            console.log('Data fetched');
+                            currentPage = page
+                            return response.json();
+                        } else if (response.status === 404) {
+                            throw new Error('Resource not found');
+                        } else if (response.ok) {
+                            throw new Error(`HTTP error! Status: ${response.status}`);
+                        } else {
+                            throw new Error('Network response was not ok');
+                        }
+                    })
+                    .then(data => {
+                        clearmodalData()
+                        tableBody.innerHTML = '';
+                        renderDataOrMessage(tableBody, data, page)
+                        activePage = page
+                    })
+                    .catch(error => {
+                        console.error('Error fetching data:', error);
+                        showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+                    });
+            } catch (error) {
+                console.error('Error in fetch operation:', error);
+            }
+        }
+
+
+        // render table or message
+
+        function renderDataOrMessage(tableBody, data, page) {
+
+            // Check if data is available and not empty
+            if (data && Array.isArray(data.results) && data.results.length > 0) {
+                // Render the data in the table
+
+                tdata = data?.results
+
+                tdata.forEach((item, index) => {
+                    const newRow = createTableRow(index + 1, item);
+                    tableBody.appendChild(newRow);
+                });
+
+                renderPagination(data, page)
+
+            } else {
+                // Display a message indicating no data available
+                tableBody.innerHTML = '<tr><td colspan="6">No data available.</td></tr>';
+
+                existingPaginationContainer.innerHTML = ''; // Clear existing content
+            }
+        }
+
+
+        // MANIPULATE Main TABLE DATA
+        function createTableRow(serialNumber, data) {
+            const newRow = document.createElement('tr');
+            newRow.setAttribute('data-item-id', data.id);
+
+            const idCell = document.createElement('td');
+            idCell.textContent = serialNumber;
+            newRow.appendChild(idCell);
+
+
+            // name
+            const td2 = document.createElement('td');
+            td2.textContent = get_value(data.name);
+            newRow.appendChild(td2);
+
+            // project
+            const td3 = document.createElement('td');
+            td3.textContent = get_value(data.start_date)
+            newRow.appendChild(td3);
+
+            //wages
+            const td4 = document.createElement('td');
+            td4.textContent = get_value(data.end_date)
+            newRow.appendChild(td4);
+
+            // total
+            const td5 = document.createElement('td');
+            td5.textContent = get_value(data.days)
+            newRow.appendChild(td5);
+
+            // PAID
+            const td6 = document.createElement('td');
+            td6.textContent = get_value(data.salary)
+            newRow.appendChild(td6);
+
+
+
+            const td7 = PaymentStatusCell(data.get_pending_amount,data.is_pending)
+            newRow.appendChild(td7);
+
+
+            // Transfer Items
+            const transferItemsCell = document.createElement('td');
+
+
+            if ( data.salary <=0 ) {
+                transferItemsCell.innerHTML = `	<button class="btn btn-soft-secondary btn-sm dropdown" type="button"  onclick="openHistoryModal('invoiceHistoryModal')" >
+                                            <i class="ri-eye-fill align-middle"></i>
+                                            </button>
+                                            <button class="btn btn-soft-secondary btn-sm dropdown" type="button"  onclick="openHistoryModal('invoiceHistoryModalAdd')" disabled>
+							Pay
+			 				</button>
+                                            `
+            }
+            else {
+                transferItemsCell.innerHTML = `	<button class="btn btn-soft-secondary btn-sm dropdown" type="button"  onclick="openHistoryModal('invoiceHistoryModal')" >
+							<i class="ri-eye-fill align-middle"></i>
+			 				</button>
+                             <button class="btn btn-soft-secondary btn-sm dropdown" type="button"  onclick="openHistoryModal('invoiceHistoryModalAdd')">
+							Pay
+			 				</button>
+                            `
+            }
+
+            newRow.appendChild(transferItemsCell);
+
+
+            transferItemsCell.addEventListener('click', () => {
+                populateModalTable(data.get_salary_receipts, modalTableBody);
+
+                payModalData(data)
+            });
+
+            return newRow;
+        }
+
+        //---------------
+
+        // nested SUB table
+        function populateModalTable(transferItems, modalTableBody) {
+            modalTableBody.innerHTML = ''; // Clear previous data
+
+            console.log(transferItems)
+            try {
+
+
+
+                transferItems?.forEach((tItem, index) => {
+                    const modalRow = document.createElement('tr');
+
+                    const serialCell = document.createElement('td');
+                    serialCell.textContent = index + 1;
+                    modalRow.appendChild(serialCell);
+
+                    const td2 = document.createElement('td');
+                    td2.textContent = get_value(tItem.payment_date)
+                    modalRow.appendChild(td2);
+
+                    const td3 = document.createElement('td');
+                    td3.textContent = get_value(tItem.transaction_id)
+                    modalRow.appendChild(td3);
+
+                    const td4 = document.createElement('td');
+                    td4.textContent = get_value(tItem.payment_period_start)
+                    modalRow.appendChild(td4);
+
+                    const td5 = document.createElement('td');
+                    td5.textContent = get_value(tItem.payment_period_end)
+                    modalRow.appendChild(td5);
+
+                    const td6 = document.createElement('td');
+                    td6.textContent = get_value(tItem.get_total_amount)
+                    modalRow.appendChild(td6);
+
+
+                    const td7 = document.createElement('td');
+                    td7.textContent = get_value(tItem.get_paid_amount)
+                    modalRow.appendChild(td7);
+
+
+                    // const td8 = document.createElement('td');
+                    // td8.textContent = get_value(tItem.get_pending_amount)
+                    // modalRow.appendChild(td8);
+
+
+                    const td9 = document.createElement('td');
+                    td9.textContent = get_value(tItem.payment_method)
+                    modalRow.appendChild(td9);
+
+                    // const td10 = document.createElement('td');
+                    // td10.textContent = get_value(tItem.status)
+                    // modalRow.appendChild(td10);
+                    const payHistory = modalRow.insertCell();
+
+                    // const payHistory = document.createElement('td');
+                    // if (tItem.is_paid === false) {
+
+                    //     payHistory.innerHTML = `<button class="btn btn-soft-secondary btn-sm dropdown" type="button" onclick="openHistoryModal('paymentHistoryModalAdd')">
+                    //                             Pay
+                    //                             </button>`
+
+
+                    //     payHistory.addEventListener('click', () => {
+
+                    //         event.stopPropagation();
+                    //         console.log(submodalTableBody)
+                    //         // populatePayHistoryTable(tItem.get_salary_receipts, submodalTableBody);
+
+                    //         payModalHistoryData(tItem)
+                    //     });
+
+                    // }
+                    // else {
+
+                    //     payHistory.innerHTML = `<span class="btn btn-soft-success btn-sm dropdown" type="button" >
+                    //                             Paid
+                    //                             </span>`
+
+                    // }
+
+                    if (tItem?.is_paid) {
+
+                        payHistory.innerHTML = `	<button class="btn btn-soft-secondary btn-sm dropdown" type="button"  onclick="openHistoryModal('paymentHistoryModal')" >
+                                            <i class="ri-eye-fill align-middle"></i>
+                                            </button>
+                                            <span class="btn btn-soft-success btn-sm dropdown" type="button" >
+                                            Paid
+                                            </span>
+                                            `
+                    }
+                    else {
+
+                        payHistory.innerHTML = `<button class="btn btn-soft-secondary btn-sm dropdown" type="button"  onclick="openHistoryModal('paymentHistoryModal')" >
+                                            <i class="ri-eye-fill align-middle"></i>
+                                            </button>
+                                            <button class="btn btn-soft-secondary btn-sm dropdown" type="button" onclick="openHistoryModal('paymentHistoryModalAdd')">
+                                            Pay
+                                            </button>
+                                            `
+                    }
+
+
+                    payHistory.addEventListener('click', () => {
+
+                        event.stopPropagation();
+                        console.log(submodalTableBody)
+                        populatePayHistoryTable(tItem.get_payment_history, submodalTableBody);
+
+                        payModalHistoryData(tItem)
+                    });
+
+
+
+                    modalTableBody.appendChild(modalRow);
+
+                });
+            }
+            catch (error) {
+                console.log(error)
+            }
+
+        }
+
+        //---------------
+
+        // NESTED NESTED TABLE
+        function populatePayHistoryTable(transferItems, payHistoryTableBody) {
+            payHistoryTableBody.innerHTML = ''; // Clear previous data
+            transferItems?.forEach((tItem, index) => {
+                const modalRow = document.createElement('tr');
+
+                const serialCell = document.createElement('td');
+                serialCell.textContent = index + 1;
+                modalRow.appendChild(serialCell);
+
+                const td2 = document.createElement('td');
+                td2.textContent = get_value(tItem.payment_date)
+                modalRow.appendChild(td2);
+
+                const td3 = document.createElement('td');
+                td3.textContent = get_value(tItem.transaction_id)
+                modalRow.appendChild(td3);
+
+                const td4 = document.createElement('td');
+                td4.textContent = get_value(tItem.amount_paid)
+                modalRow.appendChild(td4);
+
+                const td5 = document.createElement('td');
+                td5.textContent = get_value(tItem.payment_method)
+                modalRow.appendChild(td5);
+
+
+
+                payHistoryTableBody.appendChild(modalRow);
+
+            });
+
+
+        }
+
+        // populate payment history model data 
+        function payModalHistoryData(data) {
+
+            // Populate Salary Amount (assuming data has a 'salaryAmount' field)
+            const amount = document.querySelector('input[name="pending_pay_amount"]');
+            amount.value = data.get_pending_amount;
+
+
+            // Add event listener to Save button
+            const saveButton = document.querySelector('#payment-history-update');
+            // console.log(saveButton)
+            saveButton.setAttribute("data-id", data.id)
+
+
+        }
+
+
+        // populate payment model data
+        function payModalData(data) {
+            // Populate Contractor Name (assuming data has a 'contractorName' field)
+            const contractorInput = document.querySelector('input[name="name"]');
+            contractorInput.value = data.name;
+
+
+            const fromDate = document.querySelector('input[name="payment_period_start"]');
+            fromDate.value = data.start_date;
+
+
+            const toDate = document.querySelector('input[name="payment_period_end"]');
+            toDate.value = data.end_date;
+
+
+            const tamount = document.querySelector('input[name="amount"]');
+            tamount.value = data.salary;
+
+            // Populate Salary Amount (assuming data has a 'salaryAmount' field)
+            const amount = document.querySelector('input[name="amount_paid"]');
+            amount.value = data.salary;
+
+
+            // hidden
+            const pending = document.getElementById('hidden_total_amount');
+            pending.value = data.salary;
+
+
+            // Populate Pending Amount (assuming data has a 'pendingAmount' field)
+            const pendingAmountInput = document.querySelector('input[name="pending_amount"]');
+            pendingAmountInput.value = data.salary;
+
+            // Add event listener to Save button
+            const saveButton = document.querySelector('#payment-update');   //id change
+            // console.log(saveButton)
+            saveButton.setAttribute("data-id", data.id)
+
+        }
+
+
+        // get value function
+        function get_value(value) {
+
+
+            // console.log(value)
+            // Check if value is null, undefined, or an empty string, then return 'Nill'
+            if (value === null || value === undefined || value === '') {
+                return 'Nill';
+            }
+
+            // Check if value is a number, not NaN, and not just whitespace, then return the value
+            if (typeof value === 'number' && !isNaN(value) && value !== 0) {
+                return value;
+            }
+
+            // Check if value is a string and not just whitespace, then return the value
+            if (typeof value === 'string' && value.trim() !== '') {
+                return value;
+            }
+
+            // Otherwise, return 'Nill'
+            return 'Nill';
+        }
+
+
+        // ----------------------------------------------------------------------------------------------------------------
+        // update pending amount
+
+        function updatePendingAmount(input) {
+            // Get the paid amount value entered by the user
+
+            const paidAmountInput = document.getElementById('amount_paid');
+            const pendingAmount = document.getElementById('pending_amount');
+            const totalAmount = document.getElementById('amount');
+
+            const paidAmount = parseFloat(paidAmountInput.value) || 0;
+
+            const updatedPendingAmount = parseFloat(totalAmount.value) - paidAmount;
+
+            pendingAmount.value = updatedPendingAmount.toFixed(2);
+
+            return
+
+            clearErrors()
+            var errors = {}
+
+            const strictTotal = document.getElementById('hidden_total_amount')
+
+
+
+            const name = input.getAttribute('id')
+
+
+            if (isNaN(paidAmount) || paidAmount < 0) {
+                errors[name] = ['Please enter a valid positive number'];
+                handleCreateErrors(errors);
+                input.value = ''; // Clear the input field
+                return;
+            }
+
+            // Check if paid amount is greater than total amount
+            if (paidAmount > parseFloat(strictTotal.value)) {
+                errors[name] = ['Amount cannot be greater than the total amount.'];
+                handleCreateErrors(errors);
+                input.value = ''; // Clear the input field
+                return;
+            }
+
+
+            pendingAmount.value = updatedPendingAmount.toFixed(2); // Display 2 decimal places
+        }
+
+
+
+        // update payment for working days
+
+        function updateFunction(button) {
+
+            var modalSelector = button.getAttribute('data-target');
+            const saveId = button.getAttribute('data-id')
+
+            var formId = `createForm`;   //change
+            var formElement = document.getElementById(formId);
+            try {
+                disableButton(button);
+                var isValid = true;
+                var errors = {};
+                var formData = new FormData();
+
+                var requiredKeys = ["payment_period_start", "payment_period_end", "amount_paid", "payment_method", 'amount'];   //change
+
+
+                formData.append('payment_period_start', getValueOrDefault(formElement.querySelector('input[name="payment_period_start"]').value));              //change
+                formData.append('payment_period_end', getValueOrDefault(formElement.querySelector('input[name="payment_period_end"]').value));
+                formData.append('payment_method', getValueOrDefault(formElement.querySelector('select[name="payment_method"]').value));
+
+
+                const paidAmount = getValueOrDefault(formElement.querySelector('input[name="amount_paid"]').value);
+                const totalamount = getValueOrDefault(formElement.querySelector('input[name="amount"]').value);
+                const pendingAmount = getValueOrDefault(formElement.querySelector('input[name="pending_amount"]').value);
+
+
+
+                const strictTotal = getValueOrDefault(formElement.querySelector('input[name="hidden_total_amount"]').value);
+
+                if (isNaN(paidAmount) || paidAmount < 0) {
+                    errors["amount_paid"] = ['Please enter a valid positive number for the paid amount.'];
+                    handleCreateErrors(errors);
+                    enableButton(button);
+                    return;
+                }
+
+                if (isNaN(totalamount) || totalamount < 0) {
+                    errors["amount"] = ['Please enter a valid positive number'];
+                    handleCreateErrors(errors);
+                    enableButton(button);
+                    return;
+                }
+
+                // Check if paid amount is greater than total amount
+                if (paidAmount > parseFloat(totalamount) || paidAmount > parseFloat(strictTotal)) {
+                    errors["amount_paid"] = ['Paid amount cannot be greater than the total amount.'];
+                    handleCreateErrors(errors);
+                    enableButton(button);
+                    return;
+                }
+
+
+
+                // Check if paid amount is greater than total amount
+                if (totalamount > parseFloat(strictTotal)) {
+                    errors["amount"] = ['Amount cannot be greater than the total amount.'];
+                    handleCreateErrors(errors);
+                    enableButton(button);
+                    return;
+                }
+
+
+
+
+                formData.append('amount_paid', paidAmount);
+                formData.append('amount', totalamount);
+                formData.append('pending_amount', pendingAmount);
+
+                formData.append('payment_amount', totalamount)
+
+
+
+                requiredKeys.forEach(function (key) {
+                    var value = formData.get(key);
+                    if (!value.trim()) {
+                        isValid = false;
+                        errors[key] = ['This field may not be blank.'];
+                    }
+                });
+
+                if (!isValid) {
+                    enableButton(button);
+                    // console.log(errors);
+                    handleCreateErrors(errors);
+                    return;
+                } else {
+                    $(`#${formId} input, #${formId} button`).prop('disabled', true);
+
+                }
+
+                $.ajax({
+                    url: `/make-labour-salary/${saveId}/`,                //change
+                    type: 'PUT',
+                    headers: {
+                        'X-CSRFToken': csrftoken,
+                    },
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (response, status, xhr) {
+                        console.error(status);
+                        if (xhr.status === 200) {
+
+                            showToast(successMesssage?.message, '', successMesssage?.bgColor);
+                            fetchData(currentPage, reload = true)
+                            closeHistoryModal(modalSelector)
+                            restoreForm(formId, button)
+
+                        } else {
+
+                            restoreForm(formId, button)
+
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        // console.log(xhr, status, error);
+                        if (xhr.status === 400) {
+                            if (xhr?.responseJSON || xhr?.responseJSON?.errors) {
+                                handleCreateErrors(transformErrors(xhr.responseJSON));
+                                restoreForm(formId, button)
+
+
+                            } else {
+                                showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+                                restoreForm(formId, button)
+
+                            }
+                        }
+                        else if (xhr.status === 401 || 404) {
+
+                            showToast(xhr?.responseJSON?.details || errorOccured.message, '', errorAlertMessage?.bgColor);
+                            restoreForm(formId, button)
+
+
+                        }
+                        else {
+                            showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+                            restoreForm(formId, button)
+
+                        }
+                    }
+                });
+            } catch (error) {
+                showToast(errorOccured?.message, '', errorOccured?.bgColor);
+                restoreForm(formId, button)
+                console.error(error);
+            }
+        }
+
+
+        // update invoice history
+
+        function updateInvoiceFunction(button) {
+
+            const saveId = button.getAttribute('data-id')
+            var modalSelector = button.getAttribute('data-target');
+
+            var formId = `createPaymentHistoryForm`;   //change
+            var formElement = document.getElementById(formId);
+
+            // console.log(formElement)
+            try {
+                disableButton(button);
+                var isValid = true;
+                var errors = {};
+                var formData = new FormData();
+
+                var requiredKeys = ["amount_paid", "payment_method",];   //change
+
+
+                formData.append('payment_method', getValueOrDefault(formElement.querySelector('select[name="payment_method"]').value));
+
+                const paidAmount = getValueOrDefault(formElement.querySelector('input[name="amount_paid"]').value);
+                const totalamount = getValueOrDefault(formElement.querySelector('input[name="pending_pay_amount"]').value);
+
+
+
+                if (isNaN(paidAmount) || paidAmount < 0) {
+                    errors["amount_paid"] = ['Please enter a valid positive number for the paid amount.'];
+                    handleCreateErrors(errors);
+                    enableButton(button);
+                    return;
+                }
+
+                // Check if paid amount is greater than total amount
+                if (paidAmount > parseFloat(totalamount)) {
+                    errors["amount_paid"] = ['Paid amount cannot be greater than the total amount.'];
+                    handleCreateErrors(errors);
+                    enableButton(button);
+                    return;
+                }
+
+
+
+                formData.append('amount_paid', paidAmount);
+                formData.append('amount', totalamount);
+
+
+                requiredKeys.forEach(function (key) {
+                    var value = formData.get(key);
+                    if (!value.trim()) {
+                        isValid = false;
+                        errors[key] = ['This field may not be blank.'];
+                    }
+                });
+
+                if (!isValid) {
+                    enableButton(button);
+                    // console.log(errors);
+                    handleCreateErrors(errors);
+                    return;
+                } else {
+                    $(`#${formId} input, #${formId} button`).prop('disabled', true);
+
+                }
+
+                $.ajax({
+                    url: `/make-labour-payment/${saveId}/`,                //change
+                    type: 'PUT',
+                    headers: {
+                        'X-CSRFToken': csrftoken,
+                    },
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: async function (response, status, xhr) {
+                        console.error(status, response);
+                        if (xhr.status === 201) {
+                            // showToast(successMesssage?.message, '', successMesssage?.bgColor);
+                            // restoreForm(formId, button)
+                            // fetchData(currentPage, reload = true)
+                            // closeHistoryModal(modalSelector)
+
+                            try {
+
+                                await fetchData(currentPage, true);
+                                // populateModalTable([response], modalTableBody);
+                                console.log("enter")
+                                showToast(successMesssage?.message, '', successMesssage?.bgColor);
+                                restoreForm(formId, button)
+                                closeHistoryModal(modalSelector);
+                            } catch (error) {
+                                console.log(error)
+                                showToast(successMesssage?.message, '', successMesssage?.bgColor);
+                            }
+
+
+
+                        } else {
+
+                            restoreForm(formId, button)
+
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.log(xhr, status, error);
+                        if (xhr.status === 400) {
+                            if (xhr?.responseJSON || xhr?.responseJSON?.errors) {
+                                handleCreateErrors(transformErrors(xhr.responseJSON));
+                                restoreForm(formId, button)
+
+                            } else {
+                                showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+                                restoreForm(formId, button)
+
+                            }
+                        }
+                        else if (xhr.status === 401 || 404) {
+
+                            showToast(xhr?.responseJSON?.details || errorOccured.message, '', errorAlertMessage?.bgColor);
+                            restoreForm(formId, button)
+
+
+                        }
+                        else {
+                            showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+                            restoreForm(formId, button)
+
+                        }
+                    }
+                });
+            } catch (error) {
+                showToast(errorOccured?.message, '', errorOccured?.bgColor);
+                restoreForm(formId, button)
+                console.error(error);
+            }
+        }
+
+
+
+        //clear modal data
+        function clearmodalData() {
+            tableBody.innerHTML = '';
+            modalTableBody.innerHTML = ''
+            submodalTableBody.innerHTML = ''
+        }
+
+        // close modal
+        function closeHistoryModal(modalId) {
+            closeAllModals();
+            restoreAllForms();
+            clearErrors();
+            return
+
+
+            console.log(modalId)
+            var modalElement = document.getElementById(modalId);
+
+            console.log(modalElement)
+
+            // If the modal element is found, close it using Bootstrap's modal method
+            if (modalElement) {
+                var modalInstance = bootstrap.Modal.getInstance(modalElement);
+                if (modalInstance) {
+                    modalInstance.hide();
+                } else {
+                    // If no instance exists, create a new one and then hide it
+                    modalInstance = new bootstrap.Modal(modalElement);
+                    modalInstance.hide();
+                }
+            } else {
+                console.error('Modal element not found for selector: ' + modalId);
+            }
+
+            var myModal = new bootstrap.Modal(document.getElementById(modalId));
+            myModal.hide();
+        }
+
+
+
+        // close all modals
+        function closeAllModals() {
+            var modals = document.querySelectorAll('.modal.show'); // Select all active modals
+            modals.forEach(modalElement => {
+                var modalInstance = bootstrap.Modal.getInstance(modalElement);
+                if (modalInstance) {
+                    modalInstance.hide();
+                } else {
+                    modalInstance = new bootstrap.Modal(modalElement);
+                    modalInstance.hide();
+                }
+            });
+        }
+
+
+        // reset all forms
+        function restoreAllForms() {
+            var forms = document.querySelectorAll('form'); // Select all forms on the page
+            forms.forEach(form => {
+                form.reset(); // Reset each form to its default state
+            });
+        }
+
+
+        // openModal
+        function openHistoryModal(modalId) {
+            // console.log(modalId)
+            const paymentHistoryModal = new bootstrap.Modal(document.getElementById(modalId));
+            // console.log(paymentHistoryModal)
+            paymentHistoryModal.show();
+        }
+
+
+        function filterDropdownItems(inputElement) {
+            const searchTerm = inputElement.value.trim().toLowerCase();
+            const dropdownItems = Array.from(inputElement.closest('.dropdown').querySelectorAll('.dropdown-item'));
+
+            dropdownItems.forEach(function (item) {
+                const textContent = item.textContent.trim().toLowerCase();
+                if (textContent.includes(searchTerm)) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+
+
+        // payment status cell 
+        function PaymentStatusCell(value,pending) {
+            const cell = document.createElement('td');
+            const span = document.createElement('span');
+
+            const msg ={"pending" :"Pending" ,"paid" :"Paid"}
+
+       
+
+            if (parseFloat(value) > 0 ) {
+                span.classList.add("badge", "bg-danger-subtle", "text-danger", "fs-12");
+               
+                span.textContent = msg["pending"];
+
+
+            } else if (parseFloat(value) <= 0 && pending ) {
+                span.classList.add("badge", "bg-success-subtle" ,"text-success" ,"fs-12");
+                span.textContent = msg["paid"];
+
+            }
+            else{
+                span.classList.add("badge", "bg-primary-subtle", "text-primary", "fs-12");
+                span.textContent = 'Nill';
+
+            }
+         
+            cell.appendChild(span)
+
+            return cell;
+        }
+
+    </script>
+
+
+    {% endblock header2 %}

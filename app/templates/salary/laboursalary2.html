@@ -1,0 +1,563 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block header2 %}
+
+<!-- Begin page -->
+<div id="layout-wrapper">
+
+    <div class="main-content">
+
+        <div class="page-content">
+            <div class="container-fluid">
+
+                <!-- start page title -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                            <h4 class="mb-sm-0">Salary Report </h4>
+
+                            <div class="page-title-right">
+                                <ol class="breadcrumb m-0">
+                                    <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
+                                    <li class="breadcrumb-item active">report</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- end page title -->
+
+                <!-- end page title 
+
+                    <div class="alert alert-danger" role="alert">
+                        This is <strong>Datatable</strong> page in wihch we have used <b>jQuery</b> with cnd link!
+                    </div> -->
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-header">
+
+                                <div class="row">
+                                    <div class="col-xl-6 col-lg-6 col-md-6 col-12">
+                                        <h2>Salary Report Management </h2>
+                                    </div>
+                                    <div class="col-xl-4 col-lg-4 col-md-4 col-12"></div>
+                                    <div class="col-xl-2 col-lg-2 col-md-2 col-12">
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-xl-3 col-lg-3 col-md-3 col-xs-6 col-12">
+                                        <label for="" class="form-label">Employee :</label>
+
+                                        <select class="form-select mb-3" aria-label="Default select example"
+                                            id="filterdropdown1">
+                                            <option value="0"> ------------ </option>
+                                            {% for i in employees %}
+                                            <option value="{{i.id}}">{{i.name}} </option>
+                                            {% endfor %}
+                                        </select>
+
+                                    </div>
+                                    <!-- <div class="col-xl-3 col-lg-3 col-md-3 col-xs-6 col-12">
+											<label for="" class="form-label">contractor Name :</label>
+											<select class="form-select mb-3" aria-label="Default select example">
+												<option selected>contractor name </option>	
+											</select>
+										</div> -->
+
+                                    <div class="col-xl-2 col-lg-2 col-md-2 col-xs-6 col-12">
+                                        <label for="exampleInputdate" class="form-label">Select Month</label>
+                                        <input type="month" class="form-control" id="fromDate">
+                                    </div>
+
+                                    <!-- <div class="col-xl-2 col-lg-2 col-md-2 col-xs-6 col-12">
+											<label for="exampleInputdate" class="form-label">To Date</label>
+                                            <input type="month" class="form-control" id="toDate">
+										</div> -->
+
+                                    <div class="col-xl-2 col-lg-2 col-md-2 col-xs-6 col-12">
+                                        <br><button type="button"
+                                            class="btn btn-primary waves-effect waves-light mt-2">Get Report</button>
+                                    </div>
+                                </div>
+                                <hr>
+                                <table id="example"
+                                    class="table table-bordered dt-responsive nowrap table-striped align-middle"
+                                    style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <!-- <th scope="col" style="width: 10px;">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input fs-15" type="checkbox" id="checkAll" value="option">
+                                                    </div>
+                                                </th> -->
+                                            <th data-ordering="false">S No.</th>
+                                            <!-- <th data-ordering="false">Date</th> -->
+                                            <th data-ordering="false">contractor Name</th>
+                                            <th data-ordering="false">From Date</th>
+                                            <th data-ordering="false">To date</th>
+                                            <th data-ordering="false">days</th>
+                                            <th data-ordering="false">Amount</th>
+                                            <!-- <th data-ordering="false">paid Amount</th>                                               
+                                                <th data-ordering="false">Pending Amount</th>                                                -->
+                                            <th data-ordering="false">Action</th>
+
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- <tr>
+                                                <th scope="row">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input fs-15" type="checkbox" name="checkAll" value="option1">
+                                                    </div>
+                                                </th>
+                                                <td>01</td>
+												<td>07-01-2024</td>
+                                                <td>vinsup</td>
+                                                <td>25-12-23</td>                                               
+                                                <td>31-12-23</td>                                                
+                                                <td>10000</td>                                                
+                                                <td>6000</td>                                                
+                                                <td>4000</td>  
+
+                                                <td>
+                                                    <div class="dropdown d-inline-block">
+                                                        <button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="modal" data-bs-target=".bs-example-modal-lg" aria-expanded="false">
+                                                            <i class="ri-eye-fill align-middle"></i>
+                                                        </button>
+														<div class="modal fade bs-example-modal-lg123" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+															<div class="modal-dialog modal-lg">
+																<div class="modal-content">
+																	<div class="modal-header">
+																		<h5 class="modal-title" id="myLargeModalLabel">Purchase Item Details</h5>
+																		<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+																		</button>
+																	</div>
+																	<hr>
+																	<div class="modal-body">
+																		<div class="table-responsive">
+																			<table class="table table-bordered">
+																				<tr>
+																					<th>S No</th>
+																					<th>Item Name</th>
+																					<th>Qty</th>
+																					<th>Amount</th>
+																				</tr>
+																			</table>
+																		</div>
+																	</div>
+																	<hr>
+																	<div class="modal-footer">
+																		<button class="btn btn-link link-success fw-medium shadow-none" data-bs-dismiss="modal"><i class="ri-close-line me-1 align-middle"></i> Close</button>
+																		<button type="button" class="btn btn-primary ">Save </button>
+																	</div>
+																</div>
+																
+															</div>
+														
+														</div>
+														<button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                            <i class="ri-pencil-fill align-middle"></i>
+                                                        </button>
+														<button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                            <i class="ri-delete-bin-fill align-middle"></i>
+                                                        </button>
+                                                       
+                                                    </div>
+                                                </td>
+                                                
+                                            </tr> -->
+
+                                    </tbody>
+                                </table>
+
+
+
+                                <div id="pagination-container"></div>
+
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- container-fluid -->
+            </div>
+            <!-- End Page-content -->
+
+
+        </div>
+        <!-- end main content-->
+
+    </div>
+    <!-- END layout-wrapper -->
+
+
+
+
+    <!--start back-to-top-->
+    <button onclick="topFunction()" class="btn btn-danger btn-icon" id="back-to-top">
+        <i class="ri-arrow-up-line"></i>
+    </button>
+    <!--end back-to-top-->
+
+    <!--preloader-->
+    <div id="preloader">
+        <div id="status">
+            <div class="spinner-border text-primary avatar-sm" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <!-- modal table -->
+    <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+        id="invoiceHistoryModalAdd" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="myLargeModalLabel">Create Invoice</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    </button>
+                </div>
+                <hr>
+                <form id="dataEditForm">
+
+                    <div class="modal-body">
+                        <div class="row">
+
+                            <div class="col-lg-6 col-md-6 col-xs-6 col-12">
+                                <label for="" class="form-label">Employee Name :</label>
+                                <input type="text" class="form-control" id="" name="name" readonly disabled>
+                            </div>
+
+                            <div class="col-lg-6 col-md-6 col-xs-6 col-12">
+                                <!-- <label for="" class="form-label">Payment Mode:</label>
+
+                                <select class="form-select mb-3" aria-label="Default select example"
+                                    name="payment_method">
+                                    {% for i in paymode %}
+
+                                    <option value="{{i.id}}">{{i.name}} </option>
+
+                                    {% endfor %}
+                                </select>
+
+                                <span id="payment_methodError" class="error-message"></span> -->
+
+                            </div>
+
+
+
+                            <div class="col-lg-6 col-md-6 col-xs-6 col-12">
+                                <label for="" class="form-label mt-2">From Date : </label>
+                                <input type="date" class="form-control" id="payment_period_start" name="payment_period_start" readonly disabled>
+                                <span id="payment_period_startError" class="error-message"></span>
+                            </div>
+
+                            <div class="col-lg-6 col-md-6 col-xs-6 col-12">
+                                <label for="" class="form-label mt-2">To Date :</label>
+                                <input type="date" class="form-control" id="payment_period_end" name="payment_period_end" readonly disabled>
+                                <span id=" payment_period_endError" class="error-message"></span>
+                            </div>
+
+                            <hr class="mt-2">
+
+                            <input type="number" class="form-control" id="hidden_paid_amount"
+                                name="hidden_paid_amount" hidden>
+
+                            <div class="col-lg-4 col-md-4 col-xs-6 col-12">
+                                <label for="" class="form-label mt-2">Salary :</label>
+                                <input type="number" class="form-control" id="amount" name="amount"
+                                    onchange="updatePendingAmount(this)" readonly disabled>
+                                <span id="amountError" class="error-message"></span>
+                            </div>
+
+                            <div class="col-lg-4 col-md-4 col-xs-6 col-12">
+                                <label for="" class="form-label mt-2">Salary Paid :</label>
+                                <input type="number" class="form-control" id="paid" name="paid"
+                                    onchange="updatePendingAmount(this)" readonly disabled>
+                                <span id="paidError" class="error-message"></span>
+                            </div>
+
+                            <div class="col-lg-4 col-md-4 col-xs-6 col-12">
+                                <label for="" class="form-label mt-2">Salary Pending :</label>
+                                <input type="number" class="form-control" id="pending" name="pending"
+                                    onchange="updatePendingAmount(this)" readonly disabled>
+                                <span id="pendingError" class="error-message"></span>
+                            </div>
+
+                            <div class="col-lg-4 col-md-4 col-xs-6 col-12">
+                                <label for="" class="form-label mt-2">Pay</label>
+                                <input type="number" class="form-control" id="paid_amount" name="paid_amount"
+                                    onchange="updatePendingAmount(this)">
+                                <span id="paid_amountError" class="error-message"></span>
+                            </div>
+
+                            <div class="col-lg-4 col-md-4 col-xs-6 col-12">
+                                <label for="" class="form-label mt-2">Payment Mode:</label>
+
+                                <select class="form-select mb-3" aria-label="Default select example"
+                                    name="payment_method">
+                                    {% for i in paymode %}
+
+                                    <option value="{{i.id}}">{{i.name}} </option>
+
+                                    {% endfor %}
+                                </select>
+
+                                <span id="payment_methodError" class="error-message"></span>
+
+                            </div>
+
+                            <div class="col-lg-4 col-md-4 col-xs-6 col-12">
+                                <label for="" class="form-label mt-2">Pending :</label>
+                                <input type="text" class="form-control" id="pending_amount" name="pending_amount"
+                                    readonly>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </form>
+
+                <hr>
+                <div class="modal-footer">
+                    <button class="btn btn-link link-success fw-medium shadow-none" data-bs-dismiss="modal"><i
+                            class="ri-close-line me-1 align-middle"></i> Close</button>
+                    <button type="button" class="btn btn-primary" id="payment-update"
+                        onclick="updateFunction(this)">Save </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <script>
+
+        let activePage;
+
+        // fetch url
+        let fetchUrl = "labour-salary-list"
+
+        // pagination
+        const existingPaginationContainer = document.getElementById('pagination-container');
+
+        // table
+        const tableBody = document.querySelector('#example tbody');
+
+        // filters 
+        const firstDropdown = document.getElementById('filterdropdown1');
+        const fromdate = document.getElementById('fromDate');
+        // const todate = document.getElementById('toDate');
+
+        var currentPage = 1;
+
+        document.addEventListener('DOMContentLoaded', function () {
+
+            // on dom loaded 
+            const initialSelectedValue = firstDropdown.value;
+            fetchData(1);
+
+            // fetch table data API
+            firstDropdown.addEventListener('change', function () {
+
+                activePage = null
+                fetchData(currentPage);
+            });
+
+            // todate.addEventListener('change', function () {
+            //     activePage = null
+            //     fetchData(currentPage);
+            // });
+
+            fromdate.addEventListener('change', function () {
+                activePage = null
+                fetchData(currentPage);
+            });
+
+
+        });
+
+
+        // fetch data
+        function fetchData(page) {
+
+            if (activePage === page) {
+                return
+            }
+            const selectedValue = firstDropdown.value;
+            const from = fromdate?.value ? `${fromdate?.value}-15` : ""
+            const to = ""
+            try {
+                fetch(`/${fetchUrl}/${selectedValue}/?page=${page}&salary_date=${from}&end_date=${to}`)
+                    .then(response => {
+                        if (response.status === 200) {
+                            console.log('Data fetched');
+                            return response.json();
+                        } else if (response.status === 404) {
+                            throw new Error('Resource not found');
+                        } else if (response.ok) {
+                            throw new Error(`HTTP error! Status: ${response.status}`);
+                        } else {
+                            throw new Error('Network response was not ok');
+                        }
+                    })
+                    .then(data => {
+                        tableBody.innerHTML = '';
+                        renderDataOrMessage(tableBody, data, page)
+                        activePage = page
+                    })
+                    .catch(error => {
+                        console.error('Error fetching data:', error);
+                        showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+                    });
+            } catch (error) {
+                console.error('Error in fetch operation:', error);
+            }
+        }
+
+
+
+
+
+        // MANIPULATE TABLE DATA
+        function createTableRow(serialNumber, data) {
+
+            const newRow = document.createElement('tr');
+            newRow.setAttribute('data-item-id', data.id);
+
+            const idCell = createSerialCell(serialNumber);
+            newRow.appendChild(idCell);
+
+            // const td2 = createTableCell(get_value(data.created_at));
+            // newRow.appendChild(td2);
+
+            const td3 = createTableCell(get_value(data.name));
+            newRow.appendChild(td3);
+
+            const td4 = createTableCell(get_value(data.start_date));
+            newRow.appendChild(td4);
+
+            const td5 = createTableCell(get_value(data.end_date));
+            newRow.appendChild(td5);
+
+            const td7 = createTableCell(get_value(data.days));
+            newRow.appendChild(td7);
+
+            const td6 = createAmountCell(get_value(data.salary));
+            newRow.appendChild(td6);
+
+            
+
+
+
+            // actioncell
+            const actionCell = createPayActionCell('invoiceHistoryModalAdd');
+            newRow.appendChild(actionCell);
+
+            const payHistoryCell = createPayActionCell('invoiceHistoryModalAdd');
+            newRow.appendChild(actionCell);
+
+            // click event
+            actionCell.addEventListener('click', () => {
+                populateModalData(data)
+            });
+
+            return newRow;
+        }
+
+
+
+
+        // nested table
+        function populateModalData(data) {
+            const form = document.getElementById('dataEditForm');
+            if (!form) {
+                console.error("Form element not found.");
+                return;
+            }
+
+            setModalInputValue(form, 'name', data.name);
+            setModalInputValue(form, 'payment_period_start', data.start_date);
+            setModalInputValue(form, 'payment_period_end', data.end_date);
+            // alert(data.paid_amount)
+            setModalInputValue(form, 'amount', data.salary);
+
+            // setModalInputValue(form, 'hidden_paid_amount', data.paid_amount);
+
+            setModalInputValue(form, 'paid', data.paid);
+            setModalInputValue(form, 'pending', data.pending);
+           
+     
+
+            const saveButton = form.querySelector('#saveButton');
+            if (saveButton) {
+                saveButton.setAttribute("data-id", data.id);
+            } else {
+                console.error("Save button not found in the form.");
+            }
+
+        }
+
+        //---------------
+
+
+
+        function updatePendingAmount(input) {
+
+            clearErrors()
+            var errors = {}
+            // Get the paid amount value entered by the user
+
+            const paidAmountInput = document.getElementById('paid_amount');
+
+            const pendingAmount = document.getElementById('pending_amount');
+            const strictTotal = document.getElementById('pending');
+
+            if (paidAmountInput.value >strictTotal.value ){
+                errors["paid_amount"] = ['Amount cannot be greater than the pending amount.'];
+                handleCreateErrors(errors);
+                input.value = ''; // Clear the input field
+                return;
+            }
+
+            const totalAmount = document.getElementById('amount');
+
+            const paidAmount = parseFloat(paidAmountInput.value);
+
+            const updatedPendingAmount = parseFloat(totalAmount.value) - paidAmount;
+
+            pendingAmount.value = updatedPendingAmount.toFixed(2);
+
+            return
+
+            
+
+        }
+
+
+
+
+
+
+
+
+    </script>
+
+
+
+
+
+    {% endblock header2 %}

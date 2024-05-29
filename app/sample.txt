@@ -1,0 +1,1863 @@
+import uuid
+from datetime import date
+from typing import Iterable
+from django.db import models
+from django.utils import timezone
+from django.core.exceptions import ValidationError
+from django.contrib.auth.models import AbstractBaseUser,BaseUserManager,PermissionsMixin, User 
+#-------------------------------------------------------------------- Dharshini ----------------------------------------------------------------
+
+#------------------------------------------------------------------- CustomUser ----------------------------------------------------------------
+
+class CustomUserManager(BaseUserManager):
+    def create_user(self, phone_number, password=None, pin=None, **extra_fields):
+        if not phone_number:
+            raise ValueError('The phone number must be set')
+        user = self.model(phone_number=self.normalize_phone_number(phone_number), **extra_fields)
+        user.set_password(password)
+        user.pin = pin
+        user.save(using=self._db)
+        return user
+    
+    def create_superuser(self, phone_number, password=None, pin=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        return self.create_user(phone_number, password, pin, **extra_fields)
+
+    def normalize_phone_number(self, phone_number):
+        normalized_phone_number = phone_number.replace(" ", "").replace("-", "")
+        return normalized_phone_number
+ 
+class CustomUser(AbstractBaseUser, PermissionsMixin):
+    email=models.EmailField(null=True, blank=True)
+    image = models.ImageField(upload_to='profile_images/', null=True, blank=True)
+    name = models.CharField(max_length=255)
+    phone_number = models.CharField(max_length=10, unique=True)
+    # company = models.ForeignKey('Company', on_delete=models.CASCADE, null=True, blank=True)
+    pin = models.CharField(max_length=6, null=True, blank=True) 
+    is_active = models.BooleanField(default=True)
+    admin = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
+    otp = models.CharField(max_length=6, null=True, blank=True)
+    created_at =models.DateField(auto_now_add=True)
+    USERNAME_FIELD = 'phone_number'
+    REQUIRED_FIELDS = ['name']
+    
+    
+    objects = CustomUserManager()
+
+
+    def save(self, *args, **kwargs):     
+        self.pin=1111       
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.name} - {self.phone_number}"
+    
+    @property
+    def company(self):
+        if self.admin:
+            return self.company_set.all().last()
+        return None
+    
+
+
+    @property
+    def employee(self):
+        if self.employee_set.all():
+            return self.employee_set.all().last()
+        return None
+    
+#------------------------------------------------------------------------- Company ---------------------------------------------------------------
+    
+class Company(models.Model):
+    name = models.CharField(max_length=50)
+    admin = models.ForeignKey(CustomUser, on_delete=models.CASCADE,null=True,blank=True)
+
+    def __str__(self):
+        return self.name
+    
+    @property
+    def stock(self):
+        if self.inventorystock_set.all():
+            return self.inventorystock_set.all()
+        return None
+   
+#----------------------------------------------------------------------- Employee -----------------------------------------------------
+    
+class EmpRoles(models.Model):
+    company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
+    name=models.CharField(max_length=50)
+    description = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.name
+ 
+class Employee(models.Model):
+    company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
+    user=models.ForeignKey(CustomUser, on_delete=models.CASCADE,null=True,blank=True)
+    name=models.CharField(max_length=50)
+    role=models.ForeignKey(EmpRoles, on_delete=models.CASCADE)
+    mobile=models.CharField(max_length=10)
+    address=models.CharField(max_length=200)
+    bankname=models.CharField(max_length=50)
+    branch=models.CharField(max_length=50)
+    bankaccount=models.CharField(max_length=50)
+    ifsccode=models.CharField(max_length=50)
+    start_date=models.DateField()
+
+    def __str__(self):
+        return self.name
+
+#----------------------------------------------------------------------- Purchases -------------------------------------------------------
+
+#---------------> Vendor Registration <------------------
+
+    
+class VendorRegistration(models.Model):
+    company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
+    date = models.DateField()
+    vendorname = models.CharField(max_length=25)
+    companyname = models.CharField(max_length=100)
+    gstno = models.IntegerField()
+    mobile = models.CharField(max_length=13)
+    email = models.EmailField(max_length=150)
+    faxno = models.IntegerField()
+    address = models.CharField(max_length=250)
+
+    def __str__(self):
+        return self.vendorname  
+    
+#---------------> Vendor Quatation <------------------
+
+class VendorQuatation(models.Model):
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, null=True, blank=True)
+    date = models.DateField()
+    vendorname = models.ForeignKey(VendorRegistration, on_delete=models.CASCADE, null=True, blank=True)
+    quatationno = models.CharField(max_length=100)
+    quatationamount = models.CharField(max_length=50)
+    img = models.FileField(upload_to="doc")
+    # mobile = models.CharField(max_length=15)
+
+    def __str__(self):
+        return self.quatationno 
+    
+#------------------------------------------------------------------- UOM ------------------------
+class Uom(models.Model):
+    company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
+    name=models.CharField(max_length=50)
+    
+
+    def __str__(self):
+        return self.name
+
+    
+#---------------->project category <-------------------------------------------------------------
+
+class ProjectCategory(models.Model):
+    company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
+    name = models.CharField(max_length=100)
+    description = models.TextField()
+
+    def __str__(self):
+        return self.name
+
+
+    
+#-------------------------------------------------------------------- Contract category ---------
+
+class Contractcategory(models.Model):
+    company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
+    name=models.CharField(max_length=50)
+    description = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.name
+
+
+   
+# ------------------------------------------------------------Contractor------------------------------------------------------------
+
+class Contractor(models.Model):
+    company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
+    name = models.CharField(max_length=100)
+    contact_no = models.CharField(max_length=15)
+    address = models.CharField(max_length=255)
+    area = models.CharField(max_length=100)
+    rate = models.DecimalField(max_digits=10, decimal_places=2)
+    amount=models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
+    maistry = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
+    maison_cooli = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
+    male_skilled = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    male_unskilled = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    female_skilled = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    female_unskilled = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    category = models.ForeignKey(Contractcategory, on_delete=models.CASCADE)
+    start_date=models.DateField()
+
+    def __str__(self):
+        return self.name
+    
+    
+# ------------------------------------------------------------  library ------------------------------------------------------------
+
+
+class WorkStatus(models.Model):
+    name = models.CharField(max_length=50, null=True, blank=True)
+    code = models.CharField(max_length=50, null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
+
+class PaymentStatus(models.Model):
+    name = models.CharField(max_length=50, null=True, blank=True)
+    code = models.CharField(max_length=50, null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
+class PaymentSchedule(models.Model):
+    name = models.CharField(max_length=50, null=True, blank=True)
+    code = models.CharField(max_length=50, null=True, blank=True)
+    
+    def __str__(self):
+        return self.name
+
+class PaymentMethod(models.Model):
+    name = models.CharField(max_length=50, null=True, blank=True)
+    code = models.CharField(max_length=50, null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
+class ContractType(models.Model):
+    name = models.CharField(max_length=50, null=True, blank=True)
+    code = models.CharField(max_length=50, null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
+
+class MaterialLibrary(models.Model):
+    company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
+    item=models.CharField(max_length=100,null=True,blank=True)
+    unit=models.ForeignKey(Uom, on_delete=models.CASCADE,null=True,blank=True)
+    price=models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
+
+    def __str__(self):
+        return self.item
+
+
+    # def __str__(self):
+    #     if self.item:
+    #         return self.item
+    #     return None
+
+    class Meta:
+        #    unique_together to enforce uniqueness across multiple fields
+        unique_together = ('item', 'company', 'unit')
+    
+    
+class OthersLibrary(models.Model):
+    company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
+    item=models.CharField(max_length=100,null=True,blank=True)
+    unit=models.ForeignKey(Uom, on_delete=models.CASCADE,null=True,blank=True)
+    price=models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
+
+
+    def __str__(self):
+        return self.item
+    
+
+    
+class Duration(models.Model):
+    company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
+    name=models.CharField(max_length=100,null=True,blank=True)
+
+
+    def __str__(self):
+        return self.name
+
+
+class Priority(models.Model):
+    company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
+    name=models.CharField(max_length=100,null=True,blank=True)
+
+    def __str__(self):
+        return self.name
+
+class CompanyMachinaryCharges(models.Model) :
+    company = models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
+    name = models.CharField(max_length=100,null=True,blank=True)
+    rate = models.DecimalField(max_digits=10, decimal_places=2, default=0.0) 
+    payment_schedule =  models.ForeignKey(PaymentSchedule, on_delete=models.CASCADE, null=True, blank=True)
+    def __str__(self):
+        return self.name
+    
+class LabourRolesAndSalary(models.Model):
+    company = models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
+    name = models.CharField(max_length=100,null=True,blank=True)
+    rate = models.DecimalField(max_digits=10, decimal_places=2, default=0.0) 
+    payment_schedule =  models.ForeignKey(PaymentSchedule, on_delete=models.CASCADE, null=True, blank=True)
+    def __str__(self):
+        return self.name
+
+class CompanyLabours(models.Model):
+    company = models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
+    name = models.CharField(max_length=100,null=True,blank=True)
+    image  =models.FileField(upload_to="doc")
+    role = models.ForeignKey(LabourRolesAndSalary, on_delete=models.CASCADE, null=True, blank=True)
+    rate = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
+
+
+# -------------------------------------------- project ------------------------------------------------------------------------
+
+
+
+class Project(models.Model):
+    company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
+    proj_id=models.CharField(max_length=100,null=True,blank=True)
+    client = models.CharField(max_length=100,null=True,blank=True)
+    contact_no = models.CharField(max_length=15,null=True,blank=True)
+    address = models.CharField(max_length=255,null=True,blank=True)
+    proj_name=models.CharField(max_length=100,null=True,blank=True)
+    site_location=models.CharField(max_length=100,null=True,blank=True)
+    incharge=models.ForeignKey(Employee, on_delete=models.CASCADE,null=True,blank=True)  #dropdown
+    start_date=models.DateField()
+    duration =models.ForeignKey(Duration, on_delete=models.CASCADE,null=True,blank=True)
+    priority =models.ForeignKey(Priority, on_delete=models.CASCADE,null=True,blank=True)
+    estimation=models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
+    modeldesign =models.FileField(upload_to="doc")
+    aggeaments =models.FileField(upload_to="doc")
+    status = models.ForeignKey(WorkStatus, on_delete=models.CASCADE,null=True,blank=True)
+    proj_category = models.ForeignKey(ProjectCategory, on_delete=models.CASCADE,null=True,blank=True)
+
+
+    
+
+    def __str__(self):
+        return f"{self.proj_name} - {self.site_location}"
+
+    @property
+    def stock(self):
+        if self.sitestock_set.all():
+            return self.sitestock_set.all()
+        return None
+    
+    # def __init__(self, *args, **kwargs):
+    #     super().__init__(*args, **kwargs)
+    #     if not self.pk: 
+    #         self.status = WorkStatus.objects.filter(code="-2").last()  
+
+    def save(self, *args, **kwargs):
+        if not self.pk:  # Only set the default status for new projects
+            default_status = WorkStatus.objects.filter(code="-2").last()
+            if default_status:
+                self.status = default_status
+        super().save(*args, **kwargs)
+
+
+# ----------------------------- stock management ----------------------------------  
+
+
+class PurchaseInvoice(models.Model):
+    vendor =models.ForeignKey(VendorRegistration, on_delete=models.CASCADE,null=True,blank=True)
+    company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
+    vendor_company=models.CharField(max_length=255,null=True,blank=True)
+    gst= models.CharField(max_length=255,null=True,blank=True)
+    contact_no= models.CharField(max_length=255,null=True,blank=True)
+    invoice_id=models.CharField(max_length=255,null=True,blank=True)
+    created_at=models.DateField()
+    total_amount=models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
+    paid=models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
+    pending=models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
+    
+
+    class Meta:
+        # Define a unique constraint to enforce uniqueness of invoice_id per company
+        unique_together = ('invoice_id', 'company')
+    
+    def clean(self):
+        super().clean()
+
+        if self.invoice_id and self.company_id is not None:
+            existing_invoices = PurchaseInvoice.objects.filter(
+                invoice_id=self.invoice_id,
+                company=self.company
+            ).exclude(pk=self.pk)  # Exclude the current instance if updating
+            if existing_invoices.exists():
+                raise ValidationError({'invoice_id': ['An invoice with this ID already exists for this company.']})
+
+
+    def save(self, *args, **kwargs):
+        self.full_clean()  #
+        if not self.invoice_id:
+            # Generate or set the invoice_id if not already provided
+            # You can generate it based on your specific requirements
+            # For example, combining company_id with a unique identifier
+            self.invoice_id = f'{self.company_id}-{self.generate_unique_identifier()}'
+
+        super().save(*args, **kwargs)
+
+
+    def generate_unique_identifier(self):
+        # Implement your logic to generate a unique identifier for the invoice_id
+        # This could be a random string, timestamp, or any other unique identifier
+        # For simplicity, let's assume it's a random string
+        import random
+        import string
+        return ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+
+
+    # def __str__(self):
+    #     return self.vendor_company
+    
+
+    @property
+    def get_purchase_items(self):
+        if self.purchaseitems_set.all():
+            return self.purchaseitems_set.all()
+        else :
+            return []
+
+
+class InventoryStock(models.Model):
+    company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
+    item=models.ForeignKey(MaterialLibrary, on_delete=models.CASCADE,null=True,blank=True)
+    name= models.CharField(max_length=255,null=True,blank=True)
+    total_supplied_qty=models.DecimalField(max_digits=10, decimal_places=2, default=0.0) 
+    qty=models.DecimalField(max_digits=10, decimal_places=2, default=0.0)    #add  with purchase qty
+    price=models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
+    unit=models.ForeignKey(Uom, on_delete=models.CASCADE,null=True,blank=True)
+    total_amount=models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
+    taken_qty = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
+
+
+    # def __str__(self):
+    #     if self.name:
+    #         return self.name
+    #     return None
+
+    def save(self, *args, **kwargs):
+        if not self.total_supplied_qty:
+           self.total_supplied_qty =self.qty
+        super().save(*args, **kwargs)
+
+    @property
+    def get_total(self):
+        total = self.qty * self.price
+        return  "{:.2f}".format(total)
+    
+    @property
+    def available_qty(self):
+        total = self.total_supplied_qty - self.taken_qty
+        return  "{:.2f}".format(total)
+        
+class DailyInventoryUsage(models.Model):
+    stock=models.ForeignKey(InventoryStock, on_delete=models.CASCADE,null=True,blank=True)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE,null=True,blank=True)
+    material = models.ForeignKey(MaterialLibrary, on_delete=models.CASCADE,null=True,blank=True)
+    date = models.DateField(auto_now_add=True)
+    used = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
+
+    def __str__(self):
+        return f"{self.material} - {self.date}"
+    
+
+  
+
+class PurchaseItems(models.Model):
+    invoice=models.ForeignKey(PurchaseInvoice, on_delete=models.CASCADE,null=True,blank=True)
+    item=models.ForeignKey(MaterialLibrary, on_delete=models.CASCADE,null=True,blank=True)
+    inventory=models.ForeignKey(InventoryStock, on_delete=models.CASCADE,null=True,blank=True)   #change
+    name = models.CharField(max_length=255, null=True,blank=True)
+    qty=models.DecimalField(max_digits=10, decimal_places=2, default=0.0)   #change
+    price=models.DecimalField(max_digits=10, decimal_places=2, default=0.0)   #change
+    unit=models.ForeignKey(Uom, on_delete=models.CASCADE,null=True,blank=True)    #change
+    sub_total=models.DecimalField(max_digits=10, decimal_places=2, default=0.0)     #change
+
+    def __str__(self):
+        return self.name or "Unnamed Purchase Item"
+
+class SiteStock(models.Model):
+    company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
+    project=models.ForeignKey(Project, on_delete=models.CASCADE,null=True,blank=True)
+    inventory=models.ForeignKey(InventoryStock, on_delete=models.CASCADE,null=True,blank=True)
+    item=models.ForeignKey(MaterialLibrary, on_delete=models.CASCADE,null=True,blank=True)
+    name= models.CharField(max_length=255,null=True,blank=True)
+    total_supplied_qty=models.DecimalField(max_digits=10, decimal_places=2, default=0.0) 
+    qty=models.DecimalField(max_digits=10, decimal_places=2, default=0.0)    #qty
+    price=models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
+    unit=models.ForeignKey(Uom, on_delete=models.CASCADE,null=True,blank=True)
+    total_amount=models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
+    taken_qty = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
+
+    # def __str__(self):
+    #     return self.name
+
+    class Meta:
+        # Define unique_together to enforce uniqueness across multiple fields
+        unique_together = ('item', 'company', 'unit','project')
+
+
+    def save(self, *args, **kwargs):
+        if not self.total_supplied_qty:
+           self.total_supplied_qty =self.qty
+        super().save(*args, **kwargs)
+
+    @property
+    def get_total(self):
+        total = self.qty * self.price
+        return  "{:.2f}".format(total)
+    
+    @property
+    def available_qty(self):
+        total = self.total_supplied_qty - self.taken_qty
+        return  "{:.2f}".format(total)
+    
+
+class DailyMaterialUsage(models.Model):
+    stock=models.ForeignKey(SiteStock, on_delete=models.CASCADE,null=True,blank=True)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE,null=True,blank=True)
+    material = models.ForeignKey(MaterialLibrary, on_delete=models.CASCADE,null=True,blank=True)
+    date = models.DateField(auto_now_add=True)
+    used = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
+
+    def __str__(self):
+        return f"{self.material} - {self.date}"
+    
+
+    
+class Quatation(models.Model):
+    company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
+    quatation_id=models.CharField(max_length=255,null=True,blank=True)
+    site=models.ForeignKey(Project, on_delete=models.CASCADE,null=True,blank=True)
+    created_at=models.DateField(auto_now_add=True)
+
+    def __str__(self):
+        return self.quatation_id
+
+    def get_quotation_items(self):
+        if self.quatationitems_set.all():
+            return self.quatationitems_set.all()
+        else :
+            return []
+
+class QuatationItems(models.Model):
+    invoice=models.ForeignKey(Quatation, on_delete=models.CASCADE,null=True,blank=True)
+    item=models.ForeignKey(MaterialLibrary, on_delete=models.CASCADE,null=True,blank=True)   #change
+    name= models.CharField(max_length=255,null=True,blank=True)
+    qty=models.DecimalField(max_digits=10, decimal_places=2, default=0.0)   #change
+    unit=models.ForeignKey(Uom, on_delete=models.CASCADE,null=True,blank=True)    #change
+
+    def __str__(self):
+         return self.name if self.name else 'Unnamed QuatationItem'
+
+
+
+class TransferInvoice(models.Model):
+    company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
+    from_site = models.ForeignKey(Project,related_name='from_project', on_delete=models.CASCADE,null=True,blank=True)
+    to_site =  models.ForeignKey(Project,related_name='to_project', on_delete=models.CASCADE,null=True,blank=True)
+    from_inventory =  models.ForeignKey(Company,related_name='from_company', on_delete=models.CASCADE,null=True,blank=True)
+    to_inventory =  models.ForeignKey(Company,related_name='to_company', on_delete=models.CASCADE,null=True,blank=True)
+    created_at=models.DateField(auto_now_add=True)
+    invoice_id=models.CharField(max_length=255,null=True,blank=True)
+    item_delivered =models.BooleanField(default=False)
+    received_by =models.ForeignKey(Employee, on_delete=models.CASCADE,null=True,blank=True)
+
+    @property
+    def get_transfer_items(self):
+        if self.transferitems_set.all():
+            return self.transferitems_set.all()
+        return None
+
+
+class TransferItems(models.Model):
+    invoice=models.ForeignKey(TransferInvoice, on_delete=models.CASCADE,null=True,blank=True)
+    item=models.ForeignKey(MaterialLibrary, on_delete=models.CASCADE,null=True,blank=True)
+    inventory=models.ForeignKey(InventoryStock, on_delete=models.CASCADE,null=True,blank=True)
+    name= models.CharField(max_length=255,null=True,blank=True)
+    unit=models.ForeignKey(Uom, on_delete=models.CASCADE,null=True,blank=True)
+    qty=models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
+    price=models.DecimalField(max_digits=10, decimal_places=2)
+    total_amount=models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
+    item_delivered =models.BooleanField(default=False)
+    received_by =models.ForeignKey(Employee, on_delete=models.CASCADE,null=True,blank=True)
+
+
+    @property
+    def get_total(self):
+        if self.qty:
+            return self.qty *self.price
+        return None
+
+
+
+
+# --------------------------------------- salary management -----------------------------------------------
+
+
+class Attendance(models.Model):
+    clock_in=models.TimeField(null=True, blank=True)
+    clock_out=models.TimeField(null=True, blank=True)
+    employee=models.ForeignKey(Employee,null=True,blank=True, on_delete=models.CASCADE)
+    date=models.DateField(auto_now_add=True,null=True,blank=True)
+    present=models.BooleanField(default=True)
+
+
+    class Meta:
+       ordering = ['-pk'] 
+
+    class Meta:
+        unique_together = ('employee', 'date')
+
+    @property
+    def employee_info(self):
+        if self.employee:
+            return self.employee
+        return 
+    
+    def in_time(self):
+        if self.clock_in:
+            return self.clock_in.strftime('%I:%M %p')  # Format with AM/PM
+        else:
+            return ""
+    
+    def out_time(self):
+        if self.clock_out:
+            return self.clock_out.strftime('%I:%M %p')  # Format with AM/PM
+        else:
+            return ""
+
+class Salary(models.Model):
+    company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
+    employee=models.ForeignKey(Employee,null=True,blank=True, on_delete=models.CASCADE)
+    payment_date = models.DateField()
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    payment_schedule = models.ForeignKey(PaymentSchedule, on_delete=models.CASCADE, null=True, blank=True)
+ 
+
+# make payment receipt
+class SalaryReceipt(models.Model):
+    salary = models.ForeignKey(Salary, on_delete=models.CASCADE, null=True, blank=True)
+    created_by=models.ForeignKey(Employee,null=True,blank=True, on_delete=models.CASCADE)
+    payment_date = models.DateField(auto_now_add=True)
+    amount_paid = models.DecimalField(max_digits=10, decimal_places=2)
+    payment_method = models.ForeignKey(PaymentMethod, on_delete=models.CASCADE, null=True, blank=True)
+    transaction_id = models.CharField(max_length=100)
+    payment_receipt = models.FileField(upload_to='salary_receipts/', null=True, blank=True)
+
+# --------------------------------------------------------------- Project Sub Contracct -----------------------------------------------------------------
+
+# make acontract for project
+class ProjectSubContract(models.Model):
+    company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE,null=True,blank=True)
+    type = models.ForeignKey(ContractType, on_delete=models.CASCADE,null=True,blank=True)
+    contractor = models.ForeignKey(Contractor, on_delete=models.CASCADE,null=True,blank=True)
+    start_date = models.DateField()
+    end_date = models.DateField()
+    contract_amount = models.DecimalField(max_digits=10, decimal_places=2)
+    payment_schedule = models.ForeignKey(PaymentSchedule, on_delete=models.CASCADE, null=True, blank=True)
+    status = models.ForeignKey(WorkStatus, on_delete=models.CASCADE,null=True,blank=True)
+    description = models.TextField() 
+    progress_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
+    terms_conditions = models.TextField()
+    created_at= models.DateField(auto_now_add=True)
+    created_by=models.ForeignKey(Employee,null=True,blank=True, on_delete=models.CASCADE)
+
+
+    @property
+    def get_service_rates(self):
+        if self.projectsubcontractunitrates_set.all():
+            return self.projectsubcontractunitrates_set.all()
+        return None
+    
+    @property
+    def get_labour_rates(self): #ProjectSubContractLabourWages
+        if self.projectsubcontractlabourwages:
+            return self.projectsubcontractlabourwages
+        return None
+    
+
+    @property
+    def get_labour_attendence(self):
+        if self.Projectsubcontractlabourattendence_set.all():
+            return self.Projectsubcontractlabourattendence_set.all()
+        return None
+    
+
+    @property
+    def get_contract_invoice(self):
+        if self.contractorinvoice_set.all():
+            return self.contractorinvoice_set.all()
+        return None
+    
+
+    @property
+    def get_pending_amount(self):
+        contract_invoices = self.get_contract_invoice
+        if contract_invoices:
+            total_paid_amount = sum(invoice.paid_amount for invoice in contract_invoices)
+            pending_amount = self.contract_amount - total_paid_amount
+            return pending_amount if pending_amount > 0 else 0
+        return None
+    
+
+    @property
+    def total_service_amount(self):
+        service_rates= self.get_service_rates
+        total_amount = sum(rate.amount for rate in service_rates)
+        return total_amount
+    
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if not self.pk: 
+            self.status = WorkStatus.objects.filter(code="-2").last()  
+
+
+# ITEM RATES
+class ProjectSubContractUnitRates(models.Model):
+    contract = models.ForeignKey(ProjectSubContract, on_delete=models.CASCADE, null=True, blank=True)
+    created_by=models.ForeignKey(Employee,null=True,blank=True, on_delete=models.CASCADE)
+    work =models.TextField() 
+    unit= models.ForeignKey(Uom, on_delete=models.CASCADE, null=True, blank=True)
+    rate = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    total_qty = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    amount= models.DecimalField(max_digits=10, decimal_places=2, default=0)
+
+  
+# wages amount
+class ProjectSubContractLabourWages(models.Model):
+    contract = models.OneToOneField(ProjectSubContract, on_delete=models.CASCADE, null=True, blank=True)
+    created_by=models.ForeignKey(Employee,null=True,blank=True, on_delete=models.CASCADE)
+    maistry = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
+    maison_cooli = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
+    male_skilled = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    male_unskilled = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    female_skilled = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    female_unskilled = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    date=models.DateField(auto_now_add=True)
+
+
+# contract labours  app
+class ProjectSubContractLabourAttendence(models.Model):
+    created_by=models.ForeignKey(Employee,null=True,blank=True, on_delete=models.CASCADE)
+    contract = models.ForeignKey(ProjectSubContract, on_delete=models.CASCADE, null=True, blank=True)
+    maistry = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
+    maison_cooli = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
+    male_skilled = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    male_unskilled = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    female_skilled = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    female_unskilled = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+
+    maistry_ot = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
+    maison_cooli_ot = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
+    male_skilled_ot = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    male_unskilled_ot = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    female_skilled_ot = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    female_unskilled_ot = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    date=models.DateField(auto_now_add=True)
+
+
+# make invoice for project
+class ContractorInvoice(models.Model):
+    created_by=models.ForeignKey(Employee,null=True,blank=True, on_delete=models.CASCADE)
+    contract = models.ForeignKey(ProjectSubContract, on_delete=models.CASCADE, null=True, blank=True)
+    invoice_date = models.DateField(auto_now_add=True)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    pending_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    paid_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    payment_due_date = models.DateField()
+    status = models.ForeignKey(PaymentStatus, on_delete=models.CASCADE, null=True, blank=True)
+    invoice_number = models.CharField(max_length=100)  
+    terms_conditions = models.TextField()
+    documents = models.FileField(upload_to='invoices/', null=True, blank=True)
+
+    
+
+# make payment receipt
+class ContractorInvoicePayment(models.Model):
+    invoice = models.ForeignKey(ContractorInvoice, on_delete=models.CASCADE, null=True, blank=True)
+    created_by=models.ForeignKey(Employee,null=True,blank=True, on_delete=models.CASCADE)
+    payment_date = models.DateField(auto_now_add=True)
+    amount_paid = models.DecimalField(max_digits=10, decimal_places=2)
+    payment_method = models.ForeignKey(PaymentMethod, on_delete=models.CASCADE, null=True, blank=True)
+    transaction_id = models.CharField(max_length=100)
+    payment_receipt = models.FileField(upload_to='payment_receipts/', null=True, blank=True)
+
+
+
+# company labour
+class ProjectLabourAttendence(models.Model):
+    project = models.ForeignKey(Project, on_delete=models.CASCADE,null=True,blank=True)
+    labour = models.ForeignKey(CompanyLabours, on_delete=models.CASCADE, null=True, blank=True)
+    over_time = models.DecimalField(max_digits=10, decimal_places=2)
+    clock_in=models.TimeField(null=True, blank=True)
+    clock_out=models.TimeField(null=True, blank=True)
+    date=models.DateField(auto_now_add=True,null=True,blank=True)
+    present=models.BooleanField(default=True)
+
+
+
+# machinary works
+class ProjectMachineExpense(models.Model):
+    project = models.ForeignKey(Project, on_delete=models.CASCADE,null=True,blank=True)
+    name = models.CharField(max_length=100,null=True,blank=True)
+    machine = models.ForeignKey(CompanyMachinaryCharges, on_delete=models.CASCADE, null=True, blank=True)
+    rate = models.DecimalField(max_digits=10, decimal_places=2, default=0.0) 
+    payment_schedule =  models.ForeignKey(PaymentSchedule, on_delete=models.CASCADE, null=True, blank=True)
+    qty = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+
+
+
+
+
+# ------------------------ expense --------------------------------------------------- ---------------------
+
+
+class Expense(models.Model):
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, null=True, blank=True)
+    date = models.DateField(auto_now_add=True)
+    particular = models.CharField(max_length=100)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    site_location = models.ForeignKey(Project, on_delete=models.CASCADE,null=True, blank=True ) 
+    employee = models.ForeignKey(Employee, on_delete=models.CASCADE, null=True, blank=True) 
+    attachment  =models.FileField(upload_to="doc")
+
+
+
+-------------- add quatation
+
+
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block header2 %}    
+    <!-- Begin page -->
+    <div id="layout-wrapper">
+
+        <div class="main-content">
+
+            <div class="page-content">
+                <div class="container-fluid">
+
+                    <!-- start page title -->
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                                <h4 class="mb-sm-0">Quatation</h4>
+
+                                <div class="page-title-right">
+                                    <ol class="breadcrumb m-0">
+                                        <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
+                                        <li class="breadcrumb-item active">Add Quatation</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+						<div class="col-xl-5 col-lg-5 col-md-6 col-xs-6 col-12">
+							
+						</div>
+						<div class="col-xl-5 col-lg-4 col-md-3 col-xs-6 col-12"></div>
+						<div class="col-xl-2 col-lg-3 col-md-3 col-xs-6 col-12">
+							<a href="{% url 'quatationlist' %}" type="button" class="btn btn-info mb-2" style="float:right;" >Quatation List</a>
+														
+						</div>
+					</div>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="card">
+                                <div class="card-body">
+									<h2>Site details </h2>
+									<hr>
+                                    <form id="createForm" enctype="multipart/form-data">
+										{% csrf_token %}
+									<div class="row">
+										<div class="col-md-4">
+											<label for="" class="form-label">Quatation No :</label>
+											<input type="text" class="form-control" id="quatation_id" name="quatation_id">
+                                            <span id="quatation_idError" class="error-message" ></span>
+										</div>
+										<div class="col-md-4">
+											<label for="" class="form-label">Site Name :</label>
+											<select class="form-select mb-3" aria-label="Default select example" id="site" name="site">
+												<option value="">---------------------</option>
+												{% for i in site %}
+													<option value="{{ i.id }}">{{ i.site_location }}</option>
+												{% endfor %}	
+											</select>
+                                            <span id="siteError" class="error-message" ></span>
+										</div>
+										
+										<div class="col-md-4">
+											<label for="" class="form-label">Date :</label>
+											<input type="date" class="form-control" id="start_date" name="start_date">
+                                            <span id="start_dateError" class="error-message" ></span>
+										</div>
+																				
+									</div>
+									<hr>
+									<h2>Items Need </h2>
+									<hr>
+									<div class="card-body">
+										<table id="tabl" class="table table-bordered dt-responsive nowrap table-striped align-middle" style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                
+                                                <th>SR No.</th>
+                                                <th>Item Name</th>                            
+                                                <th> Name</th>                                                                                               
+                                                <th> Unit</th>  
+                                                <th>Quantity</th>                                                                                             
+                                                <th>Action</th>
+                                                
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                
+                                                <td>{{ forloop.counter }}</td>
+                                                <td>
+                                                    <select class="form-select mb-3" aria-label="Default select example" id="item" name="item">
+														<option value="">------------------</option>
+														{% for i in materiallibrary %}
+															<option value="{{ i.id }}">{{ i.item }}</option>
+														{% endfor %}
+													</select>
+													<span id="itemError" class="error-message"></span>
+                                                </td>
+                                                <td><input type="text" class="form-control" id="name" name="name"></td>
+                                                <td>
+                                                    <select class="form-select mb-3 form-control"  aria-label="Default select example" name="unit" id="unit">
+
+                                                        <option value=""> ------------------</option>
+
+                                                        {% for i in uom %}
+                                                        <option value="{{i.id}}">{{i.name}} </option>
+                                                        {% endfor %}
+                                                      </select>
+                                                      <span id="unitError" class="error-message"></span>
+                                                </td>
+                                                
+                                                <td><input type="text" class="form-control" id="qty" name="qty"></td>
+                                                
+                                                <td>
+                                                    <div class="dropdown d-inline-block">
+                                                        <button class="btn btn-soft-secondary btn-sm dropdown add-row" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                            <i class="ri-add-fill align-middle"></i>
+                                                        </button>
+                                                        <!--<ul class="dropdown-menu dropdown-menu-end">
+                                                            <li><a href="#!" class="dropdown-item"><i class="ri-eye-fill align-bottom me-2 text-muted"></i> View</a></li>
+                                                            <li><a class="dropdown-item edit-item-btn"><i class="ri-add-fill align-bottom me-2 text-muted"></i> Edit</a></li>
+                                                            <li>
+                                                                <a class="dropdown-item remove-item-btn">
+                                                                    <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete
+                                                                </a>
+                                                            </li>
+                                                        </ul> -->
+                                                    </div>
+                                                </td>
+                                            </tr>                                            
+                                        </tbody>
+                                    </table>
+									
+									<p class="text-center mt-2">
+										<button class="btn btn-link link-success fw-medium shadow-none" data-bs-dismiss="modal" onclick="clearErrors()" >
+													
+                                            <i class="ri-close-line me-1 align-middle"></i> Close</button>
+
+                                         <button type="button" class="btn btn-primary" onclick="createFunction(this)">Save </button>
+									</p>
+									</div>								</div>
+
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+<!-- container-fluid -->
+            </div>
+            <!-- End Page-content -->
+
+            
+        </div>
+        <!-- end main content-->
+
+    </div>
+    <!-- END layout-wrapper -->
+
+
+
+    <!--start back-to-top-->
+    <button onclick="topFunction()" class="btn btn-danger btn-icon" id="back-to-top">
+        <i class="ri-arrow-up-line"></i>
+    </button>
+    <!--end back-to-top-->
+
+    <!--preloader-->
+    <div id="preloader">
+        <div id="status">
+            <div class="spinner-border text-primary avatar-sm" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    </div>
+
+  
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" ></script>
+
+    <!--invoice,project,purchase,quatation,transfer,vendor,vendorquates-->
+       <script type="text/javascript">
+               $(document).ready(function() {
+                   var i = 0;
+   
+                   $(".add-row").click(function(event) {
+                       event.preventDefault();
+                       ++i;
+
+                       var newRow = `<tr>
+				       <td>${i}</td>
+						
+						<td>
+							<select class="form-select mb-3" aria-label="Default select example" id="item" name="item">
+								<option value="">------------------</option>
+								{% for i in materiallibrary %}
+									<option value="{{ i.id }}">{{ i.item }}</option>
+								{% endfor %}
+							</select>
+							<span id="itemError" class="error-message"></span>
+						</td>
+						<td><input type="text" class="form-control" id="name" name="name"></td>
+						<td><select class="form-select mb-3 form-control"  aria-label="Default select example" name="unit" id="unit">
+							<option value=""> ------------------</option>
+
+							{% for i in uom %}
+							<option value="{{i.id}}">{{i.name}} </option>
+							{% endfor %}
+						  </select>
+						  <span id="unitError" class="error-message"></span></td>
+						<td><input type="text" name="qty" value="" class="form-control"></td>
+						
+						<td><button type="button" class="btn btn-danger btn-icon waves-effect waves-light remove-table-row">
+							<i class="ri-delete-bin-5-line"></i></button></td>
+						</tr>`;
+   
+					   $("#tabl").append(newRow);
+				   });
+   
+				   $(document).on('click', '.remove-table-row', function() {
+					   $(this).parents('tr').remove();
+				   });
+			   });
+   
+                       
+     </script>  
+
+     <script>
+		// create form
+	
+		function createFunction(button) {
+			var formId = `createForm`;   //change
+			var formElement = document.getElementById(formId);
+			try {
+				disableButton(button);
+				var isValid = true;
+				var errors = {};
+				var formData = new FormData();
+	
+				var requiredKeys = ['site','quatation_id','start_date'];   //change
+
+				//var requiredKeys = ['vendor_company']
+
+				formData.append('site', getValueOrDefault(formElement.querySelector('select[name="site"]').value));              //change
+				formData.append('quatation_id', getValueOrDefault(formElement.querySelector('input[name="quatation_id"]').value));
+				formData.append('start_date', getValueOrDefault(formElement.querySelector('input[name="start_date"]').value));
+
+				var tableData = [];
+				$('#tabl tbody tr').each(function () {
+					console.log(this)
+				
+					var rowData = {};
+					rowData['item'] = $(this).find('select[name^="item"]').val();
+					rowData['name'] = $(this).find('input[name^="name"]').val();
+					rowData['unit'] = $(this).find('select[name^="unit"]').val();
+					rowData['qty'] = $(this).find('input[name^="qty"]').val();
+					tableData.push(rowData);
+				});
+
+
+				console.log(tableData)
+	
+	
+				requiredKeys.forEach(function (key) {
+					var value = formData.get(key);
+					if (!value.trim()) {
+						isValid = false;
+						errors[key] = ['This field may not be blank.'];
+					}
+				});
+	
+				if (!isValid) {
+					enableButton(button);
+					console.log(errors);
+					handleCreateErrors(errors);
+					return;
+				} else {
+					$(`#${formId} input, #${formId} button`).prop('disabled', true);
+	
+				}
+
+				formData.append("table", JSON.stringify(tableData))
+	
+				$.ajax({
+					url: '/add_quatation/',                //change
+					type: 'POST',
+					headers: {
+						'X-CSRFToken': csrftoken,
+					},
+					data: formData,
+					processData: false,
+					contentType: false,
+					success: function (response, status, xhr) {
+						console.error(status);
+						if (xhr.status === 201) {
+							showToast(successMesssage?.message, '', successMesssage?.bgColor, true);
+						} else {
+							console.error(error);
+							restoreForm(formId, button)
+	
+						}
+					},
+					error: function (xhr, status, error) {
+						console.log(xhr, status, error);
+						if (xhr.status === 400) {
+							if (xhr?.responseJSON || xhr?.responseJSON?.errors) {
+								handleCreateErrors(transformErrors(xhr.responseJSON));
+								restoreForm(formId, button)
+	
+							} else {
+								showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+								restoreForm(formId, button)
+	
+							}
+						}
+						else if (xhr.status === 401 || 404) {
+							showToast(xhr?.responseJSON?.details, '', errorAlertMessage?.bgColor);
+							restoreForm(formId, button)
+	
+						}
+						else {
+							showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+							restoreForm(formId, button)
+	
+						}
+					}
+				});
+			} catch (error) {
+				showToast(errorOccured?.message, '', errorOccured?.bgColor);
+				restoreForm(formId, button)
+				console.error(error);
+			}
+		}
+
+	</script>
+   
+
+{% endblock header2 %}  
+
+
+
+
+
+
+
+
+-------------------------- Quatation List
+
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block header2 %}  
+    <!-- Begin page -->
+    <div id="layout-wrapper">
+
+        <div class="main-content">
+
+            <div class="page-content">
+                <div class="container-fluid">
+
+                    <!-- start page title -->
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                                <h4 class="mb-sm-0">Quatation List </h4>
+
+                                <div class="page-title-right">
+                                    <ol class="breadcrumb m-0">
+                                        <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
+                                        <li class="breadcrumb-item active">List</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+						<div class="col-xl-5 col-lg-5 col-md-6 col-xs-6 col-12">
+							
+						</div>
+						<div class="col-xl-5 col-lg-4 col-md-3 col-xs-6 col-12"></div>
+						<div class="col-xl-2 col-lg-3 col-md-3 col-xs-6 col-12">
+							<a href="{% url 'quatation' %}" type="button" class="btn btn-info mb-2" style="float:right;" >Add Quatation </a>
+														
+						</div>
+					</div>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    
+									<div class="row">
+									<div class="col-xl-6 col-lg-6 col-md-6 col-12">
+										<h2>Quatation List Management </h2>
+									</div>
+									<div class="col-xl-4 col-lg-4 col-md-4 col-12"></div>
+									<div class="col-xl-2 col-lg-2 col-md-2 col-12">
+										
+									</div>
+								</div>
+                                </div>
+                                <div class="card-body">
+									<div class="row">
+										<div class="col-xl-3 col-lg-3 col-md-3 col-xs-6 col-12">
+                                            <label for="fromsite" class="form-label">Site Name:</label>
+                                            <select class="form-select mb-3" id="fromsite" name="site" aria-label="Default select example">
+                                               
+                                                {% for site in site %}
+                                                    <option value="{{ site.id }}">{{ site.site_location }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+										<div class="col-xl-3 col-lg-3 col-md-3 col-xs-6 col-12">
+											<label for="exampleInputdate" class="form-label" id="">From Date</label>
+                                            <input type="date" class="form-control" id="fromdate">
+										</div>
+										<div class="col-xl-3 col-lg-3 col-md-3 col-xs-6 col-12">
+											<label for="exampleInputdate" class="form-label">To Date</label>
+                                            <input type="date" class="form-control" id="todate">
+										</div>
+										<div class="col-xl-3 col-lg-3 col-md-3 col-xs-6 col-12">
+											<br><button type="button" class="btn btn-primary waves-effect waves-light mt-2">Get Report</button>
+										</div>
+									</div>
+									<hr>
+                                    <table id="example" class="table table-bordered dt-responsive nowrap table-striped align-middle" style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col" style="width: 10px;">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input fs-15" type="checkbox" id="checkAll" value="option">
+                                                    </div>
+                                                </th>
+                                                <th data-ordering="false">S No.</th>
+                                                <th data-ordering="false">Date</th>
+                                                <th data-ordering="false">Site Name</th>
+                                                <th data-ordering="false">Quatation No</th>                    
+                                                <th data-ordering="false">Action</th>
+                                                
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for i in queryset %}
+                                            <tr>
+                                                <th scope="row">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input fs-15" type="checkbox" name="checkAll" value="option1">
+                                                    </div>
+                                                </th>
+                                                <td>{{ forloop.counter }}</td>
+												<td>{{ i.start_date }}</td>
+                                                <td>{{ i.site }}</td>
+                                                <td>{{ i.quatation_id }}</td>                                               
+                                                                                                
+                                                <td>
+                                                    <div class="dropdown d-inline-block">
+                                                        <button class="btn btn-soft-secondary btn-sm dropdown view-btn" type="button" data-bs-toggle="modal"
+														 aria-expanded="false" onclick="openModal('viewModal','{{ i.id }}')" >
+                                                            <i class="ri-eye-fill align-middle" ></i>
+                                                        </button>
+														<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" 
+														id="viewModal_{{i.id}}"
+														aria-labelledby="myLargeModalLabel" aria-hidden="true" >
+															<div class="modal-dialog modal-lg">
+																<div class="modal-content">
+																	<div class="modal-header">
+																		<h5 class="modal-title" id="myLargeModalLabel">Quatation Details</h5>
+																		<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+																		</button>
+																	</div>
+																	<hr>																	
+                                                                    <div class="modal-body">
+																		<div class="table-responsive">
+																			<table class="table table-bordered">
+                                                                                <thead>
+																				<tr>
+																					<th>S.no</th>
+																					<th>Item Name</th>
+																					<th>Qty</th>
+																				</tr>
+                                                                                </thead>
+                                                                                <tbody>
+                                                                                    {% for j in i.quatationitems_set.all %}
+                                                                                    <tr>
+                                                                                        
+                                                                                        <td>{{ forloop.counter }}</td>
+                                                                                        <td>
+                                                                                            {% if j.item %}
+                                                                                                {{ j.item }}
+                                                                                            {% else %}
+                                                                                                {{ j.name }}
+                                                                                            {% endif %}
+                                                                                        </td>
+                                                                                        <td>{{ j.qty }}</td>                                              
+                                                                                       
+                                                                                    </tr> 
+                                                                                    {% endfor %}
+                                                                                </tbody>
+																			</table>
+																		</div>
+																	</div>
+																	<hr>
+																	<div class="modal-footer">
+																		<button class="btn btn-link link-success fw-medium shadow-none" data-bs-dismiss="modal" onclick="clearErrors()" >
+													
+                                                                            <i class="ri-close-line me-1 align-middle"></i> Close</button>
+																		<button type="button" class="btn btn-primary ">Save </button>
+																	</div>
+																</div>
+																<!-- /.modal-content -->
+															</div>
+															<!-- /.modal-dialog -->
+														</div>
+														{% comment %} <button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                            <i class="ri-pencil-fill align-middle"></i>
+                                                        </button>
+														<button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                            <i class="ri-delete-bin-fill align-middle"></i>
+                                                        </button> {% endcomment %}
+                                                        
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+
+                                    <div id="results-container"></div>
+								<div id="pagination-container"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+<!-- container-fluid -->
+            </div>
+            <!-- End Page-content -->
+
+         
+        </div>
+        <!-- end main content-->
+
+    </div>
+    <!-- END layout-wrapper -->
+
+   
+
+    <!--start back-to-top-->
+    <button onclick="topFunction()" class="btn btn-danger btn-icon" id="back-to-top">
+        <i class="ri-arrow-up-line"></i>
+    </button>
+    <!--end back-to-top-->
+
+    <!--preloader-->
+    <div id="preloader">
+        <div id="status">
+            <div class="spinner-border text-primary avatar-sm" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    </div>
+ 
+
+	</script>
+
+  
+    {% endblock header2 %}  
+
+
+
+
+
+
+
+
+
+
+
+{% extends "base.html" %} 
+
+{% load static %}
+
+{% block header2 %}
+
+<!-- Begin page -->
+
+<div id="layout-wrapper">
+
+  <div class="main-content">
+
+    <div class="page-content">
+
+      <div class="container-fluid">
+
+        <!-- start page title -->
+        <div class="row">
+          <div class="col-12">
+            <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+              <h4 class="mb-sm-0">UOM</h4>
+  
+              <div class="page-title-right">
+                <ol class="breadcrumb m-0">
+                  <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
+                  <li class="breadcrumb-item active">UOM</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+
+          <div class="col-lg-12">
+
+            <div class="card">
+
+              <div class="card-header">
+
+                <div class="row">
+
+                  <div class="col-xl-6 col-lg-6 col-md-6 col-12"><h2>UOM Management</h2></div>
+                  
+                  <div class="col-xl-4 col-lg-4 col-md-4 col-12"></div>
+
+                  <div class="col-xl-2 col-lg-2 col-md-2 col-12">
+                    
+                    <button type="button" class="btn btn-info" style="float: right" data-bs-toggle="modal" data-bs-target=".bs-example-modal-lg" >
+                       Add UOM
+                    </button>
+
+                    <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" >
+
+                      <div class="modal-dialog modal-lg">
+                    
+                        <div class="modal-content">
+                    
+                          <div class="modal-header">
+                    
+                            <h5 class="modal-title" id="myLargeModalLabel"> UOM </h5>
+
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="clearErrors()" ></button>
+                          
+                          </div> <hr />
+
+                          <div class="modal-body">
+
+                            <form id="createForm" enctype="multipart/form-data">
+
+                              {% csrf_token %}
+
+                              <div class="row">
+
+                                <div class="col-md-6">
+
+                                  <label for="id_name" class="form-label" >UOM Name :</label >
+
+                                  <input type="text" name="name" class="form-control" id="name" />
+
+                                  <span id="nameError" class="error-message" ></span>
+
+                                </div>
+
+                              </div><hr />
+
+                              <div class="modal-footer">
+
+                                <button class="btn btn-link link-success fw-medium shadow-none" data-bs-dismiss="modal" onclick="clearErrors()" >
+                                  
+                                  <i class="ri-close-line me-1 align-middle" ></i> Close 
+                                
+                                </button>
+
+                                <button type="button" class="btn btn-primary" onclick="createFunction(this)" > Save </button>
+
+                              </div>
+
+                            </form>
+
+                          </div>
+
+                        </div>
+
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                </div>
+
+                <div class="card-body">
+
+                  
+
+                  <table id="example" class="table table-bordered dt-responsive nowrap table-striped align-middle" style="width: 100%" >
+
+                    <thead>
+
+                      <tr>
+
+                        
+
+                        <th data-ordering="false">SR No.</th>
+
+                        <th data-ordering="false">UOM Name</th>
+
+                        <th data-ordering="false">Action</th>
+
+                      </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                      {% for uom in uom %}
+
+                      <tr>                        
+
+                        <td>{{ forloop.counter }}</td>
+
+                        <td>{{ uom.name }}</td>
+
+                        <td> <div class="dropdown d-inline-block">
+                          <button class="btn btn-soft-secondary btn-sm dropdown" type="button"
+                              data-bs-toggle="dropdown" aria-expanded="false">
+                              <i class="ri-more-fill align-middle"></i>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-end">
+                              <li><a  class="dropdown-item" data-id="{{i.id}}" onclick="openModal('viewModal', '{{ i.id }}')"><i class="ri-eye-fill align-bottom me-2 text-muted"></i> View</a></li>
+                              <li><a class="dropdown-item edit-item-btn" data-bs-toggle="modal"
+                                      href="#!" onclick="openModal('editModal','{{ i.id }}')"><i
+                                          class="ri-pencil-fill align-bottom me-2 text-muted"></i>
+                                      Edit</a></li>
+                              <li>
+                                  <a class="dropdown-item remove-item-btn del-btn" href="#!"  data-target ="#deleteModal{{ i.id}}">
+                                      <i
+                                          class="ri-delete-bin-fill align-bottom me-2 text-muted"></i>
+                                      Delete
+                                  </a>
+                              </li>
+                          </ul>
+                      </div>
+
+                          <div class="dropdown d-inline-block">
+
+                            <button type="button" class="btn btn-info edit-btn" style="float: right" data-id="{{uom.id}}" onclick="openModal('editModal','{{ uom.id }}')" >
+                             
+                              Edit
+
+                            </button>
+
+                            <button type="button" class="btn btn-info delete-btn" style="float: right" onclick="delFunction('{{uom.id}}')" data-id="{{uom.id}}" >
+
+                              Delete
+
+                            </button>
+
+                            <div class="modal fade" id="editModal_{{uom.id}}" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true"
+                              data-bs-backdrop="static" data-bs-keyboard="false" >
+
+                              <div class="modal-dialog modal-lg">
+
+                                <div class="modal-content">
+
+                                  <div class="modal-header">
+
+                                    <h5 class="modal-title" id="editModalLabel">
+
+                                      Edit UOM
+
+                                    </h5>
+
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="CloseModel('editModal','{{uom.id}}')" ></button>
+                                  
+                                  </div>
+
+                                  <div class="modal-body">
+
+                                    <form id="editForm{{ uom.id }}" enctype="multipart/form-data" >
+
+                                      {% csrf_token %}
+
+                                      <div class="mb-3">
+
+                                        <label for="edit_name" class="form-label" >UOM Name:</label >
+
+                                        <input type="text" class="form-control" id="{{uom.id}}_name" name="name" value="{{uom.name}}" />
+
+                                        <span id="{{uom.id}}_nameError" class="error-message" ></span>
+
+                                      </div>
+
+                                    </form>
+
+                                  </div>
+
+                                  <div class="modal-footer">
+
+                                    <button type="button" class="btn btn-secondary" id="" data-bs-dismiss="modal" onclick="CloseModel('editModal','{{uom.id}}')" >
+
+                                      Cancel
+
+                                    </button>
+
+                                    <button type="button" class="btn btn-primary" id="saveuom" onclick="updateFunction(this,'{{uom.id}}')" > 
+
+                                      Save
+
+                                    </button>
+                                    
+                                  </div>
+
+                                </div>
+
+                              </div>
+
+                            </div>
+
+                          </div>
+
+                        </td>
+
+                      </tr>
+
+                      {% endfor %}
+                      
+                    </tbody>
+
+                  </table>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <button onclick="topFunction()" class="btn btn-danger btn-icon" id="back-to-top" >
+
+      <i class="ri-arrow-up-line"></i>
+
+    </button>
+
+    <div id="preloader">
+
+      <div id="status">
+
+        <div class="spinner-border text-primary avatar-sm" role="status">
+
+          <span class="visually-hidden">Loading...</span>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+  function delFunction(dataId) {
+    $.ajax({
+      url: "/delete_uom/" + dataId + "/",
+      type: "DELETE",
+      headers: {
+        "X-CSRFToken": csrftoken,
+      },
+      success: function (response, status, xhr) {
+        if (xhr.status === 204) {
+          console.log("Data deleted successfully");
+          location.reload();
+        } else {
+          console.error("Unexpected response status:", xhr.status);
+        }
+      },
+      error: function (xhr, status, error) {
+        console.error("Error:", error);
+      },
+    });
+  }
+
+  function createFunction(button) {
+    try {
+      disableButton(button);
+      var isValid = true;
+      var errors = {};
+      var formData = new FormData();
+
+      var requiredKeys = [
+        //change
+        "name",
+      ];
+
+      formData.append(
+        "name",
+        getValueOrDefault($('#createForm input[name="name"]').val())
+      );
+
+      console.log("FormData:", formData);
+
+      requiredKeys.forEach(function (key) {
+        var value = formData.get(key);
+        if (!value.trim()) {
+          isValid = false;
+          errors[key] = ["This field may not be blank."];
+        }
+      });
+
+      if (!isValid) {
+        enableButton(button);
+        console.log(errors);
+        handleCreateErrors(errors);
+        return;
+      } else {
+        $("#createuserForm input, #createuserForm button").prop(
+          //change form id
+          "disabled",
+          true
+        );
+        enableButton(button);
+      }
+
+      $.ajax({
+        url: "/uom/", //change
+        type: "POST", //change
+        headers: {
+          "X-CSRFToken": csrftoken,
+        },
+        data: formData, //data
+        processData: false,
+        contentType: false,
+        success: function (response, status, xhr) {
+          console.error(status);
+          if (xhr.status === 201) {
+            //through 201 status
+            showToast("Successfully Updated", "", "bg-success", true);
+          } else {
+            console.error(error);
+            enableButton(button);
+          }
+        },
+        error: function (xhr, status, error) {
+          console.log(xhr, status, error);
+          if (xhr.status === 400) {
+            if (xhr?.responseJSON || xhr?.responseJSON?.errors) {
+              handleCreateErrors(transformErrors(xhr.responseJSON));
+              enableButton(button);
+            } else {
+              showToast("something went wrong", "", "bg-danger");
+              enableButton(button);
+            }
+          } else {
+            showToast("something went wrong", "", "bg-danger");
+            enableButton(button);
+          }
+        },
+      });
+    } catch (error) {
+      // showToast("An error occurred", "", "bg-danger");
+      // enableButton(button);
+      console.error(error);
+    }
+  }
+
+  function updateFunction(button, saveId) {
+    try {
+      disableButton(button);
+      clearErrors();
+
+      const formData = new FormData();
+
+      formData.append(
+        "name",
+        getValueOrDefault($(`#editForm${saveId} input[name="name"]`).val())
+      );
+
+      console.log(csrftoken);
+      $.ajax({
+        url: "/save_data/" + saveId + "/", //change
+        type: "PUT", //method
+        headers: {
+          "X-CSRFToken": csrftoken,
+        },
+        processData: false,
+        contentType: false,
+        data: formData,
+        success: function (response, status, xhr) {
+          if (xhr.status === 200) {
+            //through 200 status
+            showToast("Successfully Updated", "", "bg-success", true);
+          } else {
+            showToast("something went wrong", "", "bg-danger");
+            enableButton(button);
+            console.error(error);
+          }
+        },
+        error: function (xhr, status, error) {
+          console.log(xhr, status, error);
+          if (xhr.status === 400) {
+            if (xhr?.responseJSON || xhr?.responseJSON?.errors) {
+              handleUpdateErrors(saveId, transformErrors(xhr.responseJSON));
+              enableButton(button);
+            } else {
+              showToast("something went wrong", "", "bg-danger");
+              enableButton(button);
+            }
+          } else {
+            showToast("something went wrong", "", "bg-danger");
+            enableButton(button);
+          }
+        },
+      });
+    } catch (error) {
+      showToast("An error occurred", "", "bg-danger");
+      enableButton(button);
+      console.error(error);
+    }
+  }
+</script>
+{% endblock header2 %}

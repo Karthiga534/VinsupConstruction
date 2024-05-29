@@ -1,0 +1,262 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block header2 %}
+<!-- Begin page -->
+<div id="layout-wrapper">
+
+
+    <div class="main-content">
+
+        <div class="page-content">
+            <div class="container-fluid">
+
+                <!-- start page title -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                            <h4 class="mb-sm-0">View site stock </h4>
+
+                            <div class="page-title-right">
+                                <ol class="breadcrumb m-0">
+                                    <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
+                                    <li class="breadcrumb-item active">stock</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- end page title -->
+
+                <!-- end page title 
+
+                    <div class="alert alert-danger" role="alert">
+                        This is <strong>Datatable</strong> page in wihch we have used <b>jQuery</b> with cnd link!
+                    </div> -->
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-header">
+
+                                <div class="row">
+                                    <div class="col-xl-6 col-lg-6 col-md-6 col-12">
+                                        <h2>Maintain Site stocks</h2>
+                                    </div>
+                                    <div class="col-xl-4 col-lg-4 col-md-4 col-12"></div>
+                                    <div class="col-xl-2 col-lg-2 col-md-2 col-12">
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <form method="GET" action="{% url 'viewstock' %}">
+                                    <div class="row">
+                                        <div class="col-xl-3 col-lg-3 col-md-3 col-xs-6 col-12">
+
+                                            <label for="" class="form-label">Site Name : </label>
+
+                                            <select class="form-select mb-3" aria-label="Default select example"
+                                                name="site" id="fromsite">
+
+                                                <option value="0" selected>Inventory</option>
+                                                {% for i in site %}
+
+                                                {% if selectedSite|stringformat:"s" == i.id|stringformat:"s" %}
+
+                                                <option value="{{ i.id }}" selected>{{ i.site_location }}</option>
+                                                {% else %}
+                                                <option value="{{ i.id }}">{{ i.site_location }} </option>
+                                                {% endif %}
+                                                {% endfor %}
+                                            </select>
+
+
+                                        </div>
+                                        <div class="col-xl-3 col-lg-3 col-md-3 col-xs-6 col-12">
+                                            <br>
+                                            <!-- <button type="submit"
+                                                class="btn btn-primary waves-effect waves-light mt-2">Get
+                                            </button> -->
+                                        </div>
+                                        <div class="col-xl-3 col-lg-3 col-md-3 col-xs-6 col-12">
+
+                                        </div>
+                                        <div class="col-xl-3 col-lg-3 col-md-3 col-xs-6 col-12">
+
+                                        </div>
+                                    </div>
+                                </form>
+                                <hr>
+                                <div class="card">
+                                    <div class="card-body">
+                                        <table id="example"
+                                            class="table table-bordered dt-responsive nowrap table-striped align-middle"
+                                            style="width:100%">
+                                            <thead>
+                                                <tr>
+                                                    <!-- <th scope="col" style="width: 10px;">
+                                                        <div class="form-check">
+                                                            <input class="form-check-input fs-15" type="checkbox"
+                                                                id="checkAll" value="option">
+                                                        </div>
+                                                    </th> -->
+                                                    <th data-ordering="false">S No.</th>
+                                                    <th data-ordering="false">Item Name</th>
+                                                    <th data-ordering="false">price</th>
+                                                    <th data-ordering="false">Weight / Qty</th>
+                                                    <th data-ordering="false">Unit</th>
+                                                    <th data-ordering="false">Total Amount</th>
+
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <!-- {% for i in queryset %}
+                                                <tr>
+                                                    <th scope="row">
+                                                        <div class="form-check">
+                                                            <input class="form-check-input fs-15" type="checkbox"
+                                                                name="checkAll" value="option1">
+                                                        </div>
+                                                    </th>
+                                                    <td>{{forloop.counter}}</td>
+                                                    <td>{{i.item.item}}</td>
+                                                    <td>{{i.item.price}}</td>
+                                                    <td>{{i.qty}}</td>
+                                                    <td>{{i.unit}}</td>
+                                                    <td>{{i.get_total}}</td>
+
+                                                </tr>
+
+                                                {% endfor %} -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- container-fluid -->
+            </div>
+            <!-- End Page-content -->
+
+
+        </div>
+        <!-- end main content-->
+
+    </div>
+    <!-- END layout-wrapper -->
+
+
+
+    <!--start back-to-top-->
+    <button onclick="topFunction()" class="btn btn-danger btn-icon" id="back-to-top">
+        <i class="ri-arrow-up-line"></i>
+    </button>
+    <!--end back-to-top-->
+
+    <!--preloader-->
+    <div id="preloader">
+        <div id="status">
+            <div class="spinner-border text-primary avatar-sm" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+    <script>
+
+        var qtyError = false;
+
+        var priceError = false;
+
+        document.addEventListener('DOMContentLoaded', function () {
+
+            const dropdown = document.getElementById('fromsite');
+            const tableBody = document.querySelector('#example tbody');
+
+            // on dom loaded 
+            const initialSelectedValue = dropdown.value; 
+            fetchData(initialSelectedValue,tableBody);
+
+            // fetch table data API
+            dropdown.addEventListener('change', function () {
+                console.log(dropdown, tableBody)
+                const selectedValue = dropdown.value;
+                fetchData(selectedValue,tableBody);
+            });
+
+        });
+
+
+        // fetch data
+        function fetchData(selectedValue,tableBody) {
+            try {
+                fetch(`/transfer/${selectedValue}/`)
+                    .then(response => {
+                        if (response.status === 200) {
+                            console.log('Data fetched');
+                            return response.json();
+                        } else if (response.status === 404) {
+                            throw new Error('Resource not found');
+                        } else if (response.ok) {
+                            throw new Error(`HTTP error! Status: ${response.status}`);
+                        } else {
+                            throw new Error('Network response was not ok');
+                        }
+                    })
+                    .then(data => {
+                        tableBody.innerHTML = '';
+
+                        data.forEach((item, index) => {
+                            const newRow = createTableRow(index + 1, item);
+                            tableBody.appendChild(newRow);
+                        });
+
+                    })
+                    .catch(error => {
+                        console.error('Error fetching data:', error);
+                        showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+                    });
+            } catch (error) {
+                console.error('Error in fetch operation:', error);
+            }
+        }
+
+
+        // MANIPULATE TABLE DATA
+        function createTableRow(serialNumber, data) {
+            const newRow = document.createElement('tr');
+            newRow.setAttribute('data-item-id', data.id);
+            newRow.innerHTML = `
+
+            <!-- 	<th scope="row">
+						<div class="form-check">
+							<input class="form-check-input fs-15 item-checkbox"
+								type="checkbox" name="checkAll" value="${data.item.id}">
+						</div>           --!>
+					</th>
+					<td>${serialNumber}</td>
+					<td>${data.item.item}</td>
+					<td>${data.price}</td>
+
+					<td>${data.qty}</td>
+                    <td>${data.unit}</td>
+                    <td>${currencyFormatter.format(data.get_total)}</td>
+					`;
+
+            return newRow;
+        }
+
+
+    </script>
+
+
+
+    {% endblock header2 %}

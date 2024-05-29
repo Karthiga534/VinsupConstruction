@@ -1,0 +1,875 @@
+{% extends "base.html" %}
+{% load filters %}
+{% load static %}
+
+{% block header2 %}
+
+<!-- Begin page -->
+<div id="layout-wrapper">
+
+	<div class="main-content">
+
+		<div class="page-content">
+			<div class="container-fluid">
+
+				<!-- start page title -->
+				<div class="row">
+					<div class="col-12">
+						<div class="page-title-box d-sm-flex align-items-center justify-content-between">
+							<h4 class="mb-sm-0">Quatation</h4>
+
+							<div class="page-title-right">
+								<ol class="breadcrumb m-0">
+									<li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
+									<li class="breadcrumb-item active">vendor Quatation</li>
+								</ol>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="row ">
+					<div class="col-lg-12">
+						<div class="card">
+							<div class="card-header">
+								<div class="row">
+
+									<div class="col-xl-5 col-lg-5 col-md-6 col-xs-6 col-12">
+										<h4>Vendor Quatation</h4>
+									</div>
+									<div class="col-xl-5 col-lg-4 col-md-3 col-xs-6 col-12"></div>
+									<div class="col-xl-2 col-lg-3 col-md-3 col-xs-6 col-12">
+										<button type="button" class="btn btn-info" style="float:right;"
+											data-bs-toggle="modal" data-bs-target=".bs-example-modal-lg">Add
+											Quatation</button>
+										<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog"
+											aria-labelledby="myLargeModalLabel" aria-hidden="true">
+											<div class="modal-dialog modal-lg">
+												<div class="modal-content">
+													<form id="createForm" enctype="multipart/form-data">
+														<div class="modal-header">
+															<h5 class="modal-title" id="myLargeModalLabel">New Quatation
+															</h5>
+															<button type="button" class="btn-close"
+																data-bs-dismiss="modal" aria-label="Close"
+																onclick="clearErrors()"></button>
+														</div>
+														<hr>
+														<div class="modal-body">
+															{% csrf_token %}
+															<div class="row">
+																<div class="col-lg-12">
+																	<div class="card" style="margin-top:-15px">
+																		<div class="card-body">
+
+																			<div class="row">
+																				<div class="col-md-6">
+																					<label for="id_date"
+																						class="form-label">Select Date
+																						:</label>
+																					<input type="date" name="date"
+																						class="form-control" id="date">
+																					<span id="dateError"
+																						class="error-message"></span>
+																				</div>
+																				<div class="col-md-6">
+																					<label for="vendorname"
+																						class="form-label">Vendor
+																						Name:</label>
+																					<select class="form-select mb-3"
+																						aria-label="Default select example"
+																						id="vendorname"
+																						name="vendorname">
+																						<option value=""> --------------- </option>
+																						{% for vendor in vendor_names %}
+																						<option value="{{ vendor.id }}">
+																							{{ vendor.vendorname }}
+																						</option>
+																						{% endfor %}
+																					</select>
+																					<span id="vendornameError"
+																						class="error-message"></span>
+																				</div>
+
+
+
+																				<div class="col-md-6">
+																					<label for="id_quatationno"
+																						class="form-label">Quatation No
+																						:</label>
+																					<input type="text"
+																						name="quatationno"
+																						class="form-control"
+																						id="quatationno">
+																					<span id="quatationnoError"
+																						class="error-message"></span>
+																				</div>
+																				<div class="col-md-6">
+																					<label for="id_quatationamount"
+																						class="form-label">Quatation
+																						Amount :</label>
+																					<input type="text"
+																						name="quatationamount"
+																						class="form-control"
+																						id="quatationamount">
+																					<span id="quatationamountError"
+																						class="error-message"></span>
+																				</div>
+																				<div class="col-md-6 mt-2">
+																					<label for="img"
+																						class="form-label">Image:</label>
+																					<input type="file" name="img"
+																						class="form-control" id="img">
+																					<span id="imgError"
+																						class="error-message"></span>
+																				</div>
+
+
+																			</div>
+
+																		</div>
+																	</div>
+																</div>
+															</div>
+														</div>
+														<hr>
+														<div class="modal-footer">
+
+															<button
+																class="btn btn-link link-success fw-medium shadow-none"
+																data-bs-dismiss="modal" onclick="clearErrors()">
+
+																<i class="ri-close-line me-1 align-middle"></i>
+																Close</button>
+
+															<button type="button" class="btn btn-primary"
+																onclick="createFunction(this)">Save </button>
+
+														</div>
+													</form>
+												</div>
+												<!-- /.modal-content -->
+											</div>
+											<!-- /.modal-dialog -->
+										</div>
+
+									</div>
+
+								</div>
+							</div>
+
+
+
+
+
+							<!-- <div class="row mt-2"> -->
+							<div class="card">
+								<div class="card-body">
+									<div class="row">
+										{% include "search.html" %}
+									</div>
+
+									<hr>
+									<table id="example"
+										class="table table-bordered dt-responsive nowrap table-striped align-middle"
+										style="width:100%">
+										<thead>
+											<tr>
+
+												<th data-ordering="false">S No.</th>
+												<th data-ordering="false">Date</th>
+												<th data-ordering="false">Vendor Name</th>
+												<th data-ordering="false">Quatation No</th>
+												<th data-ordering="false">Quatation Amount</th>
+												<th data-ordering="false">Images</th>
+												<th data-ordering="false">Phone No</th>
+												<th data-ordering="false">Action</th>
+											</tr>
+										</thead>
+										<tbody>
+											{% for i in queryset %}
+											<tr>
+
+												<td>{{ forloop.counter }}</td>
+												<td>{{ i.date }}</td>
+												<td>{{ i.vendorname }}</td>
+												<td>{{ i.quatationno }}
+												</td>
+												<td>{{ i.quatationamount }}</td>
+												<td>
+
+													{% if i.img %}
+													<img src="{{ i.img.url }}" class="img-responsive"
+														style="height:40px;width:auto;" alt="Quotation Image">
+													{% else %}
+													No image available
+													{% endif %}
+
+												</td>
+												<!--   <img src="{% static "assets/images/logo.png" %}" class="img-responsive" style="height:40px;width:auto;">     -->
+												<td>{{ i.vendorname.mobile }}</td>
+
+												<td>
+													<div class="dropdown d-inline-block">
+														<button class="btn btn-soft-secondary btn-sm dropdown"
+															type="button" data-bs-toggle="dropdown"
+															aria-expanded="false">
+															<i class="ri-more-fill align-middle"></i>
+														</button>
+														<ul class="dropdown-menu dropdown-menu-end">
+															<li><a class="dropdown-item" data-id="{{i.id}}"
+																	onclick="openModal('viewModal', '{{ i.id }}')"><i
+																		class="ri-eye-fill align-bottom me-2 text-muted"></i>
+																	View</a></li>
+															<li><a class="dropdown-item edit-item-btn"
+																	data-bs-toggle="modal" href="#!"
+																	onclick="openModal('editModal','{{ i.id }}')"><i
+																		class="ri-pencil-fill align-bottom me-2 text-muted"></i>
+																	Edit</a></li>
+															<li>
+																<a class="dropdown-item remove-item-btn del-btn"
+																	href="#!" data-target="#deleteModal{{ i.id}}">
+																	<i
+																		class="ri-delete-bin-fill align-bottom me-2 text-muted"></i>
+																	Delete
+																</a>
+															</li>
+														</ul>
+													</div>
+
+													<!-- view modal -->
+
+
+													<div class="modal fade" id="viewModal_{{i.id}}" tabindex="-1"
+														role="dialog" aria-labelledby="viewModalLabel"
+														aria-hidden="true" data-bs-backdrop="static"
+														data-bs-keyboard="false">
+
+														<div class="modal-dialog modal-lg">
+
+															<div class="modal-content">
+
+																<div class="modal-header">
+
+																	<h5 class="modal-title" id="viewModalLabel">#{{i.quatationno}} -- {{i.vendorname}}</h5>
+
+																	<button type="button" class="btn-close"
+																		data-bs-dismiss="modal" aria-label="Close"
+																		onclick="CloseModel('viewModal', '{{i.id}}')"></button>
+
+																</div>
+
+																<div class="modal-body">
+																	<div class="row">
+																		<div class="col-md-6">
+																			<label for="{{i.id}}_date"
+																				class="form-label">Date:</label>
+																			<input type="text" class="form-control"
+																				id="{{i.id}}_date" name="date"
+																				value="{{i.date}}" readonly>
+																		</div>
+
+																		<div class="col-md-6">
+																			<label for="{{i.id}}_vendorname"
+																				class="form-label">Vendor Name:</label>
+																			<input type="text" class="form-control"
+																				id="{{i.id}}_vendorname"
+																				name="vendorname"
+																				value="{{i.vendorname}}" readonly>
+																		</div>
+
+																		<div class="col-md-6 mt-2">
+																			<label for="{{i.id}}_quatationno"
+																				class="form-label">Quatation No:</label>
+																			<input type="text" class="form-control"
+																				id="{{i.id}}_quatationno"
+																				name="quatationno"
+																				value="{{i.quatationno}}" readonly>
+																		</div>
+
+																		<!-- -->
+
+																		<div class="col-md-6 mt-2">
+																			<label for="{{i.id}}_quatationamount"
+																				class="form-label">Quatation
+																				Amount:</label>
+																			<input type="text" class="form-control"
+																				id="{{i.id}}_quatationamount"
+																				name="quatationamount"
+																				value="{{i.quatationamount}}" readonly>
+																		</div>
+
+																		<div class="col-md-6 mt-2">
+																			<label for="{{i.id}}_mobile"
+																				class="form-label">Phone Number:</label>
+																			<input type="text" class="form-control"
+																				id="{{i.id}}_mobile" name="mobile"
+																				value="{{i.mobile}}" readonly>
+																		</div>
+
+																		<div class="col-md-6 mt-3">
+																			<label for="{{i.id}}_img">Image:</label>
+																			<br>
+																			<!-- <input type="text" class="form-control"
+																				id="{{i.id}}_img" name="img"
+																				value="{{ i.img }}" readonly> -->
+
+																			<span class="file-span"> <a  target="_blank" href="{{ i.img.url}}" >{{i.img |filename }}</a></span>
+																		</div>
+
+
+
+
+																	</div>
+
+																</div>
+
+																<div class="modal-footer">
+																	<button type="button" class="btn btn-secondary"
+																		data-bs-dismiss="modal"
+																		onclick="CloseModel('viewModal', '{{i.id}}')">Close</button>
+																</div>
+
+															</div>
+
+														</div>
+
+													</div>
+
+
+													<!-- edit modal -->
+
+													<div class="modal fade bs-example-modal-lg" tabindex="-1"
+														data-bs-keyboard="false" id="editModal_{{i.id}}"
+														data-bs-backdrop="static" role="dialog"
+														aria-labelledby="myLargeModalLabel" aria-hidden="true">
+														<div class="modal-dialog modal-lg">
+															<div class="modal-content">
+																<div class="modal-header">
+																	<h5 class="modal-title" id="myLargeModalLabel">#{{i.quatationno}} -- {{i.vendorname}}</h5>
+																	<button type="button" class="btn-close"
+																		data-bs-dismiss="modal" aria-label="Close"
+																		onclick="CloseModel('editModal','{{i.id}}')">
+																	</button>
+																</div>
+																<hr>
+
+
+
+																<div class="modal-body">
+
+																	<form id="editForm{{ i.id }}"
+																		enctype="multipart/form-data">
+																		{% csrf_token %}
+
+																		<div class="row">
+
+																			<div class="col-md-6 mb-3">
+																				<label for="edit_vendorname"
+																					class="form-label">Vendor
+																					Name:</label>
+																				<select class="form-select"
+																					aria-label="Default select example"
+																					id="{{i.id}}_vendorname"
+																					name="vendorname">
+
+																					<option value="{{i.vendorname.id}}"
+																						selected>{{i.vendorname}}
+																					</option>
+
+																					{% for j in vendor_names %}
+																					<option value="{{j.id}}">
+																						{{j.vendorname}} </option>
+																					{% endfor %}
+																				</select>
+																				<span id="{{i.id}}_vendornameError"
+																					class="error-message"></span>
+																			</div>
+
+
+
+
+																			<div class="col-md-6 mb-3">
+																				<label for="editQuatationNo">Quatation
+																					No:</label>
+																				<input type="text" class="form-control"
+																					id="{{i.id}}id_quatationno"
+																					name="quatationno"
+																					value="{{ i.quatationno }}">
+																				<span id="{{i.id}}_quatationnoError"
+																					class="error-message"></span>
+																			</div>
+																			<div class="col-md-6 mb-3">
+																				<label
+																					for="editQuatationAmount">Quatation
+																					Amount:</label>
+																				<input type="text" class="form-control"
+																					id="{{i.id}}id_quatationamount"
+																					name="quatationamount"
+																					value="{{ i.quatationamount }}">
+																				<span id="{{i.id}}_quatationamountError"
+																					class="error-message"></span>
+																			</div>
+
+																			<div class="col-md-6 mb-3">
+																				<label for="editmobile">Phone
+																					No:</label>
+																				<input type="text" class="form-control"
+																					id="{{i.id}}id_mobile" name="mobile"
+																					value="{{ i.vendorname.mobile }}">
+																				<span id="{{i.id}}_mobileError"
+																					class="error-message"></span>
+																			</div>
+
+																			<div class="col-md-6 mb-3">
+																				<label for="editimg">Image:</label> <span class="file-span"> <a  target="_blank" href="{{ i.img.url}}" >{{i.img |filename }}</a></span>
+																				<input type="file" class="form-control"
+																					id="{{i.id}}id_img" name="img"
+																					value="{{ i.img }}">
+
+																				
+																				<span id="{{i.id}}_imgError"
+																					class="error-message"></span>
+
+																				
+																			</div>
+
+
+
+
+
+
+																			<div class="modal-footer">
+																				<button type="button"
+																					class="btn btn-secondary"
+																					data-bs-dismiss="modal"
+																					onclick="CloseModel('editModal','{{i.id}}')">Close</button>
+																				<button type="button"
+																					class="btn btn-primary"
+																					onclick="updateFunction(this,'{{i.id}}')">Save
+																					changes</button>
+																			</div>
+
+																	</form>
+
+																</div>
+
+															</div>
+
+
+														</div>
+														<!-- /.modal-content -->
+													</div>
+													<!-- /.modal-dialog -->
+								</div>
+
+
+
+
+
+								<!-- for delete -->
+
+								<div class="modal fade" id="deleteModal{{ i.id}}" tabindex="-1"
+									aria-labelledby="deleteModalLabel-{{ forloop.counter }}" aria-hidden="true">
+									<div class="modal-dialog">
+										<div class="modal-content">
+											<div class="modal-header">
+												<h5 class="modal-title" id="deleteModalLabel-{{ forloop.counter }}">
+													Delete
+													Role </h5>
+												<button type="button" class="btn-close" data-bs-dismiss="modal"
+													aria-label="Close"></button>
+											</div>
+											<div class="modal-body">
+												<p> Are you sure you want to delete "{{ i.vendorname }}"? </p>
+											</div>
+											<div class="modal-footer">
+												<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+													Cancel </button>
+
+
+												<button type="button" onclick="deleteFunction(this,'{{i.id}}')"
+													class="btn btn-danger">Delete</button>
+
+											</div>
+										</div>
+									</div>
+								</div>
+								</td>
+								</tr>
+
+								</tbody>
+								{% endfor %}
+								</table>
+
+								<div class="row">
+									{% include 'pagination.html' %}
+								</div>
+							</div>
+						</div>
+
+					</div>
+				</div>
+			</div>
+			<!-- container-fluid -->
+
+		</div>
+		<!-- End Page-content -->
+
+
+	</div>
+	<!-- end main content-->
+
+</div>
+<!-- END layout-wrapper -->
+
+
+
+<!--start back-to-top-->
+<button onclick="topFunction()" class="btn btn-danger btn-icon" id="back-to-top">
+	<i class="ri-arrow-up-line"></i>
+</button>
+<!--end back-to-top-->
+
+<!--preloader-->
+<div id="preloader">
+	<div id="status">
+		<div class="spinner-border text-primary avatar-sm" role="status">
+			<span class="visually-hidden">Loading...</span>
+		</div>
+	</div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!--invoice,project,purchase,quatation,transfer,vendor,vendorquates-->
+<script type="text/javascript">
+	$(document).ready(function () {
+		var i = 0;
+
+		$(".add-row").click(function (event) {
+			event.preventDefault();
+			++i;
+			
+
+			var newRow = '<tr><th scope="row"><div class="form-check"><input class="form-check-input fs-15" type="checkbox" name="checkAll" value="option1"></div></th><td>02</td><td><input type="text" name="" class="form-control"></td><td><input type="text" name="" class="form-control"></td><td><input type="text" name="" class="form-control"></td><td><input type="text" name="" class="form-control"></td><td><button type="button" class="btn btn-danger btn-icon waves-effect waves-light remove-table-row"><i class="ri-delete-bin-5-line"></i></button></td></tr>';
+
+			$("#tabl").append(newRow);
+		});
+
+		$(document).on('click', '.remove-table-row', function () {
+			$(this).parents('tr').remove();
+		});
+	});
+</script>
+
+<script>
+
+
+	document.addEventListener('DOMContentLoaded', function () {
+
+
+		const viewButtons = document.querySelectorAll('.view-btn');
+		const editButtons = document.querySelectorAll('.edit-btn');
+		const delButtons = document.querySelectorAll('.del-btn');
+
+		viewButtons.forEach(button => {
+			button.addEventListener('click', function () {
+				const modalId = this.getAttribute('data-target');
+				const modal = document.querySelector(modalId);
+				if (modal) {
+					$(modal).modal('show');
+				}
+			});
+		});
+
+
+		editButtons.forEach(button => {
+			button.addEventListener('click', function () {
+				const modalId = this.getAttribute('data-target');
+				const modal = document.querySelector(modalId);
+				if (modal) {
+					$(modal).modal('show');
+				}
+			});
+		});
+
+		delButtons.forEach(button => {
+			button.addEventListener('click', function () {
+				const modalId = this.getAttribute('data-target');
+				const modal = document.querySelector(modalId);
+				if (modal) {
+					$(modal).modal('show');
+				}
+			});
+		});
+
+
+	});
+
+
+
+	// create form
+
+	function createFunction(button) {
+		var formId = `createForm`;   //change
+		var formElement = document.getElementById(formId);
+		try {
+			disableButton(button);
+			var isValid = true;
+			var errors = {};
+			var formData = new FormData();
+
+			var requiredKeys = ['date', 'vendorname', 'quatationno', 'quatationamount'];   //change
+
+			formData.append('vendorname', getValueOrDefault(formElement.querySelector('select[name="vendorname"]').value));              //change
+			formData.append('date', getValueOrDefault(formElement.querySelector('input[name="date"]').value));
+			formData.append('quatationno', getValueOrDefault(formElement.querySelector('input[name="quatationno"]').value));
+			formData.append('quatationamount', getValueOrDefault(formElement.querySelector('input[name="quatationamount"]').value));
+			//formData.append('img', getValueOrDefault(formElement.querySelector('file[name="img"]').value));
+			//formData.append('mobile', getValueOrDefault(formElement.querySelector('input[name="mobile"]').value));
+
+			var img = document.querySelector('#createForm input[type="file"]').files[0];
+			if (img) {
+				formData.append("img", img);
+			}
+
+
+			requiredKeys.forEach(function (key) {
+				var value = formData.get(key);
+				if (!value.trim()) {
+					isValid = false;
+					errors[key] = ['This field may not be blank.'];
+				}
+			});
+
+			if (!isValid) {
+				enableButton(button);
+				console.log(errors);
+				handleCreateErrors(errors);
+				return;
+			} else {
+				$(`#${formId} input, #${formId} button`).prop('disabled', true);
+
+			}
+
+			$.ajax({
+				url: '/add_vendorquatation/',                //change
+				type: 'POST',
+				headers: {
+					'X-CSRFToken': csrftoken,
+				},
+				data: formData,
+				processData: false,
+				contentType: false,
+				success: function (response, status, xhr) {
+					console.error(status);
+					if (xhr.status === 201) {
+						showToast(successMesssage?.message, '', successMesssage?.bgColor, true);
+					} else {
+						console.error(error);
+						restoreForm(formId, button)
+
+					}
+				},
+				error: function (xhr, status, error) {
+					console.log(xhr, status, error);
+					if (xhr.status === 400) {
+						if (xhr?.responseJSON || xhr?.responseJSON?.errors) {
+							handleCreateErrors(transformErrors(xhr.responseJSON));
+							restoreForm(formId, button)
+
+						} else {
+							showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+							restoreForm(formId, button)
+
+						}
+					}
+					else if (xhr.status === 401 || 404) {
+						showToast(xhr?.responseJSON?.details, '', errorAlertMessage?.bgColor);
+						restoreForm(formId, button)
+
+					}
+					else {
+						showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+						restoreForm(formId, button)
+
+					}
+				}
+			});
+		} catch (error) {
+			showToast(errorOccured?.message, '', errorOccured?.bgColor);
+			restoreForm(formId, button)
+			console.error(error);
+		}
+	}
+
+
+
+
+	// update
+
+	function updateFunction(button, saveId) {
+
+		var formId = `editForm${saveId}`;   //change
+		var formElement = document.getElementById(formId);
+
+		var isValid = true;
+		var errors = {};
+		var requiredKeys = ['vendorname', 'quatationno', 'quatationamount', 'mobile'];
+
+		try {
+			disableButton(button);
+			clearErrors();
+
+			const formData = new FormData();
+
+
+			formData.append('vendorname', getValueOrDefault(formElement.querySelector('select[name="vendorname"]').value));
+			formData.append('quatationno', getValueOrDefault(formElement.querySelector('input[name="quatationno"]').value));
+			formData.append('quatationamount', getValueOrDefault(formElement.querySelector('input[name="quatationamount"]').value));
+
+			formData.append('mobile', getValueOrDefault(formElement.querySelector('input[name="mobile"]').value));
+
+			//var img = document.querySelector('#editForm input[type="file"]').files[0];
+			//		if (img) {
+			//			formData.append("img", img);
+			//		}
+
+
+			//change
+
+			requiredKeys.forEach(function (key) {
+				var value = formData.get(key);
+				if (!value.trim()) {
+					isValid = false;
+					errors[key] = ['This field may not be blank.'];
+				}
+			});
+
+			if (!isValid) {
+				enableButton(button);
+				console.log(errors);
+				handleUpdateErrors(saveId, transformErrors(errors));
+				return;
+			} else {
+				$(`#${formId} input, #${formId} button`).prop('disabled', true);
+
+			}
+
+
+			console.log(csrftoken);
+			$.ajax({
+				url: '/update_vendorquatation/' + saveId + '/',   //change
+				type: 'PUT',
+				headers: {
+					'X-CSRFToken': csrftoken,
+				},
+				processData: false,
+				contentType: false,
+				data: formData,
+				success: function (response, status, xhr) {
+					if (xhr.status === 200) {
+						showToast(updateMessage?.message, '', updateMessage?.bgColor, true);
+						restoreForm(formId, button)
+					} else {
+						showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+						restoreForm(formId, button)
+
+					}
+				},
+				error: function (xhr, status, error) {
+					console.log(xhr, status, error);
+					if (xhr.status === 400) {
+						if (xhr?.responseJSON || xhr?.responseJSON?.errors) {
+							handleUpdateErrors(saveId, transformErrors(xhr.responseJSON));
+							restoreForm(formId, button)
+						} else {
+
+							showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+							restoreForm(formId, button)
+
+						}
+					}
+					else if (xhr.status === 401 || 404) {
+						showToast(xhr?.responseJSON?.details, '', errorAlertMessage?.bgColor);
+						restoreForm(formId, button)
+
+					}
+					else {
+
+						showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+						restoreForm(formId, button)
+
+					}
+				}
+			});
+		} catch (error) {
+			showToast(errorOccured?.message, '', errorOccured?.bgColor);
+			restoreForm(formId, button)
+			console.error(error);
+		}
+	}
+
+
+
+	// delete
+
+	function deleteFunction(button, saveId) {
+		try {
+			disableButton(button);
+
+			$.ajax({
+				url: '/delete_vendorquatation/' + saveId + '/',
+				type: 'DELETE',
+				headers: {
+					'X-CSRFToken': csrftoken,
+				},
+				processData: false,
+				contentType: false,
+				success: function (response, status, xhr) {
+					if (xhr.status === 204) {
+						showToast(deleteMessage?.message, '', deleteMessage?.bgColor, true);
+						enableButton(button);
+
+					} else {
+						showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+						enableButton(button);
+
+					}
+				},
+				error: function (xhr, status, error) {
+					console.log(xhr, status, error);
+					if (xhr.status === 400) {
+						if (xhr?.responseJSON || xhr?.responseJSON?.errors) {
+							showToast(xhr?.responseJSON?.details, '', errorAlertMessage?.bgColor);
+							enableButton(button);
+						} else {
+							showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+							enableButton(button);
+						}
+					}
+					else if (xhr.status === 401 || 404) {
+						showToast(xhr?.responseJSON?.details, '', errorAlertMessage?.bgColor);
+						enableButton(button);
+					}
+					else {
+
+						showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+						enableButton(button);
+					}
+				}
+			});
+		} catch (error) {
+			showToast(errorOccured?.message, '', errorOccured?.bgColor);
+			console.error(error);
+		}
+	}
+
+
+
+
+
+</script>
+
+
+{% endblock header2 %}

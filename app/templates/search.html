@@ -1,0 +1,13 @@
+{% load static %}
+
+<form method="GET" action="{% url location %}">
+    <div class="row mb-3">
+        <div class="col-4">
+            <input type="text" class="form-control" name="search" placeholder="Search..." value="{{search}}">
+        </div>
+        <div class="col">
+            <button type="submit" class='btn btn-soft-secondary '>Search</button>
+        </div>
+    </div>
+
+</form>

@@ -1,0 +1,688 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block header2 %}
+
+<!-- Begin page -->
+<div id="layout-wrapper">
+
+	<div class="main-content">
+
+		<div class="page-content">
+			<div class="container-fluid">
+				<!-- start page title -->
+				<div class="row">
+					<div class="col-12">
+						<div class="page-title-box d-sm-flex align-items-center justify-content-between">
+							<h4 class="mb-sm-0">Purchase Management</h4>
+							<div class="page-title-right">
+								<ol class="breadcrumb m-0">
+									<li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
+									<li class="breadcrumb-item active">Add Purchase</li>
+								</ol>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-lg-12">
+						<div class="card">
+							<div class="card-body">
+								<div class="row">
+									<div class="col-lg-10 col-md-10">
+										<h4>Add Purchase</h4>
+									</div>
+									<div class="col-lg-2 col-md-2">
+										<a href="{% url 'purchaselist' %}" class="btn btn-info"
+											style="float:right;">Purchase List</a>
+									</div>
+								</div>
+								<hr>
+								<form id="createForm" enctype="multipart/form-data">
+									{% csrf_token %}
+									<fieldset>
+										<div class="row">
+											<div class="col-md-4">
+												<label for="" class="form-label">Invoice No :</label>
+												<input type="text" class="form-control" id="invoice_id"
+													name="invoice_id">
+												<span id="invoice_idError" class="error-message"></span>
+											</div>
+											<div class="col-md-4">
+												<label for="vendor" class="form-label">Vendor Name:</label>
+												<select class="form-select mb-3" aria-label="Default select example"
+													id="vendor" name="vendor">
+													<option value="">---------------------</option>
+													{% for vendor in vendor_names %}
+													<option value="{{ vendor.id }}">{{ vendor.vendorname }}</option>
+													{% endfor %}
+												</select>
+												<span id="vendorError" class="error-message"></span>
+											</div>
+											<div class="col-md-4">
+												<label for="" class="form-label">Company Name :</label>
+												<input type="text" class="form-control" id="vendor_company"
+													name="vendor_company">
+												<span id="vendor_companyError" class="error-message"></span>
+											</div>
+											<div class="col-md-4 mt-2">
+												<label for="" class="form-label">Date :</label>
+												<input type="date" class="form-control" id="created_at"
+													name="created_at">
+												<span class="error-message" id="created_atError"></span>
+											</div>
+
+											<div class="col-md-4 mt-2">
+												<label for="" class="form-label">Gst No :</label>
+												<input type="text" class="form-control" id="gst" name="gst">
+												<span id="gstError" class="error-message"></span>
+											</div>
+											<div class="col-md-4 mt-2">
+												<label for="" class="form-label">Contact No :</label>
+												<input type="text" class="form-control" id="contact_no"
+													name="contact_no">
+												<span id="contact_noError" class="error-message"></span>
+											</div>
+										</div>
+
+									</fieldset>
+									<hr>
+
+									<fieldset>
+										<h4>Items </h4>
+										<hr>
+										<div class="card-body">
+											<table id="tabl"
+												class="table table-bordered dt-responsive nowrap table-striped align-middle"
+												style="width:100%">
+												<thead>
+													<tr>
+														<th scope="col" style="width: 10px;">
+															<div class="form-check">
+																<input class="form-check-input fs-15" type="checkbox"
+																	id="checkAll" value="option">
+															</div>
+														</th>
+														<th>SR No.</th>
+														<th>Material Library</th>
+														<!-- <th>Name</th>  -->
+														<th>Unit</th>
+
+														<th>Qty</th>
+														<th>Price</th>
+														<th>Sub Total</th>
+														<th>Action</th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr>
+														<th scope="row">
+															<div class="form-check">
+																<input class="form-check-input fs-15" type="checkbox"
+																	name="checkAll" value="option1">
+															</div>
+														</th>
+														<td>1</td>
+
+														<!-- <td>
+														<select class="form-select mb-3" aria-label="Default select example" id="item" name="item">
+															<option value="">------------------</option>
+															{% for i in materiallibrary %}
+																<option value="{{ i.id }}">{{ i.item }}</option>
+															{% endfor %}
+														</select>
+														<span id="itemError" class="error-message"></span>
+													</td>
+
+													<td><input type="text" class="form-control" id="name" name="name">  
+													</td> -->
+
+														<td>
+															<div class="d-flex gap-2 ">
+
+																<select style="width:85%;" class="form-select"
+																	aria-label="Default select example" name="item">
+																	<option value="">------------------</option>
+																	{% for i in materiallibrary %}
+																	<option value="{{ i.id }}">{{ i.item }}</option>
+																	{% endfor %}
+																</select>
+																<button
+																	class="btn btn-soft-secondary align-middle btn-sm text-center"
+																	type="button" data-bs-toggle="collapse"
+																	data-bs-target="#other">
+																	<i class="ri-add-fill align-middle"></i>
+																</button>
+
+															</div>
+															<div class="collapse mt-2" id="other">
+																<input type="text" class="form-control" name="name">
+															</div>
+
+															<span name="nameError" class="error-message"></span>
+														</td>
+
+
+
+
+
+
+														<td>
+															<select class="form-select  form-control"
+																aria-label="Default select example" name="unit">
+
+																<option value=""> ------------------</option>
+
+																{% for i in uom %}
+																<option value="{{i.id}}">{{i.name}} </option>
+																{% endfor %}
+															</select>
+															<span id="unitError" class="error-message"></span>
+														</td>
+
+														<td><input type="number" class="form-control qty"
+																onchange="calculateTotalAmount(this)" name="qty">
+															<span id="qtyError" class="error-message"></span>
+														</td>
+
+														<td><input type="number" class="form-control price"
+																onchange="calculateTotalAmount(this)" name="price">
+															<span id="priceError" class="error-message"></span>
+														</td>
+
+														<td>
+															<input type="number" class="form-control sub_total"
+																name="sub_total">
+															<span name="sub_totalError" class="error-message"></span>
+														</td>
+														</td>
+
+														<td>
+															<div class="dropdown d-inline-block">
+																<button
+																	class="btn btn-soft-secondary btn-sm dropdown add-row"
+																	type="button" data-bs-toggle="dropdown"
+																	aria-expanded="false">
+																	<i class="ri-add-fill align-middle"></i>
+																</button>
+															</div>
+														</td>
+													</tr>
+												</tbody>
+											</table>
+
+									</fieldset>
+									<hr>
+
+									<fieldset>
+										<div class="row">
+											<div class="col-md-4">
+												<label for="" class="form-label">Total amount :</label>
+												<input type="text" class="form-control" id="total_amount"
+													name="total_amount">
+												<span id="total_amountError" class="error-message"></span>
+											</div>
+											<div class="col-md-4">
+												<label for="" class="form-label">Paid Amount :</label>
+												<input type="text" class="form-control" id="paid" name="paid"
+													onchange="calculatePurchasependingAmount(this)">
+												<span id="paidError" class="error-message"></span>
+
+											</div>
+											<div class="col-md-4">
+												<label for="" class="form-label">Pending Amount :</label>
+												<input type="text" class="form-control" id="pending" name="pending">
+												<span id="pendingError" class="error-message"></span>
+											</div>
+										</div>
+										<br>
+
+										<!-- <p class="text-center mt-2">
+											<a href="{% url 'subcontractorlist' %}"  type="button" class="btn btn-link link-success fw-medium shadow-none"
+												 >
+
+												<i class="ri-close-line me-1 align-middle">Cancel</i> </a>
+											<button type="button" class="btn btn-primary"
+												onclick="createFunction(this)">Save </button>
+										</p> -->
+
+
+										<p class="text-center mt-2">
+
+											<a href="{% url 'purchaselist' %}"
+												class="btn btn-link link-success fw-medium shadow-none">
+
+												<i class="ri-close-line me-1 align-middle"></i> Close </a>
+
+											<!-- <button class="btn btn-link link-success fw-medium shadow-none" data-bs-dismiss="modal" onclick="clearErrors()" >
+													
+												<i class="ri-close-line me-1 align-middle"></i> Close </button> -->
+
+											<button type="button" class="btn btn-primary"
+												onclick="createFunction(this)"> Save </button>
+										</p>
+
+									</fieldset>
+							</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- container-fluid -->
+		</div>
+		<!-- End Page-content -->
+
+
+
+	</div>
+	<!-- end main content-->
+
+</div>
+<!-- END layout-wrapper -->
+
+
+
+<!--start back-to-top-->
+<button onclick="topFunction()" class="btn btn-danger btn-icon" id="back-to-top">
+	<i class="ri-arrow-up-line"></i>
+</button>
+<!--end back-to-top-->
+
+<!--preloader-->
+<div id="preloader">
+	<div id="status">
+		<div class="spinner-border text-primary avatar-sm" role="status">
+			<span class="visually-hidden">Loading...</span>
+		</div>
+	</div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!--invoice,project,purchase,quatation,transfer,vendor,vendorquates-->
+<script type="text/javascript">
+	$(document).ready(function () {
+		var i = 1;
+
+		$(".add-row").click(function (event) {
+			event.preventDefault();
+			++i;
+
+
+			var newRow = `<tr>
+						<th scope="row"><div class="form-check"><input class="form-check-input fs-15" type="checkbox" name="checkAll" value="option1"></div></th>
+						<td>${i}</td>
+
+						<td>
+							<div  class="d-flex gap-2 ">
+								<select  style="width:85%;" class="form-select" aria-label="Default select example" id="item" name="item" >
+									<option value="">------------------</option>
+									{% for i in materiallibrary %}
+										<option value="{{ i.id }}">{{ i.item }}</option>
+									{% endfor %}
+									</select>
+								<button class="btn btn-soft-secondary align-middle btn-sm text-center" type="button" data-bs-toggle="collapse" data-bs-target="#other_${i}">
+									<i class="ri-add-fill align-middle"></i>
+								</button> 
+							
+							</div>
+							<div class="collapse mt-2" id="other_${i}">
+								<input type="text" class="form-control"  name="name" >
+							</div>
+
+							<span  name="nameError" class="error-message"></span>
+						</td>
+			
+						<td><select class="form-select  form-control"  aria-label="Default select example" name="unit" >
+							<option value=""> ------------------</option>
+							{% for i in uom %}
+							<option value="{{i.id}}">{{i.name}} </option>
+							{% endfor %}
+						  </select>
+						  <span  name="unitError" class="error-message"></span></td>
+
+						  <td><input type="number" name="qty" class="form-control qty" onchange="calculateTotalAmount(this)" >
+							<span  name="qtyError" class="error-message"></span></td>
+
+							</td>
+
+
+						  <td><input type="number" name="price" class="form-control price" onchange="calculateTotalAmount(this)">
+							<span  name="priceError" class="error-message"></span></td>
+
+							</td>
+
+						<td><input type="number" name="sub_total" class="form-control sub_total">
+							<span  name="sub_totalError" class="error-message"></span></td>
+							</td>
+
+						<td><button type="button" class="btn btn-danger btn-icon waves-effect waves-light remove-table-row">
+							<i class="ri-delete-bin-5-line"></i></button></td>
+						</tr>`;
+
+			$("#tabl").append(newRow);
+		});
+
+		$(document).on('click', '.remove-table-row', function () {
+			// --i;
+			$(this).parents('tr').remove();
+		});
+	});
+
+
+
+	// helpers
+
+	// calculate total amount
+	function calculateTotalAmount(input) {
+		const row = input.closest('tr');
+		const supplyQtyInput = row.querySelector('.qty');
+		const amountInput = row.querySelector('.price');
+		const totalAmountSpan = row.querySelector('.sub_total');
+
+		const supplyQty = parseFloat(supplyQtyInput.value);
+		const amount = parseFloat(amountInput.value);
+
+		if (!isNaN(supplyQty) && !isNaN(amount)) {
+			totalAmountSpan.textContent = (supplyQty * amount).toFixed(2);
+			totalAmountSpan.value = (supplyQty * amount).toFixed(2);
+		} else {
+			totalAmountSpan.textContent = '';
+			totalAmountSpan.value = '';
+		}
+
+		// calculate total purchase amount
+		const totalAmount = document.getElementById('total_amount')
+		calculatePurchaseAmount(totalAmount)
+
+		// calculate total pending amount
+		const paidInput = document.getElementById('paid');
+		calculatePurchasependingAmount(paidInput)
+	}
+
+
+	function calculatePurchaseAmount(input) {
+
+		const sub_total = document.querySelectorAll('.sub_total')
+		var tamount = 0;
+
+		sub_total.forEach(item => {
+			tamount += Number(item.value);
+		})
+		console.log(typeof tamount)
+		input.value = tamount;
+
+	}
+
+	function calculatePurchasependingAmount(input) {
+		const purchaseAmountInput = document.getElementById('total_amount');
+		const purchaseAmount = purchaseAmountInput.value;
+		const paid = input.value;
+
+		const pendingInput = document.getElementById('pending');
+		pendingInput.value = (purchaseAmount - paid).toFixed(2)
+
+	}
+
+</script>
+
+<script>
+	// create form
+	function createFunction(button) {
+		clearErrors()
+		var formId = `createForm`;   //change
+		var formElement = document.getElementById(formId);
+		try {
+			disableButton(button);
+			var isValid = true;
+			var errors = {};
+			var formData = new FormData();
+
+			var requiredMessage = ['This field may not be blank.']
+
+			// var requiredKeys = ['vendor_company', 'vendor', 'gst', 'contact_no', 'invoice_id', 'created_at'
+			// 	, 'total_amount', 'paid', 'pending'];   //change
+
+			var requiredKeys = ['vendor_company']
+
+			formData.append('vendor', getValueOrDefault(formElement.querySelector('select[name="vendor"]').value));              //change
+			formData.append('gst', getValueOrDefault(formElement.querySelector('input[name="gst"]').value));
+			formData.append('contact_no', getValueOrDefault(formElement.querySelector('input[name="contact_no"]').value));
+			formData.append('vendor_company', getValueOrDefault(formElement.querySelector('input[name="vendor_company"]').value));
+			formData.append('invoice_id', getValueOrDefault(formElement.querySelector('input[name="invoice_id"]').value));
+			formData.append('created_at', getValueOrDefault(formElement.querySelector('input[name="created_at"]').value));
+
+			formData.append('total_amount', getValueOrDefault(formElement.querySelector('input[name="total_amount"]').value));
+			formData.append('paid', getValueOrDefault(formElement.querySelector('input[name="paid"]').value));
+			formData.append('pending', getValueOrDefault(formElement.querySelector('input[name="pending"]').value));
+
+
+
+			var tableData = [];
+			$('#tabl tbody tr').each(function () {
+				console.log(this)
+
+				var rowData = {};
+				rowData['item'] = $(this).find('select[name^="item"]').val();
+				rowData['name'] = $(this).find('input[name^="name"]').val();
+				rowData['unit'] = $(this).find('select[name^="unit"]').val();
+				rowData['price'] = $(this).find('input[name^="price"]').val();
+				rowData['qty'] = $(this).find('input[name^="qty"]').val();
+				rowData['sub_total'] = $(this).find('input[name^="sub_total"]').val();
+				tableData.push(rowData);
+			});
+
+
+			// var tablerequiredKeys = ['item', "unit"]
+
+			// tablerequiredKeys.forEach(function (key) {
+			// 	tableData.forEach(function (item) {
+			// 		var value = item[key];
+			// 		if (value === null || value === undefined || value === '') {
+			// 			isValid = false;
+			// 			errors[key] = ['This field may not be blank.'];
+			// 		} else if (!value.trim()) {
+			// 			isValid = false;
+			// 			errors[key] = ['This field may not be blank.'];
+			// 		}
+			// 	});
+			// });
+
+
+
+			tableData.forEach(function (item) {
+				var itemValue = item['item'];
+				var nameValue = item['name'];
+				var unitValue = item['unit'];
+
+				// Check if either item or name is not null, empty, or undefined
+				if ((itemValue === null || itemValue === undefined || itemValue.trim() === '') &&
+					(nameValue === null || nameValue === undefined || nameValue.trim() === '')) {
+					isValid = false;
+					errors['item'] = requiredMessage;
+					errors['name'] = requiredMessage;
+				}
+
+				// Additional check for the 'unit' field
+				if (unitValue === null || unitValue === undefined || unitValue.trim() === '') {
+					isValid = false;
+					errors['unit'] = requiredMessage;
+				}
+			});
+
+
+			console.log(errors)
+
+			requiredKeys.forEach(function (key) {
+				var value = formData.get(key);
+				if (value === null || value === undefined || value === '') {
+					isValid = false;
+					errors[key] = requiredMessage;
+				} else if (!value.trim()) {
+					isValid = false;
+					errors[key] = requiredMessage;
+				}
+			})
+
+
+			// requiredKeys.forEach(function (key) {
+			// 	var value = formData.get(key);
+			// 	if (!value.trim()) {
+			// 		isValid = false;
+			// 		errors[key] = ['This field may not be blank.'];
+			// 	}
+			// });
+
+			if (!isValid) {
+				enableButton(button);
+				console.log(errors);
+				handleTableErrors(errors);
+				return;
+			} else {
+				$(`#${formId} input, #${formId} button`).prop('disabled', true);
+
+			}
+
+			formData.append("table", JSON.stringify(tableData))
+
+			$.ajax({
+				url: '/add_purchase/',                //change
+				type: 'POST',
+				headers: {
+					'X-CSRFToken': csrftoken,
+				},
+				data: formData,
+				processData: false,
+				contentType: false,
+				success: function (response, status, xhr) {
+					console.error(status);
+					if (xhr.status === 201) {
+						showToast(successMesssage?.message, '', successMesssage?.bgColor, true);
+						enableButton(button);
+					} else {
+						console.error(error);
+						// restoreForm(formId, button)
+
+					}
+				},
+				error: function (xhr, status, error) {
+					console.log(xhr, status, error);
+					if (xhr.status === 400) {
+						if (xhr?.responseJSON || xhr?.responseJSON?.errors) {
+							handleTableErrors(transformErrors(xhr.responseJSON));
+							// restoreForm(formId, button)
+
+						} else {
+							showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+							// restoreForm(formId, button)
+
+						}
+					}
+					else if (xhr.status === 401 || xhr.status === 404) {
+						showToast(xhr?.responseJSON?.details, '', errorAlertMessage?.bgColor);
+						// restoreForm(formId, button)
+
+					}
+					else {
+						showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+						// restoreForm(formId, button)
+
+					}
+				}
+
+			});
+		} catch (error) {
+			showToast(errorOccured?.message, '', errorOccured?.bgColor);
+			// restoreForm(formId, button)
+			console.error(error);
+		}
+		finally {
+			restoreForm(formId, button)
+		}
+	}
+
+
+
+
+	function handleTableErrors(errors, pre = "") {
+		$(".form-control").removeClass("is-invalid");
+		$(".error-message").text("");
+
+		for (var fieldName in errors) {
+			if (errors.hasOwnProperty(fieldName)) {
+				var errorMessage = errors[fieldName][0]; // Get the first error message
+
+
+				const fields = document.getElementsByName(fieldName)
+
+
+				fields.forEach((item) => {
+					if (item.value === null || item.value === "" || item.value === "undefined") {
+
+						console.log(item)
+
+						td = item.closest('td');
+
+						var name = item.getAttribute('name')
+
+						if (name === "item" || name === "name") {
+
+						if (name === "item") {
+							const inputName = item.nextElementSibling.querySelector('input[name="name"]');
+
+							
+							if (inputName && inputName.value.trim() !== "") {
+								return; 
+							}
+							else{
+								item.classList.add('is-invalid')
+								const lastElement = td.lastElementChild;
+								lastElement.innerHTML = errorMessage;
+							}
+						}
+
+						if (name === "name") {
+							const itemname = item.closest('td').querySelector('select[name="item"]');
+
+							console.log(itemname)
+
+							if (itemname && itemname.value.trim() !== "") {
+								console.log("returnnnnnnnnn")
+								return; 
+							}
+							else{
+								item.classList.add('is-invalid')
+								const lastElement = td.lastElementChild;
+								lastElement.innerHTML = errorMessage;
+							}
+						}
+
+						
+
+						}
+
+						else {
+							
+							item.classList.add('is-invalid')
+							const sibling = item.nextElementSibling;
+							if (sibling) {
+								sibling.innerHTML = errorMessage;
+							}
+						}
+
+					}
+				})
+
+
+
+			}
+		}
+	}
+
+</script>
+
+
+{% endblock header2 %}
