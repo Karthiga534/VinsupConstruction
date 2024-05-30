@@ -1,0 +1,42 @@
+{
+  "permissions": {
+
+    "CustomUser": {
+      "admin": {
+        "GET": true,
+        "POST": true,
+        "PUT": true,
+        "DELETE": false
+      },
+      "employee": {
+        "GET": true,
+        "POST": true,
+        "PUT": false,
+        "DELETE": false
+      }
+    },
+
+    
+    "Company": {  
+      "admin": {
+        "GET": true,
+        "POST": true,
+        "PUT": true,
+        "DELETE": false
+      },
+      "employee": {
+        "GET": true,
+        "POST": false,
+        "PUT": false,
+        "DELETE": false
+      }
+    }
+
+
+
+
+
+
+
+  }
+}
