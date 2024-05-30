@@ -18,6 +18,8 @@ from app.utils import PaginationAndFilter, customPagination,check_user
 
 paginator = PageNumberPagination()
 
+ONGOING_STATUS_CODE = 1
+COMPLETED_STATUS_CODE = 0
 
 #---------------------------------------------------------------------- Dharshini ----------------------------------------------------------------
 
@@ -1246,7 +1248,7 @@ def dashboard_count(request):
     project_ongoing_count = Project.objects.filter(company=user.company, status__code=1).count()
     project_completed_count = Project.objects.filter(company=user.company, status__code=0).count()
 
-    sub_labour_count = ProjectSubContractLabourAttendence.objects.filter( company=user.company, start_date=today ).count()
+    sub_labour_count = ProjectSubContractLabourAttendence.objects.filter( company=user.company, date=today ).count()
     company_labour_count = ProjectLabourAttendence.objects.filter(  company=user.company, date=today ).count()
 
     material_request_count = Quatation.objects.filter(company=user.company).count()
@@ -1268,25 +1270,15 @@ def dashboard_count(request):
 @login_required(login_url='apilogin')
 def getprojectlist(request):
     user = request.user
+  
     allow, msg = check_user(request, Project, instance=False)
     if not allow:
         return JsonResponse({'details': [msg]}, status=status.HTTP_401_UNAUTHORIZED)
 
-    ONGOING_STATUS_CODE = 1
-    COMPLETED_STATUS_CODE = 0
+    projects= Project.objects.filter(company=request.user.company)
 
-
-    projects = Project.objects.filter(company=request.user.company).order_by(
-        Case(
-            When(status__code=ONGOING_STATUS_CODE, then=Value(0)),
-            When(status__code=COMPLETED_STATUS_CODE, then=Value(1)),
-            output_field=IntegerField(),
-        ),
-        '-id'
-    )
-    ongoing_projects = Project.objects.filter(company=user.company, status__code=ONGOING_STATUS_CODE).order_by("-id")
-    completed_projects = Project.objects.filter(company=user.company, status__code=COMPLETED_STATUS_CODE).order_by("-id")
-
+    ongoing_projects = projects.filter(status__code=ONGOING_STATUS_CODE).order_by("-id")
+    completed_projects = projects.filter(status__code=COMPLETED_STATUS_CODE).order_by("-id")
 
     projects = ProjectSerializer(projects, many=True) 
     ongoing_serializer = ProjectSerializer(ongoing_projects, many=True)
@@ -1830,7 +1822,7 @@ def get_project_contractorattendance(request, project_id):
 
         project_contractorattendance = ProjectSubContractLabourAttendence.objects.filter(
             contract_id=project_id,
-            start_date=start_date
+            date=start_date
         )
         
         if not project_contractorattendance.exists():
