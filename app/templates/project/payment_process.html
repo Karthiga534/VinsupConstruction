@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% load filters %}
+{% load static %}
+
+{% block header2 %}
+
+<style>
+    .custom-button {
+        font-size: 0.85rem; /* Increase text size */
+        padding: 0.30rem 1.00rem; /* Increase button size */
+    }
+
+    #create-receipt-btn {
+        margin-right: 20px; /* Adjust the margin-right as needed */
+    }
+</style>
+
+<div id="layout-wrapper">
+
+    <div class="main-content">
+
+        <div class="page-content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                            <h4 class="mb-sm-0">Projects</h4>
+                            <div class="page-title-right">
+                                <ol class="breadcrumb m-0">
+                                    <li class="breadcrumb-item"><a href="javascript:history.back()">Back</a></li>
+                                    <li class="breadcrumb-item active">Payment Process</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>       
+                <div class="row">
+                    <div class="col-md-5 mr-md-3"> 
+                        <button type="button" class="btn btn-secondary mb-3" onclick="history.back()">Back</button>
+                    </div>
+                </div>
+                         
+                <div class="container mt-5">
+                    <div class="row justify-content-center">
+                        <div class="col-md-10"> 
+                            <div class="card">
+                                <div class="card-body">
+                          
+                                    
+                                    <h4 class="text-center mb-4">Payment Process</h4>
+                                    <form method="post">
+                                        {% csrf_token %}
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label for="date" class="form-label">Date:</label>
+                                                <input type="date" class="form-control" id="date" name="date">
+                                                <span id="dateError" class="error-message"></span>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="receipt_number" class="form-label">Receipt No:</label>
+                                                <input type="text" class="form-control" name="receipt_number" id="receipt_number">
+                                                <span id="receipt_numberError" class="error-message"></span>
+                                            </div>
+                                        </div>
+                                        <div class="row mt-3">
+                                            <div class="col-md-6">
+                                                <label for="payment_method" class="form-label">Payment Method:</label>
+                                                <select class="form-select mb-3" aria-label="Default select example" name="payment_method" id="payment_method">
+                                                    <option value="">----------------</option>
+                                                    {% for method in payment_methods %}
+                                                    <option value="{{ method.id }}">{{ method.name }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                                <span id="payment_methodError" class="error-message"></span>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="payment_amount" class="form-label">Payment Amount:</label>
+                                                <input type="number" class="form-control" name="payment_amount" id="payment_amount" min="0.01" step="0.01">
+                                                <span id="payment_amountError" class="error-message"></span>
+                                            </div>
+                                        </div>
+                                        <div class="row mt-3 justify-content-center">
+                                            <div class="col-md-6">
+                                                <button type="submit" class="btn btn-primary d-block mx-auto">Submit Payment</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>                    
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock header2 %}

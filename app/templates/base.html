@@ -416,7 +416,7 @@
                             <div class="dropdown-menu dropdown-menu-end">
                                 <!-- item-->
                                 <h6 class="dropdown-header">Welcome Admin!</h6>
-                                <a class="dropdown-item" href="#">
+                                <a class="dropdown-item" href="{% url 'profile' %}">
                                     <i class="mdi mdi-account-circle text-muted fs-16 align-middle me-1"></i>
                                     <span class="align-middle">Profile</span>
                                 </a>
@@ -641,6 +641,9 @@
                             <ul class="nav nav-sm flex-column">
                                 <li class="nav-item">
                                     <a href="{% url 'profit' %}" class="nav-link" data-key="">Profit & Loss</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{% url 'pettycash' %}" class="nav-link" data-key="">Petty Cash</a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link menu-link" href="#sidebarLayouts1" data-bs-toggle="collapse"

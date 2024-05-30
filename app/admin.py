@@ -153,3 +153,9 @@ class EmployeeProfileAdmin(admin.ModelAdmin):
 admin.site.register(ProjectMachineExpense)
 
 admin.site.register(DailyMaterialUsage)
+
+@admin.register(PettyCash)
+class PettyCashAdmin(admin.ModelAdmin):
+    list_display = ('id',)
+
+admin.site.register(PaymentHistory)

@@ -24,6 +24,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from rest_framework.decorators import api_view, permission_classes
 from app.utils import PaginationAndFilter, customPagination,check_user,get_current_month,filter_by_month_range,get_company
 
+
+
+
 paginator = PageNumberPagination()
 date_format = "%Y-%m-%d"
 clocked_in_message ='already clocked in for this date'
@@ -40,7 +43,7 @@ def login_admin(request):
         errors ={}
         if form.is_valid():
             email = form.cleaned_data['email']
-            password = form.cleaned_data['password']
+            password = form.cleaned_data['password'] 
 
             try:
                 user = CustomUser.objects.get(email=email)
@@ -55,6 +58,7 @@ def login_admin(request):
         return render(request, "login.html", {'form': form, 'errors': errors,'cred':{"email":email,"password":password}})
     
     return render(request, "login.html", {'form': form, 'errors': errors})
+
 
 
 class CustomLogoutView(LogoutView):
@@ -2263,3 +2267,135 @@ def attendancelist(request,pk):  #change name
         
     querysets =ProjectSubContract.objects.filter(company__in=company)
     return PaginationAndFilter(querysets, request,ProjectSubContractAttendenceSerialiser,date_field ="created_at")
+
+@login_required(login_url='login')
+def pettycash(request):  #change name 
+    user=request.user
+    allow,msg= check_user(request,PettyCash,instance=False)  # CHANGE model
+    if not allow:
+         context ={"unauthorized":msg}
+         return render(request,"login.html",context)    
+      
+    querysets = PettyCash.objects.filter(company=request.user.company).order_by("-id") 
+    employee = Employee.objects.filter(company=request.user.company).order_by("-id") 
+    site_location =Project.objects.filter(company=request.user.company).order_by("-id")   #change query
+    payment_method = PaymentMethod.objects.filter(company=request.user.company).order_by("-id")
+    queryset,pages,search =customPagination(request,PettyCash,querysets)    #change, model
+    context= {'queryset': queryset,
+              "location":"pettycash",
+              "pages" :pages,
+              "employees":employee,
+              "site_locations": site_location,
+              "search":search,
+              "payment_method":payment_method,
+              }   #change location name 
+    return render(request,"expense/pettycash.html",context)    #change template name
+
+@api_view(['POST'])
+@login_required(login_url='login')
+def add_pettycash (request):  # CHANGE name
+    user=request.user
+    allow,msg= check_user(request,PettyCash,instance=False)  # CHANGE model
+    if not allow:
+        return JsonResponse({'details':[msg]}, status=status.HTTP_401_UNAUTHORIZED)
+    
+    request_data=request.POST.copy().dict()
+    attachments = request.FILES.get("attachment",None) 
+
+    if user.admin:
+        request_data['company'] = user.company.id
+
+    if attachments: 
+         request_data['attachment'] = attachments
+
+    serializer = PettyCashSerializer(data=request_data)   # CHANGE serializer
+    if serializer.is_valid():  
+        serializer.save()
+        return JsonResponse( serializer.data, status=status.HTTP_201_CREATED)
+    else:
+        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['PUT'])
+@login_required(login_url='login')
+def update_pettycash(request, pk):  # CHANGE name
+    user=request.user
+
+    try:
+        instance = PettyCash.objects.get(id=pk)  # CHANGE model
+    except PettyCash.DoesNotExist:              # CHANGE model
+        return JsonResponse({'details': ['Item does not exist']}, status=404)
+
+    allow,msg= check_user(request,PettyCash,instance=instance)  # CHANGE model
+    if not allow:
+        return JsonResponse({'details':[msg]}, status=status.HTTP_401_UNAUTHORIZED)
+
+    serializer = PettyCashSerializer(instance, data=request.data,partial=True)   # CHANGE Serializer
+    if serializer.is_valid():  
+        serializer.save()
+        return JsonResponse( serializer.data, status=200)
+    else:
+        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['DELETE'])
+@login_required(login_url='login')
+def delete_pettycash(request,pk):
+    user=request.user
+    try:
+        instance = PettyCash.objects.get(id=pk)  # CHANGE model
+        allow,msg= check_user(request,PettyCash,instance=instance)  # CHANGE model
+        if not allow:
+            return JsonResponse({'details':[msg]}, status=status.HTTP_401_UNAUTHORIZED)
+        instance.delete()
+        return JsonResponse( {'details': ['success']},status=204)
+    except PettyCash.DoesNotExist:  # CHANGE model
+        return JsonResponse({'details': ['Item does not exist']}, status=404)
+    
+def clientcash(request, pk):
+    project = get_object_or_404(Project, pk=pk)
+    payment_methods = PaymentMethod.objects.all()  # Get all payment methods
+    payment_history = PaymentHistory.objects.filter(project=project)  # Get payment history for this project
+
+    total_paid_amount = payment_history.aggregate(total_paid=Sum('payment_amount'))['total_paid']
+    total_paid_amount = total_paid_amount if total_paid_amount else 0
+    
+    # Calculate pending amount
+    pending_amount = project.estimation - total_paid_amount
+    
+
+
+    client_name = project.client
+    contact_no = project.contact_no
+
+    context = {
+        'client_name': client_name,
+        'contact_no': contact_no,
+        'project': project , 'payment_methods': payment_methods, 'payment_history': payment_history,'total_paid_amount': total_paid_amount,
+        'pending_amount': pending_amount
+    }
+
+    return render(request, 'project\clientcash.html', context)
+
+def payment_process(request, project_id):
+    project = get_object_or_404(Project, pk=project_id)
+    payment_methods = PaymentMethod.objects.all()  # Get all payment methods
+
+    if request.method == 'POST':
+        date = request.POST.get('date')
+        receipt_number = request.POST.get('receipt_number')
+        payment_method_id = request.POST.get('payment_method')  # Retrieve selected payment method ID
+        payment_amount = request.POST.get('payment_amount')
+        # is_paid = request.POST.get('is_paid') == 'yes'
+
+        payment_method = PaymentMethod.objects.get(pk=payment_method_id)  # Get the selected payment method object
+
+        PaymentHistory.objects.create(
+            project=project,
+            date=date,
+            receipt_number=receipt_number,
+            payment_method=payment_method,
+            payment_amount=payment_amount,
+            # is_paid=is_paid
+        )
+        return redirect('clientcash', pk=project.id)  # Provide the pk argument
+    else:
+        return render(request, 'project/payment_process.html', {'project': project, 'payment_methods': payment_methods})
