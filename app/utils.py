@@ -3,10 +3,9 @@ from django.db.models import Q
 from django.core.paginator import Paginator
 from django.core.serializers import serialize
 from datetime import datetime, timedelta ,date
-
-
+import string
+import random
 from django.utils import timezone
-
 from rest_framework.response import Response
 
 date_format = "%Y-%m-%d"
@@ -236,7 +235,9 @@ def get_user_company(user):
 #   company,_=get_user_company(user)
 
 def get_company_id(company_list):
-    print(company_list)
+    print(type(company_list))
+    company_list = list(company_list)
+
     if company_list:
         last_company = company_list[-1]  
         print(last_company)
@@ -327,3 +328,95 @@ def truncate_file_text(text,char =10):
         name = text[0:char]
         return name + "." + ext
     return text
+
+# ---------------------------------------
+
+
+# get pin
+def get_pin():
+    pin = ''.join([str(random.randint(0, 9)) for _ in range(4)])  
+    return pin
+
+
+# get password
+def get_password(name):
+    password = ''.join(random.choices(string.ascii_letters + string.digits, k=8)) 
+    return password
+    
+
+# permissions --------------
+
+import json
+from django.contrib.auth.models import User
+from rest_framework import status
+from rest_framework.response import Response
+
+def load_permissions():
+    with open('permission.json', 'r') as file:
+        permissions_data = json.load(file)
+    return permissions_data
+
+def allow_user(request,klass,instance=False,pk=None):
+    allow_msg ='not allowed'
+    allow =True    #initial set false
+
+    user=request.user
+    role =get_user_role(user)
+    if not role:
+        return allow ,instance, allow_msg 
+    
+    model_name= klass.__name__
+    action =request.method
+    permissions_data = load_permissions()
+
+    company = get_user_company(user)
+
+    if user.is_superuser  :
+        return True ,instance, allow_msg  
+    
+    if model_name in permissions_data['permissions']:
+        role_permissions = permissions_data['permissions'][model_name]
+        if user.is_authenticated and role in role_permissions:
+            allow = role_permissions[role][action]
+
+    
+    if pk:
+        try :
+            instance = klass.objects.get(pk=pk)
+            if instance.company in company:
+                allow =True
+        except:
+            instance =False
+
+    return allow ,instance, allow_msg 
+
+
+
+def get_user_role(user):
+
+    if user.is_owner and not user.admin:
+       return "owner"
+    if user.admin:
+        return "admin"
+    if user.employee:
+        return "employee"
+    else :
+        return False
+
+
+
+def get_user(user):
+    owner=False
+    admin=False
+    employee=False
+
+    user_msg =""
+
+    if user.is_owner:
+        owner=True
+    if user.admin:
+        admin=True
+    if user.employee:
+        employee=True
+
+    return owner,admin,employee
