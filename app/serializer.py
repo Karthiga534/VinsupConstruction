@@ -523,32 +523,23 @@ class ProjectSerializer(ModelSerializer):
         fields = '__all__'
 
     def to_representation(self, instance):
-     representation = super().to_representation(instance)
-    
-     proj_category = instance.proj_category
-     status = instance.status
+        data = super().to_representation(instance)
+        
+        proj_category = instance.proj_category
+        status = instance.status
 
-     return {
-        'id': representation['id'],
-        'client': representation['client'],
-        'contact_no': representation['contact_no'],
-        'address': representation['address'],
-        'proj_name': representation['proj_name'],
-        'site_location': representation['site_location'],
-        'start_date': representation['start_date'],
-        'estimation': representation['estimation'],
-        'proj_category': {
-            'id': proj_category.id,
-            'name': proj_category.name  
-        },
-     
-        'status': {
-            'id': status.id,
-            'name': status.name  
-        },
-        #'files': representation['files'],
-        #'expenses': representation['expenses']
-    }
+        data ={}
+        data['id'] =instance.id
+        data ["proj_name"] =  instance.proj_name
+        data ["site_location"] = instance.site_location
+        data ["start_date"] = instance.start_date
+
+        data["proj_category"] = instance.proj_category.name   if instance.proj_category else None
+        
+        data ['status_name'] =  instance.status.name if instance.status else None
+
+        return data
+
 
 
 #-------------- New ---------------        
@@ -582,6 +573,11 @@ class ExpenseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Expense
         fields = ['id', 'amount', 'attachment', 'company', 'date', 'employee', 'particular', 'site_location'] 
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data ['employee_name'] =instance.employee.name if instance.employee else None
+        return data 
 
 
 class SiteStockSerializer(ModelSerializer):
@@ -1134,7 +1130,7 @@ class ProjectMachineExpenseSerializer(serializers.ModelSerializer):
         fields = '__all__'
     
     def to_representation(self, instance):
-     representation = super().to_representation(instance)
+     data = super().to_representation(instance)
     
      project = instance.project
      machine = instance.machine 
@@ -1144,34 +1140,19 @@ class ProjectMachineExpenseSerializer(serializers.ModelSerializer):
      machine_representation = None
      payment_schedule_representation = None
 
-     if project:
-        project_representation = {
-            'id': project.id,
-            'name': project.proj_name,
-        },     
-     
      if machine:
-        machine_representation = {
+       data ["machine"] = {
             'id': machine.id,
             'name': machine.name,
         },
      
      if payment_schedule:
-        payment_schedule_representation = {
+        data ["payment_schedule"] = {
             'id': payment_schedule.id,
             'name': payment_schedule.days,
         },
 
-     return {
-        'id': representation['id'],
-        'name': representation['name'],  
-        'rate': representation['rate'],       
-        'qty': representation['qty'],     
-        'attachment': representation['attachment'],     
-        'project': project_representation,  
-        'machine': machine_representation, 
-        'payment_schedule': payment_schedule_representation,     
-     }
+     return data
     
 class CompanySerializer(serializers.ModelSerializer):
     class Meta:
