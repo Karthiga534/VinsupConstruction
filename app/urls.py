@@ -166,7 +166,7 @@ urlpatterns = [
     path('delete_project/<int:pk>/', api.delete_project, name='delete_project'),
     path('update_projectstatus/', api.update_projectstatus, name='update_projectstatus'),
 
-    path('proattendance/',views.attendancereport,name= 'proattendance'),
+    path('attendance/subcontract',views.attendancereport,name= 'proattendance'),
     path('add_attendance/', views.add_attendancereport, name='add_attendance'),
     path('update_attendancereport/<int:pk>/', views.update_attendancereport, name='update_attendancereport'),
     path('delete_attendancereport/<int:pk>/', views.delete_attendancereport, name='delete_attendancereport'),
@@ -271,9 +271,12 @@ urlpatterns = [
 
     #path('api/counts/', views.count_api, name='counts-api'),
 
+    # --------------------------------------- Attendence ------------------------------------------------------------------
 
-    path('companylabourattendance/',views.companylabour_attendance,name= 'companylabourattendance'),
-    path('add_companylabourattendance/', views.add_companylabourattendance, name='add_companylabourattendance'),
+    
+    
+    path('company-labour-attendance/',views.companylabour_attendance,name= 'company-labour-attendance'),
+    path('company-labour-attendance/add/', views.add_companylabourattendance, name='add_companylabourattendance'),
     path('update_companylabourattendance/<int:pk>/', views.update_companylabourattendance, name='update_companylabourattendance'),
     path('delete_companylabourattendance/<int:pk>/', views.delete_companylabourattendance, name='delete_companylabourattendance'),
     # path('attendancelist/<int:pk>/', views.attendancelist, name='attendancelist'),

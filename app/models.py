@@ -44,7 +44,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     # company = models.ForeignKey('Company', on_delete=models.CASCADE, null=True, blank=True)
     pin = models.CharField(max_length=6, null=True, blank=True) 
     is_active = models.BooleanField(default=True)
-    admin = models.BooleanField(default=True)
+    admin = models.BooleanField(default=False)
+    is_employee = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     otp = models.CharField(max_length=6, null=True, blank=True)
@@ -64,8 +65,13 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     
     @property
     def company(self):
+        print(self.is_employee)
         if self.admin:
             return self.company_set.all().last()
+        if self.is_employee:
+            print("trueeeeeeeeeeee")
+            if self.employee_set.all():
+                return self.employee_set.all().last().company
         return None  
 
     @property
@@ -134,6 +140,14 @@ class Employee(models.Model):
 
     def __str__(self):
         return self.name
+    
+    def save(self, *args, **kwargs):
+        if self.user:
+            user =self.user
+            user.is_employee =True
+           
+        super().save(*args, **kwargs)
+    
     
 
     @property
@@ -1687,6 +1701,7 @@ class ProjectMachineExpense(models.Model):
     rate = models.DecimalField(max_digits=10, decimal_places=2, default=0.0) 
     payment_schedule =  models.ForeignKey(PaymentSchedule, on_delete=models.CASCADE, null=True, blank=True)
     qty = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    attachment  =models.FileField(upload_to="doc",null=True, blank=True)
 
 # ------------------------ expense --------------------------------------------------- ---------------------
 
@@ -1697,7 +1712,7 @@ class Expense(models.Model):
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     site_location = models.ForeignKey(Project, on_delete=models.CASCADE,null=True, blank=True ) 
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE, null=True, blank=True) 
-    attachment  =models.FileField(upload_to="doc")
+    attachment  =models.FileField(upload_to="doc",null=True, blank=True)
 
 
 
