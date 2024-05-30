@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load filters %}
 
 {% load static %}
 
@@ -73,7 +74,7 @@
                                                                         <span id="rateError" class="error-message"></span>
                                                                            
                                                                     </div>
-                                                                    <div class="col-md-6">
+                                                                    <div class="col-md-6 mt-2">
                                                                         <label for="id_payment_schedule" class="form-label">Payment schedule:</label>
                                                                         <select class="form-select" id="{{ i.id }}_payment_schedule" name="payment_schedule">
                                                                             <option value=""> ------- </option>
@@ -144,35 +145,16 @@
                                                 <td>{{ i.payment_schedule }}</td>
         
                                                 <td>
-                                                    <div class="dropdown d-inline-block">
-                                                        <button class="btn btn-soft-secondary btn-sm dropdown" type="button"
-                                                            data-bs-toggle="dropdown" aria-expanded="false">
-                                                            <i class="ri-more-fill align-middle"></i>
+                                                    <div class="btn-group" role="group">
+                                                        <button class="btn btn-soft-secondary btn-sm me-2" type="button" data-id="{{i.id}}" onclick="openModal('viewModal', '{{ i.id }}')">
+                                                            <i class="ri-eye-fill align-bottom me-2 text-muted"></i> View
                                                         </button>
-                                                        <ul class="dropdown-menu dropdown-menu-end">
-                                                            <!-- <li><a href="#!" class="dropdown-item view-btn"
-                                                                    data-bs-toggle="modal"
-                                                                    data-bs-target="#procatview"><i
-                                                                        class="ri-eye-fill align-bottom me-2 text-muted"></i>
-                                                                    View</a></li> -->
-                                                                    <li><a class="dropdown-item edit-item-btn"
-                                                                        data-bs-toggle="modal" href="#!"
-                                                                        onclick="openModal('viewModal','{{ i.id }}')"><i class="ri-eye-fill align-bottom me-2 text-muted"></i>
-                                                                        View</a></li>
-                                                            <li><a class="dropdown-item edit-item-btn"
-                                                                    data-bs-toggle="modal" href="#!"
-                                                                    onclick="openModal('editModal','{{ i.id }}')"><i
-                                                                        class="ri-pencil-fill align-bottom me-2 text-muted"></i>
-                                                                    Edit</a></li>
-                                                            <li>
-                                                                <a class="dropdown-item remove-item-btn del-btn"
-                                                                    href="#!" data-target="#deleteModal{{ i.id}}">
-                                                                    <i
-                                                                        class="ri-delete-bin-fill align-bottom me-2 text-muted"></i>
-                                                                    Delete
-                                                                </a>
-                                                            </li>
-                                                        </ul>
+                                                        <button class="btn btn-primary btn-sm me-2" type="button" data-bs-toggle="modal" onclick="openModal('editModal','{{ i.id }}')">
+                                                            <i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit
+                                                        </button>
+                                                        <button class="btn btn-danger btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#deleteModal{{ i.id }}">
+                                                            <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete
+                                                        </button>
                                                     </div>
         
                                                     <!-- view modal -->
@@ -201,9 +183,9 @@
                                                                             <input type="text" class="form-control" id="{{i.id}}_rate"
                                                                                 value="{{i.rate}}"  disabled />
                                                                         </div>
-                                                                        <div class="col-md-6">
+                                                                        <div class="col-md-6 mt-2">
                                                                             <label for="{{i.id}}_payment_schedule" class="form-label">Payment Schedule:
-                                                                                :</label>
+                                                                                </label>
                                                                             <input type="text" class="form-control" id="{{ i.id}}_payment_schedule"
                                                                                  name="payment_schedule" value="{{i.payment_schedule}}" disabled />
                                                                         </div>
@@ -260,7 +242,7 @@
                                                                             <span id="{{i.id}}_rateError" class="error-message"></span>
                                                                                
                                                                         </div>
-                                                                        <div class="col-md-6">
+                                                                        <div class="col-md-6 mt-2" >
                                                                             <label for="{{ i.id }}_payment_schedule">Payment Schedule:</label>
                                                                             <select class="form-select" id="{{ i.id }}_payment_schedule" name="payment_schedule">
                                                                                 <span id="{{ i.id }}_payment_scheduleError" class="error-message"></span>
