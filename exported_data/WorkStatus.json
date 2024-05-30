@@ -1,0 +1,22 @@
+[
+  {
+    "id": 1,
+    "name": "Yet to Start",
+    "code": "-2"
+  },
+  {
+    "id": 2,
+    "name": "Pending",
+    "code": "-1"
+  },
+  {
+    "id": 3,
+    "name": "Completed",
+    "code": "0"
+  },
+  {
+    "id": 4,
+    "name": "Ongoing",
+    "code": "1"
+  }
+]

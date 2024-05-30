@@ -151,7 +151,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
             return self.company_set.all()
         return [] 
 
-# ------------------------
+# ------------------------ System ------------------------
 
 class CompanyPlan(models.Model):
     name =models.CharField(max_length=256)
@@ -183,6 +183,42 @@ class AssetType(models.Model):
     def __str__(self):
         return self.name
     
+
+class CompanyPlanLimits(models.Model):
+    plan = models.ForeignKey(CompanyPlan,null=True,blank=True,on_delete=models.CASCADE)
+    logo = models.IntegerField(null=True,blank=True)
+    banner  = models.IntegerField(null=True,blank=True)
+    active_banner =models.IntegerField(null=True,blank=True)
+    employee = models.IntegerField(null=True,blank=True)
+    customer = models.IntegerField(null=True,blank=True)
+    documents = models.IntegerField(null=True,blank=True)
+
+
+    def __str__(self) :
+        if self.plan:
+            return self.plan.display
+        return f'{self.__class__.__name__} Object ({self.pk})'
+    
+
+    @classmethod
+    def is_valid_asset(cls, limits_instance, asset_type_code):
+        asset_type_fields = {
+            0: 'logo',
+            1: 'banner',
+            2: 'active_banner',
+          
+        }
+        if asset_type_code not in asset_type_fields:
+            raise ValueError(f"Invalid asset type code: {asset_type_code}")
+
+        field_name = asset_type_fields[asset_type_code]
+        asset_count = getattr(limits_instance, field_name)
+
+        # print(field_name,asset_count)
+        return asset_count 
+
+
+
 
 # --------------- directories ---------------------------
 
@@ -337,39 +373,6 @@ class Company(models.Model):
 
 
     
-class CompanyPlanLimits(models.Model):
-    plan = models.ForeignKey(CompanyPlan,null=True,blank=True,on_delete=models.CASCADE)
-    logo = models.IntegerField(null=True,blank=True)
-    banner  = models.IntegerField(null=True,blank=True)
-    active_banner =models.IntegerField(null=True,blank=True)
-    employee = models.IntegerField(null=True,blank=True)
-    customer = models.IntegerField(null=True,blank=True)
-    documents = models.IntegerField(null=True,blank=True)
-
-
-    def __str__(self) :
-        if self.plan:
-            return self.plan.display
-        return f'{self.__class__.__name__} Object ({self.pk})'
-    
-
-    @classmethod
-    def is_valid_asset(cls, limits_instance, asset_type_code):
-        asset_type_fields = {
-            0: 'logo',
-            1: 'banner',
-            2: 'active_banner',
-          
-        }
-        if asset_type_code not in asset_type_fields:
-            raise ValueError(f"Invalid asset type code: {asset_type_code}")
-
-        field_name = asset_type_fields[asset_type_code]
-        asset_count = getattr(limits_instance, field_name)
-
-        # print(field_name,asset_count)
-        return asset_count 
-
 
     
 

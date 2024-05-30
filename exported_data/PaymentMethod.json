@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "name": "offline",
+    "code": "0"
+  },
+  {
+    "id": 2,
+    "name": "online",
+    "code": "1"
+  }
+]

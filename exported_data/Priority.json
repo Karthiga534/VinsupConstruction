@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "company_id": null,
+    "name": "low",
+    "code": "-1"
+  },
+  {
+    "id": 2,
+    "company_id": null,
+    "name": "medium",
+    "code": "0"
+  },
+  {
+    "id": 3,
+    "company_id": null,
+    "name": "high",
+    "code": "1"
+  }
+]

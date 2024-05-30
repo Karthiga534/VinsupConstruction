@@ -1,0 +1,14 @@
+[
+  {
+    "id": 1,
+    "name": "logo",
+    "code": 0,
+    "limit": 1
+  },
+  {
+    "id": 2,
+    "name": "banner",
+    "code": 1,
+    "limit": 1
+  }
+]

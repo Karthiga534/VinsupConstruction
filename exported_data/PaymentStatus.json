@@ -1,0 +1,17 @@
+[
+  {
+    "id": 1,
+    "name": "paid",
+    "code": "0"
+  },
+  {
+    "id": 2,
+    "name": "unpaid",
+    "code": "-1"
+  },
+  {
+    "id": 3,
+    "name": "pending",
+    "code": "1"
+  }
+]

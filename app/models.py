@@ -16,6 +16,59 @@ today_date = timezone.now().date()
 # date_format =settings.DATE_FORMAT
 date_format = "%Y-%m-%d"
 
+
+# ------------------------------------------------------------ system  library ------------------------------------------------------------
+
+class WorkStatus(models.Model):
+    name = models.CharField(max_length=50, null=True, blank=True)
+    code = models.CharField(max_length=50, null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
+class PaymentStatus(models.Model):
+    name = models.CharField(max_length=50, null=True, blank=True)
+    code = models.CharField(max_length=50, null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
+class PaymentMethod(models.Model):
+    name = models.CharField(max_length=50, null=True, blank=True)
+    code = models.CharField(max_length=50, null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
+class ContractType(models.Model):
+    name = models.CharField(max_length=50, null=True, blank=True)
+    code = models.CharField(max_length=50, null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+    
+class Duration(models.Model):
+    company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
+    name=models.CharField(max_length=100,null=True,blank=True)
+    code = models.CharField(max_length=50, null=True, blank=True)
+
+
+    def __str__(self):
+        return self.name
+
+class Priority(models.Model):
+    company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
+    name=models.CharField(max_length=100,null=True,blank=True)
+    code = models.CharField(max_length=50, null=True, blank=True)
+
+
+    def __str__(self):
+        return self.name
+
+
+# --------------------------------------------------------------------------------------
+
+
 #------------------------------------------------------------------- CustomUser ----------------------------------------------------------------
 # from django.core.exceptions import ValidationError
 # from django.utils.translation import gettext_lazy as _
@@ -628,35 +681,9 @@ class Contractor(models.Model):
             return self.name
         return "unnamed"    
     
-# ------------------------------------------------------------  library ------------------------------------------------------------
 
-class WorkStatus(models.Model):
-    name = models.CharField(max_length=50, null=True, blank=True)
-    code = models.CharField(max_length=50, null=True, blank=True)
-
-    def __str__(self):
-        return self.name
-
-class PaymentStatus(models.Model):
-    name = models.CharField(max_length=50, null=True, blank=True)
-    code = models.CharField(max_length=50, null=True, blank=True)
-
-    def __str__(self):
-        return self.name
-
-class PaymentMethod(models.Model):
-    name = models.CharField(max_length=50, null=True, blank=True)
-    code = models.CharField(max_length=50, null=True, blank=True)
-
-    def __str__(self):
-        return self.name
-
-class ContractType(models.Model):
-    name = models.CharField(max_length=50, null=True, blank=True)
-    code = models.CharField(max_length=50, null=True, blank=True)
-
-    def __str__(self):
-        return self.name
+    
+# ------------------------------------------------------------
 
 class MaterialLibrary(models.Model):
     company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
@@ -688,21 +715,7 @@ class OthersLibrary(models.Model):
     def __str__(self):
         return self.item
         
-class Duration(models.Model):
-    company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
-    name=models.CharField(max_length=100,null=True,blank=True)
 
-
-    def __str__(self):
-        return self.name
-
-class Priority(models.Model):
-    company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
-    name=models.CharField(max_length=100,null=True,blank=True)
-
-
-    def __str__(self):
-        return self.name
     
 class CompanyMachinaryCharges(models.Model) :
     company = models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
@@ -1020,14 +1033,21 @@ class Project(models.Model):
         amount =0 
         if self.incharge and self.incharge.get_salary_details:
             amount += sum(get_amount_or_zero(invoice.amount) for invoice in self.incharge.get_salary_details)
-
         return amount
+    
+
+    @property
+    def get_labour_attendence(self):
+        if self.projectlabourattendence_set.all():
+            return  self.projectlabourattendence_set.all()
+        return None
     
 
     @property
     def labour_salary(self):
         amount =0 
-        if self.incharge and self.incharge.get_salary_details:
+        
+        if self.get_labour_attendence and self.incharge.get_salary_details:
             amount += sum(get_amount_or_zero(invoice.amount) for invoice in self.incharge.get_salary_details)
 
         return amount
@@ -1337,6 +1357,8 @@ class Attendance(models.Model):
         else:
             return ""
 
+
+# not used
 class Salary(models.Model):
     company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
     employee=models.ForeignKey(Employee,null=True,blank=True, on_delete=models.CASCADE)
@@ -1346,7 +1368,7 @@ class Salary(models.Model):
 
 
 
-# make payment receipt
+# make payment receipt  for employee or user
 class SalaryReceipt(models.Model):
     salary = models.ForeignKey(Salary, on_delete=models.CASCADE, null=True, blank=True)
     employee = models.ForeignKey(Employee, null=True, blank=True, on_delete=models.CASCADE)
@@ -1833,7 +1855,7 @@ class ContractorInvoicePaymentHistory(models.Model):
             invoice.update_status()
         return data
 
-
+# ------------------------------------------------------------
 
 # company staff labour attendance
 class ProjectLabourAttendence(models.Model):
@@ -1847,15 +1869,7 @@ class ProjectLabourAttendence(models.Model):
     present=models.BooleanField(default=False)
 
 
-# class Attendance(models.Model):
-#     clock_in=models.TimeField(null=True, blank=True)
-#     clock_out=models.TimeField(null=True, blank=True)
-#     employee=models.ForeignKey(Employee,null=True,blank=True, on_delete=models.CASCADE)
-#     date=models.DateField(auto_now_add=True,null=True,blank=True)
-#     present=models.BooleanField(default=False)
 
-    # class Meta:
-    #     unique_together = ('labour', 'date')
 
     class Meta:
         constraints = [
@@ -1869,6 +1883,8 @@ class ProjectLabourAttendence(models.Model):
         if self.clock_in:
             self.present =True
         return super().save(*args, **kwargs)
+    
+
 
 
 # machinary works

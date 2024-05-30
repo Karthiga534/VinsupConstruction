@@ -11,11 +11,17 @@ class Command(BaseCommand):
             {'model_name': 'CompanyPlan', 'app_name': 'app', 'file_name': 'CompanyPlan.json'},
             {'model_name': 'CompanyPlanLimits', 'app_name': 'app', 'file_name': 'CompanyPlanLimits.json'},
             {'model_name': 'AssetType', 'app_name': 'app', 'file_name': 'AssetType.json'},
-            {'model_name': 'Mode', 'app_name': 'app', 'file_name': 'Mode.json'},
-             {'model_name': 'BuildingType', 'app_name': 'app', 'file_name': 'BuildingType.json'},  
-              {'model_name': 'Duration', 'app_name': 'app', 'file_name': 'Duration.json'},  
+          
             #  add units also
-            
+
+             {'model_name': 'WorkStatus', 'app_name': 'app', 'file_name': 'WorkStatus.json'},
+            {'model_name': 'PaymentStatus', 'app_name': 'app', 'file_name': 'PaymentStatus.json'},
+            {'model_name': 'PaymentMethod', 'app_name': 'app', 'file_name': 'PaymentMethod.json'},
+          
+           {'model_name': 'ContractType', 'app_name': 'app', 'file_name': 'ContractType.json'},
+            {'model_name': 'Duration', 'app_name': 'app', 'file_name': 'Duration.json'},
+            {'model_name': 'Priority', 'app_name': 'app', 'file_name': 'Priority.json'},
+          
         ]
 
         output_folder = 'exported_data'  
@@ -32,3 +38,8 @@ class Command(BaseCommand):
             self.stdout.write(self.style.SUCCESS(f'Data exported for {model_info["model_name"]}.'))
 
         self.stdout.write(self.style.SUCCESS('All data exported successfully.'))
+
+
+
+
+

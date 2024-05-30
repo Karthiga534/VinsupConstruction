@@ -1,0 +1,22 @@
+[
+  {
+    "id": 1,
+    "name": "lump sum",
+    "code": "0"
+  },
+  {
+    "id": 2,
+    "name": "Material",
+    "code": "1"
+  },
+  {
+    "id": 3,
+    "name": "Labour",
+    "code": "2"
+  },
+  {
+    "id": 4,
+    "name": "Unit",
+    "code": "3"
+  }
+]
