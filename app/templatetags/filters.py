@@ -29,3 +29,12 @@ def truncate(value,char =15):
     return value
 
 
+
+@register.filter
+def truncate_description(value,char =100):
+    if value:
+        return truncate_text(value,char) +"..."
+    return value
+
+
+

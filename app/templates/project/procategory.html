@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 
+{% load filters %}
 {% load static %}
 
 {% block header2 %}
@@ -73,9 +74,10 @@
                                                             </div>
                                                        
 
-                                                            <div class="col-md-6">
+                                                            <div class="mt-2 mb-3">
                                                                 <label for="id_description" class="form-label">Description:</label>
-                                                                <input type="text" name="description" class="form-control" id="description" value="">
+                                                                <Textarea name="description" class="form-control" id="description" value="" rows ="5"></Textarea>
+                                                                <!-- <input type="text" name="description" class="form-control" id="description" value=""> -->
                                                                 <span id="descriptionError" class="error-message"></span>
                                                             </div>
 
@@ -119,7 +121,7 @@
                                         </th> -->
                                         <th data-ordering="false">SR No.</th>
                                         <th data-ordering="false">category Name</th>
-                                        <th data-ordering="false">Description</th>
+                                        <th data-ordering="false" class="description-td">Description </th>
 
                                         <th data-ordering="false">Action</th>
 
@@ -136,7 +138,7 @@
                                         </th> -->
                                         <td>{{ forloop.counter }}</td>
                                         <td>{{ i.name }}</td>
-                                        <td>{{ i.description }}</td>
+                                        <td>{{ i.description | truncate_description }}</td>
 
                                         <td>
                                             <div class="dropdown d-inline-block">
@@ -217,15 +219,16 @@
                                                           <div class="row">
                                                               
                                             
-                                                            <div class="col-md-6">
+                                                            <div class="">
                                                                 <label for="{{i.id}}_name" class="form-label">Project Category Name:</label>
                                                                 <input type="text" class="form-control" id="{{i.id}}_name" name="name" value="{{i.name}}" readonly>
                                                             </div>
 
-                                                            <div class="col-md-6">
+                                                            <div class="mt-2 mb-3">
                                                               <label for="{{i.id}}_description" class="form-label">Description:</label>
-                                                              <input typ
-                                                              e="text" class="form-control" id="{{i.id}}_description" name="description" value="{{i.description}}" readonly>
+                                                              <textarea class="form-control" id="{{i.id}}_description" name="description" rows="5" value="{{i.description}}" readonly >{{i.description}}</textarea>
+                                                              <!-- <input typ
+                                                              e="text" class="form-control" id="{{i.id}}_description" name="description" value="{{i.description}}" readonly> -->
                                                             </div>
                                                         </div>
 
@@ -266,20 +269,26 @@
                                                             <form id="editForm{{ i.id }}" enctype="multipart/form-data">
                                                                 {% csrf_token %}
                                                             <div class="row mb-2"> 
-                                                                <div class="col-md-6">
+                                                                <div class="">
                                                                     <label for="editCategoryName">Category Name:</label>
                                                                     <input type="text" class="form-control" name="name"
                                                                         id="{{i.id}}_name" value="{{ i.name }}">
 
-                                                                    <span id="{{i.id}}_nameError"
+                                                                    <span id="{{i.id}}_nameError" 
                                                                         class="error-message"></span>
                                                                 </div>
-                                                                <div class="col-md-6">
+                                                                
+                                                                <div class="mt-2 mb-3">
                                                                     <label
                                                                         for="editCategoryDescription">Description:</label>
-                                                                    <input type="text" class="form-control"
+                                                                        <textarea type="text" class="form-control"
+                                                                        id="{{i.id}}_description" name="description" rows="5"
+                                                                        value="{{ i.description }}"> {{ i.description }} </textarea>
+
+                                                                    <!-- <input type="text" class="form-control"
                                                                         id="{{i.id}}_description" name="description"
-                                                                        value="{{ i.description }}">
+                                                                        value="{{ i.description }}"> -->
+
                                                                     <span id="{{i.id}}_descriptionError"
                                                                         class="error-message"></span>
                                                                 </div>
@@ -443,7 +452,7 @@
 
 
             formData.append('name', getValueOrDefault(formElement.querySelector('input[name="name"]').value));              //change
-            formData.append('description', getValueOrDefault(formElement.querySelector('input[name="description"]').value));
+            formData.append('description', getValueOrDefault(formElement.querySelector('textarea[name="description"]').value));
 
 
             requiredKeys.forEach(function (key) {
@@ -534,7 +543,7 @@
             const formData = new FormData();
  
             formData.append('name', getValueOrDefault(formElement.querySelector('input[name="name"]').value));    //change
-            formData.append('description', getValueOrDefault(formElement.querySelector('input[name="description"]').value));
+            formData.append('description', getValueOrDefault(formElement.querySelector('textarea[name="description"]').value));
 
 
             var requiredKeys = ['name'];     //change

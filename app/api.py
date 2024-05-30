@@ -1009,6 +1009,8 @@ def delete_material_library(request,pk):
 
 # ------------------------------------------------------------------------------------------------
 
+
+from django.template.loader import render_to_string
 # project
 @login_required(login_url='login')
 def project(request):  #change name 
@@ -1028,6 +1030,11 @@ def project(request):  #change name
         "engineer" :engineer , 'duration' :duration ,"priority" :priority
     }   #change location name 
     return render(request,"project/project.html",context)    #change template name
+
+    html = render_to_string('project/project.html', context)
+    return JsonResponse({'html': html})
+
+
  
 @api_view(['POST'])
 @login_required(login_url='login')
