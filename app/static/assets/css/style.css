@@ -1,0 +1,47 @@
+.is-invalid {
+    border-color: #dc3545; /* Red border color */
+}
+
+.invalid-feedback {
+    color: #dc3545; /* Red text color */
+}
+
+
+
+.read-only-field {
+    background-color: #f8f9fa; /* Example background color for read-only fields */
+    border: 1px solid #ced4da; /* Example border color for read-only fields */
+    color: #6c757d; /* Example text color for read-only fields */
+}
+/* :read-only{
+    background-color: gray;
+
+} */
+
+
+input[readonly] {
+    background-color: rgb(234, 239, 239);
+}
+
+
+
+
+.inline-buttons {
+    display: flex;
+    align-items: center;
+}
+
+.inline-buttons button {
+    margin-right: 8px; /* Adjust the spacing as needed */
+}
+
+.inline-buttons button:last-child {
+    margin-right: 0; /* Remove the margin from the last button */
+}
+
+
+
+/*  for td description text  */
+.description-td{
+    width :30% !important;
+}
