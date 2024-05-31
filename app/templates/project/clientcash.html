@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{% load filters %}
+{% load static %}
+
+
+{% block header2 %}
+
+<style>
+    .custom-button {
+        font-size: 0.85rem; /* Increase text size */
+        padding: 0.30rem 1.00rem; /* Increase button size */
+    }
+
+    #create-receipt-btn {
+        margin-right: 20px; /* Adjust the margin-right as needed */
+    }
+</style>
+
+<div id="layout-wrapper">
+
+	<div class="main-content">
+
+		<div class="page-content">
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-12">
+						<div class="page-title-box d-sm-flex align-items-center justify-content-between">
+							<h4 class="mb-sm-0">Projects</h4>
+							<div class="page-title-right">
+								<ol class="breadcrumb m-0">
+									<li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
+									<li class="breadcrumb-item active">Client Cash</li>
+								</ol>
+							</div>
+						</div>
+					</div>
+				</div>                 
+                <div class="row">
+                    <div class="col-xl-5 col-lg-5 col-md-6 col-xs-6 col-12"> </div>
+                    <div class="col-xl-5 col-lg-4 col-md-3 col-xs-6 col-12"></div>
+                    <div class="col-xl-2 col-lg-3 col-md-3 col-xs-6 col-12">
+                        <a class="btn btn-primary btn-sm custom-button mr-3" href="{% url 'project' %}">  PROJECT LIST </a>
+                    </div>
+               
+                    <div class="row">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4>Project Status</h4>
+                    
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label for="" class="form-label">Client Name:</label>
+                                        <input type="text" class="form-control" name="client" value="{{client_name}}" disabled>
+                                        <span id="clientError" class="error-message"></span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="" class="form-label">Contact No:</label>
+                                        <input type="text" class="form-control" name="contact_no" value="{{ contact_no }}" disabled>
+                                        <span id="contactNoError" class="error-message"></span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="" class="form-label">Project Name:</label>
+                                        <input type="text" class="form-control" name="proj_name" value="{{ project.proj_name }}" disabled>
+                                        <span id="projNameError" class="error-message"></span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="" class="form-label">Site Location:</label>
+                                        <input type="text" class="form-control" name="site_location" value="{{ project.site_location }}" disabled>
+                                        <span id="siteLocationError" class="error-message"></span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="" class="form-label">Estimation:</label>
+                                        <input type="text" class="form-control" name="estimation" value="{{ project.estimation }}" disabled>
+                                        <span id="estimationError" class="error-message"></span>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-3">
+                                    <!-- Create Receipt Button -->
+                                    <div class="col-md-4">
+                                        <div class="col-12">
+                                            <a href="{% url 'payment-process' project_id=project.id %}" class="btn btn-primary btn-sm custom-button" id="create-receipt-btn">Create Receipt</a>
+                                        </div>
+                                    </div>
+                                    <!-- Total Paid Amount -->
+                                    <div class="col-md-4">
+                                        <div class="col-12">
+                                            <h6>Total Paid Amount</h6>
+                                            <p>{{ total_paid_amount }}</p>
+                                        </div>
+                                    </div>
+                                    <!-- Pending Amount -->
+                                    <div class="col-md-4">
+                                        <div class="col-12">
+                                            <h6>Pending Amount</h6>
+                                            <p>{{ pending_amount }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                
+                                    <div class="col-md-12"> <!-- Use most of the space for the table -->
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <h2>Payment History</h2>
+                                                <table class="table table-bordered">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Date</th>
+                                                            <th>Receipt Number</th>
+                                                            <th>Payment Method</th>
+                                                            <th>Payment Amount</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {% for payment in payment_history %}
+                                                        <tr>
+                                                            <td>{{ payment.date }}</td>
+                                                            <td>{{ payment.receipt_number }}</td>
+                                                            <td>{{ payment.payment_method }}</td>
+                                                            <td>{{ payment.payment_amount }}</td>
+                                                        </tr>
+                                                        {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                
+                                
+
+                                
+                    </div>
+                    
+                </div>
+       
+                
+        
+
+            </div>
+        </div>
+    </div>
+</div>
+
+   
+
+
+
+    {% endblock header2 %}

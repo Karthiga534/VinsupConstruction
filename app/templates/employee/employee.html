@@ -83,6 +83,11 @@
                                   <textarea class="form-control" name="address" rows="3" id="address"></textarea>
                                   <span id="addressError" class="error-message"></span>
                                 </div>
+                                <div class="col-md-6 mt-2">
+                                  <label for="" class="form-label">Month Salary :</label>
+                                  <input type="text" name="monthly_salary" class="form-control" id="monthly_salary">
+                                  <span id="monthly_salaryError" class="error-message"></span>
+                                </div>
                               </div>
 
                               {% comment %} <div class="col-md-6 mt-2">
@@ -262,6 +267,12 @@
                                     </div>
 
                                     <div class="col-md-6 mt-3">
+                                      <label for="{{i.id}}_monthly_salary" class="form-label">Month Salary:</label>
+                                      <input type="text" class="form-control" id="{{i.id}}_monthly_salary" name="monthly_salary"
+                                        value="{{ i.monthly_salary }}" readonly>
+                                    </div>
+
+                                    <div class="col-md-6 mt-3">
                                       <label for="{{i.id}}_bankname" class="form-label">Bank Name:</label>
                                       <input type="text" class="form-control" id="{{i.id}}_bankname" name="bankname"
                                         value="{{i.bankname}}" readonly>
@@ -367,6 +378,17 @@
                                           value="{{i.address}}" />
 
                                         <span id="{{i.id}}_addressError" class="error-message"></span>
+
+                                      </div>
+
+                                      <div class="col-md-6 mt-3">
+
+                                        <label for="edit_monthly_salary" class="form-label">Month Salary:</label>
+
+                                        <input type="text" class="form-control" id="{{i.id}}_monthly_salary" name="monthly_salary"
+                                          value="{{i.monthly_salary}}" />
+
+                                        <span id="{{i.id}}_monthly_salaryError" class="error-message"></span>
 
                                       </div>
 
@@ -593,6 +615,7 @@
           "role",
           "mobile",
           "address",
+          "monthly_salary"
           // "bankaccount",
           // "ifsccode",
           // "bankname",
@@ -618,6 +641,12 @@
           "mobile",
           getValueOrDefault($('#createForm input[name="mobile"]').val())
         );
+
+        formData.append(
+          "monthly_salary",
+          getValueOrDefault($('#createForm input[name="monthly_salary"]').val())
+        );
+
 
         formData.append(
           "address",
@@ -748,6 +777,11 @@
         formData.append(
           "mobile",
           getValueOrDefault($(`#editForm${saveId} input[name="mobile"]`).val())
+        );
+
+        formData.append(
+          "monthly_salary",
+          getValueOrDefault($(`#editForm${saveId} input[name="monthly_salary"]`).val())
         );
 
         formData.append(

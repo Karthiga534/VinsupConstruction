@@ -244,7 +244,7 @@ class EmployeeSerializer(ModelSerializer):
         user_data["name"] = validated_data.get('name', None) 
 
         password =get_password(user_data["name"])
-        user_data["password"]=  make_password(password)
+        user_data["password"]=  make_password(password) 
 
         print(password)
         phone=user_data["phone_number"]
@@ -1213,3 +1213,15 @@ class PaymentScheduleSerializer(serializers.ModelSerializer):
     class Meta:
         model = PaymentSchedule
         fields = '__all__'
+
+class PettyCashSerializer(serializers.ModelSerializer):
+    attachment = serializers.FileField()
+
+    class Meta:
+        model = PettyCash
+        fields = ['id', 'amount', 'attachment', 'company', 'date', 'employee', 'particular', 'site_location','payment_method'] 
+
+class PaymentHistorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PaymentHistory
+        fields = ['id', 'project', 'date', 'receipt_number', 'payment_mode', 'payment_amount']

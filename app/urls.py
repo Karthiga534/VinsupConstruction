@@ -319,6 +319,21 @@ urlpatterns = [
 
 
 
+    path('pettycash/', views.pettycash, name='pettycash'),
+    path('add_pettycash/', views.add_pettycash, name='add_pettycash'),
+    path('update_pettycash/<int:pk>/', views.update_pettycash, name='update_pettycash'),
+    path('delete_pettycash/<int:pk>/', views.delete_pettycash, name='delete_pettycash'),
+
+    path('clientcash/<int:pk>/',views.clientcash,name='clientcash'),
+    path('payment-process/<int:project_id>/', views.payment_process, name='payment-process'),
+
+
+    
+
+
+
+
+
 
   #-------------------------------> Mobile Team API
 
