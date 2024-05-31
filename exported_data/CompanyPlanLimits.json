@@ -1,0 +1,22 @@
+[
+  {
+    "id": 1,
+    "plan_id": 1,
+    "logo": 5,
+    "banner": 5,
+    "active_banner": 3,
+    "employee": 10,
+    "customer": 50,
+    "documents": 5
+  },
+  {
+    "id": 2,
+    "plan_id": 2,
+    "logo": 15,
+    "banner": 20,
+    "active_banner": 10,
+    "employee": 100,
+    "customer": 100,
+    "documents": 100
+  }
+]

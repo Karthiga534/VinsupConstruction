@@ -1026,8 +1026,8 @@ def project(request):  #change name
     querysets = Project.objects.filter(company=request.user.company).order_by("-id")   #change query
     category =ProjectCategory.objects.filter(company=request.user.company).order_by("-id")
     engineer =Employee.objects.filter(company=request.user.company).order_by("-id")
-    duration =Duration.objects.filter(company=request.user.company).order_by("-id")
-    priority =Priority.objects.filter(company=request.user.company).order_by("-id")
+    duration =Duration.objects.all()
+    priority =Priority.objects.all()
     print(category)
     queryset,pages ,search=customPagination(request,Project,querysets)    #change, model
     context= {'queryset': queryset,"location":"project","pages" :pages,"search" :search ,'category' :category ,

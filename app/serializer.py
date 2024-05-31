@@ -377,7 +377,7 @@ class TransferItemsSerializer(ModelSerializer):
                 # site_data['unit'] =source.unit
                 InventoryStock.objects.create(**site_data)
                 
-            destiny= invoice.to_inventory.stock
+            # destiny= invoice.to_inventory.stock
 
 
             destiny_obj = destiny.filter(item = item).last()

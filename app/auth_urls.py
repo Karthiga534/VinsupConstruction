@@ -21,6 +21,8 @@ urlpatterns = [
 
 
 
+
+# superuser 
 urlpatterns += [
     path('login-admin',html.login_admin,name="login-admin"),
     path('logout-admin',html.logout_admin,name="logout-admin"),
