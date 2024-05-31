@@ -221,6 +221,8 @@
                               </li>
                             </ul>
                           </div>
+
+
                           <div class="modal fade" id="viewModal_{{i.id}}" tabindex="-1" role="dialog"
                             aria-labelledby="viewModalLabel" aria-hidden="true" data-bs-backdrop="static"
                             data-bs-keyboard="false">
@@ -859,6 +861,8 @@
 
     // 
     function deleteFunction(button, saveId) {
+
+      var stat_message = {"true" :'Disabled'  , "false" : "Enabled" }
       try {
         disableButton(button);
 
@@ -871,8 +875,10 @@
           processData: false,
           contentType: false,
           success: function (response, status, xhr) {
-            if (xhr.status === 204) {
-              showToast(deleteMessage?.message, '', deleteMessage?.bgColor, true);
+            if (xhr.status === 200) {
+              const status = xhr?.responseJSON?.details?.pop()
+                        
+              showToast(stat_message[status] + ' successfully', '', deleteMessage?.bgColor, true);
               enableButton(button);
 
             } else {
@@ -886,26 +892,29 @@
             if (xhr.status === 400) {
               if (xhr?.responseJSON || xhr?.responseJSON?.errors) {
                 showToast(xhr?.responseJSON?.details, '', errorAlertMessage?.bgColor);
-                enableButton(button);
+                // enableButton(button);
               } else {
                 showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
-                enableButton(button);
+                // enableButton(button);
               }
             }
             else if (xhr.status === 401 || 404) {
               showToast(xhr?.responseJSON?.details, '', errorAlertMessage?.bgColor);
-              enableButton(button);
+              // enableButton(button);
             }
             else {
 
               showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
-              enableButton(button);
+              // enableButton(button);
             }
           }
         });
       } catch (error) {
         showToast(errorOccured?.message, '', errorOccured?.bgColor);
         console.error(error);
+      }
+      finally{
+        enableButton(button);
       }
     }
 

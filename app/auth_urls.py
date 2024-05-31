@@ -4,6 +4,16 @@ from app.auth_api import *
 from django.urls import path
 
 from app import html
+from .auth_ser import EmpCRUD
+
+
+# employees
+
+from rest_framework import routers
+
+router = routers.DefaultRouter()
+
+router.register(r'employees', EmpCRUD)
 
 
 
@@ -53,3 +63,7 @@ urlpatterns += [
 
 
 ]
+
+
+
+urlpatterns+=router.urls

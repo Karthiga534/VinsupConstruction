@@ -39,9 +39,114 @@
 										<h4>Expenses List</h4>
 									</div>
 									<div class="col-xl-4 col-lg-4 col-md-4 col-12"></div>
+								
+
 									<div class="col-xl-2 col-lg-2 col-md-2 col-12">
-										
-									</div>
+                                        <button type="button" class="btn btn-info" style="float:right;"
+                                            data-bs-toggle="modal" data-bs-target=".bs-example-modal-lg">Add
+                                            expense</button>
+                                        <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog"
+                                            aria-labelledby="myLargeModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog modal-lg">
+                                                <div class="modal-content">
+                                                    <form id="createForm" enctype="multipart/form-data">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="myLargeModalLabel">Expense
+                                                                Details</h5>
+                                                            <button type="button" class="btn-close"
+                                                                data-bs-dismiss="modal" aria-label="Close"
+                                                                onclick="clearErrors()">
+                                                            </button>
+                                                        </div>
+                                                        <hr>
+                                                        <div class="modal-body">
+                                                            <form id="createForm" enctype="multipart/form-data"></form>
+                                                            {% csrf_token %}
+                                                            <div class="row">
+                                                                <div class="col-md-4">
+                                                                    <label for="id_date" class="form-label">Date
+                                                                        :</label>
+                                                                    <input type="date" name="date" class="form-control"
+                                                                        id="date">
+                                                                    <span id="dateError" class="error-message"></span>
+                                                                </div>
+                                                                <div class="col-md-4 ">
+                                                                    <label for="id_particular"
+                                                                        class="form-label">particular :</label>
+                                                                    <input type="text" name="particular"
+                                                                        class="form-control" id="particular">
+                                                                    <span id="particularError"
+                                                                        class="error-message"></span>
+                                                                </div>
+                                                                <div class="col-md-4 mt-2">
+                                                                    <label for="id_amount" class="form-label">Amount
+                                                                        :</label>
+                                                                    <input type="text" name="amount"
+                                                                        class="form-control" id="amount">
+                                                                    <span id="amountError" class="error-message"></span>
+                                                                </div>
+                                                                <div class="col-md-4 mt-2">
+                                                                    <label for="id_site_location"
+                                                                        class="form-label">Site Location :</label>
+                                                                    <select class="form-select"
+                                                                        id="{{ i.id }}_site_location"
+                                                                        name="site_location">
+                                                                        <option value=""> ------- </option>
+                                                                        {% for i in site_locations %}
+                                                                        <option value="{{ i.id }}">{{ i.site_location }}
+                                                                        </option>
+                                                                        {% endfor %}
+                                                                    </select>
+                                                                    <span id="site_locationError"
+                                                                        class="error-message"></span>
+                                                                </div>
+
+                                                                <div class="col-md-4 mt-2">
+                                                                    <label for="id_employee" class="form-label">Employee
+                                                                        :</label>
+                                                                    <select class="form-select" id="{{ i.id }}_employee"
+                                                                        name="employee">
+                                                                        <option value=""> ------- </option>
+                                                                        {% for employee in employee %}
+                                                                        <option value="{{ employee.id }}">
+                                                                        {{ employee.name }}</option>
+                                                                           
+                                                                        {% endfor %}
+                                                                    </select>
+                                                                    <span id="employeeError"
+                                                                        class="error-message"></span>
+                                                                </div>
+
+                                                                <div class="col-md-4 mt-2">
+                                                                    <label for="id_attachment" class="form-label">Upload
+                                                                        Bill:</label>
+                                                                    <input type="file" name="attachment"
+                                                                        class="form-control" id="attachment">
+                                                                    <span id="attachmentError"
+                                                                        class="error-message"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <hr>
+                                                        <div class="modal-footer">
+                                                            <button
+                                                                class="btn btn-link link-success fw-medium shadow-none"
+                                                                data-bs-dismiss="modal"><i
+                                                                    class="ri-close-line me-1 align-middle"
+                                                                    onclick="clearErrors()"></i> Close</button>
+                                                            <button type="button" class="btn btn-primary "
+                                                                onclick="createFunction(this)">Save </button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                                <!-- /.modal-content -->
+                                            </div>
+                                            <!-- /.modal-dialog -->
+                                        </div>
+                                    </div>
+
+
+
 								</div>
                                 </div>
                                 <div class="card-body">
@@ -82,7 +187,9 @@
                                                 <th data-ordering="false">S No.</th>
                                                 <th data-ordering="false">Date</th>
                                                 <th data-ordering="false">Particular</th>
-                                                <th data-ordering="false">Amount</th>                                                                           
+                                                <th data-ordering="false">Amount</th>    
+												<th data-ordering="false">Employee</th>                                                                         
+												<th data-ordering="false">Project</th>  
                                                 <th data-ordering="false">Attachment</th>                                                                           
                                             </tr>
                                         </thead>
@@ -281,10 +388,24 @@
 			td4.textContent = get_value(data.amount)
 			newRow.appendChild(td4);
 
+
+			
+			const td51 = document.createElement('td');
+			td51.textContent = get_value(data.employee_name)
+			newRow.appendChild(td51);
+
+
+			
+			const td6 = document.createElement('td');
+			td6.textContent = get_value(data.site_name)
+			newRow.appendChild(td6);
+
+			
+
 			// To attachment
 			const td5 = document.createElement('td');
 			//td5.textContent = get_value(data.attachment)
-          td5.innerHTML=`  <a href="${data.attachment }" target="_blank">${get_filename(data.attachment) }</a>`
+          	td5.innerHTML=`  <a href="${data.attachment }" target="_blank">${get_filename(data.attachment) }</a>`
 			newRow.appendChild(td5);
 
 
@@ -298,6 +419,110 @@
 
             return  value || "Nill"
         }
+
+
+
+
+		//   // create form
+
+        function createFunction(button) {
+            var formId = `createForm`;   //change
+            var formElement = document.getElementById(formId);
+            try {
+                disableButton(button);
+                var isValid = true;
+                var errors = {};
+                var formData = new FormData();
+
+                var requiredKeys = ['date', 'particular', 'amount', 'site_location', 'employee'];   //change
+
+
+                formData.append('date', getValueOrDefault(formElement.querySelector('input[name="date"]').value));              //change
+                formData.append('particular', getValueOrDefault(formElement.querySelector('input[name="particular"]').value));
+                formData.append('amount', getValueOrDefault(formElement.querySelector('input[name="amount"]').value));
+                formData.append('site_location', getValueOrDefault(formElement.querySelector('select[name="site_location"]').value));
+                formData.append('employee', getValueOrDefault(formElement.querySelector('select[name="employee"]').value));
+                formData.append('attachment', getValueOrDefault(formElement.querySelector('input[name="attachment"]').value));
+
+                var attachment = document.querySelector('#createForm input[type="file"]').files[0];
+                if (attachment) {
+                    formData.append("attachment", attachment);
+                }
+
+
+                requiredKeys.forEach(function (key) {
+                    var value = formData.get(key);
+                    if (!value.trim()) {
+                        isValid = false;
+                        errors[key] = ['This field may not be blank.'];
+                    }
+                });
+
+                if (!isValid) {
+                    enableButton(button);
+                    console.log(errors);
+                    handleCreateErrors(errors);
+                    return;
+                } else {
+                    $(`#${formId} input, #${formId} button`).prop('disabled', true);
+
+                }
+
+                $.ajax({
+                    url: '/add_expense/',                //change
+                    type: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrftoken,
+                    },
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (response, status, xhr) {
+                        console.error(status);
+                        if (xhr.status === 201) {
+                            showToast(successMesssage?.message, '', successMesssage?.bgColor, true);
+                        } else {
+                            console.error(error);
+                            restoreForm(formId, button)
+
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.log(xhr, status, error);
+                        if (xhr.status === 400) {
+                            if (xhr?.responseJSON || xhr?.responseJSON?.errors) {
+                                handleCreateErrors(transformErrors(xhr.responseJSON));
+                                restoreForm(formId, button)
+
+                            } else {
+                                showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+                                restoreForm(formId, button)
+
+                            }
+                        }
+                        else if (xhr.status === 401 || 404) {
+                            showToast(xhr?.responseJSON?.details, '', errorAlertMessage?.bgColor);
+                            restoreForm(formId, button)
+
+                        }
+                        else {
+                            showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+                            restoreForm(formId, button)
+
+                        }
+                    }
+                });
+            } catch (error) {
+                showToast(errorOccured?.message, '', errorOccured?.bgColor);
+                restoreForm(formId, button)
+                console.error(error);
+            }
+
+            finally{
+                restoreForm(formId, button)
+            }
+        }
+
 
 	</script>
 

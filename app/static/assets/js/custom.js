@@ -9,6 +9,10 @@ const pageLength = 10;
 const TruncateLength = 20 ;
 const TruncateExt = "...";
 
+function goBack() {
+  window.history.back();
+}
+
 
 // console.log(successMesssage)
 function getCookie(name) {
@@ -564,13 +568,17 @@ function get_filename(value){
   if (value === null || value === undefined || value === '') {
     return 'Nill';
   }
-  const txtarray =value.split('.')
-  const ext = txtarray.pop()
-  const txt = txtarray.pop()
+
 
   // return get_value(txt) + "." + ext
-  const fileName = value.substring(value.lastIndexOf('/') + 1);
-  return fileName
+  const fileName =  (value.substring(value.lastIndexOf('/') + 1));
+  // return fileName
+
+  const txtarray = fileName.split('.')
+  const ext = txtarray.pop()
+  const txt = truncate(txtarray.pop())
+  return (txt) + "." + ext
+ 
 
 }
 
@@ -769,3 +777,9 @@ function restoreAllForms() {
       form.reset(); // Reset each form to its default state
   });
 }
+
+
+
+// --------------------------------------
+
+

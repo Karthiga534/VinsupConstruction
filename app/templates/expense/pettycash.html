@@ -587,7 +587,7 @@
                 formData.append('amount', getValueOrDefault(formElement.querySelector('input[name="amount"]').value));
                 formData.append('site_location', getValueOrDefault(formElement.querySelector('select[name="site_location"]').value));
                 formData.append('employee', getValueOrDefault(formElement.querySelector('select[name="employee"]').value));
-                formData.append('attachment', getValueOrDefault(formElement.querySelector('input[name="attachment"]').value));
+                // formData.append('attachment', getValueOrDefault(formElement.querySelector('input[name="attachment"]').value));
                 formData.append('payment_method', getValueOrDefault(formElement.querySelector('select[name="payment_method"]').value));
 
                 var attachment = document.querySelector('#createForm input[type="file"]').files[0];

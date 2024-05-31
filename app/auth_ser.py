@@ -416,3 +416,22 @@ class CompanyAdminProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = ('id', 'name', 'email', 'phone_number', 'company', 'owner',  'proof', 'image', 'admin')
+
+
+
+# -------------
+from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticated,AllowAny
+
+class EmployeesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Employees
+        fields = '__all__'
+
+
+
+
+class EmpCRUD(viewsets.ModelViewSet):
+    permission_classes=[AllowAny]
+    serializer_class = EmployeesSerializer
+    queryset = Employees.objects.all()

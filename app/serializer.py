@@ -43,13 +43,20 @@ class PurchaseInvoiceSerializer(ModelSerializer):
 
 
     def validate_invoice_id(self, attrs):
-        # print(self)
-        # print('llllllll')
-        # print(attrs)
         company = self.initial_data.get('company')
         if PurchaseInvoice.objects.filter(invoice_id=attrs, company=company).exists():
             raise ValidationError ('Already exists')
         return super().validate(attrs)
+    
+
+    # def validate_created_at(self, value):
+    #     print('Created At Validation')
+    #     try:
+    #         # Attempt to parse the date
+    #         parsed_date = datetime.strptime(value, '%Y-%m-%d')  # Adjust format as needed
+    #     except ValueError:
+    #         raise ValidationError("Invalid date format. Expected format is YYYY-MM-DD.")
+    #     return parsed_date.date() 
 
 
     
@@ -61,7 +68,14 @@ class PurchaseInvoiceSerializer(ModelSerializer):
             if 'invoice_id' in e.detail and 'company' in e.detail:
                 error_msg = {'invoice_id': ['An invoice with this ID already exists for this company.']}
                 e.detail = error_msg
+
+            if 'created_at' in e.detail :
+                error_msg = {'created_at': ['Invalid Date.']}
+                e.detail = error_msg
             raise e
+        
+
+
 
 
 
@@ -79,7 +93,8 @@ class   PurchaseItemsSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def create(self, validated_data):
-        # item_name = validated_data.pop('name')
+        site = self.context.get('site')
+
         item = validated_data.get('item' ,None)
         # Extract unit and price from validated data
         # price = validated_data.pop('price', 0) 
@@ -104,17 +119,30 @@ class   PurchaseItemsSerializer(serializers.ModelSerializer):
         qty_to_add = Decimal(validated_data.get('qty', 0))
         sub_total = Decimal(validated_data.get('sub_total', 0))
         
-        # Check if the item exists in InventoryStock
+
+        
+            # Check if the item exists in InventoryStock
         inventory_item, inventory_created = InventoryStock.objects.get_or_create(item = item,unit=unit,company=company)
-        inventory_item.qty = Decimal(inventory_item.qty) + qty_to_add
-        inventory_item.price = Decimal(validated_data.get('price', 0))
-        inventory_item.total_amount = sub_total
+
+        # if site  is there set item purchased for particular site so no need to manipulate inventory stock
+        inventory_item.qty = ( 0 if site else Decimal(inventory_item.qty)) + qty_to_add
+        if not inventory_item.price:
+            inventory_item.price =  Decimal(validated_data.get('price', 0))
+        inventory_item.total_amount = inventory_item.qty * inventory_item.price
         inventory_item.save()
+        
+        # else:
+        #     inventory_created.qty = Decimal(inventory_created.qty) + qty_to_add
+        #     inventory_created.price = Decimal(validated_data.get('price', 0))
+        #     inventory_created.total_amount = sub_total
+        #     inventory_created.save()
 
-
+        if site:
+             validated_data['for_site']  = True
         # validated_data['name'] = item_name  # Add 'name' field to validated_data
         validated_data['unit'] = unit  # Add 'unit' field to validated_data
         validated_data['item'] = item
+       
         validated_data['inventory'] = inventory_item
         purchase_item = super().create(validated_data)  # Create PurchaseItems instance
         
@@ -230,12 +258,13 @@ class EmployeeSerializer(ModelSerializer):
         model = Employee
         fields = "__all__"
 
-    def validate_mobile(self, attrs):
-        if Employee.objects.filter(mobile=attrs).exists():
-            raise ValidationError ('already exists')
-        if CustomUser.objects.filter(phone_number=attrs).exists():
-            raise ValidationError ('Already exists')
-        return super().validate(attrs)
+
+    # def validate_mobile(self, attrs):
+    #     if Employee.objects.filter(mobile=attrs).exists():
+    #         raise ValidationError ('already exists')
+    #     if CustomUser.objects.filter(phone_number=attrs).exists():
+    #         raise ValidationError ('Already exists')
+    #     return super().validate(attrs)
 
     def create(self, validated_data):
         user_data={}
@@ -526,10 +555,9 @@ class ProjectSerializer(ModelSerializer):
     def to_representation(self, instance):
         data = super().to_representation(instance)
         
-        proj_category = instance.proj_category
-        status = instance.status
-
-        data ={}
+        # proj_category = instance.proj_category
+        # status = instance.status
+        # data ={}
         data['id'] =instance.id
         data ["proj_name"] =  instance.proj_name
         data ["site_location"] = instance.site_location
@@ -578,6 +606,7 @@ class ExpenseSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         data = super().to_representation(instance)
         data ['employee_name'] =instance.employee.name if instance.employee else None
+        data ['site_name'] =instance.site_location.display if instance.site_location else None
         return data 
 
 

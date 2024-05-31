@@ -31,8 +31,8 @@
 					</div>
 					<div class="col-xl-5 col-lg-4 col-md-3 col-xs-6 col-12"></div>
 					<div class="col-xl-2 col-lg-3 col-md-3 col-xs-6 col-12">
-						<button type="button" class="btn btn-info" style="float:right;" data-bs-toggle="modal"
-							data-bs-target=".bs-example-modal-lg">Add Project</button>
+
+
 						<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog"
 							aria-labelledby="myLargeModalLabel" aria-hidden="true">
 							<div class="modal-dialog modal-lg">
@@ -45,6 +45,7 @@
 											<button type="button" class="btn-close" data-bs-dismiss="modal"
 												aria-label="Close">
 											</button>
+
 										</div>
 										<hr>
 										<div class="modal-body">
@@ -256,7 +257,7 @@
 
 
 															</div>
-															
+
 														</div>
 													</div>
 												</div>
@@ -284,9 +285,26 @@
 					<div class="row">
 						<div class="card">
 							<div class="card-body">
-								<div class="row">
-									{% include "search.html" %}
+
+								<div class="row "> 
+									<div class="col">
+										<h4>Projects Management</h4>
+									</div>
+									
+									<div class="col">
+										<button type="button" class="btn btn-info" style="float:right;"
+										data-bs-toggle="modal" data-bs-target=".bs-example-modal-lg">Add
+										Project</button>
+									</div>
+									
 								</div>
+
+
+								<div class="row mt-2">
+									{% include "search.html" %}
+
+								</div>
+
 								<hr>
 								<table id="example"
 									class="table table-bordered dt-responsive nowrap table-striped align-middle"
@@ -384,10 +402,15 @@
 															</a>
 														</li>
 													</ul>
-													<a class="btn btn-soft-secondary btn-sm" href="{% url 'clientcash' i.id %}">
-														<span class="align-bottom me-2 text-muted">&#8377;</span>
-														
+
+													<a 
+													class="btn btn-soft-secondary btn-sm p-0 m-1"
+														href="{% url 'clientcash' i.id %}">
+														<img src="{% static 'assets/icon/cashinward.png' %}" class ='button-img-icon'>
 													</a>
+
+												
+
 												</div>
 												<div class="modal fade" id="viewModal_{{i.id}}" tabindex="-1"
 													role="dialog" aria-labelledby="viewModalLabel" aria-hidden="true"
@@ -507,8 +530,9 @@
 																			class="form-label">Model Design:</label>
 																		<br>
 																		<span class="file-span"> <a target="_blank"
-																				href="{{ i.modeldesign.url}}">{{i.modeldesign
-																				|filename }}</a></span>
+																				href="{{ i.modeldesign.url}}">
+																				{{i.modeldesign |filename }}</a></span>
+
 
 																	</div>
 
@@ -518,8 +542,8 @@
 																			class="form-label">Aggeaments:</label>
 																		<br>
 																		<span class="file-span"> <a target="_blank"
-																				href="{{ i.aggeaments.url}}">{{i.aggeaments
-																				|filename }}</a></span>
+																				href="{{ i.aggeaments.url}}">
+																				{{i.aggeaments|filename }}</a></span>
 
 																	</div>
 
@@ -806,8 +830,9 @@
 
 																			<span class="file-span">
 																				<a target="_blank"
-																					href="{{ i.modeldesign.url}}">{{i.modeldesign
-																					|filename }}</a></span>
+																					href="{{ i.modeldesign.url}}">
+																					{{i.modeldesign |filename
+																					}}</a></span>
 																			<!-- <div class="p-1"
 																				style="width:92%;border:1px solid gray;font-size:12px">
 																				<a
@@ -832,8 +857,9 @@
 
 																			<span class="file-span">
 																				<a target="_blank"
-																					href="{{ i.modeldesign.url}}">{{i.modeldesign
-																					|filename }}</a></span>
+																					href="{{ i.modeldesign.url}}">
+																					{{i.modeldesign |filename
+																					}}</a></span>
 																			<!-- <div class="p-1"
 																				style="width:92%;border:1px solid gray;font-size:12px">
 																				<a
@@ -1036,7 +1062,7 @@
 							$(modal).modal('show');
 						}
 
-				
+
 
 
 					});

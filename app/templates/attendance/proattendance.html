@@ -176,6 +176,10 @@
 
               <div class="card-body">
                 <div class="row">
+                  <div class="col-md-10 ">
+
+                 <div class="row">
+
                   <div class="col-xl-3 col-lg-3 col-md-3 col-xs-6 col-12">
                     <label for="" class="form-label">Project Sub Contract :</label>
                     <select class="form-select mb-3" aria-label="Default select example" id="project">
@@ -198,22 +202,34 @@
                     </select>
                   </div>
 
-                  <div class="col-xl-2 col-lg-2 col-md-2 col-xs-6 col-12">
+                  <div class="col-xl-3 col-lg-2 col-md-2 col-xs-6 col-12">
                     <label for="exampleInputdate" class="form-label">From Date</label>
                     <input type="date" class="form-control" id="fromdate" />
                   </div>
 
-                  <div class="col-xl-2 col-lg-2 col-md-2 col-xs-6 col-12">
+                  <div class="col-xl-3 col-lg-2 col-md-2 col-xs-6 col-12">
                     <label for="exampleInputdate" class="form-label">To Date</label>
                     <input type="date" class="form-control" id="todate" />
                   </div>
 
-                  <div class="col-xl-3 col-lg-3 col-md-3 col-xs-6 col-12">
-                    <br /><button type="button" class="btn btn-primary waves-effect waves-light mt-2">
+                </div>
+                </div>
+
+
+                <div class="col-md-2">
+
+               
+
+                  <!-- <div class="col-xl-3 col-lg-3 col-md-3 col-xs-6 col-12"> -->
+                    <br /><button type="button" class="btn btn-primary waves-effect waves-light mt-2" onclick="getReport(this,'example')">
                       Get Report
                     </button>
-                  </div>
+                  <!-- </div> -->
                 </div>
+
+              </div>
+
+
                 <hr />
                 <table id="example" class="table table-bordered dt-responsive nowrap table-striped align-middle"
                   style="width: 100%">

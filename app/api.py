@@ -171,9 +171,12 @@ def purchase(request):  #change name
     uom =Uom.objects.filter(company=request.user.company).order_by("-id")
     materiallibrary = MaterialLibrary.objects.filter(company=request.user.company).order_by("-id")
     inventory = InventoryStock.objects.filter(company=request.user.company).order_by("-id") 
-    querysets = PurchaseInvoice.objects.filter(company=request.user.company).order_by("-id")   #change query
-    queryset,pages,search =customPagination(request,PurchaseInvoice,querysets)    #change, model
-    context= {'queryset': queryset,"location":"purchase","pages" :pages,'vendor_names': vendors,"search":search,"uom":uom,
+    # querysets = PurchaseInvoice.objects.filter(company=request.user.company).order_by("-id")  
+    projects = Project.objects.filter(company=request.user.company).order_by("-id")  
+    # queryset,pages,search =customPagination(request,PurchaseInvoice,querysets)    #change, model
+    # context= {'queryset': queryset,"location":"purchase","pages" :pages,'vendor_names': vendors,"search":search,"uom":uom, "projects" :projects ,
+    #           "inventory":inventory,"materiallibrary":materiallibrary}   #change location name 
+    context  =  {"location":"purchase",'vendor_names': vendors,"uom":uom, "projects" :projects ,
               "inventory":inventory,"materiallibrary":materiallibrary}   #change location name 
     return render(request,"purchase/purchase.html",context)    #change template name
 
@@ -188,28 +191,32 @@ def add_purchase(request):
     invoice_data = request.POST.copy().dict()
     if user.admin:
         invoice_data['company'] = user.company.id
+    
     table = request.data.get('table')  # Use request.data to get JSON data
-    invoice_serializer = PurchaseInvoiceSerializer(data=invoice_data)
-    if invoice_serializer.is_valid():
-        invoice = invoice_serializer.save()
-        if table:
-            try:
-                tdata = json.loads(table)
-                for data in tdata:
-                    data['invoice'] = invoice.id
-                    data['company'] = user.company.id
-                    items_serializer = PurchaseItemsSerializer(data=data)
-                    if items_serializer.is_valid():
-                        items_serializer.save()
-                    else:
-                        invoice.delete()
-                        return JsonResponse(items_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-            except json.JSONDecodeError:
-                invoice.delete()
-                return JsonResponse({'error': 'Invalid JSON format'}, status=status.HTTP_400_BAD_REQUEST)
-        return JsonResponse(invoice_serializer.data, status=status.HTTP_201_CREATED)
-    else:
-        return JsonResponse(invoice_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    site =  request.data.get('site',None)
+
+    with transaction.atomic():
+        invoice_serializer = PurchaseInvoiceSerializer(data=invoice_data)
+        if invoice_serializer.is_valid():
+            invoice = invoice_serializer.save()
+            if table:
+                try:
+                    tdata = json.loads(table)
+                    for data in tdata:
+                        data['invoice'] = invoice.id
+                        data['company'] = user.company.id
+                        items_serializer = PurchaseItemsSerializer(data=data,context={'site':site})
+                        if items_serializer.is_valid():
+                            items_serializer.save()
+                        else:
+                            invoice.delete()
+                            return JsonResponse(items_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                except json.JSONDecodeError:
+                    invoice.delete()
+                    return JsonResponse({'error': 'Invalid JSON format'}, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse(invoice_serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return JsonResponse(invoice_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 #Purchase List
 #--------------------
@@ -1074,6 +1081,7 @@ def update_project(request, pk):  # CHANGE name
     allow,msg= check_user(request,Project,instance=instance)  # CHANGE model
     if not allow:
         return JsonResponse({'details':[msg]}, status=status.HTTP_401_UNAUTHORIZED)
+    print('enter')
     serializer = ProjectSerializer(instance, data=request.data,partial=True)   # CHANGE Serializer
     if serializer.is_valid():  
         serializer.save()

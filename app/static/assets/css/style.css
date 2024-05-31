@@ -45,3 +45,14 @@ input[readonly] {
 .description-td{
     width :30% !important;
 }
+
+
+
+
+.button-img-icon {
+    /* background-color: red; */
+    width: 30px; 
+    height: 30px;
+    /* background-size: cover; 
+    background-repeat: no-repeat;  */
+  }
