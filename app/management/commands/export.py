@@ -21,6 +21,8 @@ class Command(BaseCommand):
            {'model_name': 'ContractType', 'app_name': 'app', 'file_name': 'ContractType.json'},
             {'model_name': 'Duration', 'app_name': 'app', 'file_name': 'Duration.json'},
             {'model_name': 'Priority', 'app_name': 'app', 'file_name': 'Priority.json'},
+
+            {'model_name': 'PaymentSchedule', 'app_name': 'app', 'file_name': 'PaymentSchedule.json'},
           
         ]
 

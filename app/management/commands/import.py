@@ -27,10 +27,6 @@ from django.apps import apps
 #         self.stdout.write(self.style.SUCCESS('All data imported successfully.'))
 
 
-import os
-import json
-from django.core.management.base import BaseCommand
-from django.apps import apps
 
 class Command(BaseCommand):
     help = 'Import data from JSON files into specified models'

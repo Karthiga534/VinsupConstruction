@@ -1,15 +1,7 @@
 
 from .utils import *
-from typing import Iterable
-from decimal import Decimal
 from django.db import models
-from django.db.models import Q
-from django.db.models import Sum
-from django.conf import settings
-# from app.models import CustomUser
 from django.utils import timezone
-from datetime import datetime, timedelta
-from django.db.models import UniqueConstraint
 from django.contrib.auth.models import AbstractBaseUser,BaseUserManager,PermissionsMixin, User 
 today_date = timezone.now().date()
 
@@ -150,6 +142,18 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         if self.admin:
             return self.company_set.all()
         return [] 
+
+
+
+class OTP(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='otp_user_details')
+    otp = models.CharField(max_length=6)
+    created_at = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return self.otp
+
+
 
 # ------------------------ System ------------------------
 
@@ -372,9 +376,7 @@ class Company(models.Model):
         return None
 
 
-    
 
-    
 
 class OwnerInfo(models.Model):
     owner=models.ForeignKey(CustomUser,null=True,blank=True,on_delete=models.CASCADE)

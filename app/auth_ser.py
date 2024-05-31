@@ -1,18 +1,12 @@
 
 from app.auth_models import *
-
-
-
 # from .models import Purchase
 from rest_framework import serializers
 from rest_framework.serializers import *
 from django.contrib.auth.hashers import make_password
-
-
-from rest_framework import serializers
 from .utils import *
 from django.db import transaction,IntegrityError
-from django.contrib.auth.hashers import make_password
+
 
 
 
