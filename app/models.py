@@ -419,7 +419,7 @@ class Employee(models.Model):
     company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
     user=models.ForeignKey(CustomUser, on_delete=models.CASCADE,null=True,blank=True)
     name=models.CharField(max_length=50,null=True,blank=True)
-    role=models.ForeignKey(EmpRoles, on_delete=models.CASCADE,null=True,blank=True)
+    role=models.ForeignKey(EmpRoles, on_delete=models.CASCADE,null=True,blank=True) 
     mobile=models.CharField(max_length=10,null=True,blank=True)
     address=models.CharField(max_length=200,null=True,blank=True)
     bankname=models.CharField(max_length=50,null=True,blank=True)
@@ -2025,3 +2025,21 @@ class CompanyProfile(models.Model):
     
     def __str__(self):
         return f"{self.company.name} Profile"
+    
+
+class PettyCash(models.Model):
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, null=True, blank=True)
+    date = models.DateField(auto_now_add=True)
+    particular = models.CharField(max_length=100)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    payment_method = models.ForeignKey(PaymentMethod, on_delete=models.CASCADE, null=True, blank=True)
+    site_location = models.ForeignKey(Project, on_delete=models.CASCADE,null=True, blank=True ) 
+    employee = models.ForeignKey(Employee, on_delete=models.CASCADE, null=True, blank=True) 
+    attachment  =models.FileField(upload_to="doc")
+
+class PaymentHistory(models.Model):
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    date = models.DateField()
+    receipt_number = models.CharField(max_length=100)
+    payment_method = models.ForeignKey(PaymentMethod, on_delete=models.CASCADE, null=True, blank=True)
+    payment_amount = models.DecimalField(max_digits=10, decimal_places=2)
