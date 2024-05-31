@@ -21,6 +21,7 @@ paginator = PageNumberPagination()
 ONGOING_STATUS_CODE = 1
 COMPLETED_STATUS_CODE = 0
 
+
 #---------------------------------------------------------------------- Dharshini ----------------------------------------------------------------
 
 #Vendor Registration
@@ -1292,7 +1293,7 @@ def getprojectlist(request):
 
     return Response(response_data)
 
-#-----> Quatation 
+#----- -------------------------------------------> Quatation  ------------------------------------------------
 
 @api_view(['GET'])
 @login_required(login_url='apilogin')
@@ -1305,11 +1306,11 @@ def getquatation_list(request, pk=None):
         except Quatation.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
-        serializer = QuatationSerializer(quatations)
+        serializer = QuatationListSerializer(quatations)
         return Response(serializer.data)
     else:
         quatations = Quatation.objects.filter(company=user_company)
-        serializer = QuatationSerializer(quatations, many=True)
+        serializer = QuatationListSerializer(quatations, many=True)
         return Response(serializer.data)
     
 
@@ -1355,7 +1356,7 @@ def update_quatation(request, pk):
     try:
         quatation = Quatation.objects.get(pk=pk)
     except Quatation.DoesNotExist:
-        raise Http404
+       return Response({'error': 'Quatation not found'}, status=status.HTTP_404_NOT_FOUND)
 
     user = request.user
     allow, msg = check_user(request, Quatation, instance=quatation)
@@ -1378,16 +1379,16 @@ def update_quatation(request, pk):
             updated_quatation = serializer.save()
 
             # Delete existing QuatationItems associated with the Quatation
-            updated_quatation.table.all().delete()
+            # updated_quatation.table.all().delete()
 
             # Create new QuatationItems based on the updated table data
-            for item_data in table_data:
-                item_data['invoice'] = updated_quatation.id
-                items_serializer = QuatationItemsSerializer(data=item_data)
-                if items_serializer.is_valid():
-                    items_serializer.save()
-                else:
-                    return JsonResponse(items_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            # for item_data in table_data:
+            #     item_data['invoice'] = updated_quatation.id
+            #     items_serializer = QuatationItemsSerializer(data=item_data)
+            #     if items_serializer.is_valid():
+            #         items_serializer.save()
+            #     else:
+            #         return JsonResponse(items_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
             return JsonResponse(serializer.data, status=status.HTTP_200_OK)
         else:
@@ -1410,6 +1411,59 @@ def deletequatation(request, pk):
         quatation.delete()
         return Response({'success': 'Quatation deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
     
+
+# --------
+# quotation item updatrte
+@api_view(['GET', 'PUT'])
+@login_required(login_url='apilogin')
+def update_quatationitem(request, pk):
+    try:
+        quatation = QuatationItems.objects.get(pk=pk)
+    except Quatation.DoesNotExist:
+        return Response({'error': 'Quatation not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    user = request.user
+    allow, msg = check_user(request, QuatationItems, instance=quatation)
+    if not allow:
+        return JsonResponse({'details': [msg]}, status=status.HTTP_401_UNAUTHORIZED)
+
+    if request.method == 'GET':
+        serializer = QuatationItemsSerializer(quatation)
+        return JsonResponse(serializer.data)
+
+    elif request.method == 'PUT':
+        data = request.data.copy()
+        if user.admin:
+            data['company'] = user.company.id
+
+        table_data = data.pop('table', [])  # Extract table data
+
+        serializer = QuatationItemsSerializer(quatation, data=data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+
+@api_view(['GET', 'DELETE'])
+def deletequatationitem(request, pk):
+    try:
+        # Assuming you want to filter by company associated with the user
+        quatation = QuatationItems.objects.get(pk=pk, company=request.user.company)
+    except QuatationItems.DoesNotExist:
+        return Response({'error': 'Item not found'}, status=status.HTTP_404_NOT_FOUND)
+    
+    if request.method == 'GET':
+        serializer = QuatationItemsSerializer(quatation)
+        return Response({'success': 'Item found', 'data': serializer.data}, status=status.HTTP_200_OK)
+    
+    elif request.method == 'DELETE':
+        quatation.delete()
+        return Response({'success': 'Item deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
+    
+
+# ----------------------------------------------------------------------------- quotation end -----------------
 
 #-----> Contract Attendance
     
@@ -1639,7 +1693,7 @@ def add_machinaryused(request):
 
     list_serializer = ProjectMachineExpenseSerializer(data=request.data)
     if list_serializer.is_valid():
-        list_serializer.save(company=user_company)
+        list_serializer.save()
         return Response(list_serializer.data, status=status.HTTP_201_CREATED)
     else:
         return Response(list_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -1651,9 +1705,10 @@ def update_machinaryused(request, pk):
     user_company = request.user.company
 
     try:
-        list = ProjectMachineExpense.objects.get(pk=pk, company=user_company)
+        list = ProjectMachineExpense.objects.get(id=pk)
     except ProjectMachineExpense.DoesNotExist:
         return Response({'error': ' Record not found'}, status=status.HTTP_404_NOT_FOUND)
+    
 
     if request.method == 'GET':
         serializer = ProjectMachineExpenseSerializer(list)

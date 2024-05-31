@@ -218,3 +218,53 @@ def reset_confirm(request):
         return JsonResponse({'error': 'Invalid OTP'}, status=400)
 
    
+
+#    ---------------------------- super admin ------------------------------------------
+
+
+# ----------------- super admin web --------------------------
+
+# UGRADE UDMIN USER TO SUPER USER
+@api_view([ 'PUT'])
+def upgrade_admin_user(request,pk):    
+    user=request.user
+    employee = user.employee if user.employee else None
+    allow,instance,allow_msg= allow_user(request,CustomUser,instance=False,pk=pk)  # CHANGE model
+    if not allow:
+        return JsonResponse({"details" : allow_msg} , status=401)
+    company,company_msg=get_user_company(user)
+    company_id=get_company_id(company)
+
+    user =get_object_or_404(CustomUser,id=pk)
+    serializer = UpgradeUserSerializer(user,data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(status=200)
+    return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+
+
+# ADD BRANCH IN WEB
+@api_view([ 'PUT'])
+def add_branch(request,pk):  
+    user=request.user
+    employee = user.employee if user.employee else None
+    allow,instance,allow_msg= allow_user(request,CustomUser,instance=False,pk=pk)  # CHANGE model
+    if not allow:
+        return JsonResponse({"details" : allow_msg} , status=401)
+    company,company_msg=get_user_company(user)
+    company_id=get_company_id(company)
+
+    user =get_object_or_404(CustomUser,id=pk)
+    # Extract company data
+    company = {
+        'name': request.POST.get('company_name'),
+        'email': request.POST.get('company_email'),
+        'phone': request.POST.get('company_phone'),
+        'address': request.POST.get('company_address'),
+    }
+
+    serializer = BranchCreateSerializer(user,data={**request.POST.dict(),"company" :company})
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data,status=200)
+    return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)

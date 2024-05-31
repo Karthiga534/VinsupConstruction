@@ -1,0 +1,42 @@
+{% load static %}
+
+<style>
+    .input-group {
+    position: relative;
+    border: 1px solid rgba(150, 94, 194, 0.705);
+    border-radius: 3px;
+}
+
+
+.no-border {
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+
+</style>
+
+<form method="GET" action="{% url location %}">
+    <div class="row mb-3">
+        <div class="col-4 position-relative">
+            <div class="input-group">
+                <input type="text" class="form-control no-border" name="search" placeholder="Search..." value='{{search}}' id="searchInput">
+                <div class="input-group-append">
+                    <button type="submit"  class="btn btn-link link-success fw-medium shadow-none" onclick="clearSearch()">X</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-2">
+            <button type="submit" class="btn btn-soft-secondary">Search</button>
+        </div>
+    </div>
+</form>
+
+
+<script>
+
+function clearSearch() {
+    document.getElementById('searchInput').value = '';  
+}
+</script>

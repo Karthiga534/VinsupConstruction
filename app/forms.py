@@ -27,3 +27,18 @@ class EmployeeForm(forms.ModelForm):
 
 #-------------------------------------------------------------------- End Dharshini ----------------------------------------------------------------
 
+class RegistrationForm(forms.ModelForm):
+    email = forms.EmailField(required=True)
+    name = forms.CharField(max_length=255 ,required=True)
+    phone_number = forms.CharField(max_length=10 ,required=True)
+    address = forms.CharField(max_length=255,required=True)
+    proof = forms.FileField(required=True)  # Add the file field for proof document upload
+
+    company_email = forms.EmailField(required=True)
+    company_name = forms.CharField(max_length=255 ,required=True)
+    company_phone_number = forms.CharField(max_length=10 ,required=True)
+    company_address = forms.CharField(max_length=255,required=True)
+
+    class Meta:
+        model = CustomUser
+        fields = ['email', 'name', 'phone_number', 'address', 'proof' , "company_email","company_name","company_phone_number","company_address"]

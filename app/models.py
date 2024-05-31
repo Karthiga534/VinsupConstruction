@@ -9,6 +9,7 @@ from django.utils import timezone
 from datetime import datetime, timedelta
 from django.db.models import UniqueConstraint
 from django.contrib.auth.models import AbstractBaseUser,BaseUserManager,PermissionsMixin, User 
+from app.auth_models import *
 today_date = timezone.now().date()
 
 
@@ -16,94 +17,231 @@ today_date = timezone.now().date()
 date_format = "%Y-%m-%d"
 
 #------------------------------------------------------------------- CustomUser ----------------------------------------------------------------
+# from django.core.exceptions import ValidationError
+# from django.utils.translation import gettext_lazy as _
 
-class CustomUserManager(BaseUserManager):
-    def create_user(self, phone_number, password=None, pin=None, **extra_fields):
-        if not phone_number:
-            raise ValueError('The phone number must be set')
-        user = self.model(phone_number=self.normalize_phone_number(phone_number), **extra_fields)
+# today_date = timezone.now().date()
+
+
+# def validate_unique_email(email):
+#     if email:
+#         try:
+#             existing_user = CustomUser.objects.get(email=email)
+#             if existing_user :
+#                 raise ValidationError(_('This email address is already in use.'))
+#             else:
+#                 pass
+#         except CustomUser.DoesNotExist:
+#             pass
+
+
+# class CustomUserManager(BaseUserManager):
+#     def create_user(self, phone_number, password=None, pin=None, **extra_fields):
+#         if not phone_number:
+#             raise ValueError('The phone number must be set')
+#         user = self.model(phone_number=self.normalize_phone_number(phone_number), **extra_fields)
        
-        user.pin = pin
-        user.save(using=self._db)
-        return user
+#         user.pin = pin
+#         user.save(using=self._db)
+#         return user
     
-    def create_superuser(self, phone_number, password=None, pin=None, **extra_fields):
-        extra_fields.setdefault('is_staff', True)
-        extra_fields.setdefault('is_superuser', True)
-        return self.create_user(phone_number, password, pin, **extra_fields)
+#     def create_superuser(self, phone_number, password=None, pin=None, **extra_fields):
+#         extra_fields.setdefault('is_staff', True)
+#         extra_fields.setdefault('is_superuser', True)
+#         return self.create_user(phone_number, password, pin, **extra_fields)
 
-    def normalize_phone_number(self, phone_number):
-        normalized_phone_number = phone_number.replace(" ", "").replace("-", "")
-        return normalized_phone_number
+#     def normalize_phone_number(self, phone_number):
+#         normalized_phone_number = phone_number.replace(" ", "").replace("-", "")
+#         return normalized_phone_number
  
-class CustomUser(AbstractBaseUser, PermissionsMixin):    
-    email=models.EmailField(null=True, blank=True)
-    image = models.ImageField(upload_to='profile_images/', null=True, blank=True)
-    name = models.CharField(max_length=255)
-    phone_number = models.CharField(max_length=10, unique=True)
-    # company = models.ForeignKey('Company', on_delete=models.CASCADE, null=True, blank=True)
-    pin = models.CharField(max_length=6, null=True, blank=True) 
-    is_active = models.BooleanField(default=True)
-    admin = models.BooleanField(default=False)
-    is_employee = models.BooleanField(default=False)
-    is_staff = models.BooleanField(default=False)
-    is_superuser = models.BooleanField(default=False)
-    otp = models.CharField(max_length=6, null=True, blank=True)
-    created_at =models.DateField(auto_now_add=True)
-    USERNAME_FIELD = 'phone_number'
-    REQUIRED_FIELDS = ['name']
-    disable = models.BooleanField(default=False)
+# class CustomUser(AbstractBaseUser, PermissionsMixin):    
+#     email=models.EmailField(null=True, blank=True)
+#     image = models.ImageField(upload_to='profile_images/', null=True, blank=True)
+#     name = models.CharField(max_length=255)
+#     phone_number = models.CharField(max_length=10, unique=True)
+#     # company = models.ForeignKey('Company', on_delete=models.CASCADE, null=True, blank=True)
+#     pin = models.CharField(max_length=6, null=True, blank=True) 
+#     is_active = models.BooleanField(default=True)
+#     admin = models.BooleanField(default=False)
+#     is_employee = models.BooleanField(default=False)
+#     is_staff = models.BooleanField(default=False)
+#     is_superuser = models.BooleanField(default=False)
+#     otp = models.CharField(max_length=6, null=True, blank=True)
+#     created_at =models.DateField(auto_now_add=True)
+#     USERNAME_FIELD = 'phone_number'
+#     REQUIRED_FIELDS = ['name']
+#     disable = models.BooleanField(default=False)
     
-    objects = CustomUserManager()
+#     objects = CustomUserManager()
 
-    # def save(self, *args, **kwargs):     
-    #     self.pin=1111       
-    #     super().save(*args, **kwargs)
 
-    def __str__(self):
-        return f"{self.name} - {self.phone_number}"
-    
-    @property
-    def company(self):
-        print(self.is_employee)
-        if self.admin:
-            return self.company_set.all().last()
-        if self.is_employee:
-            print("trueeeeeeeeeeee")
-            if self.employee_set.all():
-                return self.employee_set.all().last().company
-        return None  
+#     def save(self, *args, **kwargs):
+#         if self.email:
+#             self.email = self.email.lower()
+#         # self.pin= 1111
+#         super().save(*args, **kwargs)
 
-    @property
-    def employee(self):
-        if self.employee_set.all():
-            return self.employee_set.all().last()
-        return None
     
-    @property
-    def get_companies(self):
-        if self.admin:
-            return self.company_set.all()
-        return [] 
-    
-    
-#------------------------------------------------------------------------- Company ---------------------------------------------------------------
-    
-class Company(models.Model):
-    name = models.CharField(max_length=50)
-    admin = models.ForeignKey(CustomUser, on_delete=models.CASCADE,null=True,blank=True)
-    monthly_working_days =models.IntegerField(null=True, blank=True)
-    monthly_paid_leaves =models.IntegerField(null=True, blank=True)
+#     def clean(self):
+#         super().clean()
+#         if self.email is None and self.phone_number is None:
+#             raise ValidationError(_('Either Email or Phone Number must be set'))
 
-    def __str__(self):
-        return self.name
+#     def __str__(self):
+#         return f"{self.name} - {self.phone_number}"
+    
+#     # @property
+#     # def employee(self):
+#     #     if self.employee_set.all().last():
+#     #         return self.employee_set.all().last()
+#     #     return
+
+
+#     # @property
+#     # def company(self):
+#     #     if self.admin:
+#     #         if self.company_set.all().last():
+#     #             return self.company_set.all().last()
+#     #     if self.employee:
+#     #         return self.employee.company
+#     #     return
+    
+#     @property
+#     def getcompanies(self):
+#         if self.owner:
+#             if self.owner_company.all().last():
+#                 return self.owner_company.all()
+#         return
     
 
-    @property
-    def stock(self):
-        if self.inventorystock_set.all():
-            return self.inventorystock_set.all()
-        return None   
+#     @property
+#     def owner(self):
+#         if self.is_owner:
+#             if self.ownerinfo_set.all().last():
+#                 return self.ownerinfo_set.all().last()
+#         return 
+
+
+    
+#     @property
+#     def company(self):
+#         print(self.is_employee)
+#         if self.admin:
+#             return self.company_set.all().last()
+#         if self.is_employee:
+#             if self.employee_set.all():
+#                 return self.employee_set.all().last().company
+#         return None  
+
+#     @property
+#     def employee(self):
+#         if self.employee_set.all():
+#             return self.employee_set.all().last()
+#         return None
+    
+#     @property
+#     def get_companies(self):
+#         if self.admin:
+#             return self.company_set.all()
+#         return [] 
+    
+    
+# #------------------------------------------------------------------------- Company ---------------------------------------------------------------
+# class Company(models.Model):
+#     owner = models.ForeignKey(CustomUser,related_name="owner_company",null=True,blank=True,on_delete=models.CASCADE)
+#     admin = models.ForeignKey(CustomUser,null=True,blank=True,on_delete=models.CASCADE)
+#     name = models.CharField(max_length=500,null=True,blank=True)
+#     email=models.CharField(max_length=500,null=True,blank=True)
+#     phone=models.CharField(max_length=10, unique=True,null=True,blank=True)
+#     address=models.TextField(null=True,blank=True)
+#     gst = models.CharField(max_length=500,null=True,blank=True)
+#     created_at = models.DateField(auto_now_add=True)
+#     plan =models.ForeignKey(CompanyPlan,null=True,blank=True,on_delete=models.CASCADE)
+#     monthly_working_days =models.IntegerField(null=True, blank=True)
+#     monthly_paid_leaves =models.IntegerField(null=True, blank=True)
+
+#     def __str__(self):
+#         return self.name
+    
+
+#     @property
+#     def stock(self):
+#         if self.inventorystock_set.all():
+#             return self.inventorystock_set.all()
+#         return None 
+
+
+#     def save(self, *args, **kwargs):
+#         if not self.plan:
+#             self.plan,_ =CompanyPlan.objects.get_or_create(code=0)
+        
+#         return  super().save(*args, **kwargs)
+
+       
+#     def __str__(self):
+#         return str(self.name)
+    
+
+#     @property
+#     def get_limits(self):
+#         if self.plan:
+#             return self.plan.get_limits
+#         return 
+    
+
+#     @property
+#     def assetlist(self):
+#         if self.companyasset_set.all():
+#                 return self.companyasset_set.all()
+#         return None
+    
+
+#     @property
+#     def assetlimit(self):
+#         if self.companyassetlimit_set.all():
+#                 return self.companyassetlimit_set.all()
+#         return None
+    
+
+#     @property
+#     def get_employees(self):
+#         if self.employee_set.all():
+#             return self.employee_set.all()
+#         return None
+    
+
+#     # @property
+#     # def get_units(self):
+#     #     if self.unit_set.all():
+#     #         return self.unit_set.all()
+#     #     return None
+    
+
+#     # @property
+#     # def get_active_unit(self):
+#     #     if self.unit_set.all():
+#     #         return self.unit_set.all().filter(active_sale=True).last()
+#     #     return None
+
+
+
+
+
+# class Company(models.Model):
+#     name = models.CharField(max_length=50)
+#     admin = models.ForeignKey(CustomUser, on_delete=models.CASCADE,null=True,blank=True)
+#     monthly_working_days =models.IntegerField(null=True, blank=True)
+#     monthly_paid_leaves =models.IntegerField(null=True, blank=True)
+
+#     def __str__(self):
+#         return self.name
+    
+
+#     @property
+#     def stock(self):
+#         if self.inventorystock_set.all():
+#             return self.inventorystock_set.all()
+#         return None   
     
 class PaymentSchedule(models.Model):
     days = models.IntegerField(null=True, blank=True)
@@ -262,6 +400,35 @@ class Employee(models.Model):
     #         current_date += timedelta(days=1)
 
     #     return total_payment
+
+
+
+    @property
+    def get_today_attendence(self):
+        project = None
+        clock_in = None
+        clock_out = None
+        overtime = None
+        project_name = None
+        fdate =None
+        present =False
+        atten_id =  0
+        today =get_today()
+     
+        if self.get_attendence and self.get_attendence.exists():
+            today =self.get_attendence.filter(date=today).last()
+            print(today,"today")
+            if today:
+                clock_in =today.clock_in
+                clock_out =today.clock_out
+                overtime =today.over_time
+                present = True if today.clock_in else False
+                project = today.project.id if today.project else None
+                project_name=today.project.display if today.project else None
+                fdate =today
+                atten_id=today.id
+                
+        return project,project_name,clock_in,clock_out,overtime,present,atten_id
 
 
     @property
@@ -1137,6 +1304,9 @@ class Attendance(models.Model):
     employee=models.ForeignKey(Employee,null=True,blank=True, on_delete=models.CASCADE)
     date=models.DateField(auto_now_add=True,null=True,blank=True)
     present=models.BooleanField(default=False)
+    company = models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE,null=True,blank=True)
+    over_time = models.DecimalField(max_digits=10, decimal_places=2 ,null=True, blank=True)
 
     class Meta:
        ordering = ['-pk'] 
@@ -1663,8 +1833,9 @@ class ContractorInvoicePaymentHistory(models.Model):
             invoice.update_status()
         return data
 
-# company labour
 
+
+# company staff labour attendance
 class ProjectLabourAttendence(models.Model):
     company = models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
     project = models.ForeignKey(Project, on_delete=models.CASCADE,null=True,blank=True)
@@ -1675,6 +1846,13 @@ class ProjectLabourAttendence(models.Model):
     date=models.DateField(null=True,blank=True)
     present=models.BooleanField(default=False)
 
+
+# class Attendance(models.Model):
+#     clock_in=models.TimeField(null=True, blank=True)
+#     clock_out=models.TimeField(null=True, blank=True)
+#     employee=models.ForeignKey(Employee,null=True,blank=True, on_delete=models.CASCADE)
+#     date=models.DateField(auto_now_add=True,null=True,blank=True)
+#     present=models.BooleanField(default=False)
 
     # class Meta:
     #     unique_together = ('labour', 'date')
