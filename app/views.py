@@ -25,6 +25,10 @@ from rest_framework.decorators import api_view, permission_classes
 from app.utils import PaginationAndFilter, customPagination,check_user,get_current_month,filter_by_month_range,get_company
 
 
+from django.urls import reverse
+from django.core.mail import send_mail
+from django.utils.crypto import get_random_string
+from .forms import PasswordResetRequestForm, SetPasswordForm
 
 
 paginator = PageNumberPagination()
@@ -2399,3 +2403,57 @@ def payment_process(request, project_id):
         return redirect('clientcash', pk=project.id)  # Provide the pk argument
     else:
         return render(request, 'project/payment_process.html', {'project': project, 'payment_methods': payment_methods})
+    
+
+reset_codes = {}
+
+def password_reset_request_view(request):
+    if request.method == "POST":
+        form = PasswordResetRequestForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data["email"]
+            user = CustomUser.objects.filter(email=email).first()
+            if user:
+                reset_code = get_random_string(length=6)
+                reset_codes[email] = reset_code
+                send_mail(
+                    "Password Reset",
+                    f"Your reset code is: {reset_code}",
+                    "noreply@example.com",
+                    [email],
+                    fail_silently=False,
+                )
+                return redirect(reverse("password_reset_confirm"))
+    else:
+        form = PasswordResetRequestForm()
+    return render(request, "password_reset_request.html", {"form": form})
+
+def password_reset_confirm_view(request):
+    if request.method == "POST":
+        form = SetPasswordForm(request.POST)
+        if form.is_valid():
+            new_password = form.cleaned_data["new_password"]
+            code = request.POST.get("code")
+            email = None
+
+            # Find the email associated with the reset code
+            for key, value in reset_codes.items():
+                if value == code:
+                    email = key
+                    break
+
+            if email:
+                user = CustomUser.objects.filter(email=email).first()
+                if user:
+                    user.set_password(new_password)
+                    user.save()
+                    reset_codes.pop(email)
+                    return redirect(reverse("login"))
+                else:
+                    form.add_error(None, "User not found")
+            else:
+                form.add_error(None, "Invalid reset code")
+    else:
+        form = SetPasswordForm()
+    
+    return render(request, "password_reset_confirm.html", {"form": form})

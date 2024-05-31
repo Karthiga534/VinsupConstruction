@@ -10,6 +10,8 @@ from django.conf.urls.static import static
 from django.contrib.auth.views import LogoutView
 from django.contrib.auth import views as auth_view
 
+from .views import password_reset_request_view, password_reset_confirm_view
+
 urlpatterns = [
 
 #----------------------------------------------------------- Dharshini --------------------------------------------------------------------------
@@ -17,6 +19,9 @@ urlpatterns = [
     path('login/', views.login_admin, name='login'), 
     path('logout/', CustomLogoutView.as_view(), name='logout'),
     path('', views.index, name='index'),
+
+    path('password_reset/', password_reset_request_view, name='password_reset_request'),
+    path('password_reset_confirm/', password_reset_confirm_view, name='password_reset_confirm'),
 
 #---------------------------- UOM ----------------------------
 
