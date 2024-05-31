@@ -490,12 +490,12 @@ class Employee(models.Model):
     @property
     def get_daily_wage(self):
         if self.get_working_days:
-            return self.get_current_salary / self.get_working_days
+            return self.get_current_salary / get_int_or_zero(self.get_working_days)
         return self.get_current_salary / 26
 
     @property
     def get_current_salary(self):
-        return self.monthly_salary
+        return get_amount_or_zero(self.monthly_salary)
         return self.salary_set.last()  # Get the latest salary
     
     def was_present_on_date(self, date_to_check):
