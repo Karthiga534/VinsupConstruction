@@ -234,7 +234,20 @@ def purchaselist(request):
     context = {'queryset': queryset,"location": "purchaselist","pages": pages,"search": search,'vendor_names': vendors,}
     return render(request, "purchase/purchaselist.html", context)
 
-
+@login_required(login_url='login')
+def project_purchaselist(request,pk):
+    user = request.user
+    allow, msg = check_user(request, PurchaseInvoice, instance=False)
+    if not allow:
+        context = {"unauthorized": msg}
+        return render(request, "login.html", context)
+    # vendors = VendorRegistration.objects.filter(company=request.user.company).order_by("-id")
+    querysets = PurchaseInvoice.objects.filter(company=request.user.company).order_by("-id")
+    if pk:
+        querysets= querysets.filter(site__id=pk)
+    queryset, pages, search = customPagination(request, PurchaseInvoice, querysets)
+    context = {'queryset': queryset,"location": "purchaselist","pages": pages,"search": search,}
+    return render(request, "stock/sitePurchase.html", context)
 
 #Inventory Management
 #--------------------
@@ -442,26 +455,28 @@ def add_transfer(request):
     # print(invoice_data)
 
     table = invoice_data.pop('table')  # Use request.data to get JSON data
-    invoice_serializer = TransferInvoiceSerializer(data=invoice_data)
-    if invoice_serializer.is_valid():
-        invoice = invoice_serializer.save()
-        if table:
-            try:
-                tdata = json.loads(table)
-                for data in tdata:
-                    data['invoice'] = invoice.id
-                    items_serializer = TransferItemsSerializer(data=data)
-                    if items_serializer.is_valid():
-                        items_serializer.save()
-                    else:
-                        invoice.delete()
-                        return JsonResponse(items_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-            except json.JSONDecodeError:
-                invoice.delete()
-                return JsonResponse({'error': 'Invalid JSON format'}, status=status.HTTP_400_BAD_REQUEST)
-        return JsonResponse(invoice_serializer.data, status=status.HTTP_201_CREATED)
-    else:
-        return JsonResponse(invoice_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    with transaction.atomic():
+        invoice_serializer = TransferInvoiceSerializer(data=invoice_data)
+        if invoice_serializer.is_valid():
+            invoice = invoice_serializer.save()
+            if table:
+                try:
+                    tdata = json.loads(table)
+                    for data in tdata:
+                        data['invoice'] = invoice.id
+                        items_serializer = TransferItemsSerializer(data=data)
+                        if items_serializer.is_valid():
+                            items_serializer.save()
+                        else:
+                            invoice.delete()
+                            return JsonResponse(items_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                except json.JSONDecodeError:
+                    invoice.delete()
+                    return JsonResponse({'error': 'Invalid JSON format'}, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse(invoice_serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return JsonResponse(invoice_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 

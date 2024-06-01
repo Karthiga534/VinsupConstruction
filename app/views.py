@@ -2049,8 +2049,7 @@ def employee_attendence_list(request,pk):  #change name
     company,_=get_user_company(user)
     pk= int(pk)
     if pk !=0:   
-        print(Attendance.objects.filter(employee__id = pk))
-        print(pk)
+        print(Attendance.objects.filter(employee__id = pk,company__in=company))
         querysets =Attendance.objects.filter(employee__id = pk,company__in=company)
         return PaginationAndFilter(querysets, request,AttendenceSerialiser,date_field ="date")
         
@@ -2092,6 +2091,12 @@ def make_employee_present(request,pk):
    
     request_data =post_data(request,get_company_id(company))
     request_data['employee'] = employee
+
+    date = date if date else get_today()
+    atten = Attendance.objects.filter(employee__id=employee,date=date).last()
+    if atten:
+        return JsonResponse({"employee":["Already Data exists"]},status=400)
+    # write custom logic for employee present for that day and throw error employee is present that day 
     ser =AttendenceSerialiser(data=request_data,context={'request':request})
     if ser.is_valid():
         ser.save()
@@ -2385,9 +2390,30 @@ def labour_attendence_list(request,pk):  #change name
          return render(request,"login.html",context)    
     
     company,_=get_user_company(user)
-    pk= int(pk)
+
+    project_id = request.GET.get('project')
+
+    try:
+        pk = int(pk)
+    except ValueError:
+        return JsonResponse({'error': 'Invalid pk'}, status=400)
+
+    # Get the project if project_id is provided
+    if project_id:
+        try:
+            project_id = int(project_id)
+        except ValueError:
+            project_id = None
+    else:
+        project_id = None
+
+    
     if pk !=0:   
         querysets =ProjectLabourAttendence.objects.filter(labour__id =pk,company__in=company)
+        return PaginationAndFilter(querysets, request,ProjectLabourAttendenceSerializer,date_field ="date")
+    
+    if pk ==0 and project_id  :  
+        querysets =ProjectLabourAttendence.objects.filter(project__id =project_id,company__in=company)
         return PaginationAndFilter(querysets, request,ProjectLabourAttendenceSerializer,date_field ="date")
         
     querysets =CompanyLabours.objects.filter(company__in=company)
@@ -2427,9 +2453,13 @@ def make_labour_present(request,pk):
     if not labour:
         return JsonResponse({"labour":["This Field is required"]},status=400)
 
+    date = date if date else get_today()
    
-    request_data =request.data.copy().dict()
+    request_data =post_data(request,get_company_id(company))
     request_data['labour'] = labour
+    proj_labr_attn = ProjectLabourAttendence.objects.filter(labour__id=labour,date=date).last()
+    if proj_labr_attn:
+        return JsonResponse({"labour":["Already Data exists"]},status=400)
     ser =ProjectLabourAttendenceSerializer(data=request_data,context={'request':request})
     if ser.is_valid():
         ser.save()
@@ -2595,3 +2625,19 @@ def payment_process(request, project_id):
         return redirect('clientcash', pk=project.id)  # Provide the pk argument
     else:
         return render(request, 'project/payment_process.html', {'project': project, 'payment_methods': payment_methods})
+    
+
+# revision
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+# @login_required(login_url='login')    
+def item_price_track(request,pk,site_or_inventory):
+    if site_or_inventory ==0:
+        inventoryitem =get_object_or_404(InventoryStock,id=pk)
+    else :
+        inventoryitem =get_object_or_404(SiteStock,id=pk)
+    purchase_records =inventoryitem.purchase_history
+    serializers = PurchaseItemsPriceTrackSerializer(purchase_records,many=True)
+    return Response(serializers.data)

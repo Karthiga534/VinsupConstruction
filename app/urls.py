@@ -76,6 +76,8 @@ urlpatterns = [
 #----- Purchase List -----
 
     path('purchaselist/',api.purchaselist,name='purchaselist'), 
+
+    path('project-purchase-history/<int:pk>/',api.project_purchaselist,name='project-purchase-history'),
     # path('purchase-filter/<str:pk>/', api.purchase_filter, name="purchase_filter"),
 
 #-------------------------- Quatation --------------------
@@ -303,25 +305,9 @@ urlpatterns = [
 
 # --------
 
+# ACCOUNTS ---------------------------------
 
-
-
-
-# salary
-
-   
     path('profit-loss/<str:pk>/',views.profit_and_loss,name="profit-and-loss"),
-
-
-
-
-
-#    path('api/projects/', api.getprojectlist, name='project-list'),
-
-
-
-
-
     path('pettycash/', views.pettycash, name='pettycash'),
     path('add_pettycash/', views.add_pettycash, name='add_pettycash'),
     path('update_pettycash/<int:pk>/', views.update_pettycash, name='update_pettycash'),
@@ -331,10 +317,10 @@ urlpatterns = [
     path('payment-process/<int:project_id>/', views.payment_process, name='payment-process'),
 
 
-    
 
+# revision
 
-
+path('purchase-track/<int:pk>/<int:site_or_inventory>/' , views.item_price_track,name="item_price_track"),
 
 
 

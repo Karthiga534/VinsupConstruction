@@ -131,7 +131,12 @@ admin.site.register(OTP)
 admin.site.register(Salary)
 admin.site.register(SalaryReceipt)
 admin.site.register(SalaryPaymentHistory)
-admin.site.register(Attendance)
+
+
+@admin.register(Attendance)
+class MyModelAdmin(admin.ModelAdmin):
+    list_display =[field.name for field in Attendance._meta.fields]
+# admin.site.register(Attendance)
 
 
 @admin.register(Expense)

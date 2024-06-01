@@ -353,6 +353,13 @@ class MaterialLibrary(models.Model):
     class Meta:
         #    unique_together to enforce uniqueness across multiple fields
         unique_together = ('item', 'company', 'unit')
+
+
+    @property
+    def purchase_history(self):
+        if self.purchaseitems_set.all():
+                return self.purchaseitems_set.all()
+        return None
         
 class OthersLibrary(models.Model):
     company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
@@ -1165,6 +1172,13 @@ class InventoryStock(models.Model):
         if self.name:
             return self.name
         return None
+    
+    @property
+    def purchase_history(self):
+        if self.item:  
+            if self.item.purchase_history:
+                return self.item.purchase_history
+        return None
 
         
 class DailyInventoryUsage(models.Model):
@@ -1215,6 +1229,13 @@ class SiteStock(models.Model):
         total = self.total_supplied_qty - self.taken_qty
         return  "{:.2f}".format(total)
     
+
+    @property
+    def purchase_history(self):
+        if self.item:  
+            if self.item.purchase_history:
+                return self.item.purchase_history
+        return None
 
 
 
@@ -1313,6 +1334,12 @@ class PurchaseItems(models.Model):
 
     def __str__(self):
         return self.name or self.item.display
+    
+    @property
+    def purchase_info(self):
+        if self.invoice:
+            return self.invoice
+        return None
 # ----------------------------------- QUOTATION -----------------------------------------------------------------------------        
 
 class Quatation(models.Model):

@@ -1,0 +1,430 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block header2 %}
+
+<!-- Begin page -->
+<div id="layout-wrapper">
+    <div class="main-content">
+
+        <div class="page-content">
+            <div class="container-fluid">
+
+                <!-- start page title -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                            <h4 class="mb-sm-0">Purchase Management</h4>
+
+                            <div class="page-title-right">
+                                <ol class="breadcrumb m-0">
+                                    <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
+                                    <li class="breadcrumb-item active">Purchase List</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="row">
+                                    <div class="col-xl-6 col-lg-6 col-md-6 col-12">
+                                        <h4>Purchase List </h4>
+                                    </div>
+                                    <div class="col-xl-4 col-lg-4 col-md-4 col-12"></div>
+                                    <div class="col-xl-2 col-lg-2 col-md-2 col-12">
+                                        <a href="{% url 'viewstock' %}" type="button" class="btn btn-info"
+                                            style="float:right;">Back</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <!-- <div class="col-xl-3 col-lg-3 col-md-3 col-xs-6 col-12">
+                                        <label for="vendor" class="form-label">Vendor Name:</label>
+                                        <select class="form-select mb-3" aria-label="Default select example"
+                                            id="filterdropdown1" name="vendor">
+                                            <option value="0">---------------------</option>
+                                            {% for vendor in vendor_names %}
+                                            <option value="{{ vendor.id }}">{{ vendor.vendorname }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <span id="vendorError" class="error-message"></span>
+                                    </div> -->
+                                    <div class="col-xl-3 col-lg-3 col-md-3 col-xs-6 col-12">
+                                        <label for="exampleInputdate" class="form-label">From Date</label>
+                                        <input type="date" class="form-control" id="fromDate">
+                                    </div>
+
+                                    <div class="col-xl-3 col-lg-3 col-md-3 col-xs-6 col-12">
+                                        <label for="exampleInputdate" class="form-label">To Date</label>
+                                        <input type="date" class="form-control" id="toDate">
+                                    </div>
+                                    <div class="col-xl-3 col-lg-3 col-md-3 col-xs-6 col-12">
+                                        <br><button type="button"
+                                            class="btn btn-primary waves-effect waves-light mt-2">Get Report</button>
+                                    </div>
+
+                                </div>
+                                <hr>
+                                <table id="example"
+                                    class="table table-bordered dt-responsive nowrap table-striped align-middle"
+                                    style="width:100%">
+                                    <thead>
+
+                                        <tr>
+                                            <!-- <th scope="col" style="width: 10px;">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input fs-15" type="checkbox" id="checkAll" value="option">
+                                                    </div>
+                                                </th> -->
+                                            <th data-ordering="false">S.no</th>
+                                            <th data-ordering="false">Date</th>
+                                            <th data-ordering="false">Invoice No</th>
+                                            <th data-ordering="false">Vendor Name</th>
+                                            <th data-ordering="false">Purchase Amount</th>
+                                            <th data-ordering="false">paid Amount</th>
+                                            <th data-ordering="false">Pending Amount</th>
+                                            <th data-ordering="false">Action</th>
+
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- {% for i in queryset %}
+                                            <tr>
+                                                <th scope="row">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input fs-15" type="checkbox" name="checkAll" value="option1">
+                                                    </div>
+                                                </th>
+                                                <td>{{ forloop.counter }}</td>
+												<td>{{ i.created_at }}</td>
+                                                <td>{{ i.invoice_id }}</td>
+                                                <td>{{ i.vendor }}</td>                                               
+                                                <td>{{ i.total_amount }}</td>                                                
+                                                <td>{{ i.paid }}</td>                                                
+                                                <td>{{ i.pending }}</td>                                                
+                                                <td>
+                                                     <div class="dropdown d-inline-block">
+                                                        <button class="btn btn-soft-secondary btn-sm dropdown view-btn" type="button" data-bs-toggle="modal"
+														 aria-expanded="false" onclick="openModal('viewModal','{{ i.id }}')" >
+                                                            <i class="ri-eye-fill align-middle" ></i>
+                                                        </button>
+														<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" 
+														id="viewModal_{{i.id}}"
+														aria-labelledby="myLargeModalLabel" aria-hidden="true" >
+															<div class="modal-dialog modal-lg">
+																<div class="modal-content">
+																	<div class="modal-header">
+																		<h5 class="modal-title" id="myLargeModalLabel">Purchase Item Details</h5>
+																		<button type="button" class="btn-close" data-bs-dismiss="modal" onclick="clearErrors()" aria-label="Close">
+																			
+																		</button>
+																	</div>
+																	<hr>
+																	<div class="modal-body">
+																		<div class="table-responsive">
+																			<table class="table table-bordered">
+                                                                                <thead>
+																				<tr>
+																					<th>S.no</th>
+																					<th>Item</th>
+																					<th>Qty</th>
+																					<th>Unit</th>
+																					<th>Amount</th>
+																				</tr>
+                                                                                </thead>
+                                                                                <tbody>
+                                                                                    {% for j in i.get_purchase_items %}
+                                                                                    <tr>
+                                                                                        
+                                                                                        <td>{{ forloop.counter }}</td>
+                                                                                        <td>
+																						{% if j.item %}
+																							{{ j.item.item }} 
+																						{% else %}
+																							{{ j.name }}
+																						{% endif %} 
+																					    </td>
+                                                                                        <td>{{ j.qty }}</td>
+                                                                                        <td>{{ j.unit }}</td>                                               
+                                                                                        <td>{{ j.sub_total }}</td>                                        
+                                                                                                
+                                                                                    </tr> 
+                                                                                    {% endfor %}
+                                                                                </tbody>
+																			</table>
+																		</div>
+																	</div>
+																	<hr>
+																	<div class="modal-footer">
+																		<button class="btn btn-link link-success fw-medium shadow-none" data-bs-dismiss="modal" onclick="clearErrors()" >
+													
+																			<i class="ri-close-line me-1 align-middle"></i> Close</button>
+																		<button type="button" class="btn btn-primary ">Save </button>
+																	</div>
+																</div>
+																
+															</div>
+														
+														</div>
+														<button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                            <i class="ri-pencil-fill align-middle"></i>
+                                                        </button>
+														<button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                            <i class="ri-delete-bin-fill align-middle"></i>
+                                                        </button>                                             
+                                                    </div> 
+                                                </td>
+                                            </tr>   
+                                            {% endfor %}                                          -->
+                                    </tbody>
+
+
+                                </table>
+
+                                <div id="pagination-container"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- container-fluid -->
+            </div>
+            <!-- End Page-content -->
+
+
+        </div>
+        <!-- end main content-->
+
+    </div>
+    <!-- END layout-wrapper -->
+
+
+    <!-- modal table -->
+    <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+        id="invoiceHistoryModal" data-bs-keyboard="false" data-bs-backdrop="static" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="myLargeModalLabel">Purchase Items</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>S.no</th>
+                                    <th>Item</th>
+                                    <th>Qty</th>
+                                    <th>Unit</th>
+                                    <th>Amount</th>
+
+                                </tr>
+                            </thead>
+                            <tbody id="modalTableBody">
+                                <!-- Modal table body will be populated dynamically -->
+
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-link link-success fw-medium shadow-none" data-bs-dismiss="modal"><i
+                            class="ri-close-line me-1 align-middle"></i> Close</button>
+                    <!-- <button type="button" class="btn btn-primary">Save</button> -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!--start back-to-top-->
+    <button onclick="topFunction()" class="btn btn-danger btn-icon" id="back-to-top">
+        <i class="ri-arrow-up-line"></i>
+    </button>
+    <!--end back-to-top-->
+
+    <!--preloader-->
+    <div id="preloader">
+        <div id="status">
+            <div class="spinner-border text-primary avatar-sm" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <script>
+
+        let activePage;
+
+     
+        // fetch url
+        let fetchUrl = "purchase-list"
+
+        // pagination
+        const existingPaginationContainer = document.getElementById('pagination-container');
+
+        // table
+        const tableBody = document.querySelector('#example tbody');
+
+        // filters 
+        const firstDropdown = document.getElementById('filterdropdown1');
+        const fromdate = document.getElementById('fromDate');
+        const todate = document.getElementById('toDate');
+
+        var currentPage = 1;
+
+        document.addEventListener('DOMContentLoaded', function () {
+
+            // on dom loaded 
+            const initialSelectedValue = firstDropdown.value;
+            fetchData(1);
+
+            // fetch table data API
+            firstDropdown.addEventListener('change', function () {
+
+                activePage = null
+                fetchData(currentPage);
+            });
+
+            todate.addEventListener('change', function () {
+                activePage = null
+                fetchData(currentPage);
+            });
+
+            fromdate.addEventListener('change', function () {
+                activePage = null
+                fetchData(currentPage);
+            });
+
+
+        });
+
+
+        // fetch data
+        function fetchData(page) {
+
+            if (activePage === page) {
+                return
+            }
+            const selectedValue = firstDropdown.value;
+            const from = fromdate?.value || ""
+            const to = todate?.value || ""
+            try {
+                fetch(`/${fetchUrl}/${selectedValue}/?page=${page}&start_date=${from}&end_date=${to}&project=${to}`)
+                    .then(response => {
+                        if (response.status === 200) {
+                            console.log('Data fetched');
+                            return response.json();
+                        } else if (response.status === 404) {
+                            throw new Error('Resource not found');
+                        } else if (response.ok) {
+                            throw new Error(`HTTP error! Status: ${response.status}`);
+                        } else {
+                            throw new Error('Network response was not ok');
+                        }
+                    })
+                    .then(data => {
+                        tableBody.innerHTML = '';
+                        renderDataOrMessage(tableBody, data, page)
+                        activePage = page
+                    })
+                    .catch(error => {
+                        console.error('Error fetching data:', error);
+                        showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+                    });
+            } catch (error) {
+                console.error('Error in fetch operation:', error);
+            }
+        }
+
+
+        
+
+
+        // MANIPULATE TABLE DATA
+        function createTableRow(serialNumber, data) {
+          
+            const newRow = document.createElement('tr');
+            newRow.setAttribute('data-item-id', data.id);
+
+            const idCell = createSerialCell(serialNumber);
+            newRow.appendChild(idCell);
+
+            const td2 = createTableCell(get_value(data.created_at));
+            newRow.appendChild(td2);
+
+            const td3 = createTableCell(get_value(data.invoice_id));
+            newRow.appendChild(td3);
+
+            const td4 = createTableCell(get_value(data.vendor_name));
+            newRow.appendChild(td4);
+
+            const td5 = createAmountCell(get_value(data.total_amount));
+            newRow.appendChild(td5);
+
+            const td6 = createTableCell(get_value(data.paid));
+            newRow.appendChild(td6);
+
+            const td7 = createTableCell(get_value(data.pending));
+            newRow.appendChild(td7);
+
+
+
+            // actioncell
+            const actionCell = createViewActionCell('invoiceHistoryModal');
+            newRow.appendChild(actionCell);
+
+            // click event
+            actionCell.addEventListener('click', () => {
+                populateModalTable(data.get_purchase_items, modalTableBody);
+            });
+
+            return newRow;
+        }
+
+
+
+
+        // nested table
+        function populateModalTable(items, modalTableBody) {
+            modalTableBody.innerHTML = ''; // Clear previous data
+
+            items?.forEach((tItem, index) => {
+                const modalRow = document.createElement('tr');
+
+                modalRow.appendChild(createSerialCell(index + 1));
+                modalRow.appendChild(createTableCell(tItem.item_name));
+                modalRow.appendChild(createTableCell(tItem.qty));
+                modalRow.appendChild(createTableCell(tItem.unit_name));
+                modalRow.appendChild(createAmountCell(tItem.sub_total));
+              
+                modalTableBody.appendChild(modalRow);
+            });
+
+        }
+
+        //---------------
+
+
+
+
+
+
+
+
+
+
+    </script>
+
+    {% endblock header2 %}

@@ -41,12 +41,13 @@
                             <div class="card-header">
 
                                 <div class="row">
-                                    <div class="col-xl-6 col-lg-6 col-md-6 col-12">
+                                    <div class="col">
                                         <h2>Maintain Site stocks</h2>
                                     </div>
-                                    <div class="col-xl-4 col-lg-4 col-md-4 col-12"></div>
-                                    <div class="col-xl-2 col-lg-2 col-md-2 col-12">
-
+                                    
+                                    <div class="col text-end" >
+                                        <button class="btn btn-info" onclick="routePage('project-purchase-history')">  view Purchase History </button>
+                                       
                                     </div>
                                 </div>
                             </div>
@@ -76,9 +77,9 @@
                                         </div>
                                         <div class="col-xl-3 col-lg-3 col-md-3 col-xs-6 col-12">
                                             <br>
-                                            <!-- <button type="submit"
-                                                class="btn btn-primary waves-effect waves-light mt-2">Get
-                                            </button> -->
+                                            <button type="submit" onclick="getReport(this,'example')"
+                                                class="btn btn-primary waves-effect waves-light mt-2">Get Report
+                                            </button>
                                         </div>
                                         <div class="col-xl-3 col-lg-3 col-md-3 col-xs-6 col-12">
 
@@ -105,7 +106,7 @@
                                                     <th data-ordering="false">S No.</th>
                                                     <th data-ordering="false">Item Name</th>
                                                     <th data-ordering="false">price</th>
-                                                    <th data-ordering="false">Weight / Qty</th>
+                                                    <th data-ordering="false">Qty</th>
                                                     <th data-ordering="false">Unit</th>
                                                     <th data-ordering="false">Total Amount</th>
 
@@ -195,6 +196,14 @@
         });
 
 
+        function routePage(url,id)
+        {
+            const dropdown = document.getElementById('fromsite');
+            let pid= dropdown.value
+            window.location.href =`/${url}/${pid}/`
+        }
+
+
         // fetch data
         function fetchData(selectedValue,tableBody) {
             try {
@@ -253,6 +262,8 @@
 
             return newRow;
         }
+
+
 
 
     </script>
