@@ -50,7 +50,7 @@ class CustomUserManager(BaseUserManager):
         return normalized_phone_number
  
 class CustomUser(AbstractBaseUser, PermissionsMixin):    
-    email=models.EmailField(null=True, blank=True)
+    email=models.EmailField(null=True, blank=True,unique=True)
     image = models.ImageField(upload_to='profile_images/', null=True, blank=True)
     name = models.CharField(max_length=255)
     phone_number = models.CharField(max_length=10, unique=True)

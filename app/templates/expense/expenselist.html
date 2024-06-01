@@ -78,7 +78,7 @@
                                                                     <span id="particularError"
                                                                         class="error-message"></span>
                                                                 </div>
-                                                                <div class="col-md-4 mt-2">
+                                                                <div class="col-md-4 ">
                                                                     <label for="id_amount" class="form-label">Amount
                                                                         :</label>
                                                                     <input type="text" name="amount"
@@ -310,6 +310,7 @@
 			try {
 				fetch(`/expense_list/${selectedValue}/?page=${page}&start_date=${from}&end_date=${to}`)  //CHANGE URL
 					.then(response => {
+                        console.log(response)
 						if (response.status === 200) {
 							console.log('Data fetched');
 							return response.json();
@@ -434,7 +435,7 @@
                 var errors = {};
                 var formData = new FormData();
 
-                var requiredKeys = ['date', 'particular', 'amount', 'site_location', 'employee'];   //change
+                var requiredKeys = ['date', 'particular', 'amount'];   //change
 
 
                 formData.append('date', getValueOrDefault(formElement.querySelector('input[name="date"]').value));              //change
@@ -442,7 +443,7 @@
                 formData.append('amount', getValueOrDefault(formElement.querySelector('input[name="amount"]').value));
                 formData.append('site_location', getValueOrDefault(formElement.querySelector('select[name="site_location"]').value));
                 formData.append('employee', getValueOrDefault(formElement.querySelector('select[name="employee"]').value));
-                formData.append('attachment', getValueOrDefault(formElement.querySelector('input[name="attachment"]').value));
+                
 
                 var attachment = document.querySelector('#createForm input[type="file"]').files[0];
                 if (attachment) {
@@ -522,6 +523,9 @@
                 restoreForm(formId, button)
             }
         }
+
+
+
 
 
 	</script>

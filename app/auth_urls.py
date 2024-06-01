@@ -54,6 +54,8 @@ urlpatterns += [
 
 
     path('update-user/<int:pk>/',html.update_user,name="update-user"),
+
+    
     path('create-user/',html.register_customuser,name="create-user"),
     # make superuser
     path('admin-users-upgrade/<int:pk>/',html.upgrade_admin_user, name="admin-users-upgrade"),

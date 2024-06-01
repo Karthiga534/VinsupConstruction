@@ -992,12 +992,12 @@ def expenselist(request, pk):
     querysets = Expense.objects.filter(company=request.user.company).order_by("-id")
     if pk !=int(0) :
         querysets = querysets.filter(site_location__id=pk)
-    # Date Filtering
-    start_date = request.GET.get('start_date')
-    end_date = request.GET.get('end_date')
-    if start_date and end_date:
-        querysets = querysets.filter(date__range=[start_date, end_date])
-    return PaginationAndFilter(querysets, request, ExpenseSerializer)
+    # # Date Filtering
+    # start_date = request.GET.get('start_date')
+    # end_date = request.GET.get('end_date')
+    # if start_date and end_date:
+    #     querysets = querysets.filter(date__range=[start_date, end_date])
+    return PaginationAndFilter(querysets, request, ExpenseSerializer,"date")
 
 
 

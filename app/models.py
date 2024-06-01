@@ -1214,6 +1214,9 @@ class SiteStock(models.Model):
     def available_qty(self):
         total = self.total_supplied_qty - self.taken_qty
         return  "{:.2f}".format(total)
+    
+
+
 
 class DailyMaterialUsage(models.Model):
     stock=models.ForeignKey(SiteStock, on_delete=models.CASCADE,null=True,blank=True)
@@ -2080,3 +2083,37 @@ class PaymentHistory(models.Model):
     receipt_number = models.CharField(max_length=100)
     payment_method = models.ForeignKey(PaymentMethod, on_delete=models.CASCADE, null=True, blank=True)
     payment_amount = models.DecimalField(max_digits=10, decimal_places=2)
+
+
+
+
+class DailySiteStockUsage(models.Model):
+    stock=models.ForeignKey(SiteStock, on_delete=models.CASCADE,null=True,blank=True)
+    Project = models.ForeignKey(Project, on_delete=models.CASCADE,null=True,blank=True)
+    work_done =models.TextField()
+    date = models.DateField(auto_now_add=True)
+    qty = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
+    unit = models.ForeignKey(Uom,on_delete=models.CASCADE,null=True,blank=True)
+
+
+    # def save(self, *args, **kwargs):
+    #     if self.stock:
+    #         stock =self.stock
+    #         stock.qty -=self.qty
+    #         stock.save() 
+    #     return  super().save(*args, **kwargs)
+
+  
+
+
+
+class DailyTask(models.Model):
+    Project = models.ForeignKey(Project, on_delete=models.CASCADE,null=True,blank=True)
+    subcontrct = models.ForeignKey(ProjectSubContract, on_delete=models.CASCADE,null=True,blank=True)
+    subcontract_items =  models.ForeignKey(ProjectSubContractUnitRates, on_delete=models.CASCADE,null=True,blank=True)
+    work_done =models.TextField()
+    date = models.DateField(auto_now_add=True)
+    qty = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
+    unit = models.ForeignKey(Uom,on_delete=models.CASCADE,null=True,blank=True)
+    
+
