@@ -1975,30 +1975,6 @@ class ProjectMachineExpense(models.Model):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 class Files(models.Model):
     company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
     project_name =  models.ForeignKey(Project,on_delete=models.CASCADE, null=True, blank=True)
