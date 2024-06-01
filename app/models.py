@@ -1,109 +1,70 @@
 from .utils import *
-from typing import Iterable
 from decimal import Decimal
 from django.db import models
 from django.db.models import Q
 from django.db.models import Sum
-from django.conf import settings
 from django.utils import timezone
-from datetime import datetime, timedelta
 from django.db.models import UniqueConstraint
-from django.contrib.auth.models import AbstractBaseUser,BaseUserManager,PermissionsMixin, User 
+from app.auth_models import *
+import uuid
+from django.core.exceptions import ValidationError
+
+
 today_date = timezone.now().date()
 
+DUTY_HOURS = 8
 
 # date_format =settings.DATE_FORMAT
 date_format = "%Y-%m-%d"
 
-#------------------------------------------------------------------- CustomUser ----------------------------------------------------------------
 
-class CustomUserManager(BaseUserManager):
-    def create_user(self, phone_number, password=None, pin=None, **extra_fields):
-        if not phone_number:
-            raise ValueError('The phone number must be set')
-        user = self.model(phone_number=self.normalize_phone_number(phone_number), **extra_fields)
-       
-        user.pin = pin
-        user.save(using=self._db)
-        return user
-    
-    def create_superuser(self, phone_number, password=None, pin=None, **extra_fields):
-        extra_fields.setdefault('is_staff', True)
-        extra_fields.setdefault('is_superuser', True)
-        return self.create_user(phone_number, password, pin, **extra_fields)
+# ------------------------------------------------------------ system  library ------------------------------------------------------------
 
-    def normalize_phone_number(self, phone_number):
-        normalized_phone_number = phone_number.replace(" ", "").replace("-", "")
-        return normalized_phone_number
- 
-class CustomUser(AbstractBaseUser, PermissionsMixin):    
-    email=models.EmailField(null=True, blank=True)
-    image = models.ImageField(upload_to='profile_images/', null=True, blank=True)
-    name = models.CharField(max_length=255)
-    phone_number = models.CharField(max_length=10, unique=True)
-    # company = models.ForeignKey('Company', on_delete=models.CASCADE, null=True, blank=True)
-    pin = models.CharField(max_length=6, null=True, blank=True) 
-    is_active = models.BooleanField(default=True)
-    admin = models.BooleanField(default=False)
-    is_employee = models.BooleanField(default=False)
-    is_staff = models.BooleanField(default=False)
-    is_superuser = models.BooleanField(default=False)
-    otp = models.CharField(max_length=6, null=True, blank=True)
-    created_at =models.DateField(auto_now_add=True)
-    USERNAME_FIELD = 'phone_number'
-    REQUIRED_FIELDS = ['name']
-    disable = models.BooleanField(default=False)
-    
-    objects = CustomUserManager()
-
-    # def save(self, *args, **kwargs):     
-    #     self.pin=1111       
-    #     super().save(*args, **kwargs)
+class WorkStatus(models.Model):
+    name = models.CharField(max_length=50, null=True, blank=True)
+    code = models.CharField(max_length=50, null=True, blank=True)
 
     def __str__(self):
-        return f"{self.name} - {self.phone_number}"
-    
-    @property
-    def company(self):
-        print(self.is_employee)
-        if self.admin:
-            return self.company_set.all().last()
-        if self.is_employee:
-            print("trueeeeeeeeeeee")
-            if self.employee_set.all():
-                return self.employee_set.all().last().company
-        return None  
+        return self.name
 
-    @property
-    def employee(self):
-        if self.employee_set.all():
-            return self.employee_set.all().last()
-        return None
-    
-    @property
-    def get_companies(self):
-        if self.admin:
-            return self.company_set.all()
-        return [] 
-    
-    
-#------------------------------------------------------------------------- Company ---------------------------------------------------------------
-    
-class Company(models.Model):
-    name = models.CharField(max_length=50)
-    admin = models.ForeignKey(CustomUser, on_delete=models.CASCADE,null=True,blank=True)
-    monthly_working_days =models.IntegerField(null=True, blank=True)
-    monthly_paid_leaves =models.IntegerField(null=True, blank=True)
+class PaymentStatus(models.Model):
+    name = models.CharField(max_length=50, null=True, blank=True)
+    code = models.CharField(max_length=50, null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
+class PaymentMethod(models.Model):
+    name = models.CharField(max_length=50, null=True, blank=True)
+    code = models.CharField(max_length=50, null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
+class ContractType(models.Model):
+    name = models.CharField(max_length=50, null=True, blank=True)
+    code = models.CharField(max_length=50, null=True, blank=True)
 
     def __str__(self):
         return self.name
     
+class Duration(models.Model):
+    company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
+    name=models.CharField(max_length=100,null=True,blank=True)
+    code = models.CharField(max_length=50, null=True, blank=True)
 
-    @property
-    def stock(self):
-        if self.inventorystock_set.all():
-            return self.inventorystock_set.all()
-        return None   
+
+    def __str__(self):
+        return self.name
+
+class Priority(models.Model):
+    company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
+    name=models.CharField(max_length=100,null=True,blank=True)
+    code = models.CharField(max_length=50, null=True, blank=True)
+
+
+    def __str__(self):
+        return self.name
     
 class PaymentSchedule(models.Model):
     days = models.IntegerField(null=True, blank=True)
@@ -111,9 +72,337 @@ class PaymentSchedule(models.Model):
 
     def __str__(self):
         return str(self.days if self.days else 0)
+
+
+# --------------------------------------------------------------------------------------
+
+
+#------------------------------------------------------------------- CustomUser ----------------------------------------------------------------
+# from django.core.exceptions import ValidationError
+# from django.utils.translation import gettext_lazy as _
+
+# today_date = timezone.now().date()
+
+
+# def validate_unique_email(email):
+#     if email:
+#         try:
+#             existing_user = CustomUser.objects.get(email=email)
+#             if existing_user :
+#                 raise ValidationError(_('This email address is already in use.'))
+#             else:
+#                 pass
+#         except CustomUser.DoesNotExist:
+#             pass
+
+
+# class CustomUserManager(BaseUserManager):
+#     def create_user(self, phone_number, password=None, pin=None, **extra_fields):
+#         if not phone_number:
+#             raise ValueError('The phone number must be set')
+#         user = self.model(phone_number=self.normalize_phone_number(phone_number), **extra_fields)
+       
+#         user.pin = pin
+#         user.save(using=self._db)
+#         return user
     
-#----------------------------------------------------------------------- Employee -----------------------------------------------------
+#     def create_superuser(self, phone_number, password=None, pin=None, **extra_fields):
+#         extra_fields.setdefault('is_staff', True)
+#         extra_fields.setdefault('is_superuser', True)
+#         return self.create_user(phone_number, password, pin, **extra_fields)
+
+#     def normalize_phone_number(self, phone_number):
+#         normalized_phone_number = phone_number.replace(" ", "").replace("-", "")
+#         return normalized_phone_number
+ 
+# class CustomUser(AbstractBaseUser, PermissionsMixin):    
+#     email=models.EmailField(null=True, blank=True)
+#     image = models.ImageField(upload_to='profile_images/', null=True, blank=True)
+#     name = models.CharField(max_length=255)
+#     phone_number = models.CharField(max_length=10, unique=True)
+#     # company = models.ForeignKey('Company', on_delete=models.CASCADE, null=True, blank=True)
+#     pin = models.CharField(max_length=6, null=True, blank=True) 
+#     is_active = models.BooleanField(default=True)
+#     admin = models.BooleanField(default=False)
+#     is_employee = models.BooleanField(default=False)
+#     is_staff = models.BooleanField(default=False)
+#     is_superuser = models.BooleanField(default=False)
+#     otp = models.CharField(max_length=6, null=True, blank=True)
+#     created_at =models.DateField(auto_now_add=True)
+#     USERNAME_FIELD = 'phone_number'
+#     REQUIRED_FIELDS = ['name']
+#     disable = models.BooleanField(default=False)
     
+#     objects = CustomUserManager()
+
+
+#     def save(self, *args, **kwargs):
+#         if self.email:
+#             self.email = self.email.lower()
+#         # self.pin= 1111
+#         super().save(*args, **kwargs)
+
+    
+#     def clean(self):
+#         super().clean()
+#         if self.email is None and self.phone_number is None:
+#             raise ValidationError(_('Either Email or Phone Number must be set'))
+
+#     def __str__(self):
+#         return f"{self.name} - {self.phone_number}"
+    
+#     # @property
+#     # def employee(self):
+#     #     if self.employee_set.all().last():
+#     #         return self.employee_set.all().last()
+#     #     return
+
+
+#     # @property
+#     # def company(self):
+#     #     if self.admin:
+#     #         if self.company_set.all().last():
+#     #             return self.company_set.all().last()
+#     #     if self.employee:
+#     #         return self.employee.company
+#     #     return
+    
+#     @property
+#     def getcompanies(self):
+#         if self.owner:
+#             if self.owner_company.all().last():
+#                 return self.owner_company.all()
+#         return
+    
+
+#     @property
+#     def owner(self):
+#         if self.is_owner:
+#             if self.ownerinfo_set.all().last():
+#                 return self.ownerinfo_set.all().last()
+#         return 
+
+
+    
+#     @property
+#     def company(self):
+#         print(self.is_employee)
+#         if self.admin:
+#             return self.company_set.all().last()
+#         if self.is_employee:
+#             if self.employee_set.all():
+#                 return self.employee_set.all().last().company
+#         return None  
+
+#     @property
+#     def employee(self):
+#         if self.employee_set.all():
+#             return self.employee_set.all().last()
+#         return None
+    
+#     @property
+#     def get_companies(self):
+#         if self.admin:
+#             return self.company_set.all()
+#         return [] 
+    
+    
+# #------------------------------------------------------------------------- Company ---------------------------------------------------------------
+# class Company(models.Model):
+#     owner = models.ForeignKey(CustomUser,related_name="owner_company",null=True,blank=True,on_delete=models.CASCADE)
+#     admin = models.ForeignKey(CustomUser,null=True,blank=True,on_delete=models.CASCADE)
+#     name = models.CharField(max_length=500,null=True,blank=True)
+#     email=models.CharField(max_length=500,null=True,blank=True)
+#     phone=models.CharField(max_length=10, unique=True,null=True,blank=True)
+#     address=models.TextField(null=True,blank=True)
+#     gst = models.CharField(max_length=500,null=True,blank=True)
+#     created_at = models.DateField(auto_now_add=True)
+#     plan =models.ForeignKey(CompanyPlan,null=True,blank=True,on_delete=models.CASCADE)
+#     monthly_working_days =models.IntegerField(null=True, blank=True)
+#     monthly_paid_leaves =models.IntegerField(null=True, blank=True)
+
+#     def __str__(self):
+#         return self.name
+    
+
+#     @property
+#     def stock(self):
+#         if self.inventorystock_set.all():
+#             return self.inventorystock_set.all()
+#         return None 
+
+
+#     def save(self, *args, **kwargs):
+#         if not self.plan:
+#             self.plan,_ =CompanyPlan.objects.get_or_create(code=0)
+        
+#         return  super().save(*args, **kwargs)
+
+       
+#     def __str__(self):
+#         return str(self.name)
+    
+
+#     @property
+#     def get_limits(self):
+#         if self.plan:
+#             return self.plan.get_limits
+#         return 
+    
+
+#     @property
+#     def assetlist(self):
+#         if self.companyasset_set.all():
+#                 return self.companyasset_set.all()
+#         return None
+    
+
+#     @property
+#     def assetlimit(self):
+#         if self.companyassetlimit_set.all():
+#                 return self.companyassetlimit_set.all()
+#         return None
+    
+
+#     @property
+#     def get_employees(self):
+#         if self.employee_set.all():
+#             return self.employee_set.all()
+#         return None
+    
+
+#     # @property
+#     # def get_units(self):
+#     #     if self.unit_set.all():
+#     #         return self.unit_set.all()
+#     #     return None
+    
+
+#     # @property
+#     # def get_active_unit(self):
+#     #     if self.unit_set.all():
+#     #         return self.unit_set.all().filter(active_sale=True).last()
+#     #     return None
+
+
+
+
+
+# class Company(models.Model):
+#     name = models.CharField(max_length=50)
+#     admin = models.ForeignKey(CustomUser, on_delete=models.CASCADE,null=True,blank=True)
+#     monthly_working_days =models.IntegerField(null=True, blank=True)
+#     monthly_paid_leaves =models.IntegerField(null=True, blank=True)
+
+#     def __str__(self):
+#         return self.name
+    
+
+#     @property
+#     def stock(self):
+#         if self.inventorystock_set.all():
+#             return self.inventorystock_set.all()
+#         return None   
+    
+
+    
+
+# ------------------------------------------------------------ COMPANY MASTERS ------------------------------------------------------
+
+# -- UOM ---------
+
+class Uom(models.Model):
+    company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
+    name=models.CharField(max_length=50)
+    #date= models.DateField(auto_now_add=True)
+    date = models.DateField(auto_now_add=True, null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
+# MATERIAL LIBRARIES
+
+class MaterialLibrary(models.Model):
+    company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
+    item=models.CharField(max_length=100,null=True,blank=True)
+    unit=models.ForeignKey(Uom, on_delete=models.CASCADE,null=True,blank=True)
+    price=models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
+    date = models.DateField(auto_now_add=True, null=True, blank=True)
+
+    def __str__(self):
+        return self.item
+
+
+    # def __str__(self):
+    #     if self.item:
+    #         return self.item
+    #     return None
+
+    class Meta:
+        #    unique_together to enforce uniqueness across multiple fields
+        unique_together = ('item', 'company', 'unit')
+        
+class OthersLibrary(models.Model):
+    company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
+    item=models.CharField(max_length=100,null=True,blank=True)
+    unit=models.ForeignKey(Uom, on_delete=models.CASCADE,null=True,blank=True)
+    price=models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
+
+
+    def __str__(self):
+        return self.item
+        
+
+# COMPANY MACHINARY CHARGES
+    
+class CompanyMachinaryCharges(models.Model) :
+    company = models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
+    name = models.CharField(max_length=100,null=True,blank=True)
+    rate = models.DecimalField(max_digits=10, decimal_places=2, default=0.0) 
+    payment_schedule =  models.ForeignKey(PaymentSchedule, on_delete=models.CASCADE, null=True, blank=True)
+    unit=models.ForeignKey(Uom, on_delete=models.CASCADE,null=True,blank=True)
+    date = models.DateField(auto_now_add=True, null=True, blank=True)
+    def __str__(self):
+        return self.name
+
+
+# LABOUR ROLES AND SALARY
+
+class LabourRolesAndSalary(models.Model):
+    company = models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
+    name = models.CharField(max_length=100,null=True,blank=True)
+    rate = models.DecimalField(max_digits=10, decimal_places=2, default=0.0) 
+    payment_schedule =  models.ForeignKey(PaymentSchedule, on_delete=models.CASCADE, null=True, blank=True)
+    ot_rate = models.DecimalField(max_digits=10, decimal_places=2, default=0.0) 
+    date = models.DateField(auto_now_add=True, null=True, blank=True)
+
+
+    def __str__(self):
+        return self.name
+
+    
+#------>project category 
+class ProjectCategory(models.Model):
+    company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
+    name = models.CharField(max_length=100)
+    description = models.TextField()
+
+    def __str__(self):
+        return self.name
+
+#------------- Contract category ---------
+
+class Contractcategory(models.Model):
+    company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
+    name=models.CharField(max_length=50)
+    description = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.name
+
+
+# EMP ROLES -----
+
 class EmpRoles(models.Model):
     company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
     name=models.CharField(max_length=50)
@@ -121,7 +410,11 @@ class EmpRoles(models.Model):
 
     def __str__(self):
         return self.name
- 
+    
+    
+#----------------------------------------------------------------------- COMPANY STAFFS-----------------------------------------------------
+    
+# EMPLOYEE 
 class Employee(models.Model):
     company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
     user=models.ForeignKey(CustomUser, on_delete=models.CASCADE,null=True,blank=True)
@@ -193,10 +486,16 @@ class Employee(models.Model):
     @property
     def get_allowed_leaves(self):
         return 1 
+    
+    @property
+    def get_daily_wage(self):
+        if self.get_working_days:
+            return self.get_current_salary / get_int_or_zero(self.get_working_days)
+        return self.get_current_salary / 26
 
     @property
     def get_current_salary(self):
-        return self.monthly_salary
+        return get_amount_or_zero(self.monthly_salary)
         return self.salary_set.last()  # Get the latest salary
     
     def was_present_on_date(self, date_to_check):
@@ -262,6 +561,35 @@ class Employee(models.Model):
     #         current_date += timedelta(days=1)
 
     #     return total_payment
+
+
+
+    @property
+    def get_today_attendence(self):
+        project = None
+        clock_in = None
+        clock_out = None
+        overtime = None
+        project_name = None
+        fdate =None
+        present =False
+        atten_id =  0
+        today =get_today()
+     
+        if self.get_attendence and self.get_attendence.exists():
+            today =self.get_attendence.filter(date=today).last()
+            print(today,"today")
+            if today:
+                clock_in =today.clock_in
+                clock_out =today.clock_out
+                overtime =today.over_time
+                present = True if today.clock_in else False
+                project = today.project.id if today.project else None
+                project_name=today.project.display if today.project else None
+                fdate =today
+                atten_id=today.id
+                
+        return project,project_name,clock_in,clock_out,overtime,present,atten_id
 
 
     @property
@@ -359,208 +687,7 @@ class Employee(models.Model):
         
         return 0,salary
 
-
-
-#----------------------------------------------------------------------- Purchases -------------------------------------------------------
-
-#---------------> Vendor Registration <------------------
-    
-class VendorRegistration(models.Model):
-    company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
-    date = models.DateField(auto_now_add=True, null=True, blank=True)
-    vendorname = models.CharField(max_length=25,null=True, blank=True)
-    companyname = models.CharField(max_length=100,null=True, blank=True)
-    gstno = models.CharField(max_length=25,null=True, blank=True)
-    mobile = models.CharField(max_length=13,null=True, blank=True)
-    email = models.EmailField(max_length=150,null=True, blank=True)
-    faxno = models.CharField(max_length=25,null=True, blank=True)
-    address = models.CharField(max_length=250,null=True, blank=True)
-
-    def __str__(self):
-        return self.vendorname  
-    
-    @property
-    def display(self):
-        if self.vendorname:
-            return self.vendorname
-        if self.companyname:
-            return self.companyname
-        return self.email or "unnamed"
-    
-#---------------> Vendor Quatation <------------------
-
-class VendorQuatation(models.Model):
-    company = models.ForeignKey(Company, on_delete=models.CASCADE, null=True, blank=True)
-    date = models.DateField(auto_now_add=True, null=True, blank=True)
-    vendorname = models.ForeignKey(VendorRegistration, on_delete=models.CASCADE, null=True, blank=True)
-    quatationno = models.CharField(max_length=100)
-    quatationamount = models.CharField(max_length=50)
-    img = models.FileField(upload_to="doc")
-    # mobile = models.CharField(max_length=15)
-
-    def __str__(self):
-        return self.quatationno 
-    
-#------------------------------------------------------------------- UOM ------------------------
-
-class Uom(models.Model):
-    company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
-    name=models.CharField(max_length=50)
-    #date= models.DateField(auto_now_add=True)
-    date = models.DateField(auto_now_add=True, null=True, blank=True)
-
-    def __str__(self):
-        return self.name
-    
-#---------------->project category <-------------------------------------------------------------
-
-class ProjectCategory(models.Model):
-    company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
-    name = models.CharField(max_length=100)
-    description = models.TextField()
-
-    def __str__(self):
-        return self.name
-
-#-------------------------------------------------------------------- Contract category ---------
-
-class Contractcategory(models.Model):
-    company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
-    name=models.CharField(max_length=50)
-    description = models.CharField(max_length=200)
-
-    def __str__(self):
-        return self.name
-   
-# ------------------------------------------------------------Contractor------------------------------------------------------------
-
-class Contractor(models.Model):
-    company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
-    name = models.CharField(max_length=100)
-    contact_no = models.CharField(max_length=15)
-    address = models.CharField(max_length=255)
-    area = models.CharField(max_length=100,null=True,blank=True)
-    rate = models.DecimalField(max_digits=10, decimal_places=2)
-    unit=models.ForeignKey(Uom, on_delete=models.CASCADE,null=True,blank=True)
-    amount=models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
-    maistry = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
-    maison_cooli = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
-    male_skilled = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    male_unskilled = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    female_skilled = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    female_unskilled = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    category = models.ForeignKey(Contractcategory, on_delete=models.CASCADE)
-    start_date=models.DateField()
-
-    def __str__(self):
-        return self.name
-    
-    @property
-    def display(self):
-        if self.name :
-            return self.name
-        return "unnamed"    
-    
-# ------------------------------------------------------------  library ------------------------------------------------------------
-
-class WorkStatus(models.Model):
-    name = models.CharField(max_length=50, null=True, blank=True)
-    code = models.CharField(max_length=50, null=True, blank=True)
-
-    def __str__(self):
-        return self.name
-
-class PaymentStatus(models.Model):
-    name = models.CharField(max_length=50, null=True, blank=True)
-    code = models.CharField(max_length=50, null=True, blank=True)
-
-    def __str__(self):
-        return self.name
-
-class PaymentMethod(models.Model):
-    company = models.ForeignKey(Company, on_delete=models.CASCADE, null=True, blank=True)
-    name = models.CharField(max_length=50, null=True, blank=True)
-    code = models.CharField(max_length=50, null=True, blank=True)
-
-    def __str__(self):
-        return self.name
-
-class ContractType(models.Model):
-    name = models.CharField(max_length=50, null=True, blank=True)
-    code = models.CharField(max_length=50, null=True, blank=True)
-
-    def __str__(self):
-        return self.name
-
-class MaterialLibrary(models.Model):
-    company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
-    item=models.CharField(max_length=100,null=True,blank=True)
-    unit=models.ForeignKey(Uom, on_delete=models.CASCADE,null=True,blank=True)
-    price=models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
-    date = models.DateField(auto_now_add=True, null=True, blank=True)
-
-    def __str__(self):
-        return self.item
-
-
-    # def __str__(self):
-    #     if self.item:
-    #         return self.item
-    #     return None
-
-    class Meta:
-        #    unique_together to enforce uniqueness across multiple fields
-        unique_together = ('item', 'company', 'unit')
-        
-class OthersLibrary(models.Model):
-    company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
-    item=models.CharField(max_length=100,null=True,blank=True)
-    unit=models.ForeignKey(Uom, on_delete=models.CASCADE,null=True,blank=True)
-    price=models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
-
-
-    def __str__(self):
-        return self.item
-        
-class Duration(models.Model):
-    company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
-    name=models.CharField(max_length=100,null=True,blank=True)
-
-
-    def __str__(self):
-        return self.name
-
-class Priority(models.Model):
-    company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
-    name=models.CharField(max_length=100,null=True,blank=True)
-
-
-    def __str__(self):
-        return self.name
-    
-class CompanyMachinaryCharges(models.Model) :
-    company = models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
-    name = models.CharField(max_length=100,null=True,blank=True)
-    rate = models.DecimalField(max_digits=10, decimal_places=2, default=0.0) 
-    payment_schedule =  models.ForeignKey(PaymentSchedule, on_delete=models.CASCADE, null=True, blank=True)
-    unit=models.ForeignKey(Uom, on_delete=models.CASCADE,null=True,blank=True)
-    date = models.DateField(auto_now_add=True, null=True, blank=True)
-    def __str__(self):
-        return self.name
-
-class LabourRolesAndSalary(models.Model):
-    company = models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
-    name = models.CharField(max_length=100,null=True,blank=True)
-    rate = models.DecimalField(max_digits=10, decimal_places=2, default=0.0) 
-    payment_schedule =  models.ForeignKey(PaymentSchedule, on_delete=models.CASCADE, null=True, blank=True)
-    ot_rate = models.DecimalField(max_digits=10, decimal_places=2, default=0.0) 
-    date = models.DateField(auto_now_add=True, null=True, blank=True)
-
-
-    def __str__(self):
-        return self.name
-
-
+# COMPANY LABOUR MODEL
 class CompanyLabours(models.Model):
     company = models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
     name = models.CharField(max_length=100,null=True,blank=True)
@@ -608,7 +735,7 @@ class CompanyLabours(models.Model):
     
     @property
     def get_ot_rate(self):
-        return get_amount_or_zero(self.get_rate) / 8
+        return get_amount_or_zero(self.get_rate) / DUTY_HOURS
     
 
 
@@ -751,6 +878,77 @@ class CompanyLabours(models.Model):
         return self.total_salary_for_presented_days[0]
     
 
+
+#----------------------------------------------------------------------- VENDOR MANAGEMENT -------------------------------------------------------
+
+#---------------> Vendor Registration 
+class VendorRegistration(models.Model):
+    company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
+    date = models.DateField(auto_now_add=True, null=True, blank=True)
+    vendorname = models.CharField(max_length=25,null=True, blank=True)
+    companyname = models.CharField(max_length=100,null=True, blank=True)
+    gstno = models.CharField(max_length=25,null=True, blank=True)
+    mobile = models.CharField(max_length=13,null=True, blank=True)
+    email = models.EmailField(max_length=150,null=True, blank=True)
+    faxno = models.CharField(max_length=25,null=True, blank=True)
+    address = models.CharField(max_length=250,null=True, blank=True)
+
+    def __str__(self):
+        return self.vendorname  
+    
+    @property
+    def display(self):
+        if self.vendorname:
+            return self.vendorname
+        if self.companyname:
+            return self.companyname
+        return self.email or "unnamed"
+    
+#---------------> Vendor Quatation
+
+class VendorQuatation(models.Model):
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, null=True, blank=True)
+    date = models.DateField(auto_now_add=True, null=True, blank=True)
+    vendorname = models.ForeignKey(VendorRegistration, on_delete=models.CASCADE, null=True, blank=True)
+    quatationno = models.CharField(max_length=100)
+    quatationamount = models.CharField(max_length=50)
+    img = models.FileField(upload_to="doc")
+    # mobile = models.CharField(max_length=15)
+
+    def __str__(self):
+        return self.quatationno 
+    
+
+# ------------------------------------------------------------Contractor------------------------------------------------------------
+
+class Contractor(models.Model):
+    company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
+    name = models.CharField(max_length=100)
+    contact_no = models.CharField(max_length=15)
+    address = models.CharField(max_length=255)
+    area = models.CharField(max_length=100,null=True,blank=True)
+    rate = models.DecimalField(max_digits=10, decimal_places=2)
+    unit=models.ForeignKey(Uom, on_delete=models.CASCADE,null=True,blank=True)
+    amount=models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
+    maistry = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
+    maison_cooli = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
+    male_skilled = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    male_unskilled = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    female_skilled = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    female_unskilled = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    category = models.ForeignKey(Contractcategory, on_delete=models.CASCADE)
+    start_date=models.DateField()
+
+    def __str__(self):
+        return self.name
+    
+    @property
+    def display(self):
+        if self.name :
+            return self.name
+        return "unnamed"    
+    
+
 # -------------------------------------------- project ------------------------------------------------------------------------
 
 class Project(models.Model):
@@ -851,18 +1049,35 @@ class Project(models.Model):
 
     @property
     def employee_salary(self):
+        # get_wage
         amount =0 
-        if self.incharge and self.incharge.get_salary_details:
-            amount += sum(get_amount_or_zero(invoice.amount) for invoice in self.incharge.get_salary_details)
-
+        if self.get_employee_attendence:
+            amount += sum( get_amount_or_zero(i.get_wage) for i in self.get_employee_attendence )
+        # if self.incharge and self.incharge.get_salary_details:
+        #     amount += sum(get_amount_or_zero(invoice.amount) for invoice in self.incharge.get_salary_details)
         return amount
+    
+
+    @property
+    def get_labour_attendence(self):
+        if self.projectlabourattendence_set.all():
+            return  self.projectlabourattendence_set.all()
+        return None
+    
+    @property
+    def get_employee_attendence(self):
+        if self.attendance_set.all():
+            return  self.attendance_set.all()
+        return None
     
 
     @property
     def labour_salary(self):
         amount =0 
-        if self.incharge and self.incharge.get_salary_details:
-            amount += sum(get_amount_or_zero(invoice.amount) for invoice in self.incharge.get_salary_details)
+        if self.get_labour_attendence:
+            amount += sum( get_amount_or_zero(i.get_wage) for i in self.get_labour_attendence )
+        # if self.get_labour_attendence and self.incharge.get_salary_details:
+        #     amount += sum(get_amount_or_zero(invoice.amount) for invoice in self.incharge.get_salary_details)
 
         return amount
     
@@ -874,13 +1089,110 @@ class Project(models.Model):
             return amt
         return amt
 
-# ----------------------------- stock management ----------------------------------  
+# ----------------------------- stock management ---------------------------------- ---------------------------------------------------- 
 
 
+class InventoryStock(models.Model):
+    company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
+    item=models.ForeignKey(MaterialLibrary, on_delete=models.CASCADE,null=True,blank=True)
+    name= models.CharField(max_length=255,null=True,blank=True)
+    total_supplied_qty=models.DecimalField(max_digits=10, decimal_places=2, default=0.0) 
+    qty=models.DecimalField(max_digits=10, decimal_places=2, default=0.0)    #add  with purchase qty
+    price=models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
+    unit=models.ForeignKey(Uom, on_delete=models.CASCADE,null=True,blank=True)
+    total_amount=models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
+    taken_qty = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
+
+    date = models.DateField(auto_now_add=True, null=True, blank=True)
+    # def __str__(self):
+    #     if self.name:
+    #         return self.name
+    #     return None
+
+    def save(self, *args, **kwargs):
+        if not self.total_supplied_qty:
+           self.total_supplied_qty =self.qty
+        super().save(*args, **kwargs)
+
+    @property
+    def get_total(self):
+        total = self.qty * self.price
+        return  "{:.2f}".format(total)
+    
+    @property
+    def available_qty(self):
+        total = self.total_supplied_qty - self.taken_qty
+        return  "{:.2f}".format(total)
+    
+    @property
+    def display(self):
+        if self.item:
+            return self.item.item
+        if self.name:
+            return self.name
+        return None
+
+        
+class DailyInventoryUsage(models.Model):
+    stock=models.ForeignKey(InventoryStock, on_delete=models.CASCADE,null=True,blank=True)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE,null=True,blank=True)
+    material = models.ForeignKey(MaterialLibrary, on_delete=models.CASCADE,null=True,blank=True)
+    date = models.DateField(auto_now_add=True)
+    used = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
+
+    def __str__(self):
+        return f"{self.material} - {self.date}"  
 
 
-import uuid
-from django.core.exceptions import ValidationError
+class SiteStock(models.Model):
+    company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
+    project=models.ForeignKey(Project, on_delete=models.CASCADE,null=True,blank=True)
+    inventory=models.ForeignKey(InventoryStock, on_delete=models.CASCADE,null=True,blank=True)
+    item=models.ForeignKey(MaterialLibrary, on_delete=models.CASCADE,null=True,blank=True)
+    name= models.CharField(max_length=255,null=True,blank=True)
+    total_supplied_qty=models.DecimalField(max_digits=10, decimal_places=2, default=0.0) 
+    qty=models.DecimalField(max_digits=10, decimal_places=2, default=0.0)    #qty
+    price=models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
+    unit=models.ForeignKey(Uom, on_delete=models.CASCADE,null=True,blank=True)
+    total_amount=models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
+    taken_qty = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
+    date = models.DateField(auto_now_add=True, null=True, blank=True)
+
+
+    # def __str__(self):
+    #     return self.name
+
+    class Meta:
+        # Define unique_together to enforce uniqueness across multiple fields
+        unique_together = ('item', 'company', 'unit','project')
+
+    def save(self, *args, **kwargs):
+        if not self.total_supplied_qty:
+           self.total_supplied_qty =self.qty
+        super().save(*args, **kwargs)
+
+    @property
+    def get_total(self):
+        total = self.qty * self.price
+        return  "{:.2f}".format(total)
+    
+    @property
+    def available_qty(self):
+        total = self.total_supplied_qty - self.taken_qty
+        return  "{:.2f}".format(total)
+
+class DailyMaterialUsage(models.Model):
+    stock=models.ForeignKey(SiteStock, on_delete=models.CASCADE,null=True,blank=True)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE,null=True,blank=True)
+    material = models.ForeignKey(MaterialLibrary, on_delete=models.CASCADE,null=True,blank=True)
+    date = models.DateField(auto_now_add=True)
+    used = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
+
+    def __str__(self):
+        return f"{self.material} - {self.date}"
+
+# --------------------------------- PURCHASE ------------------------------------------------------------
+
 
 class PurchaseInvoice(models.Model):
     site = models.ForeignKey(Project, on_delete=models.CASCADE,null=True,blank=True)
@@ -946,56 +1258,7 @@ class PurchaseInvoice(models.Model):
         else :
             return []
 
-class InventoryStock(models.Model):
-    company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
-    item=models.ForeignKey(MaterialLibrary, on_delete=models.CASCADE,null=True,blank=True)
-    name= models.CharField(max_length=255,null=True,blank=True)
-    total_supplied_qty=models.DecimalField(max_digits=10, decimal_places=2, default=0.0) 
-    qty=models.DecimalField(max_digits=10, decimal_places=2, default=0.0)    #add  with purchase qty
-    price=models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
-    unit=models.ForeignKey(Uom, on_delete=models.CASCADE,null=True,blank=True)
-    total_amount=models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
-    taken_qty = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
 
-    date = models.DateField(auto_now_add=True, null=True, blank=True)
-    # def __str__(self):
-    #     if self.name:
-    #         return self.name
-    #     return None
-
-    def save(self, *args, **kwargs):
-        if not self.total_supplied_qty:
-           self.total_supplied_qty =self.qty
-        super().save(*args, **kwargs)
-
-    @property
-    def get_total(self):
-        total = self.qty * self.price
-        return  "{:.2f}".format(total)
-    
-    @property
-    def available_qty(self):
-        total = self.total_supplied_qty - self.taken_qty
-        return  "{:.2f}".format(total)
-    
-    @property
-    def display(self):
-        if self.item:
-            return self.item.item
-        if self.name:
-            return self.name
-        return None
-
-        
-class DailyInventoryUsage(models.Model):
-    stock=models.ForeignKey(InventoryStock, on_delete=models.CASCADE,null=True,blank=True)
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE,null=True,blank=True)
-    material = models.ForeignKey(MaterialLibrary, on_delete=models.CASCADE,null=True,blank=True)
-    date = models.DateField(auto_now_add=True)
-    used = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
-
-    def __str__(self):
-        return f"{self.material} - {self.date}"  
 
 class PurchaseItems(models.Model):
     invoice=models.ForeignKey(PurchaseInvoice, on_delete=models.CASCADE,null=True,blank=True)
@@ -1010,53 +1273,8 @@ class PurchaseItems(models.Model):
     def __str__(self):
         return self.name or "Unnamed Purchase Item"
 
-class SiteStock(models.Model):
-    company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
-    project=models.ForeignKey(Project, on_delete=models.CASCADE,null=True,blank=True)
-    inventory=models.ForeignKey(InventoryStock, on_delete=models.CASCADE,null=True,blank=True)
-    item=models.ForeignKey(MaterialLibrary, on_delete=models.CASCADE,null=True,blank=True)
-    name= models.CharField(max_length=255,null=True,blank=True)
-    total_supplied_qty=models.DecimalField(max_digits=10, decimal_places=2, default=0.0) 
-    qty=models.DecimalField(max_digits=10, decimal_places=2, default=0.0)    #qty
-    price=models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
-    unit=models.ForeignKey(Uom, on_delete=models.CASCADE,null=True,blank=True)
-    total_amount=models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
-    taken_qty = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
-    date = models.DateField(auto_now_add=True, null=True, blank=True)
+# ----------------------------------- QUOTATION -----------------------------------------------------------------------------        
 
-
-    # def __str__(self):
-    #     return self.name
-
-    class Meta:
-        # Define unique_together to enforce uniqueness across multiple fields
-        unique_together = ('item', 'company', 'unit','project')
-
-    def save(self, *args, **kwargs):
-        if not self.total_supplied_qty:
-           self.total_supplied_qty =self.qty
-        super().save(*args, **kwargs)
-
-    @property
-    def get_total(self):
-        total = self.qty * self.price
-        return  "{:.2f}".format(total)
-    
-    @property
-    def available_qty(self):
-        total = self.total_supplied_qty - self.taken_qty
-        return  "{:.2f}".format(total)
-
-class DailyMaterialUsage(models.Model):
-    stock=models.ForeignKey(SiteStock, on_delete=models.CASCADE,null=True,blank=True)
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE,null=True,blank=True)
-    material = models.ForeignKey(MaterialLibrary, on_delete=models.CASCADE,null=True,blank=True)
-    date = models.DateField(auto_now_add=True)
-    used = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
-
-    def __str__(self):
-        return f"{self.material} - {self.date}"
-        
 class Quatation(models.Model):
     company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
     quatation_id=models.CharField(max_length=255,null=True,blank=True)
@@ -1095,6 +1313,9 @@ class QuatationItems(models.Model):
             return self.inventory.display
         return None
 
+
+# -------------------------- TRANSFER -------------------------------------------------------------------------------------------
+
 class TransferInvoice(models.Model):
     company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
     from_site = models.ForeignKey(Project,related_name='from_project', on_delete=models.CASCADE,null=True,blank=True)
@@ -1130,44 +1351,10 @@ class TransferItems(models.Model):
             return self.qty *self.price
         return None
 
-# --------------------------------------- salary management -----------------------------------------------
+# --------------------------------------- salary management ----------------------------------------------------------------
 
-class Attendance(models.Model):
-    clock_in=models.TimeField(null=True, blank=True)
-    clock_out=models.TimeField(null=True, blank=True)
-    employee=models.ForeignKey(Employee,null=True,blank=True, on_delete=models.CASCADE)
-    date=models.DateField(auto_now_add=True,null=True,blank=True)
-    present=models.BooleanField(default=False)
 
-    class Meta:
-       ordering = ['-pk'] 
-
-    class Meta:
-        unique_together = ('employee', 'date')
-
-    def save(self, *args, **kwargs):
-        if self.clock_in:
-            self.present =True
-        return super().save(*args, **kwargs)
-
-    @property
-    def employee_info(self):
-        if self.employee:
-            return self.employee
-        return 
-    
-    def in_time(self):
-        if self.clock_in:
-            return self.clock_in.strftime('%I:%M %p')  # Format with AM/PM
-        else:
-            return ""
-    
-    def out_time(self):
-        if self.clock_out:
-            return self.clock_out.strftime('%I:%M %p')  # Format with AM/PM
-        else:
-            return ""
-
+# not used
 class Salary(models.Model):
     company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
     employee=models.ForeignKey(Employee,null=True,blank=True, on_delete=models.CASCADE)
@@ -1177,7 +1364,7 @@ class Salary(models.Model):
 
 
 
-# make payment receipt
+# make payment receipt  for employee or user
 class SalaryReceipt(models.Model):
     salary = models.ForeignKey(Salary, on_delete=models.CASCADE, null=True, blank=True)
     employee = models.ForeignKey(Employee, null=True, blank=True, on_delete=models.CASCADE)
@@ -1452,12 +1639,12 @@ class ProjectSubContract(models.Model):
                     female_skilled=Sum('female_skilled') * labour_wages.female_skilled,
                     female_unskilled=Sum('female_unskilled') * labour_wages.female_unskilled,
 
-                    maistry_ot=Sum('maistry_ot') * (labour_wages.maistry / 8),
-                    maison_cooli_ot=Sum('maison_cooli_ot') * (labour_wages.maison_cooli /8 ),
-                    male_skilled_ot=Sum('male_skilled_ot') * (labour_wages.male_skilled / 8) ,
-                    male_unskilled_ot=Sum('male_unskilled_ot') * (labour_wages.male_unskilled / 8),
-                    female_skilled_ot=Sum('female_skilled_ot') * (labour_wages.female_skilled / 8 ),
-                    female_unskilled_ot=Sum('female_unskilled_ot') *( labour_wages.female_unskilled /8 )
+                    maistry_ot=Sum('maistry_ot') * (labour_wages.maistry / DUTY_HOURS),
+                    maison_cooli_ot=Sum('maison_cooli_ot') * (labour_wages.maison_cooli /DUTY_HOURS ),
+                    male_skilled_ot=Sum('male_skilled_ot') * (labour_wages.male_skilled / DUTY_HOURS) ,
+                    male_unskilled_ot=Sum('male_unskilled_ot') * (labour_wages.male_unskilled / DUTY_HOURS),
+                    female_skilled_ot=Sum('female_skilled_ot') * (labour_wages.female_skilled / DUTY_HOURS ),
+                    female_unskilled_ot=Sum('female_unskilled_ot') *( labour_wages.female_unskilled /DUTY_HOURS )
                 )
             )
             total_wages = {key: value if value is not None else Decimal(0) for key, value in total_wages.items()}
@@ -1664,8 +1851,11 @@ class ContractorInvoicePaymentHistory(models.Model):
             invoice.update_status()
         return data
 
-# company labour
 
+
+# ------------------------------------------------------------ attendence mangment   -------------------------------------
+
+# company staff labour attendance
 class ProjectLabourAttendence(models.Model):
     company = models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
     project = models.ForeignKey(Project, on_delete=models.CASCADE,null=True,blank=True)
@@ -1675,10 +1865,8 @@ class ProjectLabourAttendence(models.Model):
     clock_out=models.TimeField(null=True, blank=True)
     date=models.DateField(null=True,blank=True)
     present=models.BooleanField(default=False)
+    wage = models.DecimalField(max_digits=10, decimal_places=2 ,null=True, blank=True)
 
-
-    # class Meta:
-    #     unique_together = ('labour', 'date')
 
     class Meta:
         constraints = [
@@ -1691,20 +1879,79 @@ class ProjectLabourAttendence(models.Model):
             self.date = today_date
         if self.clock_in:
             self.present =True
+            if self.labour :
+                self.wage = self.labour.get_rate 
+        return super().save(*args, **kwargs)
+    
+    @property
+    def get_wage(self):
+        amount =0
+        if self.wage and self.present and self.clock_in:
+            amount+= get_amount_or_zero(self.wage)
+            if self.over_time:
+                ot= get_amount_or_zero(self.wage)/DUTY_HOURS
+                amount+= get_amount_or_zero(self.over_time)*ot
+        return amount
+
+# employee attendence
+class Attendance(models.Model):
+    clock_in=models.TimeField(null=True, blank=True)
+    clock_out=models.TimeField(null=True, blank=True)
+    employee=models.ForeignKey(Employee,null=True,blank=True, on_delete=models.CASCADE)
+    date=models.DateField(auto_now_add=True,null=True,blank=True)
+    present=models.BooleanField(default=False)
+    company = models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE,null=True,blank=True)
+    over_time = models.DecimalField(max_digits=10, decimal_places=2 ,null=True, blank=True)
+    wage = models.DecimalField(max_digits=10, decimal_places=2 ,null=True, blank=True)
+
+    class Meta:
+       ordering = ['-pk'] 
+
+    class Meta:
+        unique_together = ('employee', 'date')
+
+    def save(self, *args, **kwargs):
+        if self.clock_in:
+            self.present =True
+            if self.employee :
+                self.wage = (self.employee.get_daily_wage )
         return super().save(*args, **kwargs)
 
+    @property
+    def employee_info(self):
+        if self.employee:
+            return self.employee
+        return 
+    
+    def in_time(self):
+        if self.clock_in:
+            return self.clock_in.strftime('%I:%M %p')  # Format with AM/PM
+        else:
+            return ""
+    
+    def out_time(self):
+        if self.clock_out:
+            return self.clock_out.strftime('%I:%M %p')  # Format with AM/PM
+        else:
+            return ""
+        
+    @property
+    def get_wage(self):
+        amount =0
+        if self.wage and self.present and self.clock_in:
+            print(get_amount_or_zero(self.wage))
+            amount+= get_amount_or_zero(self.wage)
+            if self.over_time:
+                ot= get_amount_or_zero(self.wage)/DUTY_HOURS
+                amount+= get_amount_or_zero(self.over_time)*ot
+        return amount
 
-# machinary works
-class ProjectMachineExpense(models.Model):
-    project = models.ForeignKey(Project, on_delete=models.CASCADE,null=True,blank=True)
-    name = models.CharField(max_length=100,null=True,blank=True)
-    machine = models.ForeignKey(CompanyMachinaryCharges, on_delete=models.CASCADE, null=True, blank=True)
-    rate = models.DecimalField(max_digits=10, decimal_places=2, default=0.0) 
-    payment_schedule =  models.ForeignKey(PaymentSchedule, on_delete=models.CASCADE, null=True, blank=True)
-    qty = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    attachment  =models.FileField(upload_to="doc",null=True, blank=True)
+# ----------------------------------------------------  --------------------------------------------------------------------------------
 
-# ------------------------ expense --------------------------------------------------- ---------------------
+
+
+# ------------------------ PROJECT  expense --------------------------------------------------- ---------------------
 
 class Expense(models.Model):
     company = models.ForeignKey(Company, on_delete=models.CASCADE, null=True, blank=True)
@@ -1715,37 +1962,15 @@ class Expense(models.Model):
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE, null=True, blank=True) 
     attachment  =models.FileField(upload_to="doc",null=True, blank=True)
 
-
-
-class OTP(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='otp_user_details')
-    otp = models.CharField(max_length=6)
-    created_at = models.DateTimeField(default=timezone.now)
-
-    def __str__(self):
-        return self.otp
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# machinary works
+class ProjectMachineExpense(models.Model):
+    project = models.ForeignKey(Project, on_delete=models.CASCADE,null=True,blank=True)
+    name = models.CharField(max_length=100,null=True,blank=True)
+    machine = models.ForeignKey(CompanyMachinaryCharges, on_delete=models.CASCADE, null=True, blank=True)
+    rate = models.DecimalField(max_digits=10, decimal_places=2, default=0.0) 
+    payment_schedule =  models.ForeignKey(PaymentSchedule, on_delete=models.CASCADE, null=True, blank=True)
+    qty = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    attachment  =models.FileField(upload_to="doc",null=True, blank=True)
 
 
 

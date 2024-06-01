@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loading Spinner and Disabled Button</title>
+    <!-- Bootstrap CSS from CDN -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- Button to trigger modal -->
+    <button id="openModalBtn" type="button" class="btn btn-primary" data-bs-toggle="modal"
+        data-bs-target="#exampleModal">
+        Open Modal
+    </button>
+
+    <button class="btn btn-primary" type="button"  onclick="show(this)">
+      <!-- <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" ></span>  -->
+      Loading...
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">API Loading Example</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Loading spinner -->
+                    <div class="d-flex justify-content-center">
+                        <div class="spinner-border" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                    <!-- Loading message -->
+                    <div class="text-center mt-2">Loading...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JavaScript (with Popper.js) from CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JavaScript -->
+    <script>
+        // Function to handle button click
+        function handleButtonClick() {
+            // Disable the button
+            document.getElementById('openModalBtn').disabled = true;
+
+            // Show the modal
+            var myModal = new bootstrap.Modal(document.getElementById('exampleModal'));
+            myModal.show();
+
+            // Simulate API call (setTimeout is used as an example, replace with your actual API call)
+            setTimeout(function () {
+                // Simulate API response
+                // Enable the button
+                document.getElementById('openModalBtn').disabled = false;
+                // Hide the modal
+                myModal.hide();
+                // Handle API response here
+                alert('API response received!');
+            }, 3000); // Simulating a 3-second API call
+        }
+
+        function show(but){
+          console.log(but)
+        }
+
+        // Event listener for button click
+        document.getElementById('openModalBtn').addEventListener('click', handleButtonClick);
+    </script>
+</body>
+
+</html>

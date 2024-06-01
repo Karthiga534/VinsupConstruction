@@ -35,6 +35,15 @@ paginator = PageNumberPagination()
 date_format = "%Y-%m-%d"
 clocked_in_message ='already clocked in for this date'
 
+message_server_error = "message sending error"
+message_server_error_status = 303
+
+def post_data(request,id):
+    request_data = request.data.copy()
+    request_data['company'] =id
+    return request_data
+
+
 #---------------------------------------------------------------- Dharshini --------------------------------------------------------------------------
 
 #------------------- Custom User -----------------------
@@ -1796,8 +1805,10 @@ def delete_uom(request,pk):
 #         return Response({'error': 'User is not authenticated'}, status=401)
 
 
+# --------------------------- attendence -----------------------------------------------------
 
 
+# labour attendence
 
 @login_required(login_url='login')
 def companylabour_attendance(request):
@@ -1810,7 +1821,7 @@ def companylabour_attendance(request):
     projectsubcontractor = CompanyLabours.objects.filter(company=request.user.company).order_by("-id")
     querysets = ProjectLabourAttendence.objects.filter(company=request.user.company).order_by("-id")   #change query
     queryset,pages,search =customPagination(request,ProjectLabourAttendence,querysets)    #change, model
-    context= {'queryset': queryset,"location":"companylabourattendance","pages" :pages,"search":search,'projectsubcontractor':projectsubcontractor,"project":project}   #change location name 
+    context= {'queryset': queryset,"location":"company-labour-attendance","pages" :pages,"search":search,'projectsubcontractor':projectsubcontractor,"project":project}   #change location name 
     return render(request, 'attendance/companylabourattendance.html',context)
 
 
@@ -1907,10 +1918,189 @@ def companylabourattendancelist(request,pk):  #change name
     if pk !=0:   
         querysets =querysets.filter(labour__id =pk)
 
+    return PaginationAndFilter(querysets, request,ProjectLabourAttendenceSerializer,date_field ="date")
+
+# employee xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@login_required(login_url='login')
+def employee_attendance(request):
+    user=request.user
+    allow,msg= check_user(request,ProjectLabourAttendence,instance=False)  # CHANGE model
+    if not allow:
+         context ={"unauthorized":msg}
+         return render(request,"login.html",context)    
+    employee =Employee.objects.filter(company = user.company).order_by("-id")
+
+    project=Project.objects.filter(company=request.user.company).order_by("-id")
+    # projectsubcontractor = CompanyLabours.objects.filter(company=request.user.company).order_by("-id")
+    # querysets = ProjectLabourAttendence.objects.filter(company=request.user.company).order_by("-id")   #change query
+    # queryset,pages,search =customPagination(request,ProjectLabourAttendence,querysets)    #change, model
+    # context= {'queryset': queryset,"location":"employee-labour-attendance","pages" :pages,"search":search,'projectsubcontractor':projectsubcontractor,"project":project}   #change location name 
+    context ={"employee":employee, "project":project}
+    return render(request, 'attendance/employee.html',context)
+
+
+@api_view(['POST'])
+@login_required(login_url='login')
+def add_employeeattendance(request):  # CHANGE name
+    user=request.user
+    allow,msg= check_user(request,ProjectLabourAttendence,instance=False)  # CHANGE model
+    if not allow:
+        return JsonResponse({'details':[msg]}, status=status.HTTP_401_UNAUTHORIZED)
+    request_data=request.POST.copy().dict()
+    if user.admin:
+        request_data['company'] = user.company.id
+
+    labour_id =   request_data['labour']
+        
+    if not labour_id:
+        return JsonResponse({'labour':['This field is required']}, status=400)
+    date_str = request_data.get('date')
+    date_format = "%Y-%m-%d"
+
+    try:
+        date = datetime.strptime(date_str, date_format)
+    except ValueError:
+        return JsonResponse({'date': ['Invalid date format']}, status=400)
+
+    attn=ProjectLabourAttendence.objects.filter(labour__id=labour_id, date=date)
+    print(attn)
+    if ProjectLabourAttendence.objects.filter(labour__id=labour_id, date=date).exists():
+        return JsonResponse({'details': [clocked_in_message]}, status=409)
+
+    serializer = ProjectLabourAttendenceSerializer(data=request_data)   # CHANGE serializer
+    if serializer.is_valid():  
+        serializer.save()
+        return JsonResponse( serializer.data, status=status.HTTP_201_CREATED)
+    else:
+        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)   
+    
+
+
+@api_view(['PUT'])
+@login_required(login_url='login')
+def update_employeeattendance(request, pk):  # CHANGE name
+    user=request.user
+    try:
+        instance = ProjectLabourAttendence.objects.get(id=pk)  # CHANGE model
+    except ProjectLabourAttendence.DoesNotExist:              # CHANGE model
+        return JsonResponse({'details': 'Item does not exist'}, status=404)    
+    allow,msg= check_user(request,ProjectLabourAttendence,instance=instance)  # CHANGE model
+    if not allow:
+        return JsonResponse({'details':[msg]}, status=status.HTTP_401_UNAUTHORIZED)
+    serializer = ProjectLabourAttendenceSerializer(instance, data=request.data,partial=True)   # CHANGE Serializer
+    if serializer.is_valid():  
+        serializer.save()
+        return JsonResponse( serializer.data, status=200)
+    else:
+        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+ 
+
+@api_view(['DELETE'])
+@login_required(login_url='login')
+def delete_employeeattendance(request,pk):
+    user=request.user
+    try:
+        instance = ProjectLabourAttendence.objects.get(id=pk)  # CHANGE model
+        allow,msg= check_user(request,ProjectLabourAttendence,instance=instance)  # CHANGE model
+        if not allow:
+            return JsonResponse({'details':[msg]}, status=status.HTTP_401_UNAUTHORIZED)
+        instance.delete()
+        return JsonResponse( {'details': ['success']},status=204)
+    except ProjectLabourAttendence.DoesNotExist:  # CHANGE model
+        return JsonResponse({'details': ['Item does not exist']}, status=404)
+    
+
+from django.db.models import Q
+from .utils import PaginationAndFilter
+@api_view(['GET'])
+@login_required(login_url='login')
+def employeeattendancelist(request,pk):  #change name 
+    user=request.user
+    allow,msg= check_user(request,ProjectLabourAttendence,instance=False)  # CHANGE model
+    if not allow:
+         context ={"unauthorized":msg}
+         return render(request,"login.html",context)    
+ 
+    contractors = ProjectLabourAttendence.objects.filter(company=request.user.company).order_by("-id")   #change query
+    
+    # current_date = date.today()
+
+    # contractors = ProjectSubContract.objects.all()
+    querysets = contractors
+    pk= int(pk)
+    if pk !=0:   
+        querysets =querysets.filter(labour__id =pk)
 
     return PaginationAndFilter(querysets, request,ProjectLabourAttendenceSerializer,date_field ="date")
 
 
+@api_view(['GET'])
+@login_required(login_url='login')
+def employee_attendence_list(request,pk):  #change name 
+    user=request.user
+    allow,msg= check_user(request,Employee,instance=False)  # CHANGE model
+    if not allow:
+         context ={"unauthorized":msg}
+         return render(request,"login.html",context)    
+    
+    company,_=get_user_company(user)
+    pk= int(pk)
+    if pk !=0:   
+        print(Attendance.objects.filter(employee__id = pk))
+        print(pk)
+        querysets =Attendance.objects.filter(employee__id = pk,company__in=company)
+        return PaginationAndFilter(querysets, request,AttendenceSerialiser,date_field ="date")
+        
+    querysets =Employee.objects.filter(company__in=company).order_by('-id')
+    return PaginationAndFilter(querysets, request,EmployeeAttendenceSerialiser,date_field ="date")
+
+
+@api_view(['POST'])
+@login_required(login_url='login')
+def make_employee_present(request,pk):
+    user=request.user
+    allow,msg= check_user(request,Attendance,instance=False)  # CHANGE model
+    if not allow:
+         context ={"unauthorized":msg}
+         return render(request,"login.html",context) 
+    
+    company,_=get_user_company(user)
+    date = request.POST.get('date',None)
+    project_id = request.POST.get('project',None)
+    clock_in = request.POST.get('clock_in',None)
+    employee = request.POST.get('employee',None)
+
+    over_time = request.POST.get('over_time',None)
+    clock_out = request.POST.get('clock_out',None)
+    instance =request.POST.get('instance',None)
+
+    # update
+    if pk !=0:
+        proj_labr_attn = get_object_or_404(Attendance,id=pk)
+        ser = AttendenceSerialiser(proj_labr_attn,request.data,context={'request':request},partial=True)
+        if ser.is_valid():
+            ser.save()
+            return Response(ser.data)
+        return Response(ser.errors,status=400)
+
+    if not employee:
+        return JsonResponse({"labour":["This Field is required"]},status=400)
+
+   
+    request_data =post_data(request,get_company_id(company))
+    request_data['employee'] = employee
+    ser =AttendenceSerialiser(data=request_data,context={'request':request})
+    if ser.is_valid():
+        ser.save()
+        return Response(ser.data,status=200)
+    return Response(ser.errors,status=400)
+   
+
+
+
+
+# --------------------------------------- registrtion ------------------------------------
 
 @api_view(['POST'])
 def registration_view(request):

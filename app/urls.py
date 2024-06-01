@@ -279,19 +279,33 @@ urlpatterns = [
     # --------------------------------------- Attendence ------------------------------------------------------------------
 
     
-    
-    path('company-labour-attendance/',views.companylabour_attendance,name= 'company-labour-attendance'),
+    # labour attendence
+    path('attendance/labour',views.companylabour_attendance,name= 'company-labour-attendance'),
     path('company-labour-attendance/add/', views.add_companylabourattendance, name='add_companylabourattendance'),
     path('update_companylabourattendance/<int:pk>/', views.update_companylabourattendance, name='update_companylabourattendance'),
     path('delete_companylabourattendance/<int:pk>/', views.delete_companylabourattendance, name='delete_companylabourattendance'),
     # path('attendancelist/<int:pk>/', views.attendancelist, name='attendancelist'),
     path('companylabourattendancelist/<str:pk>/', views.companylabourattendancelist, name="companylabourattendancelist"),
 
+    path('labour-attendence-list/<str:pk>/',views.labour_attendence_list,name='labour-attendence-list'),
+    path('make-present/<int:pk>/',views.make_labour_present,name='make_labour_present'),
+
+
+
+    # employee attendence
+    path('attendance/employee',views.employee_attendance,name= 'employee-labour-attendance'), #render only
+    path('add_employeeattendance', views.add_employeeattendance, name='add_employeelabourattendance'),
+    path('employee_companylabourattendance/<int:pk>/', views.update_employeeattendance, name='update_employeeabourattendance'),
+    path('employee_companylabourattendance/<int:pk>/', views.delete_employeeattendance, name='delete_employeelabourattendance'),
+    path('employeelabourattendancelist/<str:pk>/', views.employeeattendancelist, name="employeelabourattendancelist"),
+
+    path('employee-attendence-list/<str:pk>/',views.employee_attendence_list,name='labour-attendence-list'), #list data
+    path('make-employee-present/<int:pk>/',views.make_employee_present,name='make_employee_present'),
+
+
 # --------
 
 
-    path('labour-attendence-list/<str:pk>/',views.labour_attendence_list,name='labour-attendence-list'),
-    path('make-present/<int:pk>/',views.make_labour_present,name='make_labour_present'),
 
 
 
@@ -339,10 +353,14 @@ urlpatterns = [
     path('dashboard-count/', api.dashboard_count, name='dashboard-count'),
     path('project-list/', api.getprojectlist, name='project-list'),
 
-    path('quatation-list/', api.getquatation_list, name='quatation-list'),  
-    path('quatation-list/<int:pk>/', api.getquatation_list, name='get_quatation_detail'),
+    # path('quatation-list/', api.getquatation_list, name='quatation-list'),  
+    path('quatation/<int:pk>/', api.getquatation_list, name='get_quatation_detail'),
     path('delete-quatation/<int:pk>/', api.deletequatation, name='delete-quatation'),
     path('update_quatation/<int:pk>/', api.update_quatation, name='update_quatation'),
+
+    path('delete-quatationitem/<int:pk>/', api.deletequatationitem, name='delete-quatation'),
+    path('update_quatationitem/<int:pk>/', api.update_quatationitem, name='update_quatation'),
+
     
     path('contractattendance-list/', api.contractattendance_list, name='contractattendance-list'),
     path('contractattendance-list/<int:pk>/',  api.contractattendance_list, name='contractattendance-detail'),

@@ -8,6 +8,10 @@ from rest_framework import serializers
 from rest_framework.serializers import *
 from django.contrib.auth.hashers import make_password
 from .models import PurchaseItems, MaterialLibrary, InventoryStock
+from app.auth_models import Company
+
+
+
 #-------------------------------------------------------------------- Dharshini ----------------------------------------------------------------
 
 date_format = "%Y-%m-%d"
@@ -188,17 +192,14 @@ class QuatationItemsSerializer(ModelSerializer):
     #     return representation
 
 class QuatationSerializer(ModelSerializer):
-    table = QuatationItemsSerializer(many=True, read_only=True)
+
 
 
     class Meta:
         model = Quatation
         fields = "__all__"
 
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-    
-        return data
+
 
    
 
@@ -376,7 +377,7 @@ class TransferItemsSerializer(ModelSerializer):
                 # site_data['unit'] =source.unit
                 InventoryStock.objects.create(**site_data)
                 
-            destiny= invoice.to_inventory.stock
+            # destiny= invoice.to_inventory.stock
 
 
             destiny_obj = destiny.filter(item = item).last()
@@ -998,6 +999,46 @@ class ProjectLabourAttendenceSerializer(serializers.ModelSerializer):
     #     return representation
     
 
+""" empoyee Attendance setializrs """
+class EmployeeAttendenceSerialiser(serializers.ModelSerializer):
+
+    class Meta:
+        model = Employee
+        fields = ["id"]
+
+
+    def to_representation(self, instance):
+        data =super().to_representation(instance)
+
+        data ["employee_name"]  = instance.name if instance.name else None
+        data ["employee"]  = instance.id
+        data ["project"],data ["project_name"],data['clock_in'],data['clock_out'],data["over_time"],data['present'],data['atten_id']= instance.get_today_attendence 
+        data['date'] =get_today()
+        
+        return data
+    
+
+class AttendenceSerialiser(serializers.ModelSerializer):
+
+    class Meta:
+        model = Attendance
+        fields = "__all__"
+
+
+    def to_representation(self, instance):
+        data =super().to_representation(instance)
+
+        data ["employee_name"]  = instance.employee.name if instance.employee else None
+        data ["employee"]  = instance.employee.id if instance.employee else None
+        data ["project_name"]  = instance.project.display if instance.project else None
+        data ["atten_id"]  = instance.id
+        data['date'] =get_today()
+        
+        return data
+
+
+
+""" labour attendence serialisers  """
 class LabourAttendenceSerialiser(serializers.ModelSerializer):
 
     class Meta:

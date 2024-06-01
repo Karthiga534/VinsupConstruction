@@ -1,0 +1,1282 @@
+{% extends 'superadmin/base.html' %}
+
+{% load static %}
+
+{% block content %}
+
+<div class="main-content">
+
+    <div class="page-content">
+        <div class="container-fluid">
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="row">
+                                <div class="col-xl-6 col-lg-6 col-md-6 col-12">
+                                    <h2>Admin Details </h2>
+                                </div>
+                                <div class="col-xl-4 col-lg-4 col-md-4 col-12"></div>
+                                <div class="col-xl-2 col-lg-2 col-md-2 col-12">
+                                    <!-- <button type="button" class="btn btn-info" style="float:right;"
+                                       
+                                        onclick="openModal('myModal')"
+                                        >Add User
+                                    </button> -->
+
+
+                                    <!-- for adding new admin  -->
+                                    <button type="button" class="btn btn-info" style="float:right;"
+                                        data-bs-toggle="modal" data-bs-target=".bs-example-modal-lg">Add
+                                        User
+                                    </button>
+
+
+                                    <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" id="myModal"
+                                        aria-labelledby="myLargeModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-lg">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="myLargeModalLabel">User
+                                                        Registration</h5>
+                                                    <button type="button" class="btn-close" onclick="clearErrors()"
+                                                        data-bs-dismiss="modal" aria-label="Close">
+                                                    </button>
+                                                </div>
+                                                <hr>
+
+                                                <!-- <form id="createuserForm"  enctype="multipart/form-data"> -->
+                                                <!-- action="user-registration" method="POST"
+                                                    enctype="multipart/form-data"> -->
+                                                {% csrf_token %}
+                                                <div class="modal-body">
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <form id="createuserForm" enctype="multipart/form-data">
+                                                                <!-- <div class="col-md-6 mb-2"> -->
+                                                                <div class="mb-2">
+                                                                    <label for="" class="form-label">Name
+                                                                        :</label>
+                                                                    <input type="text" class="form-control" id="name"
+                                                                        name="name" value="">
+                                                                    <span id="nameError" class="error-message"></span>
+                                                                </div>
+
+                                                                <!-- </div> -->
+                                                                <div class="mb-2">
+                                                                    <label for="" class="form-label">Email
+                                                                        :</label>
+                                                                    <input type="email" class="form-control" id="email"
+                                                                        name="email" value="">
+                                                                    <span id="emailError" class="error-message"></span>
+                                                                </div>
+
+                                                                <div class="mb-2">
+                                                                    <label for="" class="form-label">Mobile No
+                                                                        :</label>
+                                                                    <input type="number" class="form-control"
+                                                                        id="phone_number" name="phone_number" value="">
+                                                                    <span id="phone_numberError"
+                                                                        class="error-message"></span>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <form id="createinfoForm" enctype="multipart/form-data">
+                                                                <div class=" mb-2">
+                                                                    <label for="" class="form-label">Id Proof
+                                                                        :</label>
+                                                                    <input type="file" class="form-control" id="proof"
+                                                                        name="proof" required>
+                                                                    <span id="proofError" class="error-message"></span>
+                                                                </div>
+
+                                                                <div class=" mb-2">
+                                                                    <label for="" class="form-label">Address
+                                                                        :</label>
+                                                                    <textarea rows="3" class="form-control" id="address"
+                                                                        name="address"></textarea>
+                                                                    <span id="addressError"
+                                                                        class="error-message"></span>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+
+
+
+
+                                                    </div>
+                                                </div>
+
+                                                <hr>
+
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="myLargeModalLabel">Company
+                                                        Details</h5>
+                                                </div>
+
+                                                <div class="modal-body">
+
+
+                                                    <form id="createcompanyForm" enctype="multipart/form-data">
+                                                        <div class="row">
+                                                            <div class="col-md-6 mb-2">
+                                                                <label for="" class="form-label">Name :</label>
+                                                                <input type="text" class="form-control"
+                                                                    id="company_name" name="company_name" value="">
+                                                                <span id="company_nameError"
+                                                                    class="error-message"></span>
+                                                            </div>
+                                                            <div class="col-md-6 mb-2">
+                                                                <label for="" class="form-label">Email :</label>
+                                                                <input type="email" class="form-control"
+                                                                    id="company_email" name="company_email" value="">
+                                                                <span id="company_emailError"
+                                                                    class="error-message"></span>
+                                                            </div>
+                                                            <div class="col-md-6 mb-2">
+                                                                <label for="" class="form-label">Mobile No
+                                                                    :</label>
+                                                                <input type="number" class="form-control"
+                                                                    id="company_phone" name="company_phone" value="">
+                                                                <span id="company_phoneError"
+                                                                    class="error-message"></span>
+                                                            </div>
+
+                                                            <!-- <div class="col-md-6 mb-2">
+                                                                <label for="" class="form-label">Id Proof
+                                                                    :</label>
+                                                                <input type="file" class="form-control"
+                                                                    name="proof" required>
+                                                            </div> -->
+
+                                                            <div class="col-md-6 mb-2">
+                                                                <label for="" class="form-label">Address
+                                                                    :</label>
+                                                                <textarea rows="3" class="form-control"
+                                                                    id="company_address"
+                                                                    name="company_address"></textarea>
+                                                                <span id="company_addressError"
+                                                                    class="error-message"></span>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+
+
+                                                </div>
+
+
+                                                <hr>
+                                                <div class="modal-footer">
+                                                    <button class="btn btn-link link-success fw-medium shadow-none"
+                                                        onclick="clearErrors()" data-bs-dismiss="modal"><i
+                                                            class="ri-close-line me-1 align-middle"></i>
+                                                        Close</button>
+                                                    <button type="button" onclick="createFunction(this)"
+                                                        class="btn btn-primary ">Save
+                                                    </button>
+                                                </div>
+
+
+                                            </div>
+
+                                            <hr>
+
+
+                                            <!-- /.modal-content -->
+                                        </div>
+                                        <!-- /.modal-dialog -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                        <div class="card-body">
+                            <div class="row">
+                                {% include "search.html" %}
+                            </div>
+
+                            <div class="table-responsive">
+                                <table id="example" class="table table-bordered table-striped align-middle"
+                                    style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <!-- <th scope="col" style="width: 10px;">
+                                            <div class="form-check">
+                                                <input class="form-check-input fs-15" type="checkbox"
+                                                    id="checkAll" value="option">
+                                            </div>
+                                        </th> -->
+                                            <th data-ordering="false">#</th>
+                                            <th data-ordering="false">Date</th>
+                                            <th data-ordering="false">Name</th>
+                                            <th data-ordering="false">Email</th>
+                                            <th data-ordering="false">Mobile No</th>
+                                            <th data-ordering="false">Address</th>
+                                            <th data-ordering="false">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+
+                                        {% for i in list %}
+
+                                        <tr>
+                                            <!-- <th scope="row">
+                                            <div class="form-check">
+                                                <input class="form-check-input fs-15" type="checkbox"
+                                                    name="checkAll" value="option1">
+                                            </div>
+                                        </th> -->
+                                            <!-- <td class="row-number"> forloop.counter</td> -->
+                                            <td>{{forloop.counter}}</td>
+                                            <td>{{i.created_at}}</td>
+                                            <td>{{i.name}}</td>
+                                            <td>{{i.email}}</td>
+                                            <td>{{i.phone_number}}</td>
+                                            <td>{{i.owner.address}}</td>
+                                            <td>
+                                                <div class="dropup d-inline-block">
+                                                    <button class="btn btn-soft-secondary btn-sm dropdown" type="button"
+                                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                                        <i class="ri-more-fill align-middle"></i>
+                                                    </button>
+
+                                                    <!-- <button type="button" class="btn btn-info" style="float:right;"
+                                                        onclick="openModal('superUserModal','')">Add
+                                                        User
+                                                    </button> -->
+
+                                                    <button class="btn btn-soft-secondary btn-sm dropdown" type="button"
+                                                        onclick="openModal('superUserModal','{{i.id}}')">
+                                                        super admin
+                                                        <!-- <i class="ri-more-fill align-middle"></i> -->
+                                                    </button>
+
+                                                    <ul class="dropdown-menu dropdown-menu-end">
+                                                        <!-- <li><a href="#!" class="dropdown-item view-btn"
+                                                            data-target="#viewModal{{ i.id }}"></a>
+                                                        <i
+                                                            class="ri-eye-fill align-bottom me-2 text-muted "></i>
+                                                        View</a>
+                                                    </li> -->
+
+                                                        <li><a href="#!" class="dropdown-item edit-item-btn view-btn"
+                                                                data-target="#viewModal{{ i.id }}">
+                                                                <i
+                                                                    class="ri-eye-fill align-bottom me-2 text-muted "></i>
+                                                                View
+                                                            </a>
+                                                        </li>
+
+                                                        <li><a href="#!" class="dropdown-item edit-item-btn edit-btn"
+                                                                onclick="openModal('editModal','{{ i.id }}')">
+                                                                <!-- data-target="#editModal{{ i.id }}"  -->
+                                                                <i
+                                                                    class="ri-pencil-fill align-bottom me-2 text-muted"></i>
+                                                                Edit
+                                                            </a>
+                                                        </li>
+
+                                                        <li>
+                                                            <a class="dropdown-item remove-item-btn del-btn" href="#!"
+                                                            data-target ="#deleteModal{{ i.id}}">
+                                                            <i
+                                                                class="ri-delete-bin-fill align-bottom me-2 text-muted"></i>
+                                                            Delete
+                                                            </a>
+                                                        </li>
+
+                                                    </ul>
+                                                </div>
+
+
+
+                                                <div class="modal fade bs-example-modal-lg" id="viewModal{{i.id}}"
+                                                    tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+                                                    aria-hidden="true">
+                                                    <div class="modal-dialog modal-lg">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="myLargeModalLabel">
+                                                                    View
+                                                                    User Details</h5>
+                                                                <button type="button" class="btn-close"
+                                                                    data-bs-dismiss="modal" aria-label="Close">
+                                                                </button>
+                                                            </div>
+                                                            <hr>
+                                                            <div class="modal-body">
+                                                                <div class="row">
+                                                                    <div class="col-md-6 mb-2">
+                                                                        <label for="" class="form-label">Name
+                                                                            :</label>
+                                                                        <input type="text" class="form-control" id=""
+                                                                            value="{{i.name}}" readonly>
+                                                                    </div>
+                                                                    <div class="col-md-6 mb-2">
+                                                                        <label for="" class="form-label">Email
+                                                                            :</label>
+                                                                        <input type="email" class="form-control" id=""
+                                                                            value="{{i.email}}" readonly>
+                                                                    </div>
+                                                                    <div class="col-md-6 mb-2">
+                                                                        <label for="" class="form-label">Mobile
+                                                                            No
+                                                                            :</label>
+                                                                        <input type="number" class="form-control" id=""
+                                                                            value="{{i.phone_number}}" readonly>
+                                                                    </div>
+                                                                    <div class="col-md-6 mb-2">
+                                                                        <label for="" class="form-label">Id
+                                                                            Proof
+                                                                            :</label>
+                                                                        <input type="file" class="form-control" id=""
+                                                                            value="{{i.owner.proof}}" readonly>
+                                                                    </div>
+                                                                    <div class="col-md-6 mb-2">
+                                                                        <label for="" class="form-label">Address
+                                                                            :</label>
+                                                                        <textarea rows="3" class="form-control"
+                                                                            value="{{i.owner.address}}"
+                                                                            readonly>{{i.owner.address}} </textarea>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <hr>
+
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="myLargeModalLabel">
+                                                                    Company Details</h5>
+                                                            </div>
+
+                                                            <div class="modal-body">
+                                                                <div class="row">
+                                                                    <div class="col-md-6 mb-2">
+                                                                        <label for="" class="form-label">Name
+                                                                            :</label>
+                                                                        <input type="text" class="form-control" id=""
+                                                                            value="{{i.company.name}}" readonly
+                                                                            name="company_name" value="">
+                                                                    </div>
+                                                                    <div class="col-md-6 mb-2">
+                                                                        <label for="" class="form-label">Email
+                                                                            :</label>
+                                                                        <input type="email" class="form-control" id=""
+                                                                            value="{{i.company.email}}" readonly
+                                                                            name="company_email" value="">
+                                                                    </div>
+                                                                    <div class="col-md-6 mb-2">
+                                                                        <label for="" class="form-label">Mobile
+                                                                            No
+                                                                            :</label>
+                                                                        <input type="number" class="form-control" id=""
+                                                                            value="{{i.company.phone}}" readonly
+                                                                            name="company_phone" value="">
+                                                                    </div>
+
+                                                                    <!-- <div class="col-md-6 mb-2">
+                                                                        <label for="" class="form-label">Id Proof
+                                                                            :</label>
+                                                                        <input type="file" class="form-control"
+                                                                            name="proof" required>
+                                                                    </div> -->
+
+                                                                    <div class="col-md-6 mb-2">
+                                                                        <label for="" class="form-label">Address
+                                                                            :</label>
+                                                                        <textarea rows="3" class="form-control" readonly
+                                                                            name="company_address"> {{i.company.address}} </textarea>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+
+
+                                                        </div>
+                                                        <!-- /.modal-content -->
+                                                    </div>
+                                                    <!-- /.modal-dialog -->
+                                                </div>
+
+                                                <!-- ------------------------------------ EDIT FORM ------------------------------------------------- -->
+
+                                                <!-- <div class="modal fade bs-example-modal-lg"
+                                                    data-backdrop="static" data-keyboard="false"
+                                                    id="editModal_{{i.id}}" tabindex="-1" role="dialog"
+                                                    aria-labelledby="myLargeModalLabel" aria-hidden="true"> -->
+
+                                                <div class="modal fade bs-example-modal-lg" tabindex="-1"
+                                                    aria-labelledby="exampleModalLabel" aria-hidden="true"
+                                                    data-bs-backdrop="static" data-bs-keyboard="false"
+                                                    id="editModal_{{i.id}}">
+
+
+                                                    <div class="modal-dialog modal-lg">
+                                                        <!-- action="{% url 'edit-user' pk=i.id %}" method="POST"  -->
+                                                        {% csrf_token %}
+                                                        <div class="modal-content">
+
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="myLargeModalLabel">
+                                                                    Edit
+                                                                    User Details</h5>
+                                                                <button type="button" class="btn-close"
+                                                                    data-bs-dismiss="modal" aria-label="Close"
+                                                                    onclick="CloseModel('editModal','{{i.id}}')">
+                                                                </button>
+                                                            </div>
+                                                            <hr>
+
+                                                            <div class="modal-body">
+                                                                <div class="row">
+                                                                    <div class="col-md-6">
+                                                                        <form id="edituserForm{{ i.id }}"
+                                                                            enctype="multipart/form-data">
+
+                                                                            <div class="mb-2">
+                                                                                <label for="" class="form-label">Name
+                                                                                    :</label>
+                                                                                <input type="text" class="form-control"
+                                                                                    name="name" value="{{i.name}}"
+                                                                                    id="{{i.id}}_name">
+                                                                                    <span id="{{i.id}}_nameError"
+                                                                                        class="error-message"></span>
+                                                                            </div>
+
+                                                                            <div class="mb-2">
+                                                                                <label for="" class="form-label">Email
+                                                                                    :</label>
+                                                                                <input type="email" class="form-control"
+                                                                                    value="{{i.email}}" name="email"
+                                                                                    id="{{i.id}}_email">
+                                                                                <span id="{{i.id}}_emailError"
+                                                                                    class="error-message"></span>
+
+                                                                            </div>
+
+                                                                            <div class="mb-2">
+                                                                                <label for="" class="form-label">Mobile
+                                                                                    No
+                                                                                    :</label>
+                                                                                <input type="number"
+                                                                                    class="form-control"
+                                                                                    value="{{i.phone_number}}"
+                                                                                    name="phone_number"
+                                                                                    id="{{i.id}}_phone_number">
+
+                                                                                <span id="{{i.id}}_phone_numberError"
+                                                                                    class="error-message"></span>
+                                                                            </div>
+
+                                                                        </form>
+                                                                    </div>
+
+                                                                    <div class="col-md-6">
+                                                                        <form id="editinfoForm{{ i.id }}"
+                                                                            enctype="multipart/form-data">
+                                                                            <div class="mb-2">
+                                                                                <label for="" class="form-label">Id
+                                                                                    Proof
+                                                                                    :</label>
+                                                                                <input type="file" class="form-control"
+                                                                                    value="{{i.owner.proof}}"
+                                                                                    name="proof" id="{{i.id}}_proof">
+                                                                                <span id="{{i.id}}_proofError"
+                                                                                    class="error-message"></span>
+                                                                            </div>
+                                                                            <div class="mb-2">
+                                                                                <label for="" class="form-label">Address
+                                                                                    :</label>
+                                                                                <textarea rows="3" name="address"
+                                                                                    class="form-control"
+                                                                                    id="{{i.id}}_address">{{i.owner.address}}</textarea>
+
+                                                                                <span id="{{i.id}}_addressError"
+                                                                                    class="error-message"></span>
+                                                                            </div>
+                                                                        </form>
+                                                                    </div>
+
+                                                                </div>
+                                                            </div>
+
+                                                            <hr>
+
+
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="myLargeModalLabel">
+                                                                    Company Details
+                                                                </h5>
+                                                            </div>
+
+                                                            <form id="editcompanyForm{{ i.id }}"
+                                                                enctype="multipart/form-data">
+
+                                                                <div class="modal-body">
+                                                                    <div class="row">
+
+                                                                        <div class="col-md-6 mb-2">
+                                                                            <label for="" class="form-label">Name
+                                                                                :</label>
+                                                                            <input type="text" class="form-control"
+                                                                                id="{{i.id}}_company_name"
+                                                                                value="{{i.company.name}}"
+                                                                                name="company_name" value="">
+
+                                                                            <span id="{{i.id}}_company_nameError"
+                                                                                class="error-message"></span>
+                                                                        </div>
+
+                                                                        <div class="col-md-6 mb-2">
+                                                                            <label for="" class="form-label">Email
+                                                                                :</label>
+                                                                            <input type="email" class="form-control"
+                                                                                id="{{i.id}}_company_email"
+                                                                                value="{{i.company.email}}"
+                                                                                name="company_email" value="">
+
+                                                                            <span id="{{i.id}}_company_emailError"
+                                                                                class="error-message"></span>
+                                                                        </div>
+                                                                        <div class="col-md-6 mb-2">
+                                                                            <label for="" class="form-label">Mobile
+                                                                                No
+                                                                                :</label>
+                                                                            <input type="number" class="form-control"
+                                                                                id="{{i.id}}_company_phone"
+                                                                                value="{{i.company.phone}}"
+                                                                                name="company_phone" value="">
+                                                                            <span id="{{i.id}}_company_phoneError"
+                                                                                class="error-message"></span>
+                                                                        </div>
+
+                                                                        <!-- <div class="col-md-6 mb-2">
+                                                                            <label for="" class="form-label">Id Proof
+                                                                                :</label>
+                                                                            <input type="file" class="form-control"
+                                                                                name="proof" required>
+                                                                        </div> -->
+
+                                                                        <div class="col-md-6 mb-2">
+                                                                            <label for="" class="form-label">Address
+                                                                                :</label>
+                                                                            <textarea rows="3" class="form-control"
+                                                                                id="{{i.id}}_company_address"
+                                                                                name="company_address"> {{i.company.address}} </textarea>
+                                                                            <span id="{{i.id}}_company_addressError"
+                                                                                class="error-message"></span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                            </form>
+
+
+                                                            <hr>
+                                                            <div class="modal-footer">
+                                                                <button
+                                                                    class="btn btn-link link-success fw-medium shadow-none"
+                                                                    onclick="CloseModel('editModal','{{i.id}}')"
+                                                                    data-bs-dismiss="modal"><i
+                                                                        class="ri-close-line me-1 align-middle"></i>
+                                                                    Close</button>
+
+
+                                                                <button type="button"
+                                                                    onclick="updateFunction(this,'{{i.id}}')"
+                                                                    class="btn btn-primary ">
+                                                                    Update </button>
+
+                                                                <!-- <button class="btn btn-primary" type="button" disabled>
+                                                                    <span class="spinner-border spinner-border-sm"
+                                                                        role="status" aria-hidden="true"></span>
+                                                                    Loading...
+                                                                </button> -->
+
+
+                                                            </div>
+                                                        </div>
+
+
+                                                        <!-- /.modal-content -->
+                                                    </div>
+                                                    <!-- /.modal-dialog -->
+                                                </div>
+
+
+
+                                                <!-- for upgrade admin user -->
+                                                <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog"
+                                                    id="superUserModal_{{i.id}}" aria-labelledby="myLargeModalLabel"
+                                                    aria-hidden="true">
+                                                    <div class="modal-dialog modal-lg">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="myLargeModalLabel">User
+                                                                    Registration</h5>
+                                                                <button type="button" class="btn-close"
+                                                                    onclick="resetFormAndCloseModal('{{i.id}}')"
+                                                                    data-bs-dismiss="modal" aria-label="Close">
+                                                                </button>
+                                                            </div>
+                                                            <hr>
+
+
+
+                                                            <div class="modal-body">
+
+                                                                <form id="createsuperuserForm{{ i.id }}"
+                                                                    enctype="multipart/form-data" 
+                                                                    >
+
+                                                                    {% csrf_token %}
+
+                                                                    <div class="row">
+                                                                        <div class="col-md-8">
+
+                                                                            <div class="mb-2">
+                                                                                <label for="" class="form-label">Name
+                                                                                    :</label>
+                                                                                <input type="text" class="form-control"
+                                                                                    id="{{i.id}}_sname" name="sname"
+                                                                                    value="">
+                                                                                <span id="{{i.id}}_snameError"
+                                                                                    class="error-message"></span>
+                                                                            </div>
+
+                                                                            <div class="mb-2">
+                                                                                <label for="" class="form-label">Email
+                                                                                    :</label>
+                                                                                <input type="email" class="form-control"
+                                                                                    id="{{i.id}}_semail" name="semail"
+                                                                                    value="">
+                                                                                <span id="{{i.id}}_semailError"
+                                                                                    class="error-message"></span>
+                                                                            </div>
+
+                                                                            <div class="mb-2">
+                                                                                <label for="" class="form-label">Mobile
+                                                                                    No
+                                                                                    :</label>
+                                                                                <input type="number"
+                                                                                    class="form-control"
+                                                                                    id="{{i.id}}_sphone_number"
+                                                                                    name="sphone_number"
+                                                                                    value="">
+                                                                                <span id="{{i.id}}_sphone_numberError"
+                                                                                    class="error-message"></span>
+                                                                            </div>
+
+                                                                        </div>
+
+                                                                    </div>
+
+                                                                </form>
+
+                                                            </div>
+                                                            <hr>
+                                                            <div class="modal-footer">
+                                                                <button
+                                                                    class="btn btn-link link-success fw-medium shadow-none"
+                                                                    onclick="resetFormAndCloseModal('{{i.id}}')"
+                                                                    data-bs-dismiss="modal"><i
+                                                                        class="ri-close-line me-1 align-middle"></i>
+                                                                    Close</button>
+                                                                <button type="button"
+                                                                    onclick="createSuperAdmin(this,'{{i.id}}')"
+                                                                    class="btn btn-primary ">Save
+                                                                </button>
+                                                            </div>
+
+
+                                                        </div>
+
+                                                        <hr>
+
+
+                                                        <!-- /.modal-content -->
+                                                    </div>
+                                                    <!-- /.modal-dialog -->
+                                                </div>
+
+
+                                                <!-- ------------------------------------------------------------------ -->
+
+
+
+                                                <!-- for delete -->
+
+                                                <div class="modal fade" id="deleteModal{{ i.id}}" tabindex="-1"
+                                                    aria-labelledby="deleteModalLabel-{{ forloop.counter }}"
+                                                    aria-hidden="true">
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title"
+                                                                    id="deleteModalLabel-{{ forloop.counter }}"> Delete
+                                                                    Role </h5>
+                                                                <button type="button" class="btn-close"
+                                                                    data-bs-dismiss="modal" aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <p> Are you sure you want to delete "{{ i.name }}"? </p>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary"
+                                                                    data-bs-dismiss="modal"> Cancel </button>
+                                                                <form action="{% url 'remove-user' pk=i.id %}"
+                                                                    method="post">
+                                                                    {% csrf_token %}
+                                                                    <button type="submit"
+                                                                        class="btn btn-danger">Delete</button>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- --------------------------------------------------- -->
+                                            </td>
+
+
+
+
+
+
+                                        </tr>
+                                        {% endfor %}
+
+
+                                    </tbody>
+                                </table>
+                            </div>
+
+
+                            <div class="row">
+                                {% include 'pagination.html' %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- container-fluid -->
+        </div>
+        <!-- End Page-content -->
+
+        <footer class="footer">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <script>
+                            document.write(new Date().getFullYear())
+                        </script>
+                        © vinsup.
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="text-sm-end d-none d-sm-block">
+                            Design & Develop by vinsup
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+    <!-- end main content-->
+
+</div>
+
+
+
+
+<script>
+
+    const urlprefix ='/auth'
+    document.addEventListener('DOMContentLoaded', function () {
+
+
+        const table = document.getElementById('example');
+        const rowNumbers = table.querySelectorAll('.row-number');
+
+        rowNumbers.forEach((row, index) => {
+            row.textContent = index + 1;
+        });
+
+
+
+        const viewButtons = document.querySelectorAll('.view-btn');
+        const editButtons = document.querySelectorAll('.edit-btn');
+        const delButtons = document.querySelectorAll('.del-btn');
+
+        viewButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const modalId = this.getAttribute('data-target');
+                const modal = document.querySelector(modalId);
+                if (modal) {
+                    $(modal).modal('show');
+                }
+            });
+        });
+
+
+        editButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const modalId = this.getAttribute('data-target');
+                const modal = document.querySelector(modalId);
+                if (modal) {
+                    $(modal).modal('show');
+                }
+            });
+        });
+
+
+        delButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const modalId = this.getAttribute('data-target');
+                const modal = document.querySelector(modalId);
+                if (modal) {
+                    $(modal).modal('show');
+                }
+            });
+        });
+
+
+    });
+
+
+
+
+    function updateFunction(button, saveId) {
+
+        // var formId = `edituserForm${saveId}`;
+        // var formElement = document.getElementById(formId);
+
+        // console.log(formElement)
+        try {
+            disableButton(button);
+            clearErrors();
+
+            const formData = new FormData();
+            formData.append('name', getValueOrDefault($(`#edituserForm${saveId} input[name="name"]`).val()));
+            formData.append('email', getValueOrDefault($(`#edituserForm${saveId} input[name="email"]`).val()));
+            formData.append('phone_number', getValueOrDefault($(`#edituserForm${saveId} input[name="phone_number"]`).val()));
+
+            formData.append('company_name', getValueOrDefault($(`#editcompanyForm${saveId} input[name="company_name"]`).val()));
+            formData.append('company_email', getValueOrDefault($(`#editcompanyForm${saveId} input[name="company_email"]`).val()));
+            formData.append('company_phone', getValueOrDefault($(`#editcompanyForm${saveId} input[name="company_phone"]`).val()));
+            formData.append('company_address', getValueOrDefault($(`#editcompanyForm${saveId} textarea[name="company_address"]`).val()));
+
+            formData.append('address', getValueOrDefault($(`#editinfoForm${saveId} textarea[name="address"]`).val()));
+            const proofFile = document.querySelector(`#editinfoForm${saveId} input[type="file"]`).files[0];
+            if (proofFile) {
+                formData.append("proof", proofFile);
+            }
+
+            console.log(csrftoken);
+            $.ajax({
+                url: urlprefix +'/update-user/' + saveId + '/',
+                type: 'PUT',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                },
+                processData: false,
+                contentType: false,
+                data: formData,
+                success: function (response, status, xhr) {
+                    if (xhr.status === 200) {
+                        showToast('Successfully Updated', '', 'bg-success', true);
+                    } else {
+                        showToast('something went wrong', '', 'bg-danger');
+                        enableButton(button);
+                        console.error(error);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log(xhr, status, error);
+                    if (xhr.status === 400) {
+                        if (xhr?.responseJSON || xhr?.responseJSON?.errors) {
+                            handleUpdateErrors(saveId, transformErrors(xhr.responseJSON));
+                            enableButton(button);
+                        } else {
+                            showToast('something went wrong', '', 'bg-danger');
+                            enableButton(button);
+                        }
+                    } else {
+                        showToast('something went wrong', '', 'bg-danger');
+                        enableButton(button);
+                    }
+                }
+            });
+        } catch (error) {
+            showToast('An error occurred', '', 'bg-danger');
+            enableButton(button);
+            console.error(error);
+        }
+        finally{
+           
+            enableButton(button); 
+        }
+    }
+
+
+
+
+    // create form
+
+    // function createFunction(button) {
+
+    //     disableButton(button)
+
+    //     var isValid = true;
+    //     var errors = {};
+    //     var formData = new FormData();
+
+    //     // for text only
+
+    //     // const userData = $('#createuserForm').serialize();
+    //     // const companyData = $('#createinfoForm').serialize();
+    //     // const addressData = $('#createcompanyForm').serialize();
+    //     // const formData = `${userData}&${companyData}&${addressData}`;
+
+
+    //     // for dynamic serialize
+
+    //     // var formDataArray = [];
+
+    //     // // Serialize form data from each form and add to formDataArray
+    //     // formDataArray.push($('#createuserForm').serializeArray());
+    //     // formDataArray.push($('#createinfoForm').serializeArray());
+    //     // formDataArray.push($('#createcompanyForm').serializeArray());
+
+    //     //    // Create FormData object and append data from formDataArray
+    //     //    
+    //     // for (var i = 0; i < formDataArray.length; i++) {
+    //     //     var dataArray = formDataArray[i];
+    //     //     for (var j = 0; j < dataArray.length; j++) {
+    //     //         var item = dataArray[j];
+    //     //         formData.append(item.name, item.value);
+    //     //     }
+    //     // }
+
+    //     // Create FormData object and append data from formDataArray
+
+    //     var proofFile = document.querySelector('#createinfoForm input[type="file"]').files[0];
+    //     if (proofFile) {
+    //         formData.append("proof", proofFile);
+    //     }
+
+    //     formData.append('name', getValueOrDefault($('#createuserForm input[name="name"]').val()));
+    //     formData.append('email', getValueOrDefault($('#createuserForm input[name="email"]').val()));
+    //     formData.append('phone_number', getValueOrDefault($('#createuserForm input[name="phone_number"]').val()));
+
+    //     formData.append('company_name', getValueOrDefault($('#createcompanyForm input[name="company_name"]').val()));
+    //     formData.append('company_email', getValueOrDefault($('#createcompanyForm input[name="company_email"]').val()));
+    //     formData.append('company_phone', getValueOrDefault($('#createcompanyForm input[name="company_phone"]').val()));
+    //     formData.append('company_address', getValueOrDefault($('#createcompanyForm textarea[name="company_address"]').val()));
+
+    //     formData.append('address', getValueOrDefault($('#createinfoForm textarea[name="address"]').val()));
+
+    //     console.log('FormData:', formData);
+
+    //     formData.forEach(function (value, key) {
+    //         console.log(key, value)
+    //         // Check if the value is empty or contains only whitespace
+    //         if (!value.trim()) {
+    //             isValid = false;
+    //             errors[key] = ['This field may not be blank.'];
+    //         }
+    //     });
+
+    //     if (!isValid) {
+    //         enableButton(button)
+    //         console.log(errors)
+    //         // Display error messages and apply red borders based on form validation
+    //         handleCreateErrors(errors);
+
+    //         return
+    //     } else {
+    //         // Disable form elements to prevent double submission
+    //         $('#createForm input, #createForm button').prop('disabled', true);
+    //         enableButton(button)
+
+
+    //     }
+    //     $.ajax({
+    //         url: urlprefix +'/create-user/',
+    //         type: 'POST',
+
+    //         headers: {
+    //             'X-CSRFToken': csrftoken,
+    //             // 'Authorization': 'Token ' + authToken 
+    //         },
+    //         data: formData,
+
+    //         processData: false, // Prevent jQuery from processing data
+    //         contentType: false, // Set content type to false for FormData
+
+    //         success: function (response, status, xhr) {
+
+    //             console.error(status);
+    //             if (xhr.status === 201) {
+    //                 showToast('Successfully Updated', '', 'bg-success', true);
+    //                 // location.reload();
+    //             }
+    //             else {
+    //                 console.error(error);
+    //                 enableButton(button)
+    //             }
+
+    //         },
+    //         error: function (xhr, status, error) {
+    //             console.log(xhr, status, error)
+    //             if (xhr.status === 400) {
+    //                 if (xhr?.responseJSON || xhr?.responseJSON?.errors) {
+    //                     // Display error messages and apply red borders based on API response errors
+    //                     handleCreateErrors(transformErrors(xhr.responseJSON));
+    //                     enableButton(button)
+    //                 } else {
+    //                     // Show a generic error message if no specific error details are available
+    //                     showToast('something went wrong', '', 'bg-danger');
+    //                     enableButton(button)
+    //                 }
+
+    //             }
+    //             else {
+    //                 showToast('something went wrong', '', 'bg-danger');
+    //                 enableButton(button)
+    //             }
+    //         }
+    //     });
+    // }
+
+
+
+
+
+    function createFunction(button) {
+        try {
+            disableButton(button);
+            var isValid = true;
+            var errors = {};
+            var formData = new FormData();
+
+            var requiredKeys = ['name', 'email', 'phone_number', "company_name", "company_phone", "company_address"];
+
+            var proofFile = document.querySelector('#createinfoForm input[type="file"]').files[0];
+            if (proofFile) {
+                formData.append("proof", proofFile);
+            }
+
+            formData.append('name', getValueOrDefault($('#createuserForm input[name="name"]').val()));
+            formData.append('email', getValueOrDefault($('#createuserForm input[name="email"]').val()));
+            formData.append('phone_number', getValueOrDefault($('#createuserForm input[name="phone_number"]').val()));
+
+            formData.append('company_name', getValueOrDefault($('#createcompanyForm input[name="company_name"]').val()));
+            formData.append('company_email', getValueOrDefault($('#createcompanyForm input[name="company_email"]').val()));
+            formData.append('company_phone', getValueOrDefault($('#createcompanyForm input[name="company_phone"]').val()));
+            formData.append('company_address', getValueOrDefault($('#createcompanyForm textarea[name="company_address"]').val()));
+
+            formData.append('address', getValueOrDefault($('#createinfoForm textarea[name="address"]').val()));
+
+            console.log('FormData:', formData);
+
+
+            requiredKeys.forEach(function (key) {
+                var value = formData.get(key);
+                if (!value.trim()) {
+                    isValid = false;
+                    errors[key] = ['This field may not be blank.'];
+                }
+            });
+
+            if (!isValid) {
+                enableButton(button);
+                console.log(errors);
+                handleCreateErrors(errors);
+                return;
+            } else {
+                $('#createuserForm input, #createuserForm button').prop('disabled', true);
+                // enableButton(button);
+            }
+
+            $.ajax({
+                url: urlprefix +'/create-user/',
+                type: 'POST',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                },
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response, status, xhr) {
+                    console.error(status);
+                    if (xhr.status === 201) {
+                        showToast('Successfully Created', '', 'bg-success', true);
+                    } else {
+                        console.error(error);
+                        enableButton(button);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    $('#createuserForm input, #createuserForm button').prop('disabled', false);
+                    console.log(xhr, status, error);
+                    if (xhr.status === 400) {
+                        if (xhr?.responseJSON || xhr?.responseJSON?.errors) {
+                            handleCreateErrors(transformErrors(xhr.responseJSON));
+
+                            enableButton(button);
+                        } else {
+                            showToast('something went wrong', '', 'bg-danger');
+                            enableButton(button);
+                        }
+                    } else {
+                        showToast('something went wrong', '', 'bg-danger');
+                        enableButton(button);
+                    }
+                }
+            });
+        } catch (error) {
+            showToast('An error occurred', '', 'bg-danger');
+            $('#createuserForm input, #createuserForm button').prop('disabled', false);
+            // enableButton(button);
+            console.error(error);
+        }
+        finally{
+            $('#createuserForm input, #createuserForm button').prop('disabled', false);
+            enableButton(button);
+        }
+    }
+
+
+
+    function createSuperAdmin(button, saveId) {
+
+        var formId = `createsuperuserForm${saveId}`;
+        var formElement = document.getElementById(formId);
+        clearErrors();
+
+        
+
+        try {
+            disableButton(button);
+            // clearErrors();
+            var isValid = true;
+            var errors = {};
+            var formData = new FormData();
+
+            var requiredKeys = ['name', 'email', 'phone_number'];
+
+            formData.append('name', getValueOrDefault(formElement.querySelector('input[name="sname"]').value));
+            formData.append('email', getValueOrDefault(formElement.querySelector('input[name="semail"]').value));
+            formData.append('phone_number', getValueOrDefault(formElement.querySelector('input[name="sphone_number"]').value));
+
+          
+            requiredKeys.forEach(function (key) {
+                var value = formData.get(key);
+                if (!value.trim()) {
+                    isValid = false;
+                    errors[`s${key}`] = ['This field may not be blank.'];
+                }
+            });
+
+            if (!isValid) {
+                enableButton(button);
+                console.log(errors);
+                // handleCreateErrors(errors);
+                handleUpdateErrors(saveId, errors);
+                return;
+            } else {
+                $('#createsuperuserForm input, #createsuperuserForm button').prop('disabled', true);
+                // enableButton(button);
+            }
+
+      
+            $.ajax({
+                url: urlprefix +'/admin-users-upgrade/' + saveId + '/',
+                type: 'PUT',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                },
+                processData: false,
+                contentType: false,
+                data: formData,
+                success: function (response, status, xhr) {
+                   
+                    if (xhr.status === 200) {
+                        showToast('Successfully Updated', '', 'bg-success',true);
+                    } else {
+                        showToast('something went wrong', '', 'bg-danger');
+                        enableButton(button);
+                        console.error(error);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log(xhr, status, error);
+                    if (xhr.status === 400) {
+                        if (xhr?.responseJSON || xhr?.responseJSON?.errors) {
+                            handleUpdateErrors(saveId, transformsuperErrors(xhr.responseJSON, "s"));
+                            $('#createsuperuserForm input, #createsuperuserForm button').prop('disabled', false);
+                            enableButton(button);
+                        } else {
+                            showToast('something went wrong', '', 'bg-danger');
+                            enableButton(button);
+                        }
+                    } else {
+                        showToast('something went wrong', '', 'bg-danger');
+                        enableButton(button);
+                    }
+                }
+            });
+        } catch (error) {
+            showToast('An error occurred', '', 'bg-danger');
+            $('#createsuperuserForm input, #createsuperuserForm button').prop('disabled', false);
+            enableButton(button);
+            console.error(error);
+        }
+        finally{
+            $('#createsuperuserForm input, #createsuperuserForm button').prop('disabled', false);
+            enableButton(button);
+        }
+    }
+
+
+
+
+    function resetFormAndCloseModal(id) {
+        // Reset the form
+        document.getElementById(`createsuperuserForm${id}`).reset();
+
+        // Close the modal
+        var modal = document.getElementById(`superUserModal_${id}`); // Replace 'superUserModal_' with your modal ID
+        var bootstrapModal = bootstrap.Modal.getInstance(modal);
+        bootstrapModal.hide();
+        clearErrors();
+    }
+
+
+    // for superuser errors
+
+    function transformsuperErrors(errorObj, x) {
+        const transformedErrors = {};
+        for (const key in errorObj) {
+            if (Array.isArray(errorObj[key])) {
+                transformedErrors[x + key] = errorObj[key];
+            } else if (typeof errorObj[key] === 'object') {
+                const nestedErrors = transformErrors(errorObj[key]); // Recursive call for nested objects
+                for (const nestedKey in nestedErrors) {
+                    transformedErrors[x + key + '_' + nestedKey] = nestedErrors[nestedKey];
+                }
+            }
+        }
+        return transformedErrors;
+    }
+
+
+
+</script>
+
+
+{% endblock content %}

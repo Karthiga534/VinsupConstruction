@@ -10,21 +10,17 @@
     <meta content="Premium Multipurpose Admin & Dashboard Template" name="description">
     <meta content="Themesbrand" name="author">
     <!-- App favicon -->
-    <link rel="shortcut icon" href="{% static  'images/favi.jpg' %}">
+    <link rel="shortcut icon" href="{% static  'assets/images/favi.jpg' %}">
     <!-- Layout config Js -->
-    <script src="{% static  'js/layout.js' %}"></script>
+    <script src="{% static  'assets/js/layout.js' %}"></script>
     <!-- Bootstrap Css -->
-    <link href="{% static  'css/bootstrap.min.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static  'assets/css/bootstrap.min.css' %}" rel="stylesheet" type="text/css">
     <!-- Icons Css -->
-    <link href="{% static  'css/icons.min.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static  'assets/css/icons.min.css' %}" rel="stylesheet" type="text/css">
     <!-- App Css-->
-    <link href="{% static  'css/app.min.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static  'assets/css/app.min.css' %}" rel="stylesheet" type="text/css">
     <!-- custom Css-->
-    <link href="{% static  'css/custom.min.css' %}" rel="stylesheet" type="text/css">
-
-
-
-    <link href="{% static 'assets/css/style.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static  'assets/css/custom.min.css' %}" rel="stylesheet" type="text/css">
 </head>
 
 <body>
@@ -48,27 +44,22 @@
                                     <p class="text-muted">Sign in to continue</p>
                                 </div>
                                 <div class="p-2 mt-4">
-                                    {% comment %} <form action="login" method="POST"> {% endcomment %}
-                                        <form method="post" action="{% url 'login' %}">
+                                    <form action="login-admin" method="POST">
                                        
                                         {% csrf_token %}
                                         <div class="mb-3">
                                             <label for="username" class="form-label">Email</label>
-                                            <input type="text" class="form-control" id="Enter your email" value="{{cred.email}}"
+                                            <input type="text" class="form-control" id="Enter your email"
                                                 placeholder="Enter username" name="email">
-                                                <span class="text-danger is-invalid">{{errors.email}}</span>
                                         </div>
                                         <div class="mb-3">
                                             <div class="float-end">
-                                                {% comment %} <a href="#" class="text-muted">Forgot password?</a> {% endcomment %}
-                                                <a href="" class="text-muted">Forgot password?</a>
-
+                                                <a href="#" class="text-muted">Forgot password?</a>
                                             </div>
                                             <label class="form-label" for="password-input">Password</label>
                                             <div class="position-relative auth-pass-inputgroup mb-3">
-                                                <input type="password" class="form-control pe-5 password-input" value="{{cred.password}}"
+                                                <input type="password" class="form-control pe-5 password-input"
                                                     placeholder="Enter password" id="password-input" name="password">
-                                                    <span class="text-danger  is-invalid">{{errors.password}}</span>
                                                 <button
                                                     class="btn btn-link position-absolute end-0 top-0 text-decoration-none text-muted shadow-none password-addon"
                                                     type="button" id="password-addon">
@@ -119,13 +110,15 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="text-center">
-                            <!-- <p class="mb-0 text-muted">
+                            <p class="mb-0 text-muted">
                                 &copy;
                                 <script>
                                     document.write(new Date().getFullYear())
                                 </script>
-                                
-                            </p> -->
+                              
+                                Vinsup
+                              
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -135,18 +128,18 @@
     </div>
     <!-- end auth-page-wrapper -->
     <!-- JAVASCRIPT -->
-    <script src="{% static  'libs/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-    <!-- <script src="{% static  'libs/simplebar/simplebar.min.js' %}"></script> -->
-    <script src="{% static  'libs/node-waves/waves.min.js' %}"></script>
-    <script src="{% static  'libs/feather-icons/feather.min.js' %}"></script>
-    <!-- <script src="{% static  'js/pages/plugins/lord-icon-2.1.0.js' %}"></script> -->
-    <script src="{% static  'js/plugins.js' %}"></script>
-    <!-- particl"{% static  's js -->
-    <!-- <script src="{% static  'libs/particles.js/particles.js' %}"></script> -->
-    <!-- particl"{% static  's app js -->
-    <!-- <script src="{% static  'js/pages/particles.app.js' %}"></script> -->
-    <!-- passwor"{% static  '-addon init -->
-    <script src="{% static  'js/pages/password-addon.init.js' %}"></script>
+    <script src="{% static  'assets/libs/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static  'assets/libs/simplebar/simplebar.min.js' %}"></script>
+    <script src="{% static  'assets/libs/node-waves/waves.min.js' %}"></script>
+    <script src="{% static  'assets/libs/feather-icons/feather.min.js' %}"></script>
+    <script src="{% static  'assets/js/pages/plugins/lord-icon-2.1.0.js' %}"></script>
+    <script src="{% static  'assets/js/plugins.js' %}"></script>
+    <!-- particls js -->
+    <script src="{% static  'assets/libs/particles.js/particles.js' %}"></script>
+    <!-- particls app js -->
+    <script src="{% static  'assets/js/pages/particles.app.js' %}"></script>
+    <!-- password addon init -->
+    <script src="{% static  'assets/js/pages/password-addon.init.js' %}"></script>
 </body>
 
 </html>

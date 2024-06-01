@@ -27,14 +27,11 @@
               <div class="card-header">
                 <div class="row">
                   <div class="col-xl-6 col-lg-6 col-md-6 col-12">
-                    <h2>Employee Attendence Management</h2>
+                    <h4>Employee Attendence Management</h4>
                   </div>
                   <div class="col-xl-4 col-lg-4 col-md-4 col-12"></div>
                 </div>
               </div>
-
-
-
 
 
 
@@ -46,7 +43,7 @@
 
                       <option value="0"> ------------ </option>
                       <!-- <select id="contractor" class="form-control mb-3" data-live-search="true"> -->
-                      {% for i in projectsubcontractor %}
+                      {% for i in employee %}
                       <option value="{{i.id}}"> {{i.name}} </option>
                       {% endfor %}
                     </select>
@@ -128,7 +125,7 @@
           <div class="row">
 
             <input type="date" class="form-control" id="date" name="date" hidden readonly>
-            <input type="number" class="form-control" id="labourid" name="labour" hidden readonly>
+            <input type="number" class="form-control" id="labourid" name="employee" hidden readonly>
 
             <div class="col-lg-6 col-md-6 col-xs-6 col-12">
               <label for="" class="form-label">Select Project :</label>
@@ -261,9 +258,9 @@
         )
       );
       formData.append(
-        "labour",
+        "employee",
         getValueOrDefault(
-          formElement.querySelector('select[name="labour"]').value
+          formElement.querySelector('select[name="employee"]').value
         )
       );
       formData.append(
@@ -323,7 +320,7 @@
       }
 
       $.ajax({
-        url: "/add_companylabourattendance/", //change
+        url: "/add_employeeattendance/", //change
         type: "POST",
         headers: {
           "X-CSRFToken": csrftoken,
@@ -461,7 +458,7 @@
 
     try {
       fetch(
-        `/labour-attendence-list/${selectedValue}/?page=${page}&start_date=${from}&end_date=${to}`
+        `/employee-attendence-list/${selectedValue}/?page=${page}&start_date=${from}&end_date=${to}`
       ) //CHANGE URL
         .then((response) => {
           if (response.status === 200) {
@@ -535,7 +532,7 @@
 
     // From amount
     const td4 = document.createElement("td");
-    td4.textContent = get_value(data.labour_name);
+    td4.textContent = get_value(data.employee_name);
     newRow.appendChild(td4);
 
     // From amount
@@ -622,8 +619,8 @@
     const date = document.querySelector('input[name="date"]');
     date.value = data.date;
 
-    const labour = document.querySelector('input[name="labour"]');
-    labour.value = data.labour;
+    const employee = document.querySelector('input[name="employee"]');
+    employee.value = data.employee;
 
     // Add event listener to Save button
     const saveButton = document.querySelector('#clock_insaveButton');   //id change
@@ -691,7 +688,7 @@
 
       // hidden
       const date = getValueOrDefault(formElement.querySelector('input[name="date"]').value);
-      const labour = getValueOrDefault(formElement.querySelector('input[name="labour"]').value);
+      const employee = getValueOrDefault(formElement.querySelector('input[name="employee"]').value);
 
       
       formData.append('clock_in', clock_in);
@@ -711,7 +708,7 @@
       }
       
       formData.append('date', date)
-      formData.append('labour', labour)
+      formData.append('employee', employee)
 
 
 
@@ -734,7 +731,7 @@
       }
 
       $.ajax({
-        url: `/make-present/${saveId}/`,                //change
+        url: `/make-employee-present/${saveId}/`,                //change
         type: 'POST',
         headers: {
           'X-CSRFToken': csrftoken,

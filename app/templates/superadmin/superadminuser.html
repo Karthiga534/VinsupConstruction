@@ -1,0 +1,1547 @@
+{% extends 'superadmin/base.html' %}
+
+{% load static %}
+
+{% block content %}
+
+<div class="main-content">
+
+    <div class="page-content">
+        <div class="container-fluid">
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="row">
+                                <div class="col-xl-6 col-lg-6 col-md-6 col-12">
+                                    <h2>Super Admin  Details </h2>
+                                </div>
+                                <div class="col-xl-4 col-lg-4 col-md-4 col-12"></div>
+                                <div class="col-xl-2 col-lg-2 col-md-2 col-12">
+                                    <!-- <button type="button" class="btn btn-info" style="float:right;"
+                                       
+                                        onclick="openModal('myModal')"
+                                        >Add User
+                                    </button> -->
+                                    <!-- 
+                                    <button type="button" class="btn btn-info" style="float:right;"
+                                        data-bs-toggle="modal" data-bs-target=".bs-example-modal-lg">Add
+                                        User
+                                    </button> -->
+
+
+                                    <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" id="myModal"
+                                        aria-labelledby="myLargeModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-lg">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="myLargeModalLabel">User
+                                                        Registration</h5>
+                                                    <button type="button" class="btn-close" onclick="clearErrors()"
+                                                        data-bs-dismiss="modal" aria-label="Close">
+                                                    </button>
+                                                </div>
+                                                <hr>
+
+                                                <!-- <form id="createuserForm"  enctype="multipart/form-data"> -->
+                                                <!-- action="user-registration" method="POST"
+                                                    enctype="multipart/form-data"> -->
+                                                {% csrf_token %}
+                                                <div class="modal-body">
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <form id="createuserForm" enctype="multipart/form-data">
+                                                                <!-- <div class="col-md-6 mb-2"> -->
+                                                                <div class="mb-2">
+                                                                    <label for="" class="form-label">Name
+                                                                        :</label>
+                                                                    <input type="text" class="form-control" id="name"
+                                                                        name="name" value="">
+                                                                    <span id="nameError" class="error-message"></span>
+                                                                </div>
+
+                                                                <!-- </div> -->
+                                                                <div class="mb-2">
+                                                                    <label for="" class="form-label">Email
+                                                                        :</label>
+                                                                    <input type="email" class="form-control" id="email"
+                                                                        name="email" value="">
+                                                                    <span id="emailError" class="error-message"></span>
+                                                                </div>
+
+                                                                <div class="mb-2">
+                                                                    <label for="" class="form-label">Mobile No
+                                                                        :</label>
+                                                                    <input type="number" class="form-control"
+                                                                        id="phone_number" name="phone_number" value="">
+                                                                    <span id="phone_numberError"
+                                                                        class="error-message"></span>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <form id="createinfoForm" enctype="multipart/form-data">
+                                                                <div class=" mb-2">
+                                                                    <label for="" class="form-label">Id Proof
+                                                                        :</label>
+                                                                    <input type="file" class="form-control" id="proof"
+                                                                        name="proof" required>
+                                                                    <span id="proofError" class="error-message"></span>
+                                                                </div>
+
+                                                                <div class=" mb-2">
+                                                                    <label for="" class="form-label">Address
+                                                                        :</label>
+                                                                    <textarea rows="3" class="form-control" id="address"
+                                                                        name="address"></textarea>
+                                                                    <span id="addressError"
+                                                                        class="error-message"></span>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+
+
+
+
+                                                    </div>
+                                                </div>
+
+                                                <hr>
+
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="myLargeModalLabel">Company
+                                                        Details</h5>
+                                                </div>
+
+                                                <div class="modal-body">
+
+
+                                                    <form id="createcompanyForm" enctype="multipart/form-data">
+                                                        <div class="row">
+                                                            <div class="col-md-6 mb-2">
+                                                                <label for="" class="form-label">Name :</label>
+                                                                <input type="text" class="form-control"
+                                                                    id="company_name" name="company_name" value="">
+                                                                <span id="company_nameError"
+                                                                    class="error-message"></span>
+                                                            </div>
+                                                            <div class="col-md-6 mb-2">
+                                                                <label for="" class="form-label">Email :</label>
+                                                                <input type="email" class="form-control"
+                                                                    id="company_email" name="company_email" value="">
+                                                                <span id="company_emailError"
+                                                                    class="error-message"></span>
+                                                            </div>
+                                                            <div class="col-md-6 mb-2">
+                                                                <label for="" class="form-label">Mobile No
+                                                                    :</label>
+                                                                <input type="number" class="form-control"
+                                                                    id="company_phone" name="company_phone" value="">
+                                                                <span id="company_phoneError"
+                                                                    class="error-message"></span>
+                                                            </div>
+
+                                                            <div class="col-md-6 mb-2">
+                                                                <label for="" class="form-label">Address
+                                                                    :</label>
+                                                                <textarea rows="3" class="form-control"
+                                                                    id="company_address"
+                                                                    name="company_address"></textarea>
+                                                                <span id="company_addressError"
+                                                                    class="error-message"></span>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+
+
+                                                </div>
+
+
+                                                <hr>
+                                                <div class="modal-footer">
+                                                    <button class="btn btn-link link-success fw-medium shadow-none"
+                                                        onclick="clearErrors()" data-bs-dismiss="modal"><i
+                                                            class="ri-close-line me-1 align-middle"></i>
+                                                        Close</button>
+                                                    <button type="button" onclick="createFunction(this)"
+                                                        class="btn btn-primary ">Save
+                                                    </button>
+                                                </div>
+
+
+                                            </div>
+
+                                            <hr>
+
+
+                                            <!-- /.modal-content -->
+                                        </div>
+                                        <!-- /.modal-dialog -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+
+                            <div class="">
+                                {% include "search.html" %}
+                            </div>
+
+
+                            <div class="table-responsive">
+                                <table id="example" class="table table-bordered table-striped align-middle"
+                                    style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <th data-ordering="false">#</th>
+                                            <th data-ordering="false">Date</th>
+                                            <th data-ordering="false">Name</th>
+                                            <th data-ordering="false">Email</th>
+                                            <th data-ordering="false">Mobile No</th>
+                                            <th data-ordering="false">Address</th>
+                                            <th data-ordering="false">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+
+                                        {% for i in list %}
+
+                                        <tr>
+                                            <td>{{forloop.counter}}</td>
+                                            <td>{{i.created_at}}</td>
+                                            <td>{{i.name}}</td>
+                                            <td>{{i.email}}</td>
+                                            <td>{{i.phone_number}}</td>
+                                            <td>{{i.owner.address}}</td>
+                                            <td>
+                                                <div class="dropdown d-inline-block">
+                                                    <button class="btn btn-soft-secondary btn-sm dropdown" type="button"
+                                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                                        <i class="ri-more-fill align-middle"></i>
+                                                    </button>
+
+                                                    <button class="btn btn-soft-secondary btn-sm dropdown" type="button"
+                                                        data-user-id="{{ i.id }}" onclick="openBranchModel(this)">
+                                                        + Add branches
+                                                    </button>
+
+
+                                                    <ul class="dropdown-menu dropdown-menu-end">
+                                                        <li><a href="#!" class="dropdown-item edit-item-btn view-btn"
+                                                                data-target="#viewModal{{ i.id }}">
+                                                                <i
+                                                                    class="ri-eye-fill align-bottom me-2 text-muted "></i>
+                                                                View
+                                                            </a>
+                                                        </li>
+
+
+                                                        <li><a href="#!" class="dropdown-item edit-item-btn edit-btn"
+                                                                onclick="openModal('editModal','{{ i.id }}')">
+                                                                <i
+                                                                    class="ri-pencil-fill align-bottom me-2 text-muted"></i>
+                                                                Edit
+                                                            </a>
+                                                        </li>
+
+
+                                                        <li>
+                                                            <a class="dropdown-item remove-item-btn del-btn" href="#!"
+                                                                data-target="#deleteModal{{ i.id}}">
+                                                                <i
+                                                                    class="ri-delete-bin-fill align-bottom me-2 text-muted"></i>
+                                                                Delete
+                                                            </a>
+                                                        </li>
+
+
+                                                    </ul>
+                                                </div>
+
+                                                <!-- ----------------------- viewmodel ------------------------------------------ -->
+
+                                                <div class="modal fade bs-example-modal-lg" id="viewModal{{i.id}}"
+                                                    tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+                                                    aria-hidden="true">
+                                                    <div class="modal-dialog modal-lg">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="myLargeModalLabel">
+                                                                    Branch List</h5>
+                                                                <button type="button" class="btn-close"
+                                                                    data-bs-dismiss="modal" aria-label="Close">
+                                                                </button>
+                                                            </div>
+
+                                                            <hr>
+                                                            <div class="modal-body">
+
+
+                                                                <div class="card-body">
+
+                                                          
+                                                                    <div class="table-responsive">
+                                                                        <table id="example"
+                                                                            class="table table-bordered table-striped align-middle"
+                                                                            style="width:100%">
+                                                                            <thead>
+                                                                                <tr>
+                                                                                    <th data-ordering="false">#</th>
+                                                                                    <th data-ordering="false">Date</th>
+                                                                                    <th data-ordering="false">Name</th>
+                                                                                    <th data-ordering="false">Email</th>
+                                                                                    <th data-ordering="false">Mobile No
+                                                                                    </th>
+                                                                                    <th data-ordering="false">Address
+                                                                                    </th>
+                                                                                    <th data-ordering="false">Action
+                                                                                    </th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+
+                                                                                {% for j in i.getcompanies %}
+
+                                                                                <tr>
+
+                                                                                    <td>{{forloop.counter}}</td>
+                                                                                    <td>{{j.created_at}}</td>
+                                                                                    <td>{{j.name}}</td>
+                                                                                    <td>{{j.email}}</td>
+                                                                                    <td>{{j.phone}}</td>
+                                                                                    <td>{{j.address}}</td>
+                                                                                    <td>
+                                                                                        <button
+                                                                                            class="btn btn-soft-secondary btn-sm dropdown view-btn"
+                                                                                            type="button"
+                                                                                            data-target="#bviewModal{{ j.id }}">
+
+                                                                                            View
+
+                                                                                        </button>
+
+                                                                                        <!-- <div
+                                                                                            class="dropup d-inline-block">
+                                                                                            <button
+                                                                                                class="btn btn-soft-secondary btn-sm dropdown"
+                                                                                                type="button"
+                                                                                                data-bs-toggle="dropdown"
+                                                                                                aria-expanded="false">
+                                                                                                <i
+                                                                                                    class="ri-more-fill align-middle"></i>
+                                                                                            </button>
+
+
+
+                                                                                            <ul
+                                                                                                class="dropdown-menu dropdown-menu-end">
+
+
+                                                                                                <li><a href="#!"
+                                                                                                        class="dropdown-item edit-item-btn view-btn"
+                                                                                                        data-target="#bviewModal{{ j.id }}">
+                                                                                                        <i
+                                                                                                            class="ri-eye-fill align-bottom me-2 text-muted "></i>
+                                                                                                        View
+                                                                                                    </a>
+                                                                                                </li>
+
+                                                                                                <li><a href="#!" class="dropdown-item edit-item-btn edit-btn"
+                                                                                                        onclick="openModal('beditModal','{{ j.id }}')">
+                                                                                                        <i
+                                                                                                            class="ri-pencil-fill align-bottom me-2 text-muted"></i>
+                                                                                                        Edit
+                                                                                                    </a>
+                                                                                                </li>
+
+                                                                                                <li>
+                                                                                                    <a class="dropdown-item remove-item-btn del-btn" href="#!"
+                                                                                                    data-target ="#bdeleteModal{{ i.id}}">
+                                                                                                    <i
+                                                                                                        class="ri-delete-bin-fill align-bottom me-2 text-muted"></i>
+                                                                                                    Delete
+                                                                                                    </a>
+                                                                                                </li>
+                                                                                            </ul>
+                                                                                        </div> -->
+
+                                                                                        <!-- viewmodel  -->
+
+                                                                                        <div class="modal fade bs-example-modal-lg"
+                                                                                            id="bviewModal{{j.id}}"
+                                                                                            tabindex="-1" role="dialog"
+                                                                                            aria-labelledby="myLargeModalLabel"
+                                                                                            aria-hidden="true">
+                                                                                            <div
+                                                                                                class="modal-dialog modal-lg">
+                                                                                                <div
+                                                                                                    class="modal-content">
+
+                                                                                                    <div
+                                                                                                        class="modal-header">
+                                                                                                        <h5 class="modal-title"
+                                                                                                            id="myLargeModalLabel">
+                                                                                                            Admin
+                                                                                                            Details</h5>
+                                                                                                        <button
+                                                                                                            type="button"
+                                                                                                            class="btn-close"
+                                                                                                            data-bs-dismiss="modal"
+                                                                                                            aria-label="Close">
+                                                                                                        </button>
+                                                                                                    </div>
+
+                                                                                                    <div
+                                                                                                        class="modal-body">
+
+                                                                                                        <div
+                                                                                                            class="row">
+                                                                                                            <div
+                                                                                                                class="col-md-6 mb-2">
+                                                                                                                <label
+                                                                                                                    for=""
+                                                                                                                    class="form-label">Name
+                                                                                                                    :</label>
+                                                                                                                <input
+                                                                                                                    type="text"
+                                                                                                                    class="form-control"
+                                                                                                                    id="branchname"
+                                                                                                                    name="name"
+                                                                                                                    value="{{j.admin.name}}"
+                                                                                                                    disabled>
+                                                                                                                <span
+                                                                                                                    id="branchnameError"
+                                                                                                                    class="error-message"></span>
+                                                                                                            </div>
+                                                                                                            <div
+                                                                                                                class="col-md-6 mb-2">
+                                                                                                                <label
+                                                                                                                    for=""
+                                                                                                                    class="form-label">Email
+                                                                                                                    :</label>
+                                                                                                                <input
+                                                                                                                    type="email"
+                                                                                                                    class="form-control"
+                                                                                                                    id="branchemail"
+                                                                                                                    name="email"
+                                                                                                                    value="{{j.admin.email}}"
+                                                                                                                    disabled>
+                                                                                                                <span
+                                                                                                                    id="branchemailError"
+                                                                                                                    class="error-message"></span>
+                                                                                                            </div>
+                                                                                                            <div
+                                                                                                                class="col-md-6 mb-2">
+                                                                                                                <label
+                                                                                                                    for=""
+                                                                                                                    class="form-label">Mobile
+                                                                                                                    No
+                                                                                                                    :</label>
+                                                                                                                <input
+                                                                                                                    type="number"
+                                                                                                                    class="form-control"
+                                                                                                                    id="branchphone_number"
+                                                                                                                    name="phone_number"
+                                                                                                                    value="{{j.admin.phone_number}}"
+                                                                                                                    disabled>
+                                                                                                                <span
+                                                                                                                    id="branchphone_numberError"
+                                                                                                                    class="error-message"></span>
+                                                                                                            </div>
+                                                                                                            <!-- 
+                                                                                                            <div class="col-md-6 mb-2">
+                                                                                                                <label for="" class="form-label">Address
+                                                                                                                    :</label>
+                                                                                                                <textarea rows="3" class="form-control" id="address" name="branchaddress"></textarea>
+                                                                                                                <span id="branchaddressError" class="error-message"></span>
+                                                                                                            </div> -->
+                                                                                                        </div>
+
+
+
+                                                                                                    </div>
+
+
+
+                                                                                                    <div
+                                                                                                        class="modal-header">
+                                                                                                        <h5 class="modal-title"
+                                                                                                            id="myLargeModalLabel">
+                                                                                                            Branch
+                                                                                                            Details
+                                                                                                        </h5>
+
+                                                                                                    </div>
+
+                                                                                                    <hr>
+                                                                                                    <div
+                                                                                                        class="modal-body">
+                                                                                                        <div
+                                                                                                            class="row">
+                                                                                                            <div
+                                                                                                                class="col-md-6 mb-2">
+                                                                                                                <label
+                                                                                                                    for=""
+                                                                                                                    class="form-label">Name
+                                                                                                                    :</label>
+                                                                                                                <input
+                                                                                                                    type="text"
+                                                                                                                    class="form-control"
+                                                                                                                    id=""
+                                                                                                                    value="{{j.name}}"
+                                                                                                                    disabled>
+                                                                                                            </div>
+                                                                                                            <div
+                                                                                                                class="col-md-6 mb-2">
+                                                                                                                <label
+                                                                                                                    for=""
+                                                                                                                    class="form-label">Email
+                                                                                                                    :</label>
+                                                                                                                <input
+                                                                                                                    type="email"
+                                                                                                                    class="form-control"
+                                                                                                                    id=""
+                                                                                                                    value="{{j.email}}"
+                                                                                                                    disabled>
+                                                                                                            </div>
+                                                                                                            <div
+                                                                                                                class="col-md-6 mb-2">
+                                                                                                                <label
+                                                                                                                    for=""
+                                                                                                                    class="form-label">Mobile
+                                                                                                                    No
+                                                                                                                    :</label>
+                                                                                                                <input
+                                                                                                                    type="number"
+                                                                                                                    class="form-control"
+                                                                                                                    id=""
+                                                                                                                    value="{{j.phone}}"
+                                                                                                                    disabled>
+                                                                                                            </div>
+                                                                                                            <!-- <div
+                                                                                                                class="col-md-6 mb-2">
+                                                                                                                <label
+                                                                                                                    for=""
+                                                                                                                    class="form-label">Id
+                                                                                                                    Proof
+                                                                                                                    :</label>
+                                                                                                                <input
+                                                                                                                    type="file"
+                                                                                                                    class="form-control"
+                                                                                                                    id=""
+                                                                                                                    value="{{j.owner.proof}}"
+                                                                                                                    readonly>
+                                                                                                            </div> -->
+                                                                                                            <div
+                                                                                                                class="col-md-6 mb-2">
+                                                                                                                <label
+                                                                                                                    for=""
+                                                                                                                    class="form-label">Address
+                                                                                                                    :</label>
+                                                                                                                <textarea
+                                                                                                                    rows="3"
+                                                                                                                    class="form-control"
+                                                                                                                    value="{{j.owner.address}}"
+                                                                                                                    disabled>{{j.address}} </textarea>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                    </div>
+
+                                                                                                </div>
+                                                                                                <!-- /.modal-content -->
+                                                                                            </div>
+                                                                                            <!-- /.modal-dialog -->
+                                                                                        </div>
+
+                                                                                        <!-- ------------------------------------ EDIT FORM ------------------------------------------------- -->
+
+                                                                                        <div class="modal fade bs-example-modal-lg"
+                                                                                            tabindex="-1"
+                                                                                            aria-labelledby="exampleModalLabel"
+                                                                                            aria-hidden="true"
+                                                                                            data-bs-backdrop="static"
+                                                                                            data-bs-keyboard="false"
+                                                                                            id="beditModal_{{j.id}}">
+
+
+                                                                                            <div
+                                                                                                class="modal-dialog modal-lg">
+                                                                                                <!-- action="{% url 'edit-user' pk=i.id %}" method="POST"  -->
+                                                                                                {% csrf_token %}
+                                                                                                <div
+                                                                                                    class="modal-content">
+
+                                                                                                    <div
+                                                                                                        class="modal-header">
+                                                                                                        <h5 class="modal-title"
+                                                                                                            id="myLargeModalLabel">
+                                                                                                            Edit
+                                                                                                            Company
+                                                                                                            Details
+                                                                                                        </h5>
+                                                                                                        <button
+                                                                                                            type="button"
+                                                                                                            class="btn-close"
+                                                                                                            data-bs-dismiss="modal"
+                                                                                                            aria-label="Close"
+                                                                                                            onclick="CloseModel('beditModal','{{j.id}}')">
+                                                                                                        </button>
+                                                                                                    </div>
+                                                                                                    <hr>
+
+
+                                                                                                    <form
+                                                                                                        id="beditcompanyForm{{ j.id }}"
+                                                                                                        enctype="multipart/form-data">
+
+                                                                                                        <div
+                                                                                                            class="modal-body">
+                                                                                                            <div
+                                                                                                                class="row">
+
+                                                                                                                <div
+                                                                                                                    class="col-md-6 mb-2">
+                                                                                                                    <label
+                                                                                                                        for=""
+                                                                                                                        class="form-label">Name
+                                                                                                                        :</label>
+                                                                                                                    <input
+                                                                                                                        type="text"
+                                                                                                                        class="form-control"
+                                                                                                                        id="{{j.id}}_bname"
+                                                                                                                        value="{{j.name}}"
+                                                                                                                        name="name">
+
+                                                                                                                    <span
+                                                                                                                        id="{{j.id}}_bnameError"
+                                                                                                                        class="error-message"></span>
+                                                                                                                </div>
+
+                                                                                                                <div
+                                                                                                                    class="col-md-6 mb-2">
+                                                                                                                    <label
+                                                                                                                        for=""
+                                                                                                                        class="form-label">Email
+                                                                                                                        :</label>
+                                                                                                                    <input
+                                                                                                                        type="email"
+                                                                                                                        class="form-control"
+                                                                                                                        id="{{j.id}}_bemail"
+                                                                                                                        value="{{j.email}}"
+                                                                                                                        name="email">
+
+                                                                                                                    <span
+                                                                                                                        id="{{j.id}}_bemailError"
+                                                                                                                        class="error-message"></span>
+                                                                                                                </div>
+                                                                                                                <div
+                                                                                                                    class="col-md-6 mb-2">
+                                                                                                                    <label
+                                                                                                                        for=""
+                                                                                                                        class="form-label">Mobile
+                                                                                                                        No
+                                                                                                                        :</label>
+                                                                                                                    <input
+                                                                                                                        type="number"
+                                                                                                                        class="form-control"
+                                                                                                                        id="{{j.id}}_bphone"
+                                                                                                                        value="{{j.phone}}"
+                                                                                                                        name="phone">
+                                                                                                                    <span
+                                                                                                                        id="{{j.id}}_bphoneError"
+                                                                                                                        class="error-message"></span>
+                                                                                                                </div>
+
+                                                                                                                <!-- <div class="col-md-6 mb-2">
+                                                                                                                    <label for="" class="form-label">Id Proof
+                                                                                                                        :</label>
+                                                                                                                    <input type="file" class="form-control"
+                                                                                                                        name="proof" required>
+                                                                                                                </div> -->
+
+                                                                                                                <div
+                                                                                                                    class="col-md-6 mb-2">
+                                                                                                                    <label
+                                                                                                                        for=""
+                                                                                                                        class="form-label">Address
+                                                                                                                        :</label>
+                                                                                                                    <textarea
+                                                                                                                        rows="3"
+                                                                                                                        class="form-control"
+                                                                                                                        id="{{j.id}}_baddress"
+                                                                                                                        name="address"> {{j.address}} </textarea>
+                                                                                                                    <span
+                                                                                                                        id="{{j.id}}_baddressError"
+                                                                                                                        class="error-message"></span>
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                        </div>
+
+                                                                                                    </form>
+
+
+                                                                                                    <hr>
+                                                                                                    <div
+                                                                                                        class="modal-footer">
+                                                                                                        <button
+                                                                                                            class="btn btn-link link-success fw-medium shadow-none"
+                                                                                                            onclick="CloseModel('beditModal','{{i.id}}')"
+                                                                                                            data-bs-dismiss="modal"><i
+                                                                                                                class="ri-close-line me-1 align-middle"></i>
+                                                                                                            Close</button>
+
+
+                                                                                                        <button
+                                                                                                            type="button"
+                                                                                                            onclick="updateFunction(this,'{{i.id}}')"
+                                                                                                            class="btn btn-primary ">
+                                                                                                            Update
+                                                                                                        </button>
+
+                                                                                                        <!-- <button class="btn btn-primary" type="button" disabled>
+                                                                                                            <span class="spinner-border spinner-border-sm"
+                                                                                                                role="status" aria-hidden="true"></span>
+                                                                                                            Loading...
+                                                                                                        </button> -->
+
+
+                                                                                                    </div>
+                                                                                                </div>
+
+
+                                                                                                <!-- /.modal-content -->
+                                                                                            </div>
+                                                                                            <!-- /.modal-dialog -->
+                                                                                        </div>
+                                                                                    </td>
+
+
+                                                                                </tr>
+                                                                                {% endfor %}
+
+
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </div>
+
+
+                                                                 
+                                                                </div>
+
+                                                            </div>
+
+                                                        </div>
+                                                        <!-- /.modal-content -->
+                                                    </div>
+                                                    <!-- /.modal-dialog -->
+                                                </div>
+
+                                                <!-- ------------------------------------ EDIT FORM ------------------------------------------------- -->
+
+
+                                                <div class="modal fade bs-example-modal-lg" tabindex="-1"
+                                                    aria-labelledby="exampleModalLabel" aria-hidden="true"
+                                                    data-bs-backdrop="static" data-bs-keyboard="false"
+                                                    id="editModal_{{i.id}}">
+
+
+                                                    <div class="modal-dialog modal-lg">
+                                                        <!-- action="{% url 'edit-user' pk=i.id %}" method="POST"  -->
+                                                        {% csrf_token %}
+                                                        <div class="modal-content">
+
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="myLargeModalLabel">
+                                                                    Edit
+                                                                    User Details</h5>
+                                                                <button type="button" class="btn-close"
+                                                                    data-bs-dismiss="modal" aria-label="Close"
+                                                                    onclick="CloseModel('editModal','{{i.id}}')">
+                                                                </button>
+                                                            </div>
+                                                            <hr>
+
+                                                            <div class="modal-body">
+                                                                <div class="row">
+                                                                    <div class="col-md-6">
+                                                                        <form id="edituserForm{{ i.id }}"
+                                                                            enctype="multipart/form-data">
+
+                                                                            <div class="mb-2">
+                                                                                <label for="" class="form-label">Name
+                                                                                    :</label>
+                                                                                <input type="text" class="form-control"
+                                                                                    name="name" value="{{i.name}}"
+                                                                                    id="{{i.id}}_name">
+                                                                                <span id="{{i.id}}_nameError"
+                                                                                    class="error-message"></span>
+                                                                            </div>
+
+                                                                            <div class="mb-2">
+                                                                                <label for="" class="form-label">Email
+                                                                                    :</label>
+                                                                                <input type="email" class="form-control"
+                                                                                    value="{{i.email}}" name="email"
+                                                                                    id="{{i.id}}_email">
+                                                                                <span id="{{i.id}}_emailError"
+                                                                                    class="error-message"></span>
+
+                                                                            </div>
+
+                                                                            <div class="mb-2">
+                                                                                <label for="" class="form-label">Mobile
+                                                                                    No
+                                                                                    :</label>
+                                                                                <input type="number"
+                                                                                    class="form-control"
+                                                                                    value="{{i.phone_number}}"
+                                                                                    name="phone_number"
+                                                                                    id="{{i.id}}_phone_number">
+
+                                                                                <span id="{{i.id}}_phone_numberError"
+                                                                                    class="error-message"></span>
+                                                                            </div>
+
+                                                                        </form>
+                                                                    </div>
+
+                                                                    <div class="col-md-6">
+                                                                        <form id="editinfoForm{{ i.id }}"
+                                                                            enctype="multipart/form-data">
+                                                                            <div class="mb-2">
+                                                                                <label for="" class="form-label">Id
+                                                                                    Proof
+                                                                                    :</label>
+                                                                                <input type="file" class="form-control"
+                                                                                    value="{{i.owner.proof}}"
+                                                                                    name="proof" id="{{i.id}}_proof">
+                                                                                <span id="{{i.id}}_proofError"
+                                                                                    class="error-message"></span>
+                                                                            </div>
+                                                                            <div class="mb-2">
+                                                                                <label for="" class="form-label">Address
+                                                                                    :</label>
+                                                                                <textarea rows="3" name="address"
+                                                                                    class="form-control"
+                                                                                    id="{{i.id}}_address">{{i.owner.address}}</textarea>
+
+                                                                                <span id="{{i.id}}_addressError"
+                                                                                    class="error-message"></span>
+                                                                            </div>
+                                                                        </form>
+                                                                    </div>
+
+                                                                </div>
+                                                            </div>
+
+                                                            <hr>
+
+                                                            <!-- <div>
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="myLargeModalLabel">
+                                                                    Company Details
+                                                                </h5>
+                                                            </div>
+
+                                                            <form id="editcompanyForm{{ i.id }}"
+                                                                enctype="multipart/form-data">
+
+                                                                <div class="modal-body">
+                                                                    <div class="row">
+
+                                                                        <div class="col-md-6 mb-2">
+                                                                            <label for="" class="form-label">Name
+                                                                                :</label>
+                                                                            <input type="text" class="form-control"
+                                                                                id="{{i.id}}_company_name"
+                                                                                value="{{i.company.name}}"
+                                                                                name="company_name" value="">
+
+                                                                            <span id="{{i.id}}_company_nameError"
+                                                                                class="error-message"></span>
+                                                                        </div>
+
+                                                                        <div class="col-md-6 mb-2">
+                                                                            <label for="" class="form-label">Email
+                                                                                :</label>
+                                                                            <input type="email" class="form-control"
+                                                                                id="{{i.id}}_company_email"
+                                                                                value="{{i.company.email}}"
+                                                                                name="company_email" value="">
+
+                                                                            <span id="{{i.id}}_company_emailError"
+                                                                                class="error-message"></span>
+                                                                        </div>
+                                                                        <div class="col-md-6 mb-2">
+                                                                            <label for="" class="form-label">Mobile
+                                                                                No
+                                                                                :</label>
+                                                                            <input type="number" class="form-control"
+                                                                                id="{{i.id}}_company_phone"
+                                                                                value="{{i.company.phone}}"
+                                                                                name="company_phone" value="">
+                                                                            <span id="{{i.id}}_company_phoneError"
+                                                                                class="error-message"></span>
+                                                                        </div>
+
+                                                                      
+
+                                                                        <div class="col-md-6 mb-2">
+                                                                            <label for="" class="form-label">Address
+                                                                                :</label>
+                                                                            <textarea rows="3" class="form-control"
+                                                                                id="{{i.id}}_company_address"
+                                                                                name="company_address"> {{i.company.address}} </textarea>
+                                                                            <span id="{{i.id}}_company_addressError"
+                                                                                class="error-message"></span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                            </form>
+                                                            <hr>
+                                                        </div> -->
+
+                                                            <div class="modal-footer">
+                                                                <button
+                                                                    class="btn btn-link link-success fw-medium shadow-none"
+                                                                    onclick="CloseModel('editModal','{{i.id}}')"
+                                                                    data-bs-dismiss="modal"><i
+                                                                        class="ri-close-line me-1 align-middle"></i>
+                                                                    Close</button>
+
+
+                                                                <button type="button"
+                                                                    onclick="updateFunction(this,'{{i.id}}')"
+                                                                    class="btn btn-primary ">
+                                                                    Update </button>
+
+                                                                <!-- <button class="btn btn-primary" type="button" disabled>
+                                                                    <span class="spinner-border spinner-border-sm"
+                                                                        role="status" aria-hidden="true"></span>
+                                                                    Loading...
+                                                                </button> -->
+
+
+                                                            </div>
+                                                        </div>
+
+
+                                                        <!-- /.modal-content -->
+                                                    </div>
+                                                    <!-- /.modal-dialog -->
+                                                </div>
+
+
+                                                <!-- ------------------------------------------------------------------------------------------ -->
+
+                                                <!-- for delete -->
+
+                                                <div class="modal fade" id="deleteModal{{ i.id}}" tabindex="-1"
+                                                    aria-labelledby="deleteModalLabel-{{ forloop.counter }}"
+                                                    aria-hidden="true">
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title"
+                                                                    id="deleteModalLabel-{{ forloop.counter }}"> Delete
+                                                                    Role </h5>
+                                                                <button type="button" class="btn-close"
+                                                                    data-bs-dismiss="modal" aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <p> Are you sure you want to delete "{{ i.name }}"? </p>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary"
+                                                                    data-bs-dismiss="modal"> Cancel </button>
+                                                                <form action="{% url 'remove-user' pk=i.id %}"
+                                                                    method="post">
+                                                                    {% csrf_token %}
+                                                                    <button type="submit"
+                                                                        class="btn btn-danger">Delete</button>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- --------------------------------------------------- -->
+
+
+                                            </td>
+
+
+                                        </tr>
+                                        {% endfor %}
+
+
+                                    </tbody>
+                                </table>
+                            </div>
+
+
+                            <div class="row">
+                                {% include 'pagination.html' %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- container-fluid -->
+        </div>
+        <!-- End Page-content -->
+
+        <footer class="footer">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <script>
+                            document.write(new Date().getFullYear())
+                        </script>
+                        © vinsup.
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="text-sm-end d-none d-sm-block">
+                            Design & Develop by vinsup
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+    <!-- end main content-->
+
+
+
+
+    <!-- Bootstrap Modal (outside table rows) -->
+    <!-- <div class="modal fade" id="branchModal" tabindex="-1" aria-labelledby="branchModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="branchModalLabel">Add Branch</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                 
+
+                    <form id="editcompanyForm{{ i.id }}"
+                    enctype="multipart/form-data">
+
+                    <div class="modal-body">
+                        <div class="row">
+
+                            <div class="col-md-6 mb-2">
+                                <label for="" class="form-label">Name
+                                    :</label>
+                                <input type="text" class="form-control"
+                                    id="{{i.id}}_company_name"
+                                    value="{{i.company.name}}"
+                                    name="company_name" value="">
+
+                                <span id="{{i.id}}_company_nameError"
+                                    class="error-message"></span>
+                            </div>
+
+                            <div class="col-md-6 mb-2">
+                                <label for="" class="form-label">Email
+                                    :</label>
+                                <input type="email" class="form-control"
+                                    id="{{i.id}}_company_email"
+                                    value="{{i.company.email}}"
+                                    name="company_email" value="">
+
+                                <span id="{{i.id}}_company_emailError"
+                                    class="error-message"></span>
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <label for="" class="form-label">Mobile
+                                    No
+                                    :</label>
+                                <input type="number" class="form-control"
+                                    id="{{i.id}}_company_phone"
+                                    value="{{i.company.phone}}"
+                                    name="company_phone" value="">
+                                <span id="{{i.id}}_company_phoneError"
+                                    class="error-message"></span>
+                            </div>
+
+                          
+
+                            <div class="col-md-6 mb-2">
+                                <label for="" class="form-label">Address
+                                    :</label>
+                                <textarea rows="3" class="form-control"
+                                    id="{{i.id}}_company_address"
+                                    name="company_address"> {{i.company.address}} </textarea>
+                                <span id="{{i.id}}_company_addressError"
+                                    class="error-message"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
+              
+                        <button type="button" id="submitBtn" class="btn btn-primary" onclick="createNewBranch(this)">Add</button>
+                
+                </div>
+            </div>
+        </div>
+    </div> -->
+
+
+
+
+    <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" id="branchModal"
+        aria-labelledby="branchModal" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <form id="addbranchForm" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="myLargeModalLabel">Branch
+                            Admin Details</h5>
+                    </div>
+
+                    <div class="modal-body">
+
+                        <div class="row">
+                            <div class="col-md-6 mb-2">
+                                <label for="" class="form-label">Name :</label>
+                                <input type="text" class="form-control" id="branchname" name="name" value="">
+                                <span id="branchnameError" class="error-message"></span>
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <label for="" class="form-label">Email :</label>
+                                <input type="email" class="form-control" id="branchemail" name="email" value="">
+                                <span id="branchemailError" class="error-message"></span>
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <label for="" class="form-label">Mobile No
+                                    :</label>
+                                <input type="number" class="form-control" id="branchphone_number" name="phone_number"
+                                    value="">
+                                <span id="branchphone_numberError" class="error-message"></span>
+                            </div>
+                            <!-- 
+                            <div class="col-md-6 mb-2">
+                                <label for="" class="form-label">Address
+                                    :</label>
+                                <textarea rows="3" class="form-control" id="address" name="branchaddress"></textarea>
+                                <span id="branchaddressError" class="error-message"></span>
+                            </div> -->
+                        </div>
+
+
+
+                    </div>
+
+                    <hr>
+
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="myLargeModalLabel">Branch
+                            Details</h5>
+                    </div>
+
+
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-2">
+                                <label for="" class="form-label">Name :</label>
+                                <input type="text" class="form-control" id="branchcompany_name" name="company_name"
+                                    value="">
+                                <span id="branchcompany_nameError" class="error-message"></span>
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <label for="" class="form-label">Email :</label>
+                                <input type="email" class="form-control" id="branchcompany_email" name="company_email"
+                                    value="">
+                                <span id="branchcompany_emailError" class="error-message"></span>
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <label for="" class="form-label">Mobile No
+                                    :</label>
+                                <input type="number" class="form-control" id="branchcompany_phone" name="company_phone"
+                                    value="">
+                                <span id="branchcompany_phoneError" class="error-message"></span>
+                            </div>
+
+                            <div class="col-md-6 mb-2">
+                                <label for="" class="form-label">Address
+                                    :</label>
+                                <textarea rows="3" class="form-control" id="branchcompany_address"
+                                    name="company_address"></textarea>
+                                <span id="branchcompany_addressError" class="error-message"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
+                <hr>
+                <div class="modal-footer">
+                    <button class="btn btn-link link-success fw-medium shadow-none" onclick="clearErrors()"
+                        data-bs-dismiss="modal"><i class="ri-close-line me-1 align-middle"></i>
+                        Close</button>
+                    <button type="button" onclick="createNewBranch(this)" id="submitBtn" class="btn btn-primary ">Save
+                    </button>
+                </div>
+
+
+            </div>
+
+            <hr>
+
+
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+
+
+
+</div>
+
+
+
+
+<script>
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+
+
+
+
+        const table = document.getElementById('example');
+        const rowNumbers = table.querySelectorAll('.row-number');
+
+        rowNumbers.forEach((row, index) => {
+            row.textContent = index + 1;
+        });
+
+
+
+        const viewButtons = document.querySelectorAll('.view-btn');
+        const editButtons = document.querySelectorAll('.edit-btn');
+        const delButtons = document.querySelectorAll('.del-btn');
+
+        viewButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const modalId = this.getAttribute('data-target');
+                const modal = document.querySelector(modalId);
+                if (modal) {
+                    $(modal).modal('show');
+                }
+            });
+        });
+
+
+        editButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const modalId = this.getAttribute('data-target');
+                const modal = document.querySelector(modalId);
+                if (modal) {
+                    $(modal).modal('show');
+                }
+            });
+        });
+
+        delButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const modalId = this.getAttribute('data-target');
+                const modal = document.querySelector(modalId);
+                if (modal) {
+                    $(modal).modal('show');
+                }
+            });
+        });
+
+
+    });
+
+
+
+
+    function updateFunction(button, saveId) {
+        try {
+            disableButton(button);
+            clearErrors();
+
+            const formData = new FormData();
+            formData.append('name', getValueOrDefault($(`#edituserForm${saveId} input[name="name"]`).val()));
+            formData.append('email', getValueOrDefault($(`#edituserForm${saveId} input[name="email"]`).val()));
+            formData.append('phone_number', getValueOrDefault($(`#edituserForm${saveId} input[name="phone_number"]`).val()));
+
+            formData.append('company_name', getValueOrDefault($(`#editcompanyForm${saveId} input[name="company_name"]`).val()));
+            formData.append('company_email', getValueOrDefault($(`#editcompanyForm${saveId} input[name="company_email"]`).val()));
+            formData.append('company_phone', getValueOrDefault($(`#editcompanyForm${saveId} input[name="company_phone"]`).val()));
+            formData.append('company_address', getValueOrDefault($(`#editcompanyForm${saveId} textarea[name="company_address"]`).val()));
+
+            formData.append('address', getValueOrDefault($(`#editinfoForm${saveId} textarea[name="address"]`).val()));
+            const proofFile = document.querySelector(`#editinfoForm${saveId} input[type="file"]`).files[0];
+            if (proofFile) {
+                formData.append("proof", proofFile);
+            }
+
+            console.log(csrftoken);
+            $.ajax({
+                url: '/update-user/' + saveId + '/',
+                type: 'PUT',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                },
+                processData: false,
+                contentType: false,
+                data: formData,
+                success: function (response, status, xhr) {
+                    if (xhr.status === 200) {
+                        showToast('Successfully Updated', '', 'bg-success', true);
+                    } else {
+                        showToast('something went wrong', '', 'bg-danger');
+                        enableButton(button);
+                        console.error(error);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log(xhr, status, error);
+                    if (xhr.status === 400) {
+                        if (xhr?.responseJSON || xhr?.responseJSON?.errors) {
+                            handleUpdateErrors(saveId, transformErrors(xhr.responseJSON));
+                            enableButton(button);
+                        } else {
+                            showToast('something went wrong', '', 'bg-danger');
+                            enableButton(button);
+                        }
+                    } else {
+                        showToast('something went wrong', '', 'bg-danger');
+                        enableButton(button);
+                    }
+                }
+            });
+        } catch (error) {
+            $('#createForm input, #createForm button').prop('disabled', true);
+            showToast('An error occurred', '', 'bg-danger');
+            enableButton(button);
+            console.error(error);
+        }
+    }
+
+
+
+
+    // create form
+
+    function createFunction(button) {
+        try {
+            disableButton(button);
+            var isValid = true;
+            var errors = {};
+            var formData = new FormData();
+
+            var requiredKeys = ['name', 'email', 'phone_number', "company_name", "company_phone", "company_address"];
+
+            var proofFile = document.querySelector('#createinfoForm input[type="file"]').files[0];
+            if (proofFile) {
+                formData.append("proof", proofFile);
+            }
+
+            formData.append('name', getValueOrDefault($('#createuserForm input[name="name"]').val()));
+            formData.append('email', getValueOrDefault($('#createuserForm input[name="email"]').val()));
+            formData.append('phone_number', getValueOrDefault($('#createuserForm input[name="phone_number"]').val()));
+
+            formData.append('company_name', getValueOrDefault($('#createcompanyForm input[name="company_name"]').val()));
+            formData.append('company_email', getValueOrDefault($('#createcompanyForm input[name="company_email"]').val()));
+            formData.append('company_phone', getValueOrDefault($('#createcompanyForm input[name="company_phone"]').val()));
+            formData.append('company_address', getValueOrDefault($('#createcompanyForm textarea[name="company_address"]').val()));
+
+            formData.append('address', getValueOrDefault($('#createinfoForm textarea[name="address"]').val()));
+
+            console.log('FormData:', formData);
+
+
+            requiredKeys.forEach(function (key) {
+                var value = formData.get(key);
+                if (!value.trim()) {
+                    isValid = false;
+                    errors[key] = ['This field may not be blank.'];
+                }
+            });
+
+            if (!isValid) {
+                enableButton(button);
+                console.log(errors);
+                handleCreateErrors(errors);
+                return;
+            } else {
+                $('#createuserForm input, #createuserForm button').prop('disabled', true);
+                // enableButton(button);
+            }
+
+            $.ajax({
+                url: '/create-user/',
+                type: 'POST',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                },
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response, status, xhr) {
+                    console.error(status);
+                    if (xhr.status === 201) {
+                        showToast('Successfully Updated', '', 'bg-success', true);
+                    } else {
+                        console.error(error);
+                        enableButton(button);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log(xhr, status, error);
+                    if (xhr.status === 400) {
+                        if (xhr?.responseJSON || xhr?.responseJSON?.errors) {
+                            handleCreateErrors(transformErrors(xhr.responseJSON));
+                            enableButton(button);
+                        } else {
+                            showToast('something went wrong', '', 'bg-danger');
+                            enableButton(button);
+                        }
+                    } else {
+                        showToast('something went wrong', '', 'bg-danger');
+                        enableButton(button);
+                    }
+                }
+            });
+        } catch (error) {
+            $('#createForm input, #createForm button').prop('disabled', true);
+            showToast('An error occurred', '', 'bg-danger');
+            enableButton(button);
+            console.error(error);
+        }
+    }
+
+
+
+
+    // create branch
+
+    // open modal
+
+    function openBranchModel(button) {
+        var modal = document.getElementById('branchModal');
+        var submitBtn = modal.querySelector('#submitBtn');
+
+        var userId = button.getAttribute('data-user-id'); // Get user ID from the button
+        // userIdSpan.textContent = userId; // Update the user ID span inside the modal
+        submitBtn.setAttribute('data-user-id', userId); // Set data attribute to the submit button
+        $('#branchModal').modal('show');
+    }
+
+
+
+    function createNewBranch(button) {
+        clearErrors()
+        var userId = button.getAttribute('data-user-id');
+
+        var formId = `addbranchForm`;
+        var formElement = document.getElementById(formId);
+        console.log(formElement)
+
+        try {
+            disableButton(button);
+            var isValid = true;
+            var errors = {};
+            var formData = new FormData();
+
+            var requiredKeys = ['name', 'email', 'phone_number', "company_name", "company_phone", "company_address",];
+
+            formData.append('name', getValueOrDefault(formElement.querySelector('input[name="name"]').value));
+            formData.append('email', getValueOrDefault(formElement.querySelector('input[name="email"]').value));
+            formData.append('phone_number', getValueOrDefault(formElement.querySelector('input[name="phone_number"]').value));
+
+            formData.append('company_name', getValueOrDefault(formElement.querySelector('input[name="company_name"]').value));
+            formData.append('company_email', getValueOrDefault(formElement.querySelector('input[name="company_email"]').value));
+            formData.append('company_phone', getValueOrDefault(formElement.querySelector('input[name="company_phone"]').value));
+            formData.append('company_address', getValueOrDefault(formElement.querySelector('textarea[name="company_address"]').value));
+
+
+            requiredKeys.forEach(function (key) {
+                var value = formData.get(key);
+                if (!value.trim()) {
+                    isValid = false;
+                    errors["branch" + key] = ['This field may not be blank.'];
+                }
+            });
+
+            if (!isValid) {
+                enableButton(button);
+                console.log(errors);
+                handleCreateErrors(errors);
+                return;
+            } else {
+                $('#addbranchForm input, #addbranchForm button').prop('disabled', true);
+                // enableButton(button);
+            }
+
+            $.ajax({
+                url: '/add_branch/' + userId + '/',
+                type: 'PUT',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                },
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response, status, xhr) {
+                    console.error(status);
+                    if (xhr.status === 200) {
+                        showToast('Successfully Updated', '', 'bg-success', true);
+                    } else {
+                        console.error(error);
+                        enableButton(button);
+                        showToast('something went wrong', '', 'bg-danger');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log(xhr, status, error);
+                    if (xhr.status === 400) {
+                        if (xhr?.responseJSON || xhr?.responseJSON?.errors) {
+                            $('#addbranchForm input, #addbranchForm button').prop('disabled', false);
+                            enableButton(button);
+                            handleCreateErrors(transformsuperErrors(xhr.responseJSON, "branch"));
+
+                            // enableButton(button);
+                        } else {
+                            showToast('something went wrong', '', 'bg-danger');
+                            enableButton(button);
+                        }
+                    } else {
+                        showToast('something went wrong', '', 'bg-danger');
+                        enableButton(button);
+                    }
+                }
+            });
+        } catch (error) {
+            showToast('An error occurred', '', 'bg-danger');
+            $('#addbranchForm input, #addbranchForm button').prop('disabled', false);
+            enableButton(button);
+            console.error(error);
+        }
+    }
+
+
+</script>
+
+
+
+
+
+
+
+
+
+{% endblock content %}
