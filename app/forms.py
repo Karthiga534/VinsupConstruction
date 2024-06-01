@@ -44,3 +44,19 @@ class RegistrationForm(forms.ModelForm):
     class Meta:
         model = CustomUser
         fields = ['email', 'name', 'phone_number', 'address', 'proof' , "company_email","company_name","company_phone_number","company_address"]
+class PasswordResetRequestForm(forms.Form):
+    email = forms.EmailField(label="Email", max_length=254)
+
+
+class SetPasswordForm(forms.Form):
+    new_password = forms.CharField(widget=forms.PasswordInput)
+    confirm_password = forms.CharField(widget=forms.PasswordInput)
+
+    def clean(self):
+        cleaned_data = super().clean()
+        new_password = cleaned_data.get("new_password")
+        confirm_password = cleaned_data.get("confirm_password")
+
+        if new_password != confirm_password:
+            raise forms.ValidationError("Passwords do not match")
+        return cleaned_data
