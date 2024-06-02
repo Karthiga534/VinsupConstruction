@@ -89,6 +89,7 @@
                                             <th data-ordering="false">Purchase Amount</th>
                                             <th data-ordering="false">paid Amount</th>
                                             <th data-ordering="false">Pending Amount</th>
+                                            <th data-ordering="false">Status</th>
                                             <th data-ordering="false">Action</th>
 
                                         </tr>
@@ -222,6 +223,7 @@
                                     <th>Item</th>
                                     <th>Qty</th>
                                     <th>Unit</th>
+                                    <th>Price</th>
                                     <th>Amount</th>
 
                                 </tr>
@@ -379,6 +381,11 @@
             newRow.appendChild(td7);
 
 
+            const td8 = createStatusCell(get_value(data.status_name),data.status_class);
+         
+            newRow.appendChild(td8);
+
+
 
             // actioncell
             const actionCell = createViewActionCell('invoiceHistoryModal');
@@ -406,6 +413,7 @@
                 modalRow.appendChild(createTableCell(tItem.item_name));
                 modalRow.appendChild(createTableCell(tItem.qty));
                 modalRow.appendChild(createTableCell(tItem.unit_name));
+                modalRow.appendChild(createTableCell(tItem.price));
                 modalRow.appendChild(createAmountCell(tItem.sub_total));
               
                 modalTableBody.appendChild(modalRow);

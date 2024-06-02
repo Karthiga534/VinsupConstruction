@@ -25,19 +25,21 @@ class WorkStatus(models.Model):
     code = models.CharField(max_length=50, null=True, blank=True)
 
     def __str__(self):
-        return self.name
+        return f'{self.name}'
 
 
 class ProcessStatus(models.Model):
     name = models.CharField(max_length=50, null=True, blank=True)
     code = models.CharField(max_length=50, null=True, blank=True)
+    classname = models.CharField(max_length=256, null=True, blank=True)
 
     def __str__(self):
-        return self.name
+        return f'{self.name}'
 
 class PaymentStatus(models.Model):
     name = models.CharField(max_length=50, null=True, blank=True)
     code = models.CharField(max_length=50, null=True, blank=True)
+    
 
     def __str__(self):
         return self.name
@@ -45,13 +47,14 @@ class PaymentStatus(models.Model):
 class PaymentMethod(models.Model):
     name = models.CharField(max_length=50, null=True, blank=True)
     code = models.CharField(max_length=50, null=True, blank=True)
+   
 
     def __str__(self):
         return self.name
 
 class ContractType(models.Model):
     name = models.CharField(max_length=50, null=True, blank=True)
-    code = models.CharField(max_length=50, null=True, blank=True)
+    code = models.CharField(max_length=256, null=True, blank=True)
 
     def __str__(self):
         return self.name
@@ -59,7 +62,7 @@ class ContractType(models.Model):
 class Duration(models.Model):
     company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
     name=models.CharField(max_length=100,null=True,blank=True)
-    code = models.CharField(max_length=50, null=True, blank=True)
+    code = models.CharField(max_length=256, null=True, blank=True)
 
 
     def __str__(self):
@@ -69,6 +72,7 @@ class Priority(models.Model):
     company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
     name=models.CharField(max_length=100,null=True,blank=True)
     code = models.CharField(max_length=50, null=True, blank=True)
+    
 
 
     def __str__(self):
@@ -1317,7 +1321,7 @@ class PurchaseInvoice(models.Model):
     def save(self, *args, **kwargs):
         self.full_clean()  #
         if not self.status:
-            self.status,_ =ProcessStatus.objects.get_or_create(code=0)
+            self.status,_ =ProcessStatus.objects.get_or_create(code=2)
         if not self.invoice_id:
             # Generate or set the invoice_id if not already provided
             # You can generate it based on your specific requirements

@@ -170,6 +170,7 @@
                                             <th data-ordering="false">Purchase Amount</th>
                                             <th data-ordering="false">paid Amount</th>
                                             <th data-ordering="false">Pending Amount</th>
+                                            <th data-ordering="false">Status</th>
                                             <th data-ordering="false">Action</th>
 
                                         </tr>
@@ -468,6 +469,10 @@
 
             const td7 = createTableCell(get_value(data.pending));
             newRow.appendChild(td7);
+
+
+            const td8 = createStatusCell(get_value(data.status_name),data.status_class);
+            newRow.appendChild(td8);
 
 
 

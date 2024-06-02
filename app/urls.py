@@ -413,7 +413,7 @@ path('purchase-track/<int:pk>/<int:site_or_inventory>/' , views.item_price_track
 
     path('user-list/', api.user_list, name='user-list'),
     path('contractor-list/', api.contractoratt_list, name='contractor-list'),
-    path('sub-contract-list/', api.sub_contract_list, name='sub-contract-list'),
+    path('sub-contract-list/<int:pk>/', api.sub_contract_list, name='sub-contract-list'),
 
    
     path('employee-profile/<int:pk>/', api.get_employee_profile, name='get-employee-profile'),

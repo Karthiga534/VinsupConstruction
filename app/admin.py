@@ -164,3 +164,5 @@ class PettyCashAdmin(admin.ModelAdmin):
     list_display = ('id',)
 
 admin.site.register(PaymentHistory)
+
+admin.site.register(ProcessStatus)

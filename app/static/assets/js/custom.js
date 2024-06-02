@@ -589,11 +589,21 @@ function get_filename(value) {
 
 
 // Helper function to create custom status cells
-const createStatusCell = (status) => {
+const createStatusCell = (status,className) => {
   const cell = document.createElement('td');
   const statusComponent = document.createElement('span');
   statusComponent.textContent = status;
-  statusComponent.style.color = status === 'Paid' ? 'green' : 'red';
+  if (className){
+    let classList = className.split(' ')
+    console.log(classList)
+    statusComponent.classList.add(...classList)
+    cell.appendChild(statusComponent);
+    return cell;
+  }
+  else{
+    statusComponent.style.color = status === 'Paid' ? 'green' : 'red';
+  }
+ 
   cell.appendChild(statusComponent);
   return cell;
 };
@@ -711,6 +721,7 @@ function createPaidStatusCell(value, text) {
 
   return cell;
 }
+
 
 
 

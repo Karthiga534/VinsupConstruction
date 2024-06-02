@@ -2139,7 +2139,9 @@ def contractoratt_list(request):
     return Response(contractors)
 
 @api_view(['GET'])
-def sub_contract_list(request):
-    sub_contract = ProjectSubContract.objects.values('id', 'name', )
-    sub_contracts = [{'id': sub_contract['id'], 'name': sub_contract['name']} for sub_contract in sub_contract]
-    return Response(sub_contracts)
+def sub_contract_list(request,pk):
+    user_company = request.user.company  
+    sub_contract = ProjectSubContract.objects.filter(company=user_company,project=pk)
+    ser =ProjectSubContractDdropSerializer(sub_contract,many=True)
+   
+    return Response(ser.data)

@@ -196,6 +196,9 @@ class PurchaseInvoiceListSerializer(ModelSerializer):
     def to_representation(self, instance):
         data = super().to_representation(instance)
         data ["vendor_name"] = instance.vendor.display if instance.vendor else None
+        data ["status_name"] = instance.status.name if instance.status else None
+        data ["status_code"] = instance.status.code if instance.status else None
+        data ["status_class"] = instance.status.classname if instance.status else None
         # data ['total_purchase_amount'] =instance.total_purchase_amount
         # data ['total_purchase_paid_amount'] =instance.total_purchase_paid_amount
        
@@ -539,6 +542,16 @@ class ProjectSubContractSerializer(ModelSerializer):
     class Meta:
         model = ProjectSubContract
         fields = "__all__"
+
+class ProjectSubContractDdropSerializer(ModelSerializer):
+    class Meta:
+        model = ProjectSubContract
+        fields = ('id',)
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data ['display_contractor_dropdown'] =instance.display_contractor
+        return data
 
 class ProjectSubContractUnitRatesSerializer(ModelSerializer):
     class Meta:
