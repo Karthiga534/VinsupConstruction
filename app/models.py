@@ -1129,6 +1129,34 @@ class Project(models.Model):
         if amt >0 :
             return amt
         return amt
+    
+
+    @property
+    def total_purchase_amount(self):
+        pamount=0
+        purchasehistory=self.purchaseinvoice_set.all()
+        print(purchasehistory)
+        if purchasehistory:
+            pamount =sum( get_amount_or_zero(i.total_amount) for i in purchasehistory) 
+        return pamount
+    
+
+
+    @property
+    def total_purchase_paid_amount(self):
+        pamount=0
+        purchasehistory=self.purchaseinvoice_set.all()
+        print(purchasehistory)
+        if purchasehistory:
+            pamount =sum( get_amount_or_zero(i.paid) for i in purchasehistory) 
+        return pamount
+    
+
+    @property
+    def total_purchase_pending_amount(self):
+      return self.total_purchase_amount -self.total_purchase_paid_amount
+
+
 
 # ----------------------------- stock management ---------------------------------- ---------------------------------------------------- 
 

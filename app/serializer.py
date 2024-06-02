@@ -180,7 +180,7 @@ class   PurchaseItemsPriceTrackSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        data ["item_name"] = instance.item.item if instance.item else None
+        # data ["item_name"] = instance.item.item if instance.item else None
         data ['unit_name'] = instance.unit.name if instance.unit else None
         return data
 
@@ -196,7 +196,9 @@ class PurchaseInvoiceListSerializer(ModelSerializer):
     def to_representation(self, instance):
         data = super().to_representation(instance)
         data ["vendor_name"] = instance.vendor.display if instance.vendor else None
-        # data ['unit_name'] = instance.unit.name if instance.unit else None
+        # data ['total_purchase_amount'] =instance.total_purchase_amount
+        # data ['total_purchase_paid_amount'] =instance.total_purchase_paid_amount
+       
         return data
 
 class QuatationItemsSerializer(ModelSerializer):

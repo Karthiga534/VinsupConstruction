@@ -15,7 +15,7 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                            <h4 class="mb-sm-0">Purchase Management</h4>
+                            <h4 class="mb-sm-0">Purchase History </h4>
 
                             <div class="page-title-right">
                                 <ol class="breadcrumb m-0">
@@ -30,10 +30,12 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="card">
+
+                            {% if inventry %}
                             <div class="card-header">
                                 <div class="row">
                                     <div class="col-xl-6 col-lg-6 col-md-6 col-12">
-                                        <h4>Purchase List </h4>
+                                        <h4>Inventory Purchase History </h4>
                                     </div>
                                     <div class="col-xl-4 col-lg-4 col-md-4 col-12"></div>
                                     <div class="col-xl-2 col-lg-2 col-md-2 col-12">
@@ -42,19 +44,98 @@
                                     </div>
                                 </div>
                             </div>
+                      
+
+                            {% else %}
+
+                            <div class="card-header">
+                                <div class="row">
+                                    <div class="col-xl-6 col-lg-6 col-md-6 col-12">
+                                        <h4>{{project.display}} Purchase History </h4>
+                                    </div>
+                                    <div class="col-xl-4 col-lg-4 col-md-4 col-12"></div>
+                                    <div class="col-xl-2 col-lg-2 col-md-2 col-12">
+                                        <a href="{% url 'viewstock' %}" type="button" class="btn btn-info"
+                                            style="float:right;">Back</a>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                 
+                                    <div class="col-md-4 mt-2">
+                                        <label for="" class="form-label">Client Name:</label>
+                                        <input type="text" class="form-control" name="client" value="{{project.client}}"
+                                            disabled>
+                                        <span id="clientError" class="error-message"></span>
+                                    </div>
+                                    <div class="col-md-4 mt-2">
+                                        <label for="" class="form-label">Contact No:</label>
+                                        <input type="text" class="form-control" name="contact_no"
+                                            value="{{ project.contact_no }}" disabled>
+                                        <span id="contactNoError" class="error-message"></span>
+                                    </div>
+                                    <div class="col-md-4 mt-2">
+                                        <label for="" class="form-label">Project Name:</label>
+                                        <input type="text" class="form-control" name="proj_name"
+                                            value="{{ project.proj_name }}" disabled>
+                                        <span id="projNameError" class="error-message"></span>
+                                    </div>
+                                    <div class="col-md-4 mt-2">
+                                        <label for="" class="form-label">Site Location:</label>
+                                        <input type="text" class="form-control" name="site_location"
+                                            value="{{ project.site_location }}" disabled>
+                                        <span id="siteLocationError" class="error-message"></span>
+                                    </div>
+                                    <div class="col-md-4 mt-2">
+                                        <label for="" class="form-label">Estimation:</label>
+                                        <input type="text" class="form-control" name="estimation"
+                                            value="{{ project.estimation }}" disabled>
+                                        <span id="estimationError" class="error-message"></span>
+                                    </div>
+
+                                </div>
+
+
+
+                            </div>
+
+                            {% endif %}
+
+
+                            <div class="card-header">
+
+                                <div class="row mt-3">
+                                    <div class="col bg-primary-subtle p-3 text-center m-2">
+                                        <h5> Total Purchase Amount </h5>
+                                        <h5 id="total_purchase_amount" >{{ project.total_purchase_amount }}</h5>
+                                    
+                                    </div>
+
+                                    <div class="col bg-primary-subtle p-3 text-center m-2">
+                                        <h5> Total Paid Amount </h5>
+                                        <h5 id="total_purchase_paid_amount">{{ project.total_purchase_paid_amount }}</h5>
+                                    
+                                    </div>
+                                </div>
+                                
+                            </div>
+
+
+
                             <div class="card-body">
                                 <div class="row">
-                                    <!-- <div class="col-xl-3 col-lg-3 col-md-3 col-xs-6 col-12">
+                                    <input type="text" id ="pid" value="{{pid}}" hidden>
+                                    <div class="col-xl-3 col-lg-3 col-md-3 col-xs-6 col-12">
                                         <label for="vendor" class="form-label">Vendor Name:</label>
-                                        <select class="form-select mb-3" aria-label="Default select example"
+                                        <select class="form-select mb-3" aria-label="Default select example" 
                                             id="filterdropdown1" name="vendor">
-                                            <option value="0">---------------------</option>
-                                            {% for vendor in vendor_names %}
+                                            <option value="{{0}}">All</option>
+                                            {% for vendor in vendors %}
                                             <option value="{{ vendor.id }}">{{ vendor.vendorname }}</option>
                                             {% endfor %}
                                         </select>
                                         <span id="vendorError" class="error-message"></span>
-                                    </div> -->
+                                    </div>
                                     <div class="col-xl-3 col-lg-3 col-md-3 col-xs-6 col-12">
                                         <label for="exampleInputdate" class="form-label">From Date</label>
                                         <input type="date" class="form-control" id="fromDate">
@@ -66,7 +147,7 @@
                                     </div>
                                     <div class="col-xl-3 col-lg-3 col-md-3 col-xs-6 col-12">
                                         <br><button type="button"
-                                            class="btn btn-primary waves-effect waves-light mt-2">Get Report</button>
+                                            class="btn btn-primary waves-effect waves-light mt-2" onclick="getReport(this,'example')">Get Report</button>
                                     </div>
 
                                 </div>
@@ -282,6 +363,11 @@
         const fromdate = document.getElementById('fromDate');
         const todate = document.getElementById('toDate');
 
+        const pidElement = document.getElementById('pid');
+
+        const total_purchase_amount =document.getElementById('total_purchase_amount')
+        const paidamountelement =document.getElementById('total_purchase_paid_amount')
+
         var currentPage = 1;
 
         document.addEventListener('DOMContentLoaded', function () {
@@ -320,8 +406,9 @@
             const selectedValue = firstDropdown.value;
             const from = fromdate?.value || ""
             const to = todate?.value || ""
+            const pid = pidElement.value || ""
             try {
-                fetch(`/${fetchUrl}/${selectedValue}/?page=${page}&start_date=${from}&end_date=${to}&project=${to}`)
+                fetch(`/${fetchUrl}/${selectedValue}/?page=${page}&start_date=${from}&end_date=${to}&project=${pid}`)
                     .then(response => {
                         if (response.status === 200) {
                             console.log('Data fetched');
@@ -336,6 +423,8 @@
                     })
                     .then(data => {
                         tableBody.innerHTML = '';
+                        total_purchase_amount.innerText = data.total_purchase_amount
+                        paidamountelement.innerText = data.total_purchase_paid_amount
                         renderDataOrMessage(tableBody, data, page)
                         activePage = page
                     })
@@ -354,7 +443,8 @@
 
         // MANIPULATE TABLE DATA
         function createTableRow(serialNumber, data) {
-          
+
+
             const newRow = document.createElement('tr');
             newRow.setAttribute('data-item-id', data.id);
 

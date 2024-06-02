@@ -151,6 +151,48 @@
 
 
 
+    <!-- modal table -->
+    <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+        id="purchaseHistoryModal" data-bs-keyboard="false" data-bs-backdrop="static" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="myLargeModalLabel">Purchase Items</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>S.no</th>
+                                    <th>Item</th>
+                                    <th>Qty</th>
+                                    <th>Unit</th>
+                                    <th>Amount</th>
+
+                                </tr>
+                            </thead>
+                            <tbody id="modalTableBody">
+                                <!-- Modal table body will be populated dynamically -->
+
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-link link-success fw-medium shadow-none" data-bs-dismiss="modal"><i
+                            class="ri-close-line me-1 align-middle"></i> Close</button>
+                    <!-- <button type="button" class="btn btn-primary">Save</button> -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
     <!--start back-to-top-->
     <button onclick="topFunction()" class="btn btn-danger btn-icon" id="back-to-top">
         <i class="ri-arrow-up-line"></i>
@@ -182,27 +224,27 @@
             const tableBody = document.querySelector('#example tbody');
 
             // on dom loaded 
-            const initialSelectedValue = dropdown.value; 
-            fetchData(initialSelectedValue,tableBody);
+            const initialSelectedValue = dropdown.value;
+            fetchData(initialSelectedValue, tableBody);
 
             // fetch table data API
             dropdown.addEventListener('change', function () {
                 console.log(dropdown, tableBody)
                 const selectedValue = dropdown.value;
-                fetchData(selectedValue,tableBody);
+                fetchData(selectedValue, tableBody);
             });
 
         });
 
 
         // fetch data
-        function fetchData(selectedValue,tableBody) {
+        function fetchData(selectedValue, tableBody) {
             try {
                 fetch(`/transfer/${selectedValue}/`,
-                headers: {
+                    headers: {
                     'X-CSRFToken': csrftoken,
                 },
-                
+
                 )
                     .then(response => {
                         if (response.status === 200) {
@@ -218,7 +260,6 @@
                     })
                     .then(data => {
                         tableBody.innerHTML = '';
-
                         data.forEach((item, index) => {
                             const newRow = createTableRow(index + 1, item);
                             tableBody.appendChild(newRow);
@@ -237,33 +278,88 @@
 
         // MANIPULATE TABLE DATA
         function createTableRow(serialNumber, data) {
+            // const newRow = document.createElement('tr');
+            // newRow.setAttribute('data-item-id', data.id);
+            // newRow.innerHTML = `
+
+            // <!-- 	<th scope="row">
+            // 			<div class="form-check">
+            // 				<input class="form-check-input fs-15 item-checkbox"
+            // 					type="checkbox" name="checkAll" value="${data.item.id}">
+            // 			</div>           --!>
+            // 		</th>
+            // 		<td>${serialNumber}</td>
+            // 		<td>${data.item.item}</td>
+            // 		<td>${data.price}</td>
+
+            // 		<td>${data.qty}</td>
+            //         <td>${data.unit}</td>
+            //         <td>${formatAmount(data.get_total)}</td>
+            //         <td>${data.qty}</td>
+            // 		`;
+
+            // return newRow;
+
+
             const newRow = document.createElement('tr');
             newRow.setAttribute('data-item-id', data.id);
-            newRow.innerHTML = `
 
-            <!-- 	<th scope="row">
-						<div class="form-check">
-							<input class="form-check-input fs-15 item-checkbox"
-								type="checkbox" name="checkAll" value="${data.item.id}">
-						</div>           --!>
-					</th>
-					<td>${serialNumber}</td>
-					<td>${data.item.item}</td>
-					<td>${data.price}</td>
+            const idCell = createSerialCell(serialNumber);
+            newRow.appendChild(idCell);
 
-					<td>${data.qty}</td>
-                    <td>${data.unit}</td>
-                    <td>${currencyFormatter.format(data.get_total)}</td>
-					`;
+            const td2 = createTableCell(get_value(data.item.item));
+            newRow.appendChild(td2);
+
+            const td3 = createTableCell(get_value(data.price));
+            newRow.appendChild(td3);
+
+            const td4 = createTableCell(get_value(data.qty));
+            newRow.appendChild(td4);
+
+            const td5 = createAmountCell(get_value(data.unit));
+            newRow.appendChild(td5);
+
+            const td6 = createTableCell(get_value(formatAmount(data.get_total)));
+            newRow.appendChild(td6);
+
+
+            // actioncell
+            const actionCell = createViewActionCell('purchaseHistoryModal');
+            newRow.appendChild(actionCell);
+
+            // click event
+            actionCell.addEventListener('click', () => {
+                populateModalTable(data.get_purchase_items, modalTableBody);
+            });
 
             return newRow;
+
+
         }
 
 
-        function routePage(url,id)
-        
-        {
-            window.location.href =`${url}`
+        // nested table
+        function populateModalTable(items, modalTableBody) {
+            modalTableBody.innerHTML = ''; // Clear previous data
+
+            items?.forEach((tItem, index) => {
+                const modalRow = document.createElement('tr');
+
+                modalRow.appendChild(createSerialCell(index + 1));
+                modalRow.appendChild(createTableCell(tItem.item_name));
+                modalRow.appendChild(createTableCell(tItem.qty));
+                modalRow.appendChild(createTableCell(tItem.unit_name));
+                modalRow.appendChild(createAmountCell(tItem.sub_total));
+
+                modalTableBody.appendChild(modalRow);
+            });
+
+        }
+
+
+
+        function routePage(url, id) {
+            window.location.href = `${url}`
         }
 
 

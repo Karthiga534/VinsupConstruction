@@ -2049,7 +2049,7 @@ def employee_attendence_list(request,pk):  #change name
     company,_=get_user_company(user)
     pk= int(pk)
     if pk !=0:   
-        print(Attendance.objects.filter(employee__id = pk,company__in=company))
+        # print(Attendance.objects.filter(employee__id = pk,company__in=company))
         querysets =Attendance.objects.filter(employee__id = pk,company__in=company)
         return PaginationAndFilter(querysets, request,AttendenceSerialiser,date_field ="date")
         
@@ -2293,10 +2293,38 @@ def purchase_list(request,pk):  #change name
          return render(request,"login.html",context)    
  
     querysets = PurchaseInvoice.objects.filter(company=request.user.company).order_by("-id")   #change query
-    
+   
     pk= int(pk)
     if pk !=0:   
-        querysets = querysets.filter(vendor__id =pk)
+        print('vendor')
+        querysets = querysets.filter(vendor__id = pk)    
+
+    project_id = request.GET.get('project')
+
+    # try :
+    #     project =int(project_id)
+    # except:
+    #     project =0
+
+    project =get_int_or_zero(project_id)
+
+    if project and project !=0:
+        querysets =querysets.filter(site__id =project)
+
+    # Apply pagination and get the serialized data
+    paginated_data = PaginationAndFilter(querysets, request, PurchaseInvoiceListSerializer, date_field="created_at")
+
+    results = paginated_data.data['results']
+    
+    # Calculate total amounts
+    total_purchase_amount = sum(get_amount_or_zero(item['total_amount'] )for item in results)
+    total_purchase_paid_amount = sum(get_amount_or_zero(item['paid']) for item in results)
+    
+    # Add totals to the response data
+    paginated_data.data['total_purchase_amount'] = total_purchase_amount
+    paginated_data.data['total_purchase_paid_amount'] = total_purchase_paid_amount
+    
+    return paginated_data
 
     return PaginationAndFilter(querysets, request,PurchaseInvoiceListSerializer,date_field ="created_at")
 
@@ -2635,9 +2663,18 @@ def payment_process(request, project_id):
 # @login_required(login_url='login')    
 def item_price_track(request,pk,site_or_inventory):
     if site_or_inventory ==0:
-        inventoryitem =get_object_or_404(InventoryStock,id=pk)
+        item =get_object_or_404(InventoryStock,id=pk)
     else :
-        inventoryitem =get_object_or_404(SiteStock,id=pk)
-    purchase_records =inventoryitem.purchase_history
+        item =get_object_or_404(SiteStock,id=pk)
+    purchase_records =item.purchase_history
     serializers = PurchaseItemsPriceTrackSerializer(purchase_records,many=True)
-    return Response(serializers.data)
+    data = serializers.data
+
+    item_name =item.item.item if item.item else None
+    
+    results={
+        "data" : data,
+        "item_name" :item_name
+    }
+
+    return Response(results)

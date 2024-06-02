@@ -241,12 +241,25 @@ def project_purchaselist(request,pk):
     if not allow:
         context = {"unauthorized": msg}
         return render(request, "login.html", context)
-    # vendors = VendorRegistration.objects.filter(company=request.user.company).order_by("-id")
-    querysets = PurchaseInvoice.objects.filter(company=request.user.company).order_by("-id")
-    if pk:
-        querysets= querysets.filter(site__id=pk)
+    vendors = VendorRegistration.objects.filter(company=request.user.company).order_by("-id")
+    # querysets = PurchaseInvoice.objects.filter(company=request.user.company).order_by("-id")
+    # if pk:
+    #     querysets= querysets.filter(site__id=pk)
+    
+    querysets =PurchaseInvoice.objects.none()
     queryset, pages, search = customPagination(request, PurchaseInvoice, querysets)
-    context = {'queryset': queryset,"location": "purchaselist","pages": pages,"search": search,}
+   
+    pid =pk
+    inventory = True
+
+    project ={}
+
+    if pk !=0:
+        project = get_object_or_404(Project,id=pk)
+        inventory = False
+    
+    context = {'queryset': queryset,"location": "project-purchase-history","pages": pages,
+               "search": search,'pid':pk,"project":project,"inventry":inventory,'vendors':vendors}
     return render(request, "stock/sitePurchase.html", context)
 
 #Inventory Management
