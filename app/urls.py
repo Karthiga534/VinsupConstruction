@@ -400,6 +400,18 @@ urlpatterns = [
     path('update_files/<int:pk>/', api.update_files, name='update_files'),
     path('delete_files/<int:pk>/', api.delete_files, name='delete_files'),
 
+
+    path('dailytask/', views.dailytask, name='dailytask'),  
+    path('add_dailytask/', views.add_dailytask, name='add_dailytask'),  
+    path('update_dailytask/<int:pk>/', views.update_dailytask, name='update_dailytask'), 
+    path('delete_dailytask/<int:pk>/', views.delete_dailytask, name='delete_dailytask'),  
+
+
+
+
+
+
+
     path('machinaryused-list/', api.machinaryused_list, name='machinaryused-list'),
     path('machinaryused-list/<int:pk>/',  api.machinaryused_list, name='machinaryused-detail'),
     path('add_machinaryused/', api.add_machinaryused, name='add_machinaryused'),
@@ -454,6 +466,13 @@ urlpatterns = [
    
     path('employee-profile/<int:pk>/', api.get_employee_profile, name='get-employee-profile'),
 
+
+
+    path('dailysitestockusage/', api.dailysitestockusage, name='dailysitestockusage'),
+
+
+
+
 ]+static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
 
 admin.site.site_header = "CONSTRUCTION"
@@ -461,6 +480,7 @@ admin.site.site_title = "Construction"
 
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
 
 
 
