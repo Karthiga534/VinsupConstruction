@@ -417,7 +417,8 @@ def delete_employee(request, id):
             user.disable = False if user.disable else True
             user.save()
         # instance.delete()
-        return JsonResponse({'message': 'Disabled successfully'}, status=204)
+        return JsonResponse( {'details': [user.disable]},status=200)
+        # return JsonResponse({'message': 'Disabled successfully'}, status=204)
     except Employee.DoesNotExist:
         return JsonResponse({'error': 'Data not found'}, status=404)
     
@@ -432,6 +433,7 @@ def enable_employee(request, id):
             user.disable = False
             user.save()
         # instance.delete()
+        return JsonResponse( {'details': [user.disable]},status=200)
         return JsonResponse({'message': 'enabled successfully'}, status=204)
     except Employee.DoesNotExist:
         return JsonResponse({'error': 'Data not found'}, status=404)
@@ -873,8 +875,10 @@ def delete_labours(request,pk):
         allow,msg= check_user(request,CompanyLabours,instance=instance)  # CHANGE model
         if not allow:
             return JsonResponse({'details':[msg]}, status=status.HTTP_401_UNAUTHORIZED)
-        instance.delete()
-        return JsonResponse( {'details': ['success']},status=204)
+        instance.disable = False if instance.disable else True
+        instance.save()
+        # instance.delete()
+        return JsonResponse( {'details': [instance.disable]},status=200)
     except CompanyLabours.DoesNotExist:  # CHANGE model
         return JsonResponse({'details': ['Item does not exist']}, status=404)
 
@@ -968,6 +972,7 @@ def expense_list(request):
          return render(request, "login.html", context)
     querysets = Expense.objects.filter(company=request.user.company).order_by("-id")  #change query
     project=  Project.objects.filter(company=request.user.company).order_by("-id")
+    employee =Employee.objects.filter(company=request.user.company).order_by("-id") 
     queryset, pages, search = customPagination(request, Expense, querysets)   #change, model
     context = {
         'queryset': queryset,
@@ -975,6 +980,7 @@ def expense_list(request):
         "site_locations":project,
         "pages": pages,
         "search": search,
+        "employee" : employee
     }
     return render(request,"expense/expenselist.html", context)
 
@@ -987,15 +993,15 @@ def expenselist(request, pk):
          context = {"unauthorized": msg}
          return render(request, "login.html", context)
 
-    querysets = Expense.objects.filter(company=request.user.company)
+    querysets = Expense.objects.filter(company=request.user.company).order_by("-id")
     if pk !=int(0) :
-        querysets = Expense.objects.filter(site_location__id=pk)
-    # Date Filtering
-    start_date = request.GET.get('start_date')
-    end_date = request.GET.get('end_date')
-    if start_date and end_date:
-        querysets = querysets.filter(date__range=[start_date, end_date])
-    return PaginationAndFilter(querysets, request, ExpenseSerializer)
+        querysets = querysets.filter(site_location__id=pk)
+    # # Date Filtering
+    # start_date = request.GET.get('start_date')
+    # end_date = request.GET.get('end_date')
+    # if start_date and end_date:
+    #     querysets = querysets.filter(date__range=[start_date, end_date])
+    return PaginationAndFilter(querysets, request, ExpenseSerializer,"date")
 
 
 
@@ -2473,7 +2479,7 @@ def pettycash(request):  #change name
     querysets = PettyCash.objects.filter(company=request.user.company).order_by("-id") 
     employee = Employee.objects.filter(company=request.user.company).order_by("-id") 
     site_location =Project.objects.filter(company=request.user.company).order_by("-id")   #change query
-    payment_method = PaymentMethod.objects.filter(company=request.user.company).order_by("-id")
+    payment_method = PaymentMethod.objects.all().order_by("-id")
     queryset,pages,search =customPagination(request,PettyCash,querysets)    #change, model
     context= {'queryset': queryset,
               "location":"pettycash",

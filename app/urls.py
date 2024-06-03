@@ -20,9 +20,6 @@ urlpatterns = [
     path('logout/', CustomLogoutView.as_view(), name='logout'),
     path('', views.index, name='index'),
 
-    path('password_reset/', password_reset_request_view, name='password_reset_request'),
-    path('password_reset_confirm/', password_reset_confirm_view, name='password_reset_confirm'),
-
 #---------------------------- UOM ----------------------------
 
     path('uom/', views.uom, name='uom'),

@@ -6,8 +6,12 @@ const errorAlertMessage = { "message": "something went wrong", "bgColor": "bg-da
 const errorOccured = { "message": "An error occured", "bgColor": "bg-danger" }
 
 const pageLength = 10;
-const TruncateLength = 20 ;
+const TruncateLength = 20;
 const TruncateExt = "...";
+
+function goBack() {
+  window.history.back();
+}
 
 
 // console.log(successMesssage)
@@ -90,14 +94,14 @@ function reloadWithoutQueryParams() {
   window.location.reload();                  // Redirect to the URL without query parameters
 }
 
-function handleCreateErrors(errors,pre="") {
+function handleCreateErrors(errors, pre = "") {
   // console.log(errors);
 
   // Clear previous error styles and messages
   $(".form-control").removeClass("is-invalid");
   $(".error-message").text("");
 
-  
+
   for (var fieldName in errors) {
     if (errors.hasOwnProperty(fieldName)) {
       var errorMessage = errors[fieldName][0]; // Get the first error message
@@ -105,10 +109,10 @@ function handleCreateErrors(errors,pre="") {
       // console.log(pre+fieldName,"pppppppppp")
 
       // Add 'is-invalid' class to the input field
-      $("#" +pre+ fieldName).addClass("is-invalid");
+      $("#" + pre + fieldName).addClass("is-invalid");
 
       // Display error message in the adjacent invalid-feedback element
-      $("#" +pre+ fieldName + "Error").text(errorMessage);
+      $("#" + pre + fieldName + "Error").text(errorMessage);
     }
   }
 }
@@ -140,10 +144,10 @@ function handleUpdateErrors(modelId, errorObj) {
     $("#" + inputId).addClass("is-invalid");
 
     // Display error message in the adjacent invalid-feedback element
-    if(errorSpan){
+    if (errorSpan) {
       errorSpan.textContent = errorMessage;
     }
-   
+
     //   errorSpan.innerText  =errorMessage
     //   errorSpan.innerHTML=errorMessage;
   }
@@ -228,6 +232,7 @@ function resetFormValues(modelName, modelId) {
 
 // clear all errors
 function clearErrors(modelId) {
+  // alert()
   var errorSpans = document.querySelectorAll(".error-message");
   errorSpans.forEach(function (span) {
     span.textContent = "";
@@ -313,7 +318,7 @@ function renderPagination(data, currentPage) {
   if (data.next === null && data.previous === null) {
     existingPaginationContainer.innerHTML = ''; // Clear existing content
     return;
-}
+  }
 
 
   const totalPages = Math.ceil(data.count / pageLength);
@@ -443,22 +448,22 @@ function getSearchQuery() {
 function renderDataOrMessage(tableBody, data, page) {
   // Check if data is available and not empty
   if (data && Array.isArray(data.results) && data.results.length > 0) {
-      // Render the data in the table
+    // Render the data in the table
 
-      let tdata = data?.results
+    let tdata = data?.results
 
-      tdata.forEach((item, index) => {
-          const newRow = createTableRow(index + 1, item);
-          tableBody.appendChild(newRow);
-      });
+    tdata.forEach((item, index) => {
+      const newRow = createTableRow(index + 1, item);
+      tableBody.appendChild(newRow);
+    });
 
-      renderPagination(data, page)
+    renderPagination(data, page)
 
   } else {
-      // Display a message indicating no data available
-      tableBody.innerHTML = '<tr><td colspan="6">No data available.</td></tr>';
+    // Display a message indicating no data available
+    tableBody.innerHTML = '<tr><td colspan="6">No data available.</td></tr>';
 
-      existingPaginationContainer.innerHTML = ''; // Clear existing content
+    existingPaginationContainer.innerHTML = ''; // Clear existing content
   }
 }
 
@@ -531,7 +536,7 @@ function get_value(value) {
   }
 
   // Check if value is a number, not NaN, and not just whitespace, then return the value
-  if (typeof value === 'number' && !isNaN(value) ) {
+  if (typeof value === 'number' && !isNaN(value)) {
     let valueStr = value.toString();
     var val = truncate(valueStr)
     return val;
@@ -539,7 +544,7 @@ function get_value(value) {
 
   // Check if value is a string and not just whitespace, then return the value
   if (typeof value === 'string' && value.trim() !== '') {
-    var val =truncate(value)
+    var val = truncate(value)
     return val;
   }
 
@@ -548,29 +553,33 @@ function get_value(value) {
 }
 
 
-function truncate(value){
- 
-    if (value.length > TruncateLength) {
-      return value.substring(0, TruncateLength) + TruncateExt;
-    }
-    return value;
+function truncate(value) {
+
+  if (value.length > TruncateLength) {
+    return value.substring(0, TruncateLength) + TruncateExt;
+  }
+  return value;
 
 
 }
 
 
 
-function get_filename(value){
+function get_filename(value) {
   if (value === null || value === undefined || value === '') {
     return 'Nill';
   }
-  const txtarray =value.split('.')
-  const ext = txtarray.pop()
-  const txt = txtarray.pop()
+
 
   // return get_value(txt) + "." + ext
-  const fileName = value.substring(value.lastIndexOf('/') + 1);
-  return fileName
+  const fileName = (value.substring(value.lastIndexOf('/') + 1));
+  // return fileName
+
+  const txtarray = fileName.split('.')  //["tezt",'png']
+  const ext = txtarray.pop()
+  const txt = truncate(txtarray.pop())
+  return (txt) + "." + ext
+
 
 }
 
@@ -590,29 +599,29 @@ const createStatusCell = (status) => {
 };
 
 // Helper function to create custom amount cells with currency
-const createAmountCell = (amount, currency=false) => {
+const createAmountCell = (amount, currency = false) => {
   const cell = document.createElement('td');
   const amountComponent = document.createElement('span');
   const formattedAmount = formatAmount(amount); // Ensure 'amount' is parsed to a number
   // console.log(formattedAmount)
-  amountComponent.textContent =currency?  currencyFormatter.format(formattedAmount)  :formattedAmount;
+  amountComponent.textContent = currency ? currencyFormatter.format(formattedAmount) : formattedAmount;
   cell.appendChild(amountComponent);
   return cell;
 };
 
 
 function formatAmount(amount) {
-//  console.log(amount)
+  //  console.log(amount)
   if (amount == null || amount === '') {
-    return 0.00; 
+    return 0.00;
   }
   const formattedAmount = parseFloat(amount).toFixed(2);
 
   if (isNaN(formattedAmount)) {
-    return 0.00; 
+    return 0.00;
   }
 
-  return formattedAmount; 
+  return formattedAmount;
 }
 
 // Helper function to create serial number cells
@@ -656,20 +665,20 @@ function createPaidCell(value) {
   const cell = document.createElement('td');
   const span = document.createElement('span');
 
-  const i =  document.createElement('i')
+  const i = document.createElement('i')
 
- 
+
 
   if (parseFloat(value) > 0 || value === true) {
-     
-      span.classList.add("badge", "bg-success-subtle" ,"text-success" ,"fs-12");
-      span.textContent = "Paid";
+
+    span.classList.add("badge", "bg-success-subtle", "text-success", "fs-12");
+    span.textContent = "Paid";
 
   } else if (parseFloat(value) < 0 || value === false) {
-     
-      span.classList.add("badge", "bg-danger-subtle", "text-danger", "fs-12");
-      span.textContent = "unpaid";
-     
+
+    span.classList.add("badge", "bg-danger-subtle", "text-danger", "fs-12");
+    span.textContent = "unpaid";
+
   }
   span.appendChild(i)
   cell.appendChild(span)
@@ -678,24 +687,24 @@ function createPaidCell(value) {
 }
 
 
-function createPaidStatusCell(value,text) {
+function createPaidStatusCell(value, text) {
   const cell = document.createElement('td');
   const span = document.createElement('span');
 
-  const i =  document.createElement('i')
+  const i = document.createElement('i')
 
   span.textContent = text;
 
   if (value == 0 || value == "true") {
-     
-      span.classList.add("badge", "bg-success-subtle" ,"text-success" ,"fs-12");
-      
+
+    span.classList.add("badge", "bg-success-subtle", "text-success", "fs-12");
+
 
   } else if (value == 1 || value == "false") {
-     
-      span.classList.add("badge", "bg-danger-subtle", "text-danger", "fs-12");
-     
-     
+
+    span.classList.add("badge", "bg-danger-subtle", "text-danger", "fs-12");
+
+
   }
   span.appendChild(i)
   cell.appendChild(span)
@@ -707,11 +716,11 @@ function createPaidStatusCell(value,text) {
 
 // ------------------------------------  close all models -----------------------------------------
 
-  // // openModal
-  function openHistoryModal(modalId) {
-    const HistoryModal = new bootstrap.Modal(document.getElementById(modalId));
-    HistoryModal.show();
-  }
+// // openModal
+function openHistoryModal(modalId) {
+  const HistoryModal = new bootstrap.Modal(document.getElementById(modalId));
+  HistoryModal.show();
+}
 
 
 
@@ -729,16 +738,16 @@ function closeHistoryModal(modalId) {
 
   // If the modal element is found, close it using Bootstrap's modal method
   if (modalElement) {
-      var modalInstance = bootstrap.Modal.getInstance(modalElement);
-      if (modalInstance) {
-          modalInstance.hide();
-      } else {
-          // If no instance exists, create a new one and then hide it
-          modalInstance = new bootstrap.Modal(modalElement);
-          modalInstance.hide();
-      }
+    var modalInstance = bootstrap.Modal.getInstance(modalElement);
+    if (modalInstance) {
+      modalInstance.hide();
+    } else {
+      // If no instance exists, create a new one and then hide it
+      modalInstance = new bootstrap.Modal(modalElement);
+      modalInstance.hide();
+    }
   } else {
-      console.error('Modal element not found for selector: ' + modalId);
+    console.error('Modal element not found for selector: ' + modalId);
   }
 
   var myModal = new bootstrap.Modal(document.getElementById(modalId));
@@ -751,13 +760,13 @@ function closeHistoryModal(modalId) {
 function closeAllModals() {
   var modals = document.querySelectorAll('.modal.show'); // Select all active modals
   modals.forEach(modalElement => {
-      var modalInstance = bootstrap.Modal.getInstance(modalElement);
-      if (modalInstance) {
-          modalInstance.hide();
-      } else {
-          modalInstance = new bootstrap.Modal(modalElement);
-          modalInstance.hide();
-      }
+    var modalInstance = bootstrap.Modal.getInstance(modalElement);
+    if (modalInstance) {
+      modalInstance.hide();
+    } else {
+      modalInstance = new bootstrap.Modal(modalElement);
+      modalInstance.hide();
+    }
   });
 }
 
@@ -766,6 +775,73 @@ function closeAllModals() {
 function restoreAllForms() {
   var forms = document.querySelectorAll('form'); // Select all forms on the page
   forms.forEach(form => {
-      form.reset(); // Reset each form to its default state
+    form.reset(); // Reset each form to its default state
   });
 }
+
+
+
+// -------------------------------------- report generation -----------------
+
+
+
+
+
+function getReport(button, tableId) {
+  // Show loader
+  button.disabled = true;
+  const btnText = button.innerText ;
+  button.innerText = 'Generating Report...';
+
+  const table = document.getElementById(tableId);
+  const rows = table.getElementsByTagName('tr');
+
+  let csv = '';
+  const headers = table.getElementsByTagName('th');
+  const columnsToSkip = [];
+
+  // Get table headers
+  for (let i = 0; i < headers.length; i++) {
+      if (headers[i].innerText.toLowerCase() !== 'action') {
+          csv += '"' + headers[i].innerText + '"' + (i < headers.length - 1 ? ',' : '');
+      } else {
+          columnsToSkip.push(i);
+      }
+  }
+  csv += '\n';
+
+  // Iterate over rows to build the CSV
+  for (let i = 1; i < rows.length; i++) { // Start from 1 to skip header row
+      const cells = rows[i].getElementsByTagName('td');
+      for (let j = 0; j < cells.length; j++) {
+          if (!columnsToSkip.includes(j)) {
+              csv += '"' + cells[j].innerText + '"' + (j < cells.length - 1 ? ',' : '');
+          }
+      }
+      csv += '\n';
+  }
+
+  // Trigger the download of the CSV file
+  downloadCSV(csv, 'report.csv');
+
+  // Hide loader
+  button.disabled = false;
+  button.innerText = btnText;
+}
+
+// Function to download the report as a CSV file
+function downloadCSV(csv, filename) {
+  const csvFile = new Blob([csv], { type: 'text/csv' });
+  const downloadLink = document.createElement('a');
+
+  downloadLink.download = filename;
+  downloadLink.href = window.URL.createObjectURL(csvFile);
+  downloadLink.style.display = 'none';
+  document.body.appendChild(downloadLink);
+  downloadLink.click();
+  document.body.removeChild(downloadLink);
+}
+
+
+
+// --------- ----------------------

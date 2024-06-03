@@ -45,11 +45,12 @@ def check_user(request,klass,instance=False):
 from rest_framework.pagination import PageNumberPagination
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
-def PaginationAndFilter(queryset, request,serializer_class,date_field="1900-05-05"):
+def PaginationAndFilter(queryset, request,serializer_class,date_field=None):
     # # Date Filtering
     start_date = request.GET.get('start_date')
     end_date = request.GET.get('end_date')
-    queryset =filter_by_date_range(queryset,start_date,end_date,date_field)
+    if date_field:
+        queryset =filter_by_date_range(queryset,start_date,end_date,date_field)
    
     # Pagination
     paginator = PageNumberPagination()

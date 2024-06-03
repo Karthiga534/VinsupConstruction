@@ -62,21 +62,21 @@
                                                             {% csrf_token %}
                                                           
                                                             <div class="row">
-                                                                <div class="col-md-6">
+                                                                <div class="col-md-6 mt-2">
                                                                     <label
-                                                                        for="contractor_name"
+                                                                        for="name"
                                                                         class="form-label">Contractor
                                                                         Name:</label>
                                                                     <input type="text"
                                                                         class="form-control"
-                                                                        id="contractor_name"
+                                                                        id="name"
                                                                         name="name"
-                                                                        value="{{ i.name }}" />
+                                                                        value="" />
                                                                     <span
-                                                                        id="contractor_nameError"
+                                                                        id="nameError"
                                                                         class="error-message"></span>
                                                                 </div>
-                                                                <div class="col-md-6">
+                                                                <div class="col-md-6 mt-2">
                                                                     <label for="contact_no"
                                                                         class="form-label">Contact
                                                                         No:</label>
@@ -84,7 +84,7 @@
                                                                         class="form-control"
                                                                         id="contact_no"
                                                                         name="contact_no"
-                                                                        value="{{ i.contact_no }}" />
+                                                                        value="" />
                                                                     <span
                                                                         id="  
                                                                         contact_noError"
@@ -94,27 +94,27 @@
                                                             </div>
                                                             <div class="row">
                                                                 <div class="col-md-6 mt-2">
-                                                                    <label for="{{ i.id }}_address"
+                                                                    <label for="address"
                                                                         class="form-label">Address:</label>
                                                                     <input type="text"
                                                                         class="form-control"
-                                                                        id="{{ i.id }}_address"
+                                                                        id="address"
                                                                         name="address"
-                                                                        value="{{ i.address }}" />
-                                                                    <span id="{{ i.id }}_addressError"
+                                                                        value="" />
+                                                                    <span id="addressError"
                                                                         class="error-message"></span>
                                                                 </div>
 
                                                                 
                                                                     <div class="col-md-6 mt-2">
-                                                                        <label for="{{ i.id }}_category"
+                                                                        <label for="category"
                                                                             class="form-label">Category:</label>
                                                                         <select class="form-select"
-                                                                            id="{{ i.id }}_category"
+                                                                            id="category"
                                                                             name="category">
                                                                             <option
-                                                                                value="{{ i.category.id }}"
-                                                                                selected>{{ i.category.name }}</option>
+                                                                                value=""
+                                                                                selected>Select Category</option>
                                                                                 
                                                                             <!-- Populate options with categories from your database -->
                                                                             {% for category in categories %}
@@ -122,7 +122,7 @@
                                                                                 value="{{ category.id }}">{{category.name }}</option>
                                                                             {% endfor %}
                                                                         </select>
-                                                                        <span id="{{ i.id }}_categoryError"
+                                                                        <span id="categoryError"
                                                                             class="error-message"></span>
                                                                     </div>
                                                                
@@ -144,27 +144,27 @@
 
                                                                 
                                                                 <div class="col-md-6 mt-2">
-                                                                    <label for="{{ i.id }}_unit"
+                                                                    <label for="unit"
                                                                         class="form-label">Select Unit:</label>
-                                                                    <select class="form-select" id="{{i.id}}_unit" name="unit">
-                                                                        <option value="{{i.unit.id}}">{{i.unit.name}}</option>
+                                                                    <select class="form-select" id="unit" name="unit">
+                                                                        <option value="">Select Unit</option>
                                                                         {% for unit in uom %}
                                                                             <option value="{{ unit.id }}">{{ unit.name }}</option>
                                                                         {% endfor %}
                                                                     </select>
-                                                                <span id="{{i.id}}_unitError" class="error-message"></span>
+                                                                <span id="unitError" class="error-message"></span>
 
                                                                 </div>
 
 
                                                                 <div class="col-md-6 mt-2">
-                                                                    <label for="{{ i.id }}_rate"
+                                                                    <label for="rate"
                                                                         class="form-label">Rate:</label>
                                                                     <input type="text"
                                                                         class="form-control"
-                                                                        id="{{ i.id }}_rate" name="rate"
-                                                                        value="{{ i.rate }}" />
-                                                                    <span id="{{ i.id }}_rateError"
+                                                                        id="rate" name="rate"
+                                                                        value="" />
+                                                                    <span id="rateError"
                                                                         class="error-message"></span>
                                                                 </div>
 
@@ -172,14 +172,14 @@
                                                             <hr>
                                                             <div class="row">
                                                                 <div class="col-md-6 mt-2">
-                                                                    <label for="{{ i.id }}_maistry"
+                                                                    <label for="maistry"
                                                                         class="form-label">Maistry:</label>
                                                                     <input type="text"
                                                                         class="form-control"
-                                                                        id="{{ i.id }}_maistry"
+                                                                        id="maistry"
                                                                         name="maistry"
-                                                                        value="{{ i.maistry }}" />
-                                                                    <span id="{{ i.id }}_maistryError"
+                                                                        value="" />
+                                                                    <span id="maistryError"
                                                                         class="error-message"></span>
                                                                 </div>
 
@@ -188,60 +188,60 @@
                                                                 </div>
 
                                                                 <div class="col-md-6 mt-2">
-                                                                    <label for="{{ i.id }}_male_skilled"
+                                                                    <label for="male_skilled"
                                                                         class="form-label">Male
                                                                         Skilled:</label>
                                                                     <input type="text"
                                                                         class="form-control"
-                                                                        id="{{ i.id }}_male_skilled"
+                                                                        id="male_skilled"
                                                                         name="male_skilled"
-                                                                        value="{{ i.male_skilled }}" />
+                                                                        value="" />
                                                                     <span
-                                                                        id="{{ i.id }}_male_skilledError"
+                                                                        id="male_skilledError"
                                                                         class="error-message"></span>
                                                                 </div>
                                                                 <div class="col-md-6 mt-2">
                                                                     <label
-                                                                        for="{{ i.id }}_male_unskilled"
+                                                                        for="male_unskilled"
                                                                         class="form-label">Male
                                                                         Unskilled:</label>
                                                                     <input type="text"
                                                                         class="form-control"
-                                                                        id="{{ i.id }}_male_unskilled"
+                                                                        id="male_unskilled"
                                                                         name="male_unskilled"
-                                                                        value="{{ i.male_unskilled }}" />
+                                                                        value="" />
                                                                     <span
-                                                                        id="{{ i.id }}_male_unskilledError"
+                                                                        id="male_unskilledError"
                                                                         class="error-message"></span>
                                                                 </div>
                                                             </div>
                                                             <div class="row">
                                                                 <div class="col-md-6 mt-2">
                                                                     <label
-                                                                        for="{{ i.id }}_female_skilled"
+                                                                        for="female_skilled"
                                                                         class="form-label">Female
                                                                         Skilled:</label>
                                                                     <input type="text"
                                                                         class="form-control"
-                                                                        id="{{ i.id }}_female_skilled"
+                                                                        id="female_skilled"
                                                                         name="female_skilled"
-                                                                        value="{{ i.female_skilled }}" />
+                                                                        value="" />
                                                                     <span
-                                                                        id="{{ i.id }}_female_skilledError"
+                                                                        id="female_skilledError"
                                                                         class="error-message"></span>
                                                                 </div>
                                                                 <div class="col-md-6 mt-2">
                                                                     <label
-                                                                        for="{{ i.id }}_female_unskilled"
+                                                                        for="female_unskilled"
                                                                         class="form-label">Female
                                                                         Unskilled:</label>
                                                                     <input type="text"
                                                                         class="form-control"
-                                                                        id="{{ i.id }}_female_unskilled"
+                                                                        id="female_unskilled"
                                                                         name="female_unskilled"
-                                                                        value="{{ i.female_unskilled }}" />
+                                                                        value="" />
                                                                     <span
-                                                                        id="{{ i.id }}_female_unskilledError"
+                                                                        id="female_unskilledError"
                                                                         class="error-message"></span>
                                                                 </div>
                                                             </div>
@@ -372,21 +372,21 @@
                                                                             enctype="multipart/form-data">
                                                                             {% csrf_token %}
                                                                             <div class="row">
-                                                                                <div class="col-md-6">
+                                                                                <div class="col-md-6 mt-2">
                                                                                     <label
-                                                                                        for="{{ i.id }}_contractor_name"
+                                                                                        for="{{ i.id }}_name"
                                                                                         class="form-label">Contractor
                                                                                         Name:</label>
                                                                                     <input type="text"
                                                                                         class="form-control"
-                                                                                        id="{{ i.id }}_contractor_name"
+                                                                                        id="{{ i.id }}_name"
                                                                                         name="name"
                                                                                         value="{{ i.name }}" />
                                                                                     <span
-                                                                                        id="{{ i.id }}_contractor_nameError"
+                                                                                        id="{{ i.id }}_nameError"
                                                                                         class="error-message"></span>
                                                                                 </div>
-                                                                                <div class="col-md-6">
+                                                                                <div class="col-md-6 mt-2">
                                                                                     <label for="{{ i.id }}_contact_no"
                                                                                         class="form-label">Contact
                                                                                         No:</label>
@@ -582,7 +582,7 @@
                                                                     </div>
                                                                     <div class="modal-body">
                                                                         <div class="row">
-                                                                            <div class="col-md-6">
+                                                                            <div class="col-md-6 mt-2">
                                                                                 <label for="{{ i.id }}_contractor_name"
                                                                                     class="form-label">Contractor
                                                                                     Name:</label>
@@ -591,7 +591,7 @@
                                                                                     name="name" value="{{ i.name }}"
                                                                                     disabled />
                                                                             </div>
-                                                                            <div class="col-md-6">
+                                                                            <div class="col-md-6 mt-2">
                                                                                 <label for="{{ i.id }}_contact_no"
                                                                                     class="form-label">Contact
                                                                                     No:</label>
@@ -603,7 +603,7 @@
                                                                             </div>
                                                                         </div>
                                                                         <div class="row">
-                                                                            <div class="col-md-6">
+                                                                            <div class="col-md-6 mt-2">
                                                                                 <label for="{{ i.id }}_address"
                                                                                     class="form-label">Address:</label>
                                                                                 <input type="text" class="form-control"
@@ -612,7 +612,7 @@
                                                                                     value="{{ i.address }}" disabled />
                                                                             </div>
 
-                                                                            <div class="col-md-6">
+                                                                            <div class="col-md-6 mt-2">
                                                                                 <label for="{{ i.id }}_category"
                                                                                     class="form-label">Category:</label>
                                                                                 <input type="text" class="form-control"
@@ -627,7 +627,7 @@
                                                                         <hr>
 
                                                                         <div class="row">
-                                                                            <div class="col-md-6">
+                                                                            <div class="col-md-6 mt-2">
                                                                                 <label for="{{ i.id }}_area"
                                                                                     class="form-label">Unit:</label>
                                                                                 <input type="text" class="form-control"
@@ -635,7 +635,7 @@
                                                                                     value="{{ i.unit.name }}" disabled />
                                                                             </div>
 
-                                                                            <div class="col-md-6">
+                                                                            <div class="col-md-6 mt-2">
                                                                                 <label for="{{ i.id }}_rate"
                                                                                     class="form-label">Rate:</label>
                                                                                 <input type="text" class="form-control"
@@ -647,7 +647,7 @@
                                                                         </div>
                                                                         <hr>
                                                                         <div class="row">
-                                                                            <div class="col-md-6">
+                                                                            <div class="col-md-6 mt-2">
                                                                                 <label for="{{ i.id }}_maistry"
                                                                                     class="form-label">Maistry:</label>
                                                                                 <input type="text" class="form-control"
@@ -660,7 +660,7 @@
                                                                                
                                                                             </div>
 
-                                                                            <div class="col-md-6">
+                                                                            <div class="col-md-6 mt-2">
                                                                                 <label for="{{ i.id }}_male_skilled"
                                                                                     class="form-label">Male
                                                                                     Skilled:</label>
@@ -670,7 +670,7 @@
                                                                                     value="{{ i.male_skilled }}"
                                                                                     disabled />
                                                                             </div>
-                                                                            <div class="col-md-6">
+                                                                            <div class="col-md-6 mt-2">
                                                                                 <label for="{{ i.id }}_male_unskilled"
                                                                                     class="form-label">Male
                                                                                     Unskilled:</label>
@@ -682,7 +682,7 @@
                                                                             </div>
                                                                         </div>
                                                                         <div class="row">
-                                                                            <div class="col-md-6">
+                                                                            <div class="col-md-6 mt-2">
                                                                                 <label for="{{ i.id }}_female_skilled"
                                                                                     class="form-label">Female
                                                                                     Skilled:</label>
@@ -692,7 +692,7 @@
                                                                                     value="{{ i.female_skilled }}"
                                                                                     disabled />
                                                                             </div>
-                                                                            <div class="col-md-6">
+                                                                            <div class="col-md-6 mt-2">
                                                                                 <label for="{{ i.id }}_female_unskilled"
                                                                                     class="form-label">Female
                                                                                     Unskilled:</label>
@@ -854,6 +854,7 @@
             var formData = new FormData();
 
             var requiredKeys = [
+               
                 //change
                 "start_date",
                 "name",
@@ -863,7 +864,7 @@
                 "rate",
          
                 "maistry",
-                "maison_cooli",
+                // "maison_cooli",
                 "male_skilled",
                 "male_unskilled",
                 "female_skilled",
@@ -901,10 +902,10 @@
             //     "amount",
             //     getValueOrDefault($('#createForm input[name="amount"]').val())
             // );
-            formData.append(
-                "maison_cooli",
-                getValueOrDefault($('#createForm input[name="maison_cooli"]').val())
-            );
+            // formData.append(
+            //     "maison_cooli",
+            //     getValueOrDefault($('#createForm input[name="maison_cooli"]').val())
+            // );
 
             formData.append(
                 "maistry",
@@ -997,7 +998,14 @@
             enableButton(button);
             console.error(error);
         }
+
+        finally{
+            enableButton(button);
+        }
     }
+
+
+    // update contractors
 
     function updateFunction(button, saveId) {
         try {
@@ -1074,7 +1082,7 @@
                         showToast("Successfully Updated", "", "bg-success", true);
                     } else {
                         showToast("something went wrong", "", "bg-danger");
-                        enableButton(button);
+                        // enableButton(button);
 
                     }
                 },
@@ -1083,25 +1091,32 @@
                     if (xhr.status === 400) {
                         if (xhr?.responseJSON || xhr?.responseJSON?.errors) {
                             handleUpdateErrors(saveId, transformErrors(xhr.responseJSON));
-                            enableButton(button);
+                            // enableButton(button);
                         } else {
                             showToast("something went wrong", "", "bg-danger");
-                            enableButton(button);
+                            // enableButton(button);
                         }
                     } else {
                         showToast("something went wrong", "", "bg-danger");
-                        enableButton(button);
+                        // enableButton(button);
                     }
                 },
             });
         } catch (error) {
             showToast("An error occurred", "", "bg-danger");
-            enableButton(button);
+            // enableButton(button);
             console.error(error);
+        }
+
+        finally{
+            enableButton(button);
         }
     }
 
 
+
+
+    // remove contractor
 
     function deleteFunction(button, saveId) {
         try {
@@ -1122,7 +1137,7 @@
 
                     } else {
                         showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
-                        enableButton(button);
+                        // enableButton(button);
 
                     }
                 },
@@ -1131,26 +1146,29 @@
                     if (xhr.status === 400) {
                         if (xhr?.responseJSON || xhr?.responseJSON?.errors) {
                             showToast(xhr?.responseJSON?.details, '', errorAlertMessage?.bgColor);
-                            enableButton(button);
+                            // enableButton(button);
                         } else {
                             showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
-                            enableButton(button);
+                            // enableButton(button);
                         }
                     }
-                    else if (xhr.status === 401 || 404) {
+                    else if (xhr.status === 401 || xhr.status === 404) {
                         showToast(xhr?.responseJSON?.details, '', errorAlertMessage?.bgColor);
-                        enableButton(button);
+                        // enableButton(button);
                     }
                     else {
 
                         showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
-                        enableButton(button);
+                        // enableButton(button);
                     }
                 }
             });
         } catch (error) {
             showToast(errorOccured?.message, '', errorOccured?.bgColor);
             console.error(error);
+        }
+        finally{
+            enableButton(button);
         }
     }
 

@@ -41,12 +41,13 @@ INSTALLED_APPS = [
     'rest_framework',
 
     'rest_framework.authtoken',
-    #  "corsheaders",
+     "corsheaders",
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -185,3 +186,28 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 
 DATE_FORMAT = "%Y-%m-%d"
+
+
+# ALLOW_ALL_ORIGINS =True
+
+CORS_ALLOW_METHODS = (
+    "DELETE",
+    "GET",
+    "OPTIONS",
+    "PATCH",
+    "POST", 
+    "PUT",
+)
+CORS_ALLOW_HEADERS = (
+    "accept",
+    "authorization",
+    "content-type",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
+)
+
+
+CORS_ALLOW_ALL_ORIGINS = True 
+CORS_ALLOW_CREDENTIALS = True
+

@@ -15,6 +15,10 @@
     <link href="{% static 'assets/images/favi.jpg' %}" rel="shortcut icon">
     <!-- plugin css -->
     <link href="{% static 'assets/libs/jsvectormap/css/jsvectormap.min.css' %}" rel="stylesheet" type="text/css">
+
+
+
+
     <!-- Layout config Js -->
     <script src="{% static 'assets/js/layout.js' %}"></script>
     <!-- Bootstrap Css -->
@@ -41,6 +45,11 @@
             }
         });
     </script>
+
+
+
+
+
 
 
 
@@ -652,7 +661,21 @@
                                 <li class="nav-item">
                                     <a href="{% url 'pettycash' %}" class="nav-link" data-key="">Petty Cash</a>
                                 </li>
+
+                                <!-- <li class="nav-item">
+                                    <a href="{% url 'expense' %}" class="nav-link" data-key="">
+                                        <i class="mdi mdi-basket-fill"></i>
+                                        <span data-key="">Expenses</span>
+                                    </a>
+                                </li> -->
                                 <li class="nav-item">
+                                    <a href="{% url 'expense_list' %}" class="nav-link" data-key="">
+                                        <!-- <i class="mdi mdi-basket-fill"></i> -->
+                                        Expenses list
+                                    </a>
+                                </li>
+
+                                <!-- <li class="nav-item">
                                     <a class="nav-link menu-link" href="#sidebarLayouts1" data-bs-toggle="collapse"
                                         role="button" aria-expanded="false" aria-controls="sidebarLayouts1">
                                         <i class="mdi mdi-comment-text-outline"></i>
@@ -673,7 +696,7 @@
                                             </li>
                                         </ul>
                                     </div>
-                                </li>
+                                </li> -->
                             </ul>
                         </div>
                     </li>
@@ -894,6 +917,30 @@
 
     {% endblock footer-segment %}
 
+
+    <!-- <script>
+        function loadExternalJSFile() {
+            const script = document.createElement('script');
+            script.src = "{% static 'assets/js/custom.js' %}";
+            document.head.appendChild(script);
+        }
+    </script> -->
+
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+
+
+<!-- CDN link for jsPDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
+<!-- CDN link for jsPDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
+
+
+
+
+
+
     <script src="{% static 'assets/js/custom.js' %}"></script>
 
     <!-- <script src="{% static 'assets/js/new.js' %}"></script> -->
@@ -940,6 +987,26 @@
 
 
 
+
+    <!-- <script>
+        
+function getReport(button,tableId){
+
+const element = document.getElementById(tableId);
+
+html2canvas(element, {
+  onrendered: function(canvas) {
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const imgWidth = pdf.internal.pageSize.getWidth();
+      const imgHeight = canvas.height * imgWidth / canvas.width;
+      pdf.addImage(imgData, 'PNG', 10, 10, imgWidth - 20, imgHeight);
+      pdf.save('table_report.pdf');
+  }
+});
+
+}
+    </script> -->
 
 
 </body>

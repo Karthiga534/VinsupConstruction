@@ -45,6 +45,20 @@
 									<fieldset>
 										<div class="row">
 											<div class="col-md-4">
+												<label for="site" class="form-label">Project :</label>
+												<select class="form-select mb-3" aria-label="Default select example"
+													id="site" name="site">
+													<option value="">---------------------</option>
+													{% for i in projects %}
+													<option value="{{ i.id }}">{{ i.display }}</option>
+													{% endfor %}
+												</select>
+												<span id="siterError" class="error-message"></span>
+											</div>
+
+										</div>
+										<div class="row">
+											<div class="col-md-4">
 												<label for="" class="form-label">Invoice No :</label>
 												<input type="text" class="form-control" id="invoice_id"
 													name="invoice_id">
@@ -61,12 +75,14 @@
 												</select>
 												<span id="vendorError" class="error-message"></span>
 											</div>
+
 											<div class="col-md-4">
 												<label for="" class="form-label">Company Name :</label>
 												<input type="text" class="form-control" id="vendor_company"
 													name="vendor_company">
 												<span id="vendor_companyError" class="error-message"></span>
 											</div>
+											
 											<div class="col-md-4 mt-2">
 												<label for="" class="form-label">Date :</label>
 												<input type="date" class="form-control" id="created_at"
@@ -448,7 +464,7 @@
 
 			var requiredKeys = ['vendor_company']
 
-			formData.append('vendor', getValueOrDefault(formElement.querySelector('select[name="vendor"]').value));              //change
+			formData.append('vendor', getValueOrDefault(formElement.querySelector('select[name="vendor"]').value));            //change
 			formData.append('gst', getValueOrDefault(formElement.querySelector('input[name="gst"]').value));
 			formData.append('contact_no', getValueOrDefault(formElement.querySelector('input[name="contact_no"]').value));
 			formData.append('vendor_company', getValueOrDefault(formElement.querySelector('input[name="vendor_company"]').value));
@@ -460,6 +476,11 @@
 			formData.append('pending', getValueOrDefault(formElement.querySelector('input[name="pending"]').value));
 
 
+			const site =  getValueOrDefault(formElement.querySelector('select[name="site"]'))
+
+			if (site){
+				formData.append('site',site?.value);     
+			}
 
 			var tableData = [];
 			$('#tabl tbody tr').each(function () {
@@ -618,6 +639,7 @@
 
 				const fields = document.getElementsByName(fieldName)
 
+				console.log(fields, "fieldname")
 
 				fields.forEach((item) => {
 					if (item.value === null || item.value === "" || item.value === "undefined") {
@@ -630,42 +652,42 @@
 
 						if (name === "item" || name === "name") {
 
-						if (name === "item") {
-							const inputName = item.nextElementSibling.querySelector('input[name="name"]');
+							if (name === "item") {
+								const inputName = item.nextElementSibling.querySelector('input[name="name"]');
 
-							
-							if (inputName && inputName.value.trim() !== "") {
-								return; 
+
+								if (inputName && inputName.value.trim() !== "") {
+									return;
+								}
+								else {
+									item.classList.add('is-invalid')
+									const lastElement = td.lastElementChild;
+									lastElement.innerHTML = errorMessage;
+								}
 							}
-							else{
-								item.classList.add('is-invalid')
-								const lastElement = td.lastElementChild;
-								lastElement.innerHTML = errorMessage;
+
+							if (name === "name") {
+								const itemname = item.closest('td').querySelector('select[name="item"]');
+
+								console.log(itemname)
+
+								if (itemname && itemname.value.trim() !== "") {
+									console.log("returnnnnnnnnn")
+									return;
+								}
+								else {
+									item.classList.add('is-invalid')
+									const lastElement = td.lastElementChild;
+									lastElement.innerHTML = errorMessage;
+								}
 							}
-						}
 
-						if (name === "name") {
-							const itemname = item.closest('td').querySelector('select[name="item"]');
 
-							console.log(itemname)
-
-							if (itemname && itemname.value.trim() !== "") {
-								console.log("returnnnnnnnnn")
-								return; 
-							}
-							else{
-								item.classList.add('is-invalid')
-								const lastElement = td.lastElementChild;
-								lastElement.innerHTML = errorMessage;
-							}
-						}
-
-						
 
 						}
 
 						else {
-							
+
 							item.classList.add('is-invalid')
 							const sibling = item.nextElementSibling;
 							if (sibling) {
@@ -674,11 +696,23 @@
 						}
 
 					}
+
+
+					else {
+
+						item.classList.add('is-invalid')
+						const sibling = item.nextElementSibling;
+						if (sibling) {
+							sibling.innerHTML = errorMessage;
+						}
+					}
+
+
+
 				})
-
-
-
 			}
+
+
 		}
 	}
 
