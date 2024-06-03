@@ -86,9 +86,14 @@ th {
     text-align: center !important;
 }
 
-tr:nth-child(even) {
-    background-color: #f9f9f9;
+thead:first-child {
+    background-color: #8ad5d3aa;
 }
+
+tr:nth-child(even) {
+    background-color: #d8dad883;
+}
+
 
 tr:hover {
     background-color: #ddd;

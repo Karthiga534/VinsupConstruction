@@ -933,13 +933,32 @@ class LabourSalaryReceiptHistorySerializer(ModelSerializer):
         SalaryPaymentHistory.objects.create(**data)
         return instance
     
+# -----------
+
+class EmployeeSalaryHistorySerializer(ModelSerializer):
+    
+    class Meta:
+        model = SalaryReceipt
+        fields = '__all__'
+
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data ["payment_method"] =instance.get_payment_method
+        # data ["get_paid_amount"] =instance.get_paid_amount
+        # data['get_pending_amount'] =instance.get_pending_amount
+        # data ['get_total_amount'] =instance.get_total_amount
+        # data['is_paid'] =instance.is_paid
+        return data
+    
+
 
     
 class EmployeeSalarySerializer(serializers.ModelSerializer):
-    # get_salary_receipts = EmployeeSalaryReceiptHistorySerializer(many=True,read_only=True)
+    get_payment_receipt = EmployeeSalaryHistorySerializer(many=True,read_only=True)
     class Meta:
         model = Employee
-        fields =('id',"name")
+        fields =('id',"name",'get_payment_receipt')
 
 
     def to_representation(self, instance):

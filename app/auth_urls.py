@@ -26,6 +26,8 @@ urlpatterns = [
     path('verify_otp/', verify_otp, name='verify_otp'),
     path('reset_confirm/', reset_confirm, name='reset_confirm'),
     path('logintoken/',login_with_token_and_pin, name='login_with_token_and_pin'),
+
+    path('profile/',get_me , name='get-me'),
 ]
 
 

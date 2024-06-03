@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "name": "delivered",
+    "code": "0",
+    "classname": "statustag badge align-middle fs-10 bg-success"
+  },
+  {
+    "id": 2,
+    "name": "dispatched",
+    "code": "1",
+    "classname": "statustag badge align-middle fs-10 bg-primary"
+  },
+  {
+    "id": 3,
+    "name": "ordered",
+    "code": "2",
+    "classname": "statustag badge align-middle fs-10 bg-info"
+  },
+  {
+    "id": 4,
+    "name": "pending",
+    "code": "-1",
+    "classname": "statustag badge align-middle fs-10 bg-warning"
+  },
+  {
+    "id": 5,
+    "name": "canceled",
+    "code": "-2",
+    "classname": "statustag badge align-middle fs-10 bg-danger"
+  }
+]

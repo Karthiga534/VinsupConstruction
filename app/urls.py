@@ -56,6 +56,7 @@ urlpatterns = [
 #----- Vendor Registration -----
 
     path('vendor/', api.vendor, name='vendors'),
+    path('vendor-list/', api.vendor_list, name='vendors-list'),
     path('add_vendor/', api.add_vendor, name='add_vendor'),
     path('update_vendor/<int:pk>/', api.update_vendor, name='update_vendor'),
     path('delete_vendor/<int:pk>/', api.delete_vendor, name='delete_vendor'),
@@ -294,7 +295,7 @@ urlpatterns = [
 
     # employee attendence
     path('attendance/employee',views.employee_attendance,name= 'employee-labour-attendance'), #render only
-    path('add_employeeattendance', views.add_employeeattendance, name='add_employeelabourattendance'),
+    path('add_employeeattendance/', views.add_employeeattendance, name='add_employeelabourattendance'),
     path('employee_companylabourattendance/<int:pk>/', views.update_employeeattendance, name='update_employeeabourattendance'),
     path('employee_companylabourattendance/<int:pk>/', views.delete_employeeattendance, name='delete_employeelabourattendance'),
     path('employeelabourattendancelist/<str:pk>/', views.employeeattendancelist, name="employeelabourattendancelist"),
@@ -302,6 +303,10 @@ urlpatterns = [
     path('employee-attendence-list/<str:pk>/',views.employee_attendence_list,name='labour-attendence-list'), #list data
     path('make-employee-present/<int:pk>/',views.make_employee_present,name='make_employee_present'),
 
+
+
+    path('employee-clockin',views.employee_clock_in,name ='employe-clockin'),
+    path('employee-clockout/<int:pk>/',views.employee_clock_out,name = 'employe-clockout'),
 
 # --------
 

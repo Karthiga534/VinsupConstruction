@@ -343,7 +343,7 @@
                                                                             <input type="date" class="form-control"
                                                                             name="date"
                                                                                 id="{{ i.id }}_date"
-                                                                                value="{{ i.date }}" >
+                                                                                value="{{ i.date |date:'Y-m-d' }}" >
                                                                                 <span id="{{i.id}}_dateError" class="error-message"></span>
                                                                         </div> 
                                                                     

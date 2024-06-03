@@ -33,7 +33,7 @@
                   </div>
                   <div class="col-xl-4 col-lg-4 col-md-4 col-12"></div>
 
-                  <!-- <div class="col-xl-2 col-lg-2 col-md-2 col-12">
+                  <div class="col-xl-2 col-lg-2 col-md-2 col-12">
                     <button type="button" class="btn btn-info" style="float: right" data-bs-toggle="modal"
                       data-bs-target=".bs-example-modal-lg">
                       Add Attendance
@@ -120,7 +120,7 @@
                         </div>
                       </div>
                     </div>
-                  </div> -->
+                  </div> 
 
                 </div>
               </div>
@@ -696,31 +696,34 @@
   // populate payment model data
   function payModalData(data) {
     const formId ='clocKInForm'
-
-   
+    var formElement = document.getElementById(formId);
+    
     modalheader.innerText= `${data.labour_name} details`
     
-    const clockIn = document.querySelector('input[name="clock_in"]');
+    const clockIn = formElement.querySelector('input[name="clock_in"]')
+    // document.querySelector('input[name="clock_in"]');
     clockIn.value = data.clock_in;
 
 
-    const project = document.querySelector('select[name="project"]');
+    const project = formElement.querySelector('select[name="project"]');
     project.value = data.project;
 
 
-    const clockOut = document.querySelector('input[name="clock_out"]');
+    const clockOut = formElement.querySelector('input[name="clock_out"]');
     clockOut.value = data.clock_out;
 
 
-    const overTime = document.querySelector('input[name="over_time"]');
+    const overTime = formElement.querySelector('input[name="over_time"]');
     overTime.value = data.over_time;
+
+    console.log(overTime ,data.over_time)
 
 
     // hidden
-    const date = document.querySelector('input[name="date"]');
+    const date = formElement.querySelector('input[name="date"]');
     date.value = data.date;
 
-    const labour = document.querySelector('input[name="labour"]');
+    const labour = formElement.querySelector('input[name="labour"]');
     labour.value = data.labour;
 
     // Add event listener to Save button

@@ -13,6 +13,7 @@ from .serializer import *
 from .utils import *
 import string
 import random
+from app.auth_ser import *
 
 message_server_error = "message sending error"
 message_server_error_status = 303
@@ -268,3 +269,37 @@ def add_branch(request,pk):
         serializer.save()
         return Response(serializer.data,status=200)
     return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+
+
+@api_view(['GET', 'PUT'])
+def get_me(request):    
+    user=request.user
+    employee = user.employee if user.employee else None
+    allow,instance,allow_msg= allow_user(request,CustomUser,instance=False,pk=False)  # CHANGE model
+    if not allow:
+        return JsonResponse({"details" : allow_msg} , status=401)
+    company,company_msg=get_user_company(user)
+    company_id=get_company_id(company)
+
+    if request.method == 'GET':
+        if user.company:
+             ser = CompanyAdminProfileSerializer(user, many=False)
+        else:
+            ser = AdminOwnerSerializer(user, many=False)
+        return Response(ser.data)
+    elif request.method == 'PUT':
+        request_data = request.data.copy()
+        request_data.pop('password', None)
+        request_data.pop('pin', None)
+        ser = UserSerializer(user, data=request_data, partial=True) 
+        if ser.is_valid():
+            ser.save()
+            return Response(ser.data)
+        return Response(ser.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    else:
+        return JsonResponse({'error': 'Method Not Allowed'}, status=405)

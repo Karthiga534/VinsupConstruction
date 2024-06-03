@@ -703,14 +703,15 @@ class Employee(models.Model):
         pending= net_salary
         if is_paid:
             for i in is_paid:
-                paid +=i.get_paid_amount
-                pending +=i.get_pending_amount
+                paid +=i.amount_paid
+                pending -=i.amount_paid
 
         start_date=get_date(start_date)
         end_date =get_date(end_date)
-        is_paid =False
+        ispaid =False if paid < net_salary  else True
         net_salary = "{:.2f}".format(net_salary)
-        return net_salary ,paid,pending ,start_date , end_date,is_paid
+        pending = "{:.2f}".format(pending)
+        return net_salary ,paid,pending ,start_date , end_date,ispaid
     
 
 
@@ -1332,9 +1333,6 @@ class PurchaseInvoice(models.Model):
 
 
     def generate_unique_identifier(self):
-        # Implement your logic to generate a unique identifier for the invoice_id
-        # This could be a random string, timestamp, or any other unique identifier
-        # For simplicity, let's assume it's a random string
         import random
         import string
         return ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
@@ -1385,6 +1383,12 @@ class Quatation(models.Model):
     #created by Employee , Status
 
 
+    def save(self, *args, **kwargs):
+        self.full_clean()  #
+        if not self.quatation_id:
+            self.quatation_id = f'{generate_unique_identifier(self.company)}{self.id}'
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return self.quatation_id
 
@@ -1426,6 +1430,13 @@ class TransferInvoice(models.Model):
     item_delivered =models.BooleanField(default=False)
     received_by =models.ForeignKey(Employee, on_delete=models.CASCADE,null=True,blank=True)
 
+
+    def save(self, *args, **kwargs):
+        self.full_clean()  #
+        if not self.invoice_id:
+            self.invoice_id = f'{generate_unique_identifier(self.company)}{self.id}'
+        super().save(*args, **kwargs)
+    
     @property
     def get_transfer_items(self):
         if self.transferitems_set.all():
@@ -1534,11 +1545,11 @@ class SalaryPaymentHistory(models.Model):
     receipt = models.ForeignKey(SalaryReceipt, on_delete=models.CASCADE, null=True, blank=True)
     created_by=models.ForeignKey(Employee,null=True,blank=True, on_delete=models.CASCADE)
     payment_date = models.DateField(auto_now_add=True)
-
     amount_paid = models.DecimalField(max_digits=10, decimal_places=2)
     payment_method = models.ForeignKey(PaymentMethod, on_delete=models.CASCADE, null=True, blank=True)
     transaction_id = models.CharField(max_length=100,null=True, blank=True)
     payment_receipt = models.FileField(upload_to='salary_receipts/', null=True, blank=True)
+
 
 
     @property
@@ -2135,6 +2146,9 @@ class PettyCash(models.Model):
     site_location = models.ForeignKey(Project, on_delete=models.CASCADE,null=True, blank=True ) 
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE, null=True, blank=True) 
     attachment  =models.FileField(upload_to="doc")
+
+
+
 
 class PaymentHistory(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)

@@ -38,6 +38,21 @@ def vendor(request):  #change name
     context= {'queryset': queryset,"location":"vendors","pages" :pages,"search":search}   #change location name 
     return render(request,"purchase/vendor.html",context)    #change template name 
 
+
+@api_view(['GET'])
+@login_required(login_url='login')
+def vendor_list(request):  #change name 
+    user=request.user
+    allow,msg= check_user(request,VendorRegistration,instance=False)  # CHANGE model
+    if not allow:
+         context ={"unauthorized":msg}
+         return render(request,"login.html",context)      
+    querysets = VendorRegistration.objects.filter(company=request.user.company).order_by("-id")   #change query
+    ser = VendorRegistrationSerializer(querysets,many=True)
+    return Response(ser.data)
+
+
+
 @api_view(['POST'])
 @login_required(login_url='login')
 def add_vendor (request):  # CHANGE name
@@ -1360,8 +1375,8 @@ def add_quatation(request):
     if not allow:
         return JsonResponse({'details': [msg]}, status=status.HTTP_401_UNAUTHORIZED)
     invoice_data = request.POST.copy().dict()
-    if user.admin:
-        invoice_data['company'] = user.company.id
+    # if user.admin:
+    invoice_data['company'] = user.company.id
     print(request.data)
     table=request.POST.get('table')
 
@@ -1376,6 +1391,7 @@ def add_quatation(request):
                     items_serializer = QuatationItemsSerializer(data=data)
                     if items_serializer.is_valid():
                         items_serializer.save()
+                        # return JsonResponse(items_serializer.data ,status=201)
                     else:
                         invoice.delete()
                         return JsonResponse(items_serializer.errors ,status=status.HTTP_400_BAD_REQUEST)

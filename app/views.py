@@ -1945,18 +1945,21 @@ def employee_attendance(request):
 @login_required(login_url='login')
 def add_employeeattendance(request):  # CHANGE name
     user=request.user
-    allow,msg= check_user(request,ProjectLabourAttendence,instance=False)  # CHANGE model
+    allow,msg= check_user(request,Attendance,instance=False)  # CHANGE model
     if not allow:
         return JsonResponse({'details':[msg]}, status=status.HTTP_401_UNAUTHORIZED)
     request_data=request.POST.copy().dict()
     if user.admin:
         request_data['company'] = user.company.id
 
-    labour_id =   request_data['labour']
+    employee_id =   request_data['employee']
+
+
+    # employee_id = user.employee.id if user.employee else  employee_id
         
-    if not labour_id:
-        return JsonResponse({'labour':['This field is required']}, status=400)
-    date_str = request_data.get('date')
+    if not employee_id:
+        return JsonResponse({'employee':['This field is required']}, status=400)
+    date_str = request_data.get('date') 
     date_format = "%Y-%m-%d"
 
     try:
@@ -1964,18 +1967,85 @@ def add_employeeattendance(request):  # CHANGE name
     except ValueError:
         return JsonResponse({'date': ['Invalid date format']}, status=400)
 
-    attn=ProjectLabourAttendence.objects.filter(labour__id=labour_id, date=date)
+    attn=Attendance.objects.filter(employee__id=employee_id, date=date)
     print(attn)
-    if ProjectLabourAttendence.objects.filter(labour__id=labour_id, date=date).exists():
+    if attn.exists():
         return JsonResponse({'details': [clocked_in_message]}, status=409)
 
-    serializer = ProjectLabourAttendenceSerializer(data=request_data)   # CHANGE serializer
+    serializer = AttendenceSerialiser(data=request_data)   # CHANGE serializer
     if serializer.is_valid():  
         serializer.save()
         return JsonResponse( serializer.data, status=status.HTTP_201_CREATED)
     else:
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)   
+
+
+
+@api_view(['POST'])
+@login_required(login_url='login')
+def employee_clock_in(request):  # CHANGE name
+    user=request.user
+    allow,msg= check_user(request,Attendance,instance=False)  # CHANGE model
+    if not allow:
+        return JsonResponse({'details':[msg]}, status=status.HTTP_401_UNAUTHORIZED)
+    request_data=request.POST.copy().dict()
+    if user.admin:
+        request_data['company'] = user.company.id
+
+    employee_id = user.employee.id if user.employee else None
+        
+    if not employee_id:
+        return JsonResponse({'employee':['This field is required']}, status=400)
+    date_str = get_today()
+    # date_format = "%Y-%m-%d"
+
+    # try:
+    #     date = datetime.strptime(date_str, date_format)
+    # except ValueError:
+    #     return JsonResponse({'date': ['Invalid date format']}, status=400)
+    request_data ['date'] =date_str
+    attn=Attendance.objects.filter(employee__id=employee_id, date=date_str)
+    if attn.exists():
+        return JsonResponse({'details': [clocked_in_message]}, status=409)
+
+    serializer = AttendenceSerialiser(data=request_data)   # CHANGE serializer
+    if serializer.is_valid():  
+        serializer.save()
+        return JsonResponse( serializer.data, status=status.HTTP_201_CREATED)
+    else:
+        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)   
+
+
+@api_view(['PUT',"GET"])
+@login_required(login_url='login')
+def employee_clock_out(request,pk):  # CHANGE name
+    user=request.user
+     
+    allow,msg= check_user(request,AttendenceSerialiser,instance=False)  # CHANGE model
+    if not allow:
+        return JsonResponse({'details':[msg]}, status=status.HTTP_401_UNAUTHORIZED)
     
+    if request.method == 'GET':   
+        attn =Attendance.objects.filter(employee = user.employee,date =get_today()).last()
+        if attn:
+            serializer = AttendenceSerialiser(attn,many=False)
+        else :
+            serializer= EmployeeAttendenceSerialiser(user.employee,many=False)
+    else:
+        try:
+            instance = Attendance.objects.get(id=pk)  # CHANGE model
+        except Attendance.DoesNotExist:              # CHANGE model
+            return JsonResponse({'details': 'Item does not exist'}, status=404)  
+        serializer = AttendenceSerialiser(instance, data=request.data,partial=True)   # CHANGE Serializer
+        if serializer.is_valid():  
+            serializer.save()
+        else:
+            return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    return JsonResponse( serializer.data, status=200)
+    # else:
+    #     return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 
 
 @api_view(['PUT'])
@@ -1983,13 +2053,13 @@ def add_employeeattendance(request):  # CHANGE name
 def update_employeeattendance(request, pk):  # CHANGE name
     user=request.user
     try:
-        instance = ProjectLabourAttendence.objects.get(id=pk)  # CHANGE model
-    except ProjectLabourAttendence.DoesNotExist:              # CHANGE model
+        instance = Attendance.objects.get(id=pk)  # CHANGE model
+    except Attendance.DoesNotExist:              # CHANGE model
         return JsonResponse({'details': 'Item does not exist'}, status=404)    
-    allow,msg= check_user(request,ProjectLabourAttendence,instance=instance)  # CHANGE model
+    allow,msg= check_user(request,AttendenceSerialiser,instance=instance)  # CHANGE model
     if not allow:
         return JsonResponse({'details':[msg]}, status=status.HTTP_401_UNAUTHORIZED)
-    serializer = ProjectLabourAttendenceSerializer(instance, data=request.data,partial=True)   # CHANGE Serializer
+    serializer = AttendenceSerialiser(instance, data=request.data,partial=True)   # CHANGE Serializer
     if serializer.is_valid():  
         serializer.save()
         return JsonResponse( serializer.data, status=200)
@@ -2003,13 +2073,13 @@ def update_employeeattendance(request, pk):  # CHANGE name
 def delete_employeeattendance(request,pk):
     user=request.user
     try:
-        instance = ProjectLabourAttendence.objects.get(id=pk)  # CHANGE model
-        allow,msg= check_user(request,ProjectLabourAttendence,instance=instance)  # CHANGE model
+        instance = Attendance.objects.get(id=pk)  # CHANGE model
+        allow,msg= check_user(request,Attendance,instance=instance)  # CHANGE model
         if not allow:
             return JsonResponse({'details':[msg]}, status=status.HTTP_401_UNAUTHORIZED)
         instance.delete()
         return JsonResponse( {'details': ['success']},status=204)
-    except ProjectLabourAttendence.DoesNotExist:  # CHANGE model
+    except Attendance.DoesNotExist:  # CHANGE model
         return JsonResponse({'details': ['Item does not exist']}, status=404)
     
 
@@ -2019,22 +2089,21 @@ from .utils import PaginationAndFilter
 @login_required(login_url='login')
 def employeeattendancelist(request,pk):  #change name 
     user=request.user
-    allow,msg= check_user(request,ProjectLabourAttendence,instance=False)  # CHANGE model
+    allow,msg= check_user(request,Attendance,instance=False)  # CHANGE model
     if not allow:
          context ={"unauthorized":msg}
          return render(request,"login.html",context)    
  
-    contractors = ProjectLabourAttendence.objects.filter(company=request.user.company).order_by("-id")   #change query
+    querysets = Attendance.objects.filter(company=request.user.company).order_by("-id")   #change query
     
-    # current_date = date.today()
-
-    # contractors = ProjectSubContract.objects.all()
-    querysets = contractors
+  
     pk= int(pk)
     if pk !=0:   
-        querysets =querysets.filter(labour__id =pk)
+        querysets =querysets.filter(employee__id =pk)
 
-    return PaginationAndFilter(querysets, request,ProjectLabourAttendenceSerializer,date_field ="date")
+    return PaginationAndFilter(querysets, request,AttendenceSerialiser,date_field ="date")
+
+
 
 
 @api_view(['GET'])
@@ -2086,7 +2155,7 @@ def make_employee_present(request,pk):
         return Response(ser.errors,status=400)
 
     if not employee:
-        return JsonResponse({"labour":["This Field is required"]},status=400)
+        return JsonResponse({"employee":["This Field is required"]},status=400)
 
    
     request_data =post_data(request,get_company_id(company))
