@@ -2647,3 +2647,94 @@ def password_reset_confirm_view(request):
         form = SetPasswordForm()
     
     return render(request, "password_reset_confirm.html", {"form": form})
+
+
+
+
+#--------------------------------------Daily Task-----------------------------------
+
+@login_required(login_url='login')
+def dailytask(request):  #change name 
+    user=request.user
+    allow,msg= check_user(request,Dailytask,instance=False)  # CHANGE model
+    if not allow:
+         context ={"unauthorized":msg}
+         return render(request,"login.html",context)    
+      
+    querysets = Dailytask.objects.filter(company=request.user.company).order_by("-id")
+    project = Project.objects.filter(company=request.user.company).order_by("-id") 
+    subcontract =ProjectSubContract.objects.filter(company=request.user.company).order_by("-id")
+    # subcontract_item =ProjectSubContractUnitRates.objects.all().order_by("-id")
+    uom =Uom.objects.filter(company=request.user.company).order_by("-id")
+    queryset,pages,search =customPagination(request,Expense,querysets)    #change, model
+    context= {'queryset': queryset,
+              "location":"dailytask",
+              "pages" :pages,
+              "projects":project,   
+              "subcontracts":subcontract,
+              "uoms": uom,
+              "search":search,
+              }   #change location name 
+    return render(request,"dailytask.html",context)    #change template name
+
+@api_view(['POST'])
+@login_required(login_url='login')
+def add_dailytask (request):  # CHANGE name
+    user=request.user
+    allow,msg= check_user(request,Dailytask,instance=False)  # CHANGE model
+    if not allow:
+        return JsonResponse({'details':[msg]}, status=status.HTTP_401_UNAUTHORIZED)
+    
+    request_data=request.POST.copy().dict()
+    # attachments = request.FILES.get("attachment",None) 
+
+    if user.admin:
+        request_data['company'] = user.company.id
+
+    # if attachments: 
+    #      request_data['attachment'] = attachments
+
+    serializer = dailyTaskSerializer(data=request_data)   # CHANGE serializer
+    if serializer.is_valid():  
+        serializer.save()
+        return JsonResponse( serializer.data, status=status.HTTP_201_CREATED)
+    else:
+        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['PUT'])
+@login_required(login_url='login')
+def update_dailytask(request, pk):  # CHANGE name
+    user=request.user
+
+    try:
+        instance = Dailytask.objects.get(id=pk)  # CHANGE model
+    except Dailytask.DoesNotExist:              # CHANGE model
+        return JsonResponse({'details': ['Item does not exist']}, status=404)
+
+    allow,msg= check_user(request,Dailytask,instance=instance)  # CHANGE model
+    if not allow:
+        return JsonResponse({'details':[msg]}, status=status.HTTP_401_UNAUTHORIZED)
+
+    serializer = dailyTaskSerializer(instance, data=request.data,partial=True)   # CHANGE Serializer
+    if serializer.is_valid():  
+        serializer.save()
+        return JsonResponse( serializer.data, status=200)
+    else:
+        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['DELETE'])
+@login_required(login_url='login')
+def delete_dailytask(request,pk):
+    user=request.user
+    try:
+        instance = Dailytask.objects.get(id=pk)  # CHANGE model
+        allow,msg= check_user(request,Dailytask,instance=instance)  # CHANGE model
+        if not allow:
+            return JsonResponse({'details':[msg]}, status=status.HTTP_401_UNAUTHORIZED)
+        instance.delete()
+        return JsonResponse( {'details': ['success']},status=204)
+    except Dailytask.DoesNotExist:  # CHANGE model
+        return JsonResponse({'details': ['Item does not exist']}, status=404)
+    
+
+

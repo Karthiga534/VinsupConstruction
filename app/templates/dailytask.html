@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% load filters %}
+
 {% load static %}
 
 {% block header2 %}
@@ -16,12 +16,12 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                            <h4 class="mb-sm-0">Expenses </h4>
+                            <h4 class="mb-sm-0">DailyTask</h4>
 
                             <div class="page-title-right">
                                 <ol class="breadcrumb m-0">
                                     <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
-                                    <li class="breadcrumb-item active">expense</li>
+                                    <li class="breadcrumb-item active">DailyTask</li>
                                 </ol>
                             </div>
                         </div>
@@ -35,20 +35,20 @@
 
                                 <div class="row">
                                     <div class="col-xl-6 col-lg-6 col-md-6 col-12">
-                                        <h4>Expense Management </h4>
+                                        <h4>DailyTask Management </h4>
                                     </div>
                                     <div class="col-xl-4 col-lg-4 col-md-4 col-12"></div>
                                     <div class="col-xl-2 col-lg-2 col-md-2 col-12">
                                         <button type="button" class="btn btn-info" style="float:right;"
-                                            data-bs-toggle="modal" data-bs-target=".bs-example-modal-lg">Add
-                                            expense</button>
+                                            data-bs-toggle="modal" data-bs-target=".bs-example-modal-lg">+ Add
+                                           </button>
                                         <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog"
                                             aria-labelledby="myLargeModalLabel" aria-hidden="true">
                                             <div class="modal-dialog modal-lg">
                                                 <div class="modal-content">
                                                     <form id="createForm" enctype="multipart/form-data">
                                                         <div class="modal-header">
-                                                            <h5 class="modal-title" id="myLargeModalLabel">Expense
+                                                            <h5 class="modal-title" id="myLargeModalLabel">DailyTask
                                                                 Details</h5>
                                                             <button type="button" class="btn-close"
                                                                 data-bs-dismiss="modal" aria-label="Close"
@@ -57,73 +57,80 @@
                                                         </div>
                                                         <hr>
                                                         <div class="modal-body">
-                                                            <form id="createForm" enctype="multipart/form-data"></form>
-                                                            {% csrf_token %}
-                                                            <div class="row">
-                                                                <div class="col-md-4">
-                                                                    <label for="id_date" class="form-label">Date
-                                                                        :</label>
-                                                                    <input type="date" name="date" class="form-control"
-                                                                        id="date">
-                                                                    <span id="dateError" class="error-message"></span>
-                                                                </div>
-                                                                <div class="col-md-4 ">
-                                                                    <label for="id_particular"
-                                                                        class="form-label">particular :</label>
-                                                                    <input type="text" name="particular"
-                                                                        class="form-control" id="particular">
-                                                                    <span id="particularError"
-                                                                        class="error-message"></span>
-                                                                </div>
-                                                                <div class="col-md-4 mt-2">
-                                                                    <label for="id_amount" class="form-label">Amount
-                                                                        :</label>
-                                                                    <input type="text" name="amount"
-                                                                        class="form-control" id="amount">
-                                                                    <span id="amountError" class="error-message"></span>
-                                                                </div>
-                                                                <div class="col-md-4 mt-2">
-                                                                    <label for="id_site_location"
-                                                                        class="form-label">Site Location :</label>
-                                                                    <select class="form-select"
-                                                                        id="{{ i.id }}_site_location"
-                                                                        name="site_location">
-                                                                        <option value=""> ------- </option>
-                                                                        {% for i in site_locations %}
-                                                                        <option value="{{ i.id }}">{{ i.site_location }}
-                                                                        </option>
-                                                                        {% endfor %}
-                                                                    </select>
-                                                                    <span id="site_locationError"
-                                                                        class="error-message"></span>
-                                                                </div>
-
-                                                                <div class="col-md-4 mt-2">
-                                                                    <label for="id_employee" class="form-label">Employee
-                                                                        :</label>
-                                                                    <select class="form-select" id="{{ i.id }}_employee"
-                                                                        name="employee">
-                                                                        <option value=""> ------- </option>
-                                                                        {% for employee in employees %}
-                                                                        <option value="{{ employee.id }}">
-                                                                        {{ employee.name }}</option>
+                                                            <form id="createForm" enctype="multipart/form-data">
+                                                                {% csrf_token %}
+                                                                <div class="row">
+                                                                    <div class="col-md-6 mt-2">
+                                                                        <label for="id_date"
+                                                                            class="form-label">Date:</label>
+                                                                        <input type="date" name="date"
+                                                                            class="form-control" id="date">
+                                                                        <span id="dateError"
+                                                                            class="error-message"></span>
+                                                                    </div>
+                                                                    
+                                                                    <div class="col-md-6 mt-2">
+                                                                        <label for="id_qty"
+                                                                            class="form-label">Quantity:</label>
+                                                                        <input type="text" name="qty"
+                                                                            class="form-control" id="qty">
+                                                                        <span id="qtyError"
+                                                                            class="error-message"></span>
+                                                                    </div>
+                                                                    <div class="col-md-6 mt-2">
+                                                                        <label for="id_unit"
+                                                                            class="form-label">Unit:</label>
+                                                                        <select class="form-select" id="unit"
+                                                                            name="unit">
+                                                                            <option value=""> ------- </option>
+                                                                            {% for uom in uoms %}
+                                                                            <option value="{{ uom.id }}">{{ uom.name }}</option>
+                                                                            
+                                                                            {% endfor %}
+                                                                        </select>
+                                                                        <span id="unitError"
+                                                                            class="error-message"></span>
+                                                                    </div>
+                                                                    <div class="col-md-6 mt-2">
+                                                                        <label for="id_project"
+                                                                            class="form-label">Project:</label>
+                                                                        <select class="form-select" id="project" name="project">
                                                                            
-                                                                        {% endfor %}
-                                                                    </select>
-                                                                    <span id="employeeError"
-                                                                        class="error-message"></span>
-                                                                </div>
+                                                                            <option value=""> ------- </option>
+                                                                            {% for i in projects %}
+                                                                            <option value="{{ i.id }}">{{i.proj_name }}
+                                                                                </option>
+                                                                            {% endfor %}
+                                                                        </select>
+                                                                        <span id="projectError"
+                                                                            class="error-message"></span>
+                                                                    </div>
+                                                                    <div class="col-md-6 mt-2">
+                                                                        <label for="id_subcontract" class="form-label">Subcontract:</label>
+                                                                        <select class="form-select" id="subcontract" name="subcontract">
+                                                                            <option value=""> ------- </option>
+                                                                            {% for subcontract in subcontracts %}
+                                                                                <option value="{{ subcontract.id }}">{{ subcontract.display_contractor_dropdown }}</option>
+                                                                            {% endfor %}
+                                                                        </select>
+                                                                        <span id="subcontractError" class="error-message"></span>
+                                                                    </div>
 
-                                                                <div class="col-md-4 mt-2">
-                                                                    <label for="id_attachment" class="form-label">Upload
-                                                                        Bill:</label>
-                                                                    <input type="file" name="attachment"
-                                                                        class="form-control" id="attachment">
-                                                                    <span id="attachmentError"
-                                                                        class="error-message"></span>
+
+
+                                                                <div class="row mt-2">
+                                                                        <label for="work_done"
+                                                                            class="form-label">Work_done:</label>
+                                                                            <textarea name="work_done" class="form-control" id="work_done" rows="4"></textarea>
+                                                                        <span id="work_doneError"
+                                                                            class="error-message"></span>
+                                                                    </div> 
+                                                                    
                                                                 </div>
-                                                            </div>
+                                                            </form>
                                                         </div>
+                                                        
+
                                                         <hr>
                                                         <div class="modal-footer">
                                                             <button
@@ -154,18 +161,14 @@
                                     style="width:100%">
                                     <thead>
                                         <tr>
-                                            <!-- <th scope="col" style="width: 10px;">
-                                                    <div class="form-check">
-                                                        <input class="form-check-input fs-15" type="checkbox" id="checkAll" value="option">
-                                                    </div>
-                                                </th> -->
                                             <th data-ordering="false">S No.</th>
                                             <th data-ordering="false">Date</th>
-                                            <th data-ordering="false">Particular</th>
-                                            <th data-ordering="false">Amount</th>
-                                            <th data-ordering="false">site_location</th>
-                                            <th data-ordering="false">Employee</th>
-                                            <th data-ordering="false">Attachment</th>
+                                            <th data-ordering="false">Project</th>
+                                            <th data-ordering="false">Subcontract</th>
+                                            <!-- <th data-ordering="false">subcontract_items</th> -->
+                                            <th data-ordering="false" class="work_done">Work_done</th>
+                                            <th data-ordering="false">Qty</th>
+                                            <th data-ordering="false">Unit</th>
                                             <th data-ordering="false">Action</th>
                                         </tr>
                                     </thead>
@@ -179,19 +182,17 @@
                                                 </th> -->
                                             <td>{{ forloop.counter }}</td>
                                             <td>{{ i.date }}</td>
-                                            <td>{{ i.particular }}</td>
-                                            <td>{{ i.amount }}</td>
-                                            <td>{{ i.site_location }}</td>
-                                            <td>{{ i.employee }}</td>
-                                            <td>  <span class="file-span"> <a  target="_blank" href="{{ i.attachment.url}}" >{{i.attachment |filename }}</a></span>
-                                            </td>
-                                           
-                                            
+                                            <td>{{ i.project }}</td>
+                                            <td>{{ i.subcontract.display_contractor_dropdown }}</td>
+                                            <!-- <td>{{ i.subcontract_items }}</td> -->
+                                            <td>{{ i.work_done }}</td>
+                                            <td>{{ i.qty }}</td>
+                                            <td>{{ i.unit }}</td>
+
                                             <td>
                                                 <div class="dropdown d-inline-block">
-                                                    <button class="btn btn-soft-secondary btn-sm dropdown"
-                                                        type="button" data-bs-toggle="dropdown"
-                                                        aria-expanded="false">
+                                                    <button class="btn btn-soft-secondary btn-sm dropdown" type="button"
+                                                        data-bs-toggle="dropdown" aria-expanded="false">
                                                         <i class="ri-more-fill align-middle"></i>
                                                     </button>
                                                     <ul class="dropdown-menu dropdown-menu-end">
@@ -200,18 +201,19 @@
                                                                 data-bs-target="#procatview"><i
                                                                     class="ri-eye-fill align-bottom me-2 text-muted"></i>
                                                                 View</a></li> -->
-                                                                <li><a class="dropdown-item edit-item-btn"
-                                                                    data-bs-toggle="modal" href="#!"
-                                                                    onclick="openModal('viewModal','{{ i.id }}')"><i class="ri-eye-fill align-bottom me-2 text-muted"></i>
-                                                                    View</a></li>
+                                                        <li><a class="dropdown-item edit-item-btn"
+                                                                data-bs-toggle="modal" href="#!"
+                                                                onclick="openModal('viewModal','{{ i.id }}')"><i
+                                                                    class="ri-eye-fill align-bottom me-2 text-muted"></i>
+                                                                View</a></li>
                                                         <li><a class="dropdown-item edit-item-btn"
                                                                 data-bs-toggle="modal" href="#!"
                                                                 onclick="openModal('editModal','{{ i.id }}')"><i
                                                                     class="ri-pencil-fill align-bottom me-2 text-muted"></i>
                                                                 Edit</a></li>
                                                         <li>
-                                                            <a class="dropdown-item remove-item-btn del-btn"
-                                                                href="#!" data-target="#deleteModal{{ i.id}}">
+                                                            <a class="dropdown-item remove-item-btn del-btn" href="#!"
+                                                                data-target="#deleteModal{{ i.id}}">
                                                                 <i
                                                                     class="ri-delete-bin-fill align-bottom me-2 text-muted"></i>
                                                                 Delete
@@ -223,14 +225,13 @@
                                                 <!-- view modal -->
 
 
-                                                <div class="modal fade" id="viewModal_{{ i.id }}"
-                                                    tabindex="-1"  aria-labelledby="myLargeModalLabel"
-                                                    aria-hidden="true">
+                                                <div class="modal fade" id="viewModal_{{ i.id }}" tabindex="-1"
+                                                    aria-labelledby="myLargeModalLabel" aria-hidden="true">
                                                     <div class="modal-dialog modal-lg">
                                                         <div class="modal-content">
                                                             <div class="modal-header">
                                                                 <h5 class="modal-title" id="myLargeModalLabel">View
-                                                                    Expanses</h5>
+                                                                    DailyTask</h5>
                                                                 <button type="button" class="btn-close"
                                                                     data-bs-dismiss="modal" aria-label="Close">
                                                                 </button>
@@ -238,55 +239,69 @@
                                                             <hr>
                                                             <div class="modal-body">
                                                                 <div class="row">
-                                                                    <div class="col-md-6">
-                                                                        <label for="{{ i.id }}_date" class="form-label">Date
-                                                                            :</label>
-                                                                        <input type="text" class="form-control" id="{{i.id}}_date"
-                                                                        name="date" value="{{i.date}}" disabled />
-                                                                    </div>
-                                                                    <div class="col-md-6">
-                                                                        <label for="{{i.id}}_particular" class="form-label">Particular
-                                                                            :</label>
-                                                                        <input type="text" class="form-control" id="{{i.id}}_particular"
-                                                                            value="{{i.particular}}" disabled />
-                                                                    </div>
                                                                     <div class="col-md-6 mt-2">
-                                                                        <label for="{{i.id}}_amount" class="form-label">Amount
+                                                                        <label for="{{ i.id }}_date"
+                                                                            class="form-label">Date
                                                                             :</label>
-                                                                        <input type="text" class="form-control" id="{{i.id}}_amount"
-                                                                            value="{{i.amount}}" disabled />
+                                                                        <input type="text" class="form-control"
+                                                                            id="{{i.id}}_date" name="date"
+                                                                            value="{{i.date}}" disabled />
+                                                                    </div>
+                                                                    
+                                                                    <div class="col-md-6 mt-2">
+                                                                        <label for="{{i.id}}_qty"
+                                                                            class="form-label">Quantity :</label>
+                                                                        <input type="text" class="form-control"
+                                                                            id="{{i.id}}_qty" value="{{i.qty}}"
+                                                                            disabled />
                                                                     </div>
 
                                                                     <div class="col-md-6 mt-2">
-                                                                        <label for="{{i.id}}_site_location" class="form-label">Site_location
-                                                                            :</label>
-                                                                        <input type="text" class="form-control" id="{{i.id}}_site_location"
-                                                                            value="{{i.site_location}}" disabled />
+                                                                        <label for="{{i.id}}_unit"
+                                                                            class="form-label">Unit :</label>
+                                                                        <input type="text" class="form-control"
+                                                                            id="{{i.id}}_unit" value="{{i.unit}}"
+                                                                            disabled />
                                                                     </div>
 
                                                                     <div class="col-md-6 mt-2">
-                                                                        <label for="{{i.id}}_employee" class="form-label">Employee
+                                                                        <label for="{{i.id}}_project"
+                                                                            class="form-label">Project :</label>
+                                                                        <input type="text" class="form-control"
+                                                                            id="{{i.id}}_project" value="{{i.project}}"
+                                                                            disabled />
+                                                                    </div>
+                                                                    <div class="col-md-6 mt-2">
+                                                                        <label for="{{i.id}}_subcontract"
+                                                                            class="form-label">subcontract :</label>
+                                                                        <input type="text" class="form-control"
+                                                                            id="{{i.id}}_subcontract" value="{{i.subcontract.display_contractor_dropdown }}"
+                                                                            disabled />
+                                                                    </div>
+<!-- 
+                                                                    <div class="col-md-6 mt-2">
+                                                                        <label for="{{i.id}}_subcontract_items"
+                                                                            class="form-label">Subcontract Items
                                                                             :</label>
-                                                                        <input type="text" class="form-control" id="{{i.id}}_employee"
-                                                                            value="{{i.employee}}"disabled />
+                                                                        <input type="text" class="form-control"
+                                                                            id="{{i.id}}_subcontract_items"
+                                                                            value="{{i.subcontract_items}}" disabled />
+                                                                    </div> -->
+                                                                    <div class="row mt-2">
+                                                                        <label for="{{i.id}}_work_done"
+                                                                            class="form-label">Work Done :</label>
+                                                                        <textarea class="form-control"
+                                                                            id="{{i.id}}_work_done"
+                                                                            disabled>{{i.work_done}}</textarea>
                                                                     </div>
 
-                                                                    <div class="col-md-6 mt-3">
-                                                                        <label for="{{i.id}}_attachment"
-                                                                            class="form-label">Attachment:</label>
-                                                                            <br>
-                                                                        <span class="file-span"> <a  target="_blank" href="{{ i.attachment.url}}" >{{i.attachment |filename }}</a></span>
 
-                                                                        <!-- <input type="file" class="form-control" id="{{i.id}}_attachment"
-                                                                            value="{{i.attachment}}" disabled />
-                                                                        <a href="{{ i.attachment}}">{{i.attachment}}</a> -->
-                                                                    </div>
 
                                                                 </div>
                                                             </div>
 
                                                             <div class="modal-footer mt-3">
-                                                                
+
                                                             </div>
 
 
@@ -297,9 +312,12 @@
                                                 </div>
 
 
+
                                                 <!-- edit modal -->
-                                                <div class="modal fade " id="editModal_{{ i.id }}"  tabindex="-1" data-bs-keyboard="false"  data-bs-backdrop="static"
-                                                   role="dialog" aria-labelledby="myLargeModalLabel"aria-hidden="true">
+
+                                                <div class="modal fade" id="editModal_{{ i.id }}" tabindex="-1"
+                                                    data-bs-keyboard="false" data-bs-backdrop="static" role="dialog"
+                                                    aria-labelledby="myLargeModalLabel" aria-hidden="true">
                                                     <div class="modal-dialog modal-lg">
                                                         <div class="modal-content">
                                                             <div class="modal-header">
@@ -311,84 +329,113 @@
                                                             </div>
                                                             <hr>
                                                             <div class="modal-body">
-                                                                <form id="editForm{{ i.id }}" enctype="multipart/form-data">
+                                                                <form id="editForm{{ i.id }}"
+                                                                    enctype="multipart/form-data">
                                                                     {% csrf_token %}
                                                                     <div class="row">
                                                                         <div class="col-md-6">
                                                                             <label for="{{ i.id }}_date">Date:</label>
                                                                             <input type="date" class="form-control"
-                                                                            name="date"
-                                                                                id="{{ i.id }}_date"
-                                                                                value="{{ i.date }}" >
-                                                                                <span id="{{i.id}}_dateError" class="error-message"></span>
-                                                                        </div> 
-                                                                    
+                                                                                name="date" id="{{ i.id }}_date"
+                                                                                value="{{ i.date }}" />
+                                                                            <span id="{{i.id}}_dateError"
+                                                                                class="error-message"></span>
+                                                                        </div>
+                                                                       
                                                                         <div class="col-md-6 ">
                                                                             <label
-                                                                                for="{{ i.id }}_particular">Particular:</label>
+                                                                                for="{{ i.id }}_qty">Quantity:</label>
                                                                             <input type="text" class="form-control"
-                                                                                id="{{ i.id }}_particular"
-                                                                                name="particular"
-                                                                                value="{{ i.particular }}">
-                                                                                <span id="{{i.id}}_particularError" class="error-message"></span>
+                                                                                id="{{ i.id }}_qty" name="qty"
+                                                                                value="{{ i.qty }}" />
+                                                                            <span id="{{i.id}}_qtyError"
+                                                                                class="error-message"></span>
                                                                         </div>
                                                                         <div class="col-md-6 mt-2">
                                                                             <label
-                                                                                for="{{ i.id }}_amount">Amount:</label>
-                                                                            <input type="text" class="form-control"
-                                                                                id="{{ i.id }}_amount" name="amount"
-                                                                                value="{{ i.amount }}">
-                                                                                <span id="{{i.id}}_amountError" class="error-message"></span>
-                                                                        </div>
-                                                                        <div class="col-md-6 mt-2">
-                                                                            <label for="{{ i.id }}_site_location">Site
-                                                                                Location:</label>
+                                                                                for="{{ i.id }}_unit">Unit:</label>
                                                                             <select class="form-select"
-                                                                                id="{{ i.id }}_site_location"
-                                                                                name="site_location">
-                                                                                <span id="{{i.id}}_site_locationError" class="error-message"></span>
-                                                                                <option value="{{i.site_location.id}}" selected>{{i.site_location.site_location}}
-                                                                                </option>
-                                                                                <option value="" disabled> ----------------
-                                                                                </option>
-                                                                                {% for location in site_locations %}
-                                                                                <option value="{{ location.id }}"> {{ location.site_location }}</option>
-                                                                                                                                                                  
+                                                                                id="{{ i.id }}_unit" name="unit">
+                                                                                <option value="{{ i.unit.id }}"
+                                                                                    selected>{{ i.unit }}</option>
+                                                                               
+                                                                                {% for uom in uoms %}
+                                                                                <option value="{{ uom.id }}">{{ uom.name }}</option>
+                                                                                   
                                                                                 {% endfor %}
-                                                                                 </select>
+                                                                            </select>
+                                                                            <span id="{{i.id}}_unitError"
+                                                                                class="error-message"></span>
                                                                         </div>
 
                                                                         <div class="col-md-6 mt-2">
                                                                             <label
-                                                                                for="{{ i.id }}_employee">Employee:</label>
+                                                                                for="{{ i.id }}_project">Project:</label>
                                                                             <select class="form-select"
-                                                                                id="{{ i.id }}_employee"
-                                                                                name="employee">
-                                                                                <span id="{{i.id}}_employeeError" class="error-message"></span>
-                                                                                <option value="{{i.employee.id}}" selected>{{i.employee.name}}
-                                                                                </option>
-                                                                                <option value="" disabled> ----------------
-                                                                                </option>
-                                                                                {% for employee in employees %}
-                                                                                <option value="{{ employee.id }}">{{employee.name}}</option>
+                                                                                id="{{ i.id }}_project" name="project">
+                                                                                <option value="{{ i.project.id }}"
+                                                                                    selected>{{ i.project }}</option>
+                                                                                <option value="" disabled>
+                                                                                    ---------------- </option>
+                                                                                {% for project in projects %}
+                                                                                <option value="{{ project.id }}">{{ project.proj_name }}</option>
+                                                                                   
                                                                                 {% endfor %}
                                                                             </select>
-                                                                                                                                                        
-                                                                        
-                                                                                                                                              
+                                                                            <span id="{{i.id}}_projectError"
+                                                                                class="error-message"></span>
                                                                         </div>
                                                                         <div class="col-md-6 mt-2">
                                                                             <label
-                                                                                for="{{ i.id }}_attachment">Attachment:</label>
-                                                                                <span class="file-span"> <a  target="_blank" href="{{ i.attachment.url}}" >{{i.attachment |filename }}</a></span>
-                                                                            <input type="file" class="form-control"
-                                                                                id="{{ i.id }}_attachment"
-                                                                                name="attachment"
-                                                                                value="{{ i.attachment }}" readonly>
-                                                                                <span id="{{i.id}}_attachmentError" class="error-message"></span>
-                                                                            
-                                                                    
-                                                                            
+                                                                                for="{{ i.id }}_subcontract">Subcontract:</label>
+                                                                            <select class="form-select"
+                                                                                id="{{ i.id }}_subcontract"
+                                                                                name="subcontract">
+                                                                                <option value="{{ i.subcontract.id }}"
+                                                                                    selected>{{ i.subcontract.display_contractor_dropdown }}
+                                                                                </option>
+                                                                                <option value="" disabled>
+                                                                                    ---------------- </option>
+                                                                                {% for subcontract in subcontracts %}
+                                                                                <option value="{{ subcontract.id }}">{{subcontract.display_contractor_dropdown }}</option>
+                                                                                    
+                                                                                {% endfor %}
+                                                                            </select>
+                                                                            <span id="{{i.id}}_subcontractError"
+                                                                                class="error-message"></span>
+                                                                        </div>
+                                                                        <!-- <div class="col-md-6 mt-2">
+                                                                            <label
+                                                                                for="{{ i.id }}_subcontract_items">Subcontract
+                                                                                Items:</label>
+                                                                            <select class="form-select"
+                                                                                id="{{ i.id }}_subcontract_items"
+                                                                                name="subcontract_items">
+                                                                                <option
+                                                                                    value="{{ i.subcontract_items.id }}"
+                                                                                    selected>{{ i.subcontract_items }}
+                                                                                </option>
+                                                                                <option value="" disabled>
+                                                                                    ---------------- </option>
+                                                                                {% for item in subcontract_items %}
+                                                                                <option value="{{ item.id }}">{{item.name }}
+                                                                                    </option>
+                                                                                {% endfor %}
+                                                                            </select>
+                                                                            <span id="{{i.id}}_subcontract_itemsError"
+                                                                                class="error-message"></span>
+                                                                        </div> -->
+
+                                                                    </div>
+                                                                    <div class="row mt-2">
+                                                                        <div class="col">
+                                                                            <label for="{{ i.id }}_work_done">Work
+                                                                                Done:</label>
+                                                                            <textarea class="form-control"
+                                                                                id="{{ i.id }}_work_done"
+                                                                                name="work_done" rows="4">{{ i.work_done }}</textarea>
+                                                                            <span id="{{i.id}}_work_doneError"
+                                                                                class="error-message"></span>
                                                                         </div>
                                                                     </div>
                                                                     <div class="modal-footer mt-3">
@@ -413,13 +460,15 @@
                                                         <div class="modal-content">
                                                             <div class="modal-header">
                                                                 <h5 class="modal-title"
-                                                                    id="deleteModalLabel-{{ forloop.counter }}">Delete
-                                                                    Expense</h5>
+                                                                    id="deleteModalLabel-{{ forloop.counter }}">
+                                                                    Delete
+                                                                    DailyTask</h5>
                                                                 <button type="button" class="btn-close"
                                                                     data-bs-dismiss="modal" aria-label="Close"></button>
                                                             </div>
                                                             <div class="modal-body">
-                                                                <p>Are you sure you want to delete "{{ i.particular }}"?
+                                                                <p>Are you sure you want to delete
+                                                                    "{{ i.project }}"?
                                                                 </p>
                                                             </div>
                                                             <div class="modal-footer">
@@ -534,20 +583,24 @@
                 var errors = {};
                 var formData = new FormData();
 
-                var requiredKeys = ['date', 'particular', 'amount', 'site_location', 'employee'];   //change
+                var requiredKeys = ['date'];   //change
 
 
-                formData.append('date', getValueOrDefault(formElement.querySelector('input[name="date"]').value));              //change
-                formData.append('particular', getValueOrDefault(formElement.querySelector('input[name="particular"]').value));
-                formData.append('amount', getValueOrDefault(formElement.querySelector('input[name="amount"]').value));
-                formData.append('site_location', getValueOrDefault(formElement.querySelector('select[name="site_location"]').value));
-                formData.append('employee', getValueOrDefault(formElement.querySelector('select[name="employee"]').value));
-                formData.append('attachment', getValueOrDefault(formElement.querySelector('input[name="attachment"]').value));
+                
+                formData.append('date', getValueOrDefault(formElement.querySelector('input[name="date"]').value));
+                formData.append('project', getValueOrDefault(formElement.querySelector('select[name="project"]').value));
+                formData.append('subcontract', getValueOrDefault(formElement.querySelector('select[name="subcontract"]').value));
+                // formData.append('subcontract_items', getValueOrDefault(formElement.querySelector('select[name="subcontract_items"]').value));
+                formData.append('work_done', getValueOrDefault(formElement.querySelector('textarea[name="work_done"]').value));
+                formData.append('qty', getValueOrDefault(formElement.querySelector('input[name="qty"]').value));
+                formData.append('unit', getValueOrDefault(formElement.querySelector('select[name="unit"]').value));
 
-                var attachment = document.querySelector('#createForm input[type="file"]').files[0];
-                if (attachment) {
-                    formData.append("attachment", attachment);
-                }
+
+               
+                // var attachment = document.querySelector('#createForm input[type="file"]').files[0];
+                // if (attachment) {
+                //     formData.append("attachment", attachment);
+                // }
 
 
                 requiredKeys.forEach(function (key) {
@@ -569,7 +622,7 @@
                 }
 
                 $.ajax({
-                    url: '/add_expense/',                //change
+                    url: '/add_dailytask/',                //change
                     type: 'POST',
                     headers: {
                         'X-CSRFToken': csrftoken,
@@ -618,7 +671,7 @@
                 console.error(error);
             }
 
-            finally{
+            finally {
                 restoreForm(formId, button)
             }
         }
@@ -640,20 +693,23 @@
 
                 const formData = new FormData();
 
-                formData.append('date', getValueOrDefault(formElement.querySelector('input[name="date"]').value));    //change
-                formData.append('particular', getValueOrDefault(formElement.querySelector('input[name="particular"]').value));
-                formData.append('amount', getValueOrDefault(formElement.querySelector('input[name="amount"]').value));
-                formData.append('site_location', getValueOrDefault(formElement.querySelector('select[name="site_location"]').value));
-                formData.append('employee', getValueOrDefault(formElement.querySelector('select[name="employee"]').value));
+                formData.append('date', getValueOrDefault(formElement.querySelector('input[name="date"]').value));
+                formData.append('project', getValueOrDefault(formElement.querySelector('select[name="project"]').value));
+                formData.append('subcontract', getValueOrDefault(formElement.querySelector('select[name="subcontract"]').value));
+                // formData.append('subcontract_items', getValueOrDefault(formElement.querySelector('select[name="subcontract_items"]').value));
+                formData.append('work_done', getValueOrDefault(formElement.querySelector('textarea[name="work_done"]').value));
+                formData.append('qty', getValueOrDefault(formElement.querySelector('input[name="qty"]').value));
+                
+                formData.append('unit', getValueOrDefault(formElement.querySelector('select[name="unit"]').value));
 
 
-                var attachment = getValueOrDefault(formElement.querySelector('input[type="file"]').files[0]);
-                if (attachment) {
-                    formData.append("attachment", attachment);
-                }
+                // var attachment = getValueOrDefault(formElement.querySelector('input[type="file"]').files[0]);
+                // if (attachment) {
+                //     formData.append("attachment", attachment);
+                // }
 
-    
-                var requiredKeys = ['date', 'particular', 'amount', 'site_location', 'employee',];     //change
+
+                var requiredKeys = [];     //change
 
                 requiredKeys.forEach(function (key) {
                     var value = formData.get(key);
@@ -676,7 +732,7 @@
 
                 console.log(csrftoken);
                 $.ajax({
-                    url: '/update_expense/' + saveId + '/',   //change
+                    url: '/update_dailytask/' + saveId + '/',   //change
                     type: 'PUT',
                     headers: {
                         'X-CSRFToken': csrftoken,
@@ -726,7 +782,7 @@
                 console.error(error);
             }
 
-            finally{
+            finally {
                 restoreForm(formId, button)
             }
         }
@@ -739,7 +795,7 @@
                 disableButton(button);
 
                 $.ajax({
-                    url: '/delete_expense/' + saveId + '/',
+                    url: '/delete_dailytask/' + saveId + '/',
                     type: 'DELETE',
                     headers: {
                         'X-CSRFToken': csrftoken,
@@ -783,8 +839,8 @@
                 showToast(errorOccured?.message, '', errorOccured?.bgColor);
                 console.error(error);
             }
-            finally{
-                enableButton(button);  
+            finally {
+                enableButton(button);
             }
         }
 

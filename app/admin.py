@@ -138,6 +138,10 @@ admin.site.register(Attendance)
 class ExpenseAdmin(admin.ModelAdmin):
     list_display = ('id',)  
 
+@admin.register(Dailytask)
+class DailytaskAdmin(admin.ModelAdmin):
+    list_display = ('id',)  
+
 @admin.register(Files)
 class FilesAdmin(admin.ModelAdmin):
     list_display = ('id','project_name','file',)

@@ -36,5 +36,11 @@ def truncate_description(value,char =100):
         return truncate_text(value,char) +"..."
     return value
 
+# @register.filter
+# def truncate_work_done(value,char =100):
+#     if value:
+#         return truncate_text(value,char) +"..."
+#     return value
+
 
 

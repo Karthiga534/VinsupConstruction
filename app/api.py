@@ -2107,3 +2107,41 @@ def sub_contract_list(request):
     sub_contract = ProjectSubContract.objects.values('id', 'name', )
     sub_contracts = [{'id': sub_contract['id'], 'name': sub_contract['name']} for sub_contract in sub_contract]
     return Response(sub_contracts)
+
+
+#------------------------------------------------Daily Site Stock Usage----------------------------------------
+
+def dailysitestockusage(request):
+    user = request.user
+    allow, msg = check_user(request, DailySiteStockUsage, instance=False)
+    if not allow:
+        context = {"unauthorized": msg}
+        return render(request, "login.html", context)
+    
+    uom = Uom.objects.filter(company=user.company).order_by("-id")
+    site = Project.objects.filter(company=user.company).order_by("-id")
+    
+    from_site = request.GET.get('from', "")
+    items = []
+    if from_site:
+        pro = site.filter(id=from_site).last()
+        items = SiteStock.objects.filter(project=pro)
+    else:
+        items = InventoryStock.objects.filter(company=user.company).order_by("-id")
+    
+    
+    querysets = DailySiteStockUsage.objects.filter(project__company=user.company).order_by("-id")
+    queryset, pages, search = customPagination(request, DailySiteStockUsage, querysets)
+    
+    context = {
+        'queryset': queryset,
+        "location": "dailysitestockusage",
+        "pages": pages,
+        "search": search,
+        "site": site,
+        "uom": uom,
+        "inventory": user.company,
+        'items': items
+    }
+    
+    return render(request, "dailysitestockusage.html", context)

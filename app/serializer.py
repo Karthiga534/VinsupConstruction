@@ -610,6 +610,8 @@ class InventoryStockSerializer(ModelSerializer):
         if unit_obj is not None:
             return unit_obj.name
         return None
+    
+
 
 # -------------------------------- contractor -payment -------------------------------------------
 
@@ -1225,3 +1227,12 @@ class PaymentHistorySerializer(serializers.ModelSerializer):
     class Meta:
         model = PaymentHistory
         fields = ['id', 'project', 'date', 'receipt_number', 'payment_mode', 'payment_amount']
+
+
+
+
+class dailyTaskSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Dailytask
+        fields = '__all__'
