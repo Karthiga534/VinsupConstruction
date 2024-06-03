@@ -1,12 +1,12 @@
+import uuid
 from .utils import *
 from decimal import Decimal
 from django.db import models
+from app.auth_models import *
 from django.db.models import Q
 from django.db.models import Sum
 from django.utils import timezone
 from django.db.models import UniqueConstraint
-from app.auth_models import *
-import uuid
 from django.core.exceptions import ValidationError
 
 
@@ -33,7 +33,7 @@ class ProcessStatus(models.Model):
     code = models.CharField(max_length=50, null=True, blank=True)
 
     def __str__(self):
-        return self.name
+        return f'(self.name)'
 
 class PaymentStatus(models.Model):
     name = models.CharField(max_length=50, null=True, blank=True)
@@ -1237,6 +1237,7 @@ class PurchaseInvoice(models.Model):
     company= models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
     vendor_company=models.CharField(max_length=255,null=True,blank=True)
     gst= models.CharField(max_length=255,null=True,blank=True)
+    tax= models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
     contact_no= models.CharField(max_length=255,null=True,blank=True)
     invoice_id=models.CharField(max_length=255,null=True,blank=True)
     created_at=models.DateField()
@@ -2054,7 +2055,7 @@ class PettyCash(models.Model):
     attachment  =models.FileField(upload_to="doc")
 
 class PaymentHistory(models.Model):
-    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE) 
     date = models.DateField()
     receipt_number = models.CharField(max_length=100)
     payment_method = models.ForeignKey(PaymentMethod, on_delete=models.CASCADE, null=True, blank=True)
@@ -2093,3 +2094,16 @@ class DailyTask(models.Model):
     unit = models.ForeignKey(Uom,on_delete=models.CASCADE,null=True,blank=True)
     
 
+class SiteAllocation(models.Model):
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, null=True, blank=True)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE,null=True,blank=True)
+    employee = models.ForeignKey(Employee, on_delete=models.CASCADE, null=True,blank=True)
+    labour = models.ForeignKey(CompanyLabours, on_delete=models.CASCADE, null=True,blank=True)
+    date = models.DateField(auto_now_add=True)
+    created_by = models.ForeignKey(CustomUser, on_delete=models.CASCADE,null=True,blank=True)
+    
+    @property
+    def get_date(self):
+        if self.date:
+            return self.date
+        return "sdfsdf"
