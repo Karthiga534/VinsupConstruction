@@ -2237,7 +2237,7 @@ def add_dailysitestockusage(request):
 
 
 @login_required(login_url='login')
-def dailysitestockusagelist(request):
+def dailysitestockusagelist(request, pk):
     user = request.user
     allow, msg = check_user(request, DailySiteStockUsage, instance=False)
     if not allow:

@@ -349,7 +349,7 @@ urlpatterns = [
 
 # revision
 
-path('purchase-track/<int:pk>/<int:site_or_inventory>/' , views.item_price_track,name="item_price_track"),
+# path('purchase-track/<int:pk>/<int:site_or_inventory>/' , views.item_price_track,name="item_price_track"),
 
 
 
@@ -408,7 +408,7 @@ path('purchase-track/<int:pk>/<int:site_or_inventory>/' , views.item_price_track
     path('dailysitestockusage/', api.dailysitestockusage, name='dailysitestockusage'), 
     path('add_dailysitestockusage/',api.add_dailysitestockusage, name='add_dailysitestockusage'),
     # path('dailysitestockusagelist/', api.dailysitestockusagelist, name="dailysitestockusagelist"),
-    path('dailysitestockusagelist/', api.dailysitestockusagelist, name='dailysitestockusagelist'), 
+    path('dailysitestockusagelist/<int:pk>/', api.dailysitestockusagelist, name='dailysitestockusagelist'), 
 
 
 
