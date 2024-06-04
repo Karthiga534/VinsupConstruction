@@ -167,3 +167,9 @@ class PettyCashAdmin(admin.ModelAdmin):
     list_display = ('id',)
 
 admin.site.register(PaymentHistory)
+
+admin.site.register(SiteAllocation)
+
+# @admin.register(SiteAllocation)
+# class SiteAllocationAdmin(admin.ModelAdmin):
+#     list_display = ('id','date',)

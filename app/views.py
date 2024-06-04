@@ -417,7 +417,8 @@ def delete_employee(request, id):
             user.disable = False if user.disable else True
             user.save()
         # instance.delete()
-        return JsonResponse({'message': 'Disabled successfully'}, status=204)
+        return JsonResponse( {'details': [user.disable]},status=200)
+        # return JsonResponse({'message': 'Disabled successfully'}, status=204)
     except Employee.DoesNotExist:
         return JsonResponse({'error': 'Data not found'}, status=404)
     
@@ -432,6 +433,7 @@ def enable_employee(request, id):
             user.disable = False
             user.save()
         # instance.delete()
+        return JsonResponse( {'details': [user.disable]},status=200)
         return JsonResponse({'message': 'enabled successfully'}, status=204)
     except Employee.DoesNotExist:
         return JsonResponse({'error': 'Data not found'}, status=404)
@@ -873,8 +875,10 @@ def delete_labours(request,pk):
         allow,msg= check_user(request,CompanyLabours,instance=instance)  # CHANGE model
         if not allow:
             return JsonResponse({'details':[msg]}, status=status.HTTP_401_UNAUTHORIZED)
-        instance.delete()
-        return JsonResponse( {'details': ['success']},status=204)
+        instance.disable = False if instance.disable else True
+        instance.save()
+        # instance.delete()
+        return JsonResponse( {'details': [instance.disable]},status=200)
     except CompanyLabours.DoesNotExist:  # CHANGE model
         return JsonResponse({'details': ['Item does not exist']}, status=404)
 
@@ -968,6 +972,7 @@ def expense_list(request):
          return render(request, "login.html", context)
     querysets = Expense.objects.filter(company=request.user.company).order_by("-id")  #change query
     project=  Project.objects.filter(company=request.user.company).order_by("-id")
+    employee =Employee.objects.filter(company=request.user.company).order_by("-id") 
     queryset, pages, search = customPagination(request, Expense, querysets)   #change, model
     context = {
         'queryset': queryset,
@@ -975,6 +980,7 @@ def expense_list(request):
         "site_locations":project,
         "pages": pages,
         "search": search,
+        "employee" : employee
     }
     return render(request,"expense/expenselist.html", context)
 
@@ -987,15 +993,15 @@ def expenselist(request, pk):
          context = {"unauthorized": msg}
          return render(request, "login.html", context)
 
-    querysets = Expense.objects.filter(company=request.user.company)
+    querysets = Expense.objects.filter(company=request.user.company).order_by("-id")
     if pk !=int(0) :
-        querysets = Expense.objects.filter(site_location__id=pk)
-    # Date Filtering
-    start_date = request.GET.get('start_date')
-    end_date = request.GET.get('end_date')
-    if start_date and end_date:
-        querysets = querysets.filter(date__range=[start_date, end_date])
-    return PaginationAndFilter(querysets, request, ExpenseSerializer)
+        querysets = querysets.filter(site_location__id=pk)
+    # # Date Filtering
+    # start_date = request.GET.get('start_date')
+    # end_date = request.GET.get('end_date')
+    # if start_date and end_date:
+    #     querysets = querysets.filter(date__range=[start_date, end_date])
+    return PaginationAndFilter(querysets, request, ExpenseSerializer,"date")
 
 
 
@@ -2473,7 +2479,7 @@ def pettycash(request):  #change name
     querysets = PettyCash.objects.filter(company=request.user.company).order_by("-id") 
     employee = Employee.objects.filter(company=request.user.company).order_by("-id") 
     site_location =Project.objects.filter(company=request.user.company).order_by("-id")   #change query
-    payment_method = PaymentMethod.objects.filter(company=request.user.company).order_by("-id")
+    payment_method = PaymentMethod.objects.all().order_by("-id")
     queryset,pages,search =customPagination(request,PettyCash,querysets)    #change, model
     context= {'queryset': queryset,
               "location":"pettycash",
@@ -2738,3 +2744,283 @@ def delete_dailytask(request,pk):
     
 
 
+@login_required(login_url='login')
+def site_allocation(request):
+    user=request.user
+    allow,msg= check_user(request,SiteAllocation,instance=False)  # CHANGE model
+    if not allow:
+         context ={"unauthorized":msg}
+         return render(request,"login.html",context)    
+    employee =Employee.objects.filter(company = user.company).order_by("-id")
+
+    project=Project.objects.filter(company=request.user.company).order_by("-id")
+    # projectsubcontractor = CompanyLabours.objects.filter(company=request.user.company).order_by("-id")
+    # querysets = ProjectLabourAttendence.objects.filter(company=request.user.company).order_by("-id")   #change query
+    # queryset,pages,search =customPagination(request,ProjectLabourAttendence,querysets)    #change, model
+    # context= {'queryset': queryset,"location":"employee-labour-attendance","pages" :pages,"search":search,'projectsubcontractor':projectsubcontractor,"project":project}   #change location name 
+    context ={"employee":employee, "project":project}
+    return render(request, 'emp_site_allocation.html',context)
+
+@api_view(['POST'])
+@login_required(login_url='login')
+def add_site_allocation(request):
+    user = request.user
+    allow, msg = check_user(request, SiteAllocation, instance=False)
+    
+    if not allow:
+        return JsonResponse({'details': [msg]}, status=status.HTTP_401_UNAUTHORIZED)
+    
+    request_data = request.POST.copy().dict()
+    
+    if user.admin:
+        request_data['company'] = user.company.id
+    
+    serializer = SiteAllocationEmployeeSerializer(data=request_data)
+    
+    if serializer.is_valid():
+        site_allocation = serializer.save(created_by=user)
+        return JsonResponse(SiteAllocationEmployeeSerializer(site_allocation).data, status=status.HTTP_201_CREATED)
+    else:
+        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+@login_required(login_url='login')
+def site_allocation_list(request, pk):  # change name 
+    user = request.user
+    allow, msg = check_user(request, SiteAllocation, instance=False)  # CHANGE model
+    if not allow:
+        context = {"unauthorized": msg}
+        return render(request, "login.html", context)    
+    
+    company, _ = get_user_company(user)
+    pk = int(pk)
+
+    if pk != 0:
+        querysets = SiteAllocation.objects.filter(employee__id=pk, company__in=company)
+        return PaginationAndFilter(querysets, request, SiteAllocationEmployeeSerializer, date_field="date")
+    
+    querysets = SiteAllocation.objects.filter(company__in=company).order_by('-id')
+    return PaginationAndFilter(querysets, request, SiteAllocationEmployeeSerializer, date_field="date")
+
+
+@login_required(login_url='login')
+def lab_site_allocation(request):
+    user=request.user
+    allow,msg= check_user(request,SiteAllocation,instance=False)  # CHANGE model
+    if not allow:
+         context ={"unauthorized":msg}
+         return render(request,"login.html",context)    
+    employee =CompanyLabours.objects.filter(company = user.company).order_by("-id")
+
+    project=Project.objects.filter(company=request.user.company).order_by("-id")
+    # projectsubcontractor = CompanyLabours.objects.filter(company=request.user.company).order_by("-id")
+    # querysets = ProjectLabourAttendence.objects.filter(company=request.user.company).order_by("-id")   #change query
+    # queryset,pages,search =customPagination(request,ProjectLabourAttendence,querysets)    #change, model
+    # context= {'queryset': queryset,"location":"employee-labour-attendance","pages" :pages,"search":search,'projectsubcontractor':projectsubcontractor,"project":project}   #change location name 
+    context ={"employee":employee, "project":project}
+    return render(request, 'lab_site_allocation.html',context)
+
+@api_view(['POST'])
+@login_required(login_url='login')
+def add_lab_site_allocation(request):
+    user = request.user
+    allow, msg = check_user(request, SiteAllocation, instance=False)
+    
+    if not allow:
+        return JsonResponse({'details': [msg]}, status=status.HTTP_401_UNAUTHORIZED)
+    
+    request_data = request.POST.copy().dict()
+    
+    if user.admin:
+        request_data['company'] = user.company.id
+    
+    serializer = SiteAllocationLabourSerializer(data=request_data)
+    
+    if serializer.is_valid():
+        site_allocation = serializer.save(created_by=user)
+        return JsonResponse(SiteAllocationLabourSerializer(site_allocation).data, status=status.HTTP_201_CREATED)
+    else:
+        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+@login_required(login_url='login')
+def lab_site_allocation_list(request, pk):  # change name 
+    user = request.user
+    allow, msg = check_user(request, SiteAllocation, instance=False)  # CHANGE model
+    if not allow:
+        context = {"unauthorized": msg}
+        return render(request, "login.html", context)    
+    
+    company, _ = get_user_company(user)
+    pk = int(pk)
+
+    if pk != 0:
+        querysets = SiteAllocation.objects.filter(labour__id=pk, company__in=company)
+        return PaginationAndFilter(querysets, request, SiteAllocationLabourSerializer, date_field="date")
+    
+    querysets = SiteAllocation.objects.filter(company__in=company).order_by('-id')
+    return PaginationAndFilter(querysets, request, SiteAllocationLabourSerializer, date_field="date")
+
+
+# def purchase_details(request, purchase_id):
+#     purchase = get_object_or_404(PurchaseInvoice, id=purchase_id)
+#     items = PurchaseItems.objects.filter(invoice=purchase)
+    
+#     data = {
+#         'invoice_id': purchase.invoice_id,
+        
+#         'vendor_name': purchase.vendor.vendorname if purchase.vendor else '',
+#         'total_amount': str(purchase.total_amount),
+#         'paid': str(purchase.paid),
+#         'pending': str(purchase.pending),
+#         'created_at': purchase.created_at.strftime('%Y-%m-%d'),
+#         'items': [
+#             {
+#                 'item_name': item.name,
+#                 'quantity': str(item.qty),
+#                 'unit': item.unit.name if item.unit else '',
+#                 'amount': str(item.sub_total)
+#             }
+#             for item in items
+#         ],
+#     }
+#     return JsonResponse(data)
+
+# def purchase_details(request, purchase_id):
+#     purchase = get_object_or_404(PurchaseInvoice, id=purchase_id)
+#     items = PurchaseItems.objects.filter(invoice=purchase)
+    
+#     # Calculate balance
+#     balance = purchase.total_amount - purchase.paid
+    
+#     data = {
+#         'site_name': purchase.site.site_location if purchase.site else '',
+#         'company_name': purchase.vendor_company,
+#         'gst': purchase.gst if purchase.gst else '',
+#         'tax': str(purchase.tax),
+#         'contact_no': purchase.contact_no if purchase.contact_no else '',
+#         'invoice_id': purchase.invoice_id,
+#         'vendor_name': purchase.vendor.vendorname if purchase.vendor else '',
+#         'total_amount': str(purchase.total_amount),
+#         'paid': str(purchase.paid),
+#         'pending': str(purchase.pending),
+#         'balance': str(balance),  # Include balance in the response
+#         'created_at': purchase.created_at.strftime('%Y-%m-%d'),
+#         'items': [
+#             {
+#                 'item_name': item.name,
+#                 'quantity': str(item.qty),
+#                 'unit': item.unit.name if item.unit else '',
+#                 'amount': str(item.sub_total)
+#             }
+#             for item in items
+#         ],
+#     }
+#     return JsonResponse(data)
+
+
+# from django.http import JsonResponse
+
+# def update_purchase_details(request, purchase_id):
+#     if request.method == 'POST':
+#         # Retrieve the updated data from the request
+#         updated_data = request.POST  # Assuming the updated data is sent via POST request
+        
+#         # Retrieve the PurchaseInvoice instance
+#         purchase = get_object_or_404(PurchaseInvoice, id=purchase_id)
+        
+#         # Update the fields of the PurchaseInvoice instance with the new data
+#         purchase.site = updated_data.get('site_name')
+#         purchase.vendor_company = updated_data.get('company_name')
+#         purchase.gst = updated_data.get('gst')
+#         purchase.tax = updated_data.get('tax')
+#         purchase.contact_no = updated_data.get('contact_no')
+#         purchase.invoice_id = updated_data.get('invoice_id')
+#         purchase.vendor.vendorname = updated_data.get('vendor_name')
+#         purchase.total_amount = updated_data.get('total_amount')
+#         purchase.paid = updated_data.get('paid')
+#         purchase.pending = updated_data.get('pending')
+#         purchase.created_at = updated_data.get('created_at')
+        
+#         # Save the changes
+#         purchase.save()
+        
+#         # Return a success response
+#         return JsonResponse({'message': 'Purchase details updated successfully'})
+#     else:
+#         # If the request method is not POST, return an error response
+#         return JsonResponse({'error': 'Invalid request method'})
+
+
+from django.http import JsonResponse
+
+def purchase_details(request, purchase_id):
+    purchase = get_object_or_404(PurchaseInvoice, id=purchase_id)
+    items = PurchaseItems.objects.filter(invoice=purchase)
+    
+    if request.method == 'GET':
+        balance = purchase.total_amount - purchase.paid
+        data = {
+            'site_name': purchase.site.site_location if purchase.site else '',
+            'company_name': purchase.vendor_company,
+            'gst': purchase.gst if purchase.gst else '',
+            'tax': str(purchase.tax),
+            'contact_no': purchase.contact_no if purchase.contact_no else '',
+            'invoice_id': purchase.invoice_id,
+            'vendor_name': purchase.vendor.vendorname if purchase.vendor else '',
+            'total_amount': str(purchase.total_amount),
+            'paid': str(purchase.paid),
+            'pending': str(purchase.pending),
+            'balance': str(balance),
+            'created_at': purchase.created_at.strftime('%Y-%m-%d'),
+            'items': [
+                {
+                    'item_name': item.name,
+                    'quantity': str(item.qty),
+                    'unit': item.unit.name if item.unit else '',
+                    'amount': str(item.sub_total)
+                }
+                for item in items
+            ],
+        }
+        return JsonResponse(data)
+    
+    elif request.method == 'POST':
+        try:
+            updated_data = json.loads(request.body)
+            purchase.site = updated_data.get('site', purchase.site)
+            purchase.vendor_company = updated_data.get('company_name', purchase.vendor_company)
+            purchase.gst = updated_data.get('gst', purchase.gst)
+            purchase.tax = updated_data.get('tax', purchase.tax)
+            purchase.contact_no = updated_data.get('contact_no', purchase.contact_no)
+            purchase.invoice_id = updated_data.get('invoice_id', purchase.invoice_id)
+                
+            for item_data in updated_data.get('items', []):
+                item_id = item_data.get('id')
+                item_name = item_data.get('item_name')
+                quantity = item_data.get('quantity')
+                unit = item_data.get('unit')
+                amount = item_data.get('amount')
+                    
+                if item_id:
+                    item = PurchaseItems.objects.get(id=item_id)
+                    item.name = item_name
+                    item.qty = quantity
+                    item.unit = Uom.objects.get(name=unit) if unit else None
+                    item.sub_total = amount
+                    item.save()
+                else:
+                    PurchaseItems.objects.create(
+                        invoice=purchase,
+                        name=item_name,
+                        qty=quantity,
+                        unit=Uom.objects.get(name=unit) if unit else None,
+                        sub_total=amount
+                    )
+            purchase.save()
+            return JsonResponse({'message': 'Purchase details updated successfully'})
+    
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON format'}, status=400)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)

@@ -1,12 +1,12 @@
+import uuid
 from .utils import *
 from decimal import Decimal
 from django.db import models
+from app.auth_models import *
 from django.db.models import Q
 from django.db.models import Sum
 from django.utils import timezone
 from django.db.models import UniqueConstraint
-from app.auth_models import *
-import uuid
 from django.core.exceptions import ValidationError
 
 
@@ -26,6 +26,14 @@ class WorkStatus(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class ProcessStatus(models.Model):
+    name = models.CharField(max_length=50, null=True, blank=True)
+    code = models.CharField(max_length=50, null=True, blank=True)
+
+    def __str__(self):
+        return f'(self.name)'
 
 class PaymentStatus(models.Model):
     name = models.CharField(max_length=50, null=True, blank=True)
@@ -331,6 +339,10 @@ class MaterialLibrary(models.Model):
 
     def __str__(self):
         return self.item
+    
+    @property
+    def display(self):
+        return self.item
 
 
     # def __str__(self):
@@ -434,14 +446,35 @@ class Employee(models.Model):
     def __str__(self):
         return self.name
     
+    # def save(self, *args, **kwargs):
+    #     if self.user:
+    #         user =self.user
+    #         user.is_employee =True
+           
+    #     super().save(*args, **kwargs)
+    
     def save(self, *args, **kwargs):
+        self.full_clean()  # Perform validation before saving
         if self.user:
             user =self.user
             user.is_employee =True
-           
         super().save(*args, **kwargs)
-    
-    
+
+    def clean(self):
+        from django.core.exceptions import ValidationError
+        from django.utils.translation import gettext_lazy as _
+
+        try:
+             queryset = Employee.objects.exclude(pk=self.pk) if self else Employee.objects.all()
+             if queryset.filter(mobile=self.mobile).exists():
+                raise ValidationError('Mobile number already exists.')
+             
+            #  if CustomUser.objects.filter(phone_number=self.mobile).exists():
+            #     raise ValidationError ('Already exists')
+                # raise ValidationError('Mobile number already exists.')
+                    # validate_mobile(self.mobile, instance=self)
+        except ValidationError as e:
+            raise ValidationError({'mobile': ["Already exists"]})
 
     @property
     def disable(self):
@@ -698,7 +731,8 @@ class CompanyLabours(models.Model):
     payment_schedule =  models.ForeignKey(PaymentSchedule, on_delete=models.CASCADE, null=True, blank=True)
     ot_rate = models.DecimalField(max_digits=10, decimal_places=2, default=0.0) 
     date = models.DateField(auto_now_add=True, null=True, blank=True)
-
+    disable = models.BooleanField(default=False)
+    
     # @property
     def __str__(self):
         return str(f"{self.name}" if self.name else "unnamed")
@@ -1185,6 +1219,9 @@ class SiteStock(models.Model):
     def available_qty(self):
         total = self.total_supplied_qty - self.taken_qty
         return  "{:.2f}".format(total)
+    
+
+
 
 class DailyMaterialUsage(models.Model):
     stock=models.ForeignKey(SiteStock, on_delete=models.CASCADE,null=True,blank=True)
@@ -1205,6 +1242,7 @@ class PurchaseInvoice(models.Model):
     company= models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
     vendor_company=models.CharField(max_length=255,null=True,blank=True)
     gst= models.CharField(max_length=255,null=True,blank=True)
+    tax= models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
     contact_no= models.CharField(max_length=255,null=True,blank=True)
     invoice_id=models.CharField(max_length=255,null=True,blank=True)
     created_at=models.DateField()
@@ -1212,8 +1250,9 @@ class PurchaseInvoice(models.Model):
     paid=models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
     pending=models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
     
+    status = models.ForeignKey(ProcessStatus, on_delete=models.CASCADE,null=True,blank=True)
+    is_delivered = models.BooleanField(default=False)
     
-
     class Meta:
         # Define a unique constraint to enforce uniqueness of invoice_id per company
         unique_together = ('invoice_id', 'company')
@@ -1234,6 +1273,8 @@ class PurchaseInvoice(models.Model):
 
     def save(self, *args, **kwargs):
         self.full_clean()  #
+        if not self.status:
+            self.status,_ =ProcessStatus.objects.get_or_create(code=0)
         if not self.invoice_id:
             # Generate or set the invoice_id if not already provided
             # You can generate it based on your specific requirements
@@ -1274,10 +1315,10 @@ class PurchaseItems(models.Model):
     price=models.DecimalField(max_digits=10, decimal_places=2, default=0.0)   #change
     unit=models.ForeignKey(Uom, on_delete=models.CASCADE,null=True,blank=True)    #change
     sub_total=models.DecimalField(max_digits=10, decimal_places=2, default=0.0)     #change
+    for_site = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.name or "Unnamed Purchase Item"
-
+        return self.name or self.item.display
 # ----------------------------------- QUOTATION -----------------------------------------------------------------------------        
 
 class Quatation(models.Model):
@@ -2040,7 +2081,6 @@ class PettyCash(models.Model):
     attachment  =models.FileField(upload_to="doc")
 
 class PaymentHistory(models.Model):
-    project = models.ForeignKey(Project, on_delete=models.CASCADE)
     date = models.DateField()
     receipt_number = models.CharField(max_length=100)
     payment_method = models.ForeignKey(PaymentMethod, on_delete=models.CASCADE, null=True, blank=True)
@@ -2053,8 +2093,8 @@ class DailySiteStockUsage(models.Model):
     subcontract=models.ForeignKey(ProjectSubContract,on_delete=models.CASCADE, null=True, blank=True)
     # work_done=models.TextField()
     date = models.DateField(auto_now_add=True)
-    qty=models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
-    unit=models.ForeignKey(Uom,on_delete=models.CASCADE, null=True, blank=True)
+    qty = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
+    unit = models.ForeignKey(Uom,on_delete=models.CASCADE,null=True,blank=True)
 
 
 
@@ -2075,8 +2115,37 @@ class Dailytask(models.Model):
     qty=models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
     unit=models.ForeignKey(Uom, on_delete=models.CASCADE, null=True, blank=True)
 
+    # def save(self, *args, **kwargs):
+    #     if self.stock:
+    #         stock =self.stock
+    #         stock.qty -=self.qty
+    #         stock.save() 
+    #     return  super().save(*args, **kwargs)
+
+  
 
 
 
-
+class DailyTask(models.Model):
+    Project = models.ForeignKey(Project, on_delete=models.CASCADE,null=True,blank=True)
+    subcontrct = models.ForeignKey(ProjectSubContract, on_delete=models.CASCADE,null=True,blank=True)
+    subcontract_items =  models.ForeignKey(ProjectSubContractUnitRates, on_delete=models.CASCADE,null=True,blank=True)
+    work_done =models.TextField()
+    date = models.DateField(auto_now_add=True)
+    qty = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
+    unit = models.ForeignKey(Uom,on_delete=models.CASCADE,null=True,blank=True)
     
+
+class SiteAllocation(models.Model):
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, null=True, blank=True)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE,null=True,blank=True)
+    employee = models.ForeignKey(Employee, on_delete=models.CASCADE, null=True,blank=True)
+    labour = models.ForeignKey(CompanyLabours, on_delete=models.CASCADE, null=True,blank=True)
+    date = models.DateField(auto_now_add=True)
+    created_by = models.ForeignKey(CustomUser, on_delete=models.CASCADE,null=True,blank=True)
+    
+    @property
+    def get_date(self):
+        if self.date:
+            return self.date
+        return "sdfsdf"

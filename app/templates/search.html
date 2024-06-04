@@ -1,13 +1,90 @@
 {% load static %}
 
-<form method="GET" action="{% url location %}">
+<!-- <form method="GET" action="{% url location %}">
     <div class="row mb-3">
         <div class="col-4">
             <input type="text" class="form-control" name="search" placeholder="Search..." value="{{search}}">
         </div>
         <div class="col">
-            <button type="submit" class='btn btn-soft-secondary '>Search</button>
+            <button type="submit" class='btn btn-soft-secondary '>
+                {% if search %}
+                Clear
+                {% else %}
+                Search
+                {% endif %}
+            </button>
         </div>
     </div>
 
+</form> -->
+
+
+
+<style>
+    .input-container {
+        position: relative;
+    }
+    .clear-btn {
+        position: absolute;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        /* visibility: hidden; */
+        /* padding: 0 5px; */
+        background-color: transparent;
+        border: none;
+        height: max-content;
+    }
+    .input-container:hover .clear-btn {
+        visibility: visible;
+    }
+</style>
+
+<form id="searchForm" method="GET" action="{% url location %}">
+    <div class="row mb-3">
+        <div class="col-4 input-container">
+            <input id="searchInput" type="text" class="form-control" name="search" placeholder="Search..." value="{{ search }}">
+            <button id="clearSearch" class="clear-btn " type="button" onclick="clearInput()">&times;</button>
+        </div>
+        <div class="col">
+            <button type="submit" class='btn btn-soft-secondary'>
+             
+                    Search
+       
+            </button>
+        </div>
+    </div>
 </form>
+
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('searchInput');
+        const searchForm = document.getElementById('searchForm');
+        const clearButton = document.getElementById('clearSearch');
+
+        // Add click event listener to the clear button
+        clearButton.addEventListener('click', function() {
+            searchInput.value = ''; // Clear the search input
+            const urlWithoutSearchParam = window.location.href.split('?')[0];
+            window.location.href = urlWithoutSearchParam; // Reload the page without the query parameter
+        });
+
+        // Add submit event listener to the form
+        searchForm.addEventListener('submit', function(e) {
+            // Prevent the default form submission
+            e.preventDefault();
+
+            // Check if the input value is not empty
+            if (searchInput.value.trim()) {
+                searchForm.submit(); // Submit the form normally
+            } else {
+                const urlWithoutSearchParam = window.location.href.split('?')[0];
+                window.location.href = urlWithoutSearchParam; // Reload the page without the query parameter
+            }
+        });
+    });
+</script>
+

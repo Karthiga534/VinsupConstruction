@@ -7,143 +7,380 @@
 
 <style>
     .custom-button {
-        font-size: 0.85rem; /* Increase text size */
-        padding: 0.30rem 1.00rem; /* Increase button size */
+        font-size: 0.85rem;
+        /* Increase text size */
+        padding: 0.30rem 1.00rem;
+        /* Increase button size */
     }
 
     #create-receipt-btn {
-        margin-right: 20px; /* Adjust the margin-right as needed */
+        margin-right: 20px;
+        /* Adjust the margin-right as needed */
     }
 </style>
 
 <div id="layout-wrapper">
 
-	<div class="main-content">
+    <div class="main-content">
 
-		<div class="page-content">
-			<div class="container-fluid">
-				<div class="row">
-					<div class="col-12">
-						<div class="page-title-box d-sm-flex align-items-center justify-content-between">
-							<h4 class="mb-sm-0">Projects</h4>
-							<div class="page-title-right">
-								<ol class="breadcrumb m-0">
-									<li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
-									<li class="breadcrumb-item active">Client Cash</li>
-								</ol>
-							</div>
-						</div>
-					</div>
-				</div>                 
+        <div class="page-content">
+            <div class="container-fluid">
                 <div class="row">
-                    <div class="col-xl-5 col-lg-5 col-md-6 col-xs-6 col-12"> </div>
-                    <div class="col-xl-5 col-lg-4 col-md-3 col-xs-6 col-12"></div>
-                    <div class="col-xl-2 col-lg-3 col-md-3 col-xs-6 col-12">
-                        <a class="btn btn-primary btn-sm custom-button mr-3" href="{% url 'project' %}">  PROJECT LIST </a>
+                    <div class="col-12">
+                        <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                            <h4 class="mb-sm-0">Projects</h4>
+                            <div class="page-title-right">
+                                <ol class="breadcrumb m-0">
+                                    <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
+                                    <li class="breadcrumb-item active">Client Cash</li>
+                                </ol>
+                            </div>
+                        </div>
                     </div>
-               
+                </div>
+                <div class="row">
+
+
                     <div class="row">
                         <div class="card">
                             <div class="card-body">
-                                <h4>Project Status</h4>
-                    
                                 <div class="row">
-                                    <div class="col-md-4">
+                                    <div class="col text-end">
+                                        <a class="btn btn-info btn-sm custom-button mr-3" href="{% url 'project' %}">
+                                            Back </a>
+                                    </div>
+                                </div>
+                                <h4>Project Status</h4>
+
+                                <div class="row">
+                                    <div class="col-md-4 mt-2">
+                                        <input type="text" class="form-control" id="" name="client" value="{{project.id}}"  hidden
+                                        disabled>
                                         <label for="" class="form-label">Client Name:</label>
-                                        <input type="text" class="form-control" name="client" value="{{client_name}}" disabled>
+                                        <input type="text" class="form-control" name="client" value="{{client_name}}"
+                                            disabled>
                                         <span id="clientError" class="error-message"></span>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-4 mt-2">
                                         <label for="" class="form-label">Contact No:</label>
-                                        <input type="text" class="form-control" name="contact_no" value="{{ contact_no }}" disabled>
+                                        <input type="text" class="form-control" name="contact_no"
+                                            value="{{ contact_no }}" disabled>
                                         <span id="contactNoError" class="error-message"></span>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-4 mt-2">
                                         <label for="" class="form-label">Project Name:</label>
-                                        <input type="text" class="form-control" name="proj_name" value="{{ project.proj_name }}" disabled>
+                                        <input type="text" class="form-control" name="proj_name"
+                                            value="{{ project.proj_name }}" disabled>
                                         <span id="projNameError" class="error-message"></span>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-4 mt-2">
                                         <label for="" class="form-label">Site Location:</label>
-                                        <input type="text" class="form-control" name="site_location" value="{{ project.site_location }}" disabled>
+                                        <input type="text" class="form-control" name="site_location"
+                                            value="{{ project.site_location }}" disabled>
                                         <span id="siteLocationError" class="error-message"></span>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-4 mt-2">
                                         <label for="" class="form-label">Estimation:</label>
-                                        <input type="text" class="form-control" name="estimation" value="{{ project.estimation }}" disabled>
+                                        <input type="text" class="form-control" name="estimation"
+                                            value="{{ project.estimation }}" disabled>
                                         <span id="estimationError" class="error-message"></span>
                                     </div>
                                 </div>
 
                                 <div class="row mt-3">
-                                    <!-- Create Receipt Button -->
-                                    <div class="col-md-4">
-                                        <div class="col-12">
-                                            <a href="{% url 'payment-process' project_id=project.id %}" class="btn btn-primary btn-sm custom-button" id="create-receipt-btn">Create Receipt</a>
-                                        </div>
-                                    </div>
+
                                     <!-- Total Paid Amount -->
-                                    <div class="col-md-4">
-                                        <div class="col-12">
-                                            <h6>Total Paid Amount</h6>
-                                            <p>{{ total_paid_amount }}</p>
-                                        </div>
+                                    <div class="col bg-primary-subtle p-3 text-center m-2">
+                                        <!-- <div class="col-12"> -->
+                                        <h5> Total Paid Amount </h5>
+                                        <h5>{{ total_paid_amount }}</h5>
+                                        <!-- </div> -->
                                     </div>
                                     <!-- Pending Amount -->
-                                    <div class="col-md-4">
-                                        <div class="col-12">
-                                            <h6>Pending Amount</h6>
-                                            <p>{{ pending_amount }}</p>
+                                    <div class="col bg-primary-subtle p-3 text-center m-2">
+                                        <!-- <div class="col-12"> -->
+                                        <h5> Pending Amount </h5>
+                                        <h5>{{ pending_amount }}</h5>
+                                        <!-- </div> -->
+                                    </div>
+
+
+
+                                </div>
+
+
+                                <div class="col-md-12"> <!-- Use most of the space for the table -->
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <h2>Payment History</h2>
+                                                </div>
+
+                                                <div class="col text-end p-2">
+
+                                                    <button type="button" class="btn btn-primary btn-sm custom-button"
+                                                        data-bs-toggle="modal" data-bs-target=".bs-example-modal-lg">+
+                                                        Add
+                                                        expense</button>
+
+                                                    <!-- <a href="{% url 'payment-process' project_id=project.id %}"
+                                                        class="btn btn-primary btn-sm custom-button"
+                                                        id="create-receipt-btn"> + Create Receipt</a> -->
+
+                                                </div>
+
+
+
+                                            </div>
+                                            <div class="row">
+                                                <div class="card">
+                                                    <div class="card-header">
+                                                        <div class="col-xl-2 col-lg-2 col-md-2 col-12">
+
+                                                            <div class="modal fade bs-example-modal-lg p-5"
+                                                                tabindex="-1" role="dialog"
+                                                                aria-labelledby="myLargeModalLabel" aria-hidden="true">
+                                                                <div class="modal-dialog modal-lg p-5">
+
+                                                                    <div class="modal-content p-3">
+
+
+                                                                        <div class="row">
+                                                                            <h4>Create New Receipt</h4>
+                                                                        </div>
+
+                                                                        <div class="row">
+
+                                                                            <form  id="createForm">
+                                                                                {% csrf_token %}
+                                                                                <div class="row">
+                                                                                    <div class="col-md-6">
+                                                                                        <label for="date"
+                                                                                            class="form-label">Date:</label>
+                                                                                        <input type="date"
+                                                                                            class="form-control"
+                                                                                            id="date" name="date">
+                                                                                        <span id="dateError"
+                                                                                            class="error-message"></span>
+                                                                                    </div>
+                                                                                    <div class="col-md-6">
+                                                                                        <label for="receipt_number"
+                                                                                            class="form-label">Receipt
+                                                                                            No:</label>
+                                                                                        <input type="text"
+                                                                                            class="form-control"
+                                                                                            name="receipt_number"
+                                                                                            id="receipt_number">
+                                                                                        <span id="receipt_numberError"
+                                                                                            class="error-message"></span>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="row mt-3">
+                                                                                    <div class="col-md-6">
+                                                                                        <label for="payment_method"
+                                                                                            class="form-label">Payment
+                                                                                            Method:</label>
+                                                                                        <select class="form-select mb-3"
+                                                                                            aria-label="Default select example"
+                                                                                            name="payment_method"
+                                                                                            id="payment_method">
+                                                                                            <option value="">
+                                                                                                ----------------
+                                                                                            </option>
+                                                                                            {% for method in  payment_methods %}
+                                                                                           
+
+                                                                                            <option
+                                                                                                value="{{ method.id }}">
+                                                                                                {{ method.name }}
+                                                                                            </option>
+                                                                                            {% endfor %}
+                                                                                        </select>
+                                                                                        <span id="payment_methodError"
+                                                                                            class="error-message"></span>
+                                                                                    </div>
+                                                                                    <div class="col-md-6">
+                                                                                        <label for="payment_amount"
+                                                                                            class="form-label">Payment
+                                                                                            Amount:</label>
+                                                                                        <input type="number"
+                                                                                            class="form-control"
+                                                                                            name="payment_amount"
+                                                                                            id="payment_amount"
+                                                                                            min="0.01" step="0.01">
+                                                                                        <span id="payment_amountError"
+                                                                                            class="error-message"></span>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div
+                                                                                    class="row mt-3 justify-content-center">
+                                                                                    <div class="col-md-6">
+                                                                                        <button type="button" onclick="createFunction(this)"
+                                                                                            class="btn btn-primary d-block mx-auto">Submit
+                                                                                            Payment</button>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </form>
+                                                                        </div>
+
+                                                                    </div>
+                                                                    <!-- /.modal-content -->
+                                                                </div>
+                                                                <!-- /.modal-dialog -->
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+
+
+                                            <table class="table table-bordered">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Date</th>
+                                                        <th>Receipt Number</th>
+                                                        <th>Payment Method</th>
+                                                        <th>Payment Amount</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for payment in payment_history %}
+                                                    <tr>
+                                                        <td>{{ payment.date }}</td>
+                                                        <td>{{ payment.receipt_number }}</td>
+                                                        <td>{{ payment.payment_method }}</td>
+                                                        <td>{{ payment.payment_amount }}</td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
                                         </div>
                                     </div>
                                 </div>
-                                
-                                
-                                    <div class="col-md-12"> <!-- Use most of the space for the table -->
-                                        <div class="card">
-                                            <div class="card-body">
-                                                <h2>Payment History</h2>
-                                                <table class="table table-bordered">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Date</th>
-                                                            <th>Receipt Number</th>
-                                                            <th>Payment Method</th>
-                                                            <th>Payment Amount</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        {% for payment in payment_history %}
-                                                        <tr>
-                                                            <td>{{ payment.date }}</td>
-                                                            <td>{{ payment.receipt_number }}</td>
-                                                            <td>{{ payment.payment_method }}</td>
-                                                            <td>{{ payment.payment_amount }}</td>
-                                                        </tr>
-                                                        {% endfor %}
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
-                                
-                                
 
-                                
+
+
+
+                            </div>
+
+                        </div>
+
+
+
+
                     </div>
-                    
                 </div>
-       
-                
-        
-
             </div>
         </div>
-    </div>
-</div>
-
-   
 
 
 
-    {% endblock header2 %}
+
+        <script>
+
+
+            const posturl = "clientcash"
+
+
+            function createFunction(button, pk) {
+                var formId = `createForm`;   //change
+                var formElement = document.getElementById(formId);
+                try {
+                    disableButton(button);
+                    var isValid = true;
+                    var errors = {};
+                    var formData = new FormData();
+
+                    var requiredKeys = ['date', 'receipt_number', 'payment_amount', 'payment_method'];   //change
+
+
+                    formData.append('date', getValueOrDefault(formElement.querySelector('input[name="date"]').value));              //change
+                    formData.append('receipt_number', getValueOrDefault(formElement.querySelector('input[name="receipt_number"]').value));
+                    formData.append('payment_amount', getValueOrDefault(formElement.querySelector('input[name="payment_amount"]').value));
+                    formData.append('payment_method', getValueOrDefault(formElement.querySelector('select[name="payment_method"]').value));
+                    // formData.append('employee', getValueOrDefault(formElement.querySelector('select[name="employee"]').value));
+                   
+                  
+
+
+                    requiredKeys.forEach(function (key) {
+                        var value = formData.get(key);
+                        if (!value.trim()) {
+                            isValid = false;
+                            errors[key] = ['This field may not be blank.'];
+                        }
+                    });
+
+                    if (!isValid) {
+                        enableButton(button);
+                        console.log(errors);
+                        handleCreateErrors(errors);
+                        return;
+                    } else {
+                        $(`#${formId} input, #${formId} button`).prop('disabled', true);
+
+                    }
+
+                    $.ajax({
+                        url: `/${posturl}/1/`,                //change
+                        type: 'POST',
+                        headers: {
+                            'X-CSRFToken': csrftoken,
+                        },
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function (response, status, xhr) {
+                            console.error(status);
+                            if (xhr.status === 201) {
+                                showToast(successMesssage?.message, '', successMesssage?.bgColor, true);
+                            } else {
+                                console.error(error);
+                                // restoreForm(formId, button)
+
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            console.log(xhr, status, error);
+                            if (xhr.status === 400) {
+                                if (xhr?.responseJSON || xhr?.responseJSON?.errors) {
+                                    handleCreateErrors(transformErrors(xhr.responseJSON));
+                                    // restoreForm(formId, button)
+
+                                } else {
+                                    showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+                                    // restoreForm(formId, button)
+
+                                }
+                            }
+                            else if (xhr.status === 401 || 404) {
+                                showToast(xhr?.responseJSON?.details, '', errorAlertMessage?.bgColor);
+                                // restoreForm(formId, button)
+
+                            }
+                            else {
+                                showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+                                // restoreForm(formId, button)
+
+                            }
+                        }
+                    });
+                } catch (error) {
+                    showToast(errorOccured?.message, '', errorOccured?.bgColor);
+                    // restoreForm(formId, button)
+                    console.error(error);
+                }
+
+                finally {
+                    restoreForm(formId, button)
+                }
+            }
+
+        </script>
+
+
+
+        {% endblock header2 %}

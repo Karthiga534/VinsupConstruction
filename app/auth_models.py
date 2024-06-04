@@ -74,7 +74,7 @@ class CustomUserManager(BaseUserManager):
         return normalized_phone_number
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):    
-    email=models.EmailField(null=True, blank=True)
+    email=models.EmailField(null=True, blank=True,unique=True)
     image = models.ImageField(upload_to='profile_images/', null=True, blank=True)
     name = models.CharField(max_length=255)
     phone_number = models.CharField(max_length=10, unique=True)
@@ -343,8 +343,8 @@ class Company(models.Model):
     gst = models.CharField(max_length=500,null=True,blank=True)
     created_at = models.DateField(auto_now_add=True)
     plan =models.ForeignKey(CompanyPlan,null=True,blank=True,on_delete=models.CASCADE)
-    monthly_working_days =models.IntegerField(null=True, blank=True)
-    monthly_paid_leaves =models.IntegerField(null=True, blank=True)
+    monthly_working_days =models.IntegerField(default=26,null=True, blank=True)
+    monthly_paid_leaves =models.IntegerField(default=1,null=True, blank=True)
 
 
     def save(self, *args, **kwargs):
@@ -469,3 +469,25 @@ class City(models.Model):
 
     def __str__(self):
         return self.name
+    
+
+
+
+
+
+
+class Employees(models.Model):
+    company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
+    user=models.ForeignKey(CustomUser, on_delete=models.CASCADE,null=True,blank=True)
+    name=models.CharField(max_length=50,null=True,blank=True)   
+    mobile=models.CharField(max_length=10,null=True,blank=True)
+    address=models.CharField(max_length=200,null=True,blank=True)
+    bankname=models.CharField(max_length=50,null=True,blank=True)
+    branch=models.CharField(max_length=50,null=True,blank=True)
+    bankaccount=models.CharField(max_length=50,null=True,blank=True)
+    ifsccode=models.CharField(max_length=50,null=True,blank=True)
+    start_date=models.DateField(auto_now_add=True, null=True, blank=True)
+    wage=models.DecimalField(max_digits=10, decimal_places=2,null=True, blank=True)
+    monthly_salary = models.DecimalField(max_digits=10, decimal_places=2,null=True, blank=True)
+
+

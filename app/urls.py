@@ -20,9 +20,6 @@ urlpatterns = [
     path('logout/', CustomLogoutView.as_view(), name='logout'),
     path('', views.index, name='index'),
 
-    path('password_reset/', password_reset_request_view, name='password_reset_request'),
-    path('password_reset_confirm/', password_reset_confirm_view, name='password_reset_confirm'),
-
 #---------------------------- UOM ----------------------------
 
     path('uom/', views.uom, name='uom'),
@@ -332,6 +329,29 @@ urlpatterns = [
     path('clientcash/<int:pk>/',views.clientcash,name='clientcash'),
     path('payment-process/<int:project_id>/', views.payment_process, name='payment-process'),
 
+
+
+    #     # employee attendence
+    # path('attendance/employee',views.employee_attendance,name= 'employee-labour-attendance'), #render only
+    # path('add_employeeattendance', views.add_employeeattendance, name='add_employeelabourattendance'),
+    # path('employee_companylabourattendance/<int:pk>/', views.update_employeeattendance, name='update_employeeabourattendance'),
+    # path('employee_companylabourattendance/<int:pk>/', views.delete_employeeattendance, name='delete_employeelabourattendance'),
+    # path('employeelabourattendancelist/<str:pk>/', views.employeeattendancelist, name="employeelabourattendancelist"),
+
+    # path('employee-attendence-list/<str:pk>/',views.employee_attendence_list,name='labour-attendence-list'), #list data
+    # path('make-employee-present/<int:pk>/',views.make_employee_present,name='make_employee_present'),
+
+    path('site_allocation/',views.site_allocation,name= 'site_allocation'), 
+    path('add_site_allocation/', views.add_site_allocation, name='add_site_allocation'),
+    path('site-allocation-list/<str:pk>/',views.site_allocation_list,name='site-allocation-list'), #list data
+
+    path('lab_site_allocation/',views.lab_site_allocation,name= 'lab_site_allocation'), 
+    path('add_lab_site_allocation/', views.add_lab_site_allocation, name='add_lab_site_allocation'),
+    path('lab-site-allocation-list/<str:pk>/',views.lab_site_allocation_list,name='lab-site-allocation-list'), 
+
+
+    path('purchase-details/<int:purchase_id>/', views.purchase_details, name='purchase-details'),
+    # path('update-purchase/<int:purchase_id>/',  views.purchase_details, name='update_purchase_details'),
 
     
 

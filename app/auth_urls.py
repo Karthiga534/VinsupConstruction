@@ -4,6 +4,16 @@ from app.auth_api import *
 from django.urls import path
 
 from app import html
+from .auth_ser import EmpCRUD
+
+
+# employees
+
+from rest_framework import routers
+
+router = routers.DefaultRouter()
+
+router.register(r'employees', EmpCRUD)
 
 
 
@@ -44,6 +54,8 @@ urlpatterns += [
 
 
     path('update-user/<int:pk>/',html.update_user,name="update-user"),
+
+    
     path('create-user/',html.register_customuser,name="create-user"),
     # make superuser
     path('admin-users-upgrade/<int:pk>/',html.upgrade_admin_user, name="admin-users-upgrade"),
@@ -53,3 +65,7 @@ urlpatterns += [
 
 
 ]
+
+
+
+urlpatterns+=router.urls

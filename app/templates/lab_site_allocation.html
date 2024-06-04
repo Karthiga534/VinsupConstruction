@@ -8,13 +8,13 @@
         <div class="row">
           <div class="col-12">
             <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-              <h4 class="mb-sm-0">Employee Attendence Report</h4>
+              <h4 class="mb-sm-0">Site Allocation</h4>
               <div class="page-title-right">
                 <ol class="breadcrumb m-0">
                   <li class="breadcrumb-item">
                     <a href="javascript: void(0);">Dashboard</a>
                   </li>
-                  <li class="breadcrumb-item active">Employee Attendence</li>
+                  <li class="breadcrumb-item active">Site Allocation</li>
                 </ol>
               </div>
             </div>
@@ -24,21 +24,106 @@
         <div class="row">
           <div class="col-lg-12">
             <div class="card">
+              
+
               <div class="card-header">
+
                 <div class="row">
-                  <div class="col-xl-6 col-lg-6 col-md-6 col-12">
-                    <h4>Employee Attendence Management</h4>
-                  </div>
-                  <div class="col-xl-4 col-lg-4 col-md-4 col-12"></div>
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-12">
+                        <h4>Site Allocation Management</h4>
+                    </div>
+                    <div class="col-xl-4 col-lg-4 col-md-4 col-12"></div>
+                    <div class="col-xl-2 col-lg-2 col-md-2 col-12">
+                        <button type="button" class="btn btn-info" style="float:right;"
+                            data-bs-toggle="modal" data-bs-target=".bs-example-modal-lg">+ Add
+                           </button>
+                        <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog"
+                            aria-labelledby="myLargeModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <form id="createForm" enctype="multipart/form-data">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="myLargeModalLabel">Labour Site Allocation
+                                            </h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close" onclick="clearErrors()">
+                                            </button>
+                                        </div>
+                                        <hr>
+                                        <div class="modal-body">
+
+                                            {% csrf_token %}
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <label for="id_date" class="form-label">Date: </label>
+                                                    <input type="date" name="date" class="form-control"
+                                                        id="date" value="">
+                                                    <span id="dateError" class="error-message"></span>
+                                                </div>
+
+                                                <div class="col-md-6">
+                                                    <label for="" class="form-label">Select Labour
+                                                        :</label>
+                                                    <select class="form-select mb-3"
+                                                        aria-label="Default select example"
+                                                        name="labour" id="labour">
+
+                                                        <option value=""> ---------------- </option>
+                                                        {% for i in employee %}
+                                                        <option value="{{i.id}}">{{i.name}} </option>
+                                                        {% endfor %}
+
+                                                    </select>
+                                                    <span id="labourError"
+                                                        class="error-message"></span>
+                                                </div>
+
+                                                <div class="col-md-6">
+                                                    <label for="" class="form-label">Select Project
+                                                        :</label>
+                                                    <select class="form-select mb-3"
+                                                        aria-label="Default select example"
+                                                        name="project" id="project">
+
+                                                        <option value="">----------------</option>
+                                                        {% for i in project %}
+                                                        <option value="{{i.id}}">{{i.proj_name}} </option>
+                                                        {% endfor %}
+
+                                                    </select>
+                                                    <span id="projectError"
+                                                        class="error-message"></span>
+                                                </div>
+                                           
+                                                
+
+                                            </div>
+                                        </div>
+                                        <hr>
+                                        <div class="modal-footer">
+                                            <button class="btn btn-link link-success fw-medium shadow-none"
+                                                data-bs-dismiss="modal"><i
+                                                    class="ri-close-line me-1 align-middle"
+                                                    onclick="clearErrors()"></i> Close</button>
+                                            <button type="button" class="btn btn-primary "
+                                                onclick="createFunction(this)">Save </button>
+                                        </div>
+                                    </form>
+                                </div>
+                                <!-- /.modal-content -->
+                            </div>
+                            <!-- /.modal-dialog -->
+                        </div>
+                    </div>
                 </div>
-              </div>
+            </div>
 
 
 
               <div class="card-body">
                 <div class="row">
                   <div class="col-xl-3 col-lg-3 col-md-3 col-xs-6 col-12">
-                    <label for="" class="form-label">Employee Name :</label>
+                    <label for="" class="form-label">Labour Name :</label>
                     <select class="form-select mb-3" aria-label="Default select example" id="labourdropdown">
 
                       <option value="0"> ------------ </option>
@@ -48,6 +133,17 @@
                       {% endfor %}
                     </select>
                   </div>
+                  <div class="col-xl-3 col-lg-3 col-md-3 col-xs-6 col-12">
+                    <label for="" class="form-label">Project Name :</label>
+                    <select class="form-select mb-3" aria-label="Default select example"  id="dropdown">
+                        <option value="0"> ------------ </option>
+                        {% for i in project %}
+                        <option value="{{i.id}}">{{i.proj_name}} </option>
+                        {% endfor %}
+
+                    </select>
+                    
+                </div>
 
                   <div class="col-xl-2 col-lg-2 col-md-2 col-xs-6 col-12">
                     <label for="exampleInputdate" class="form-label">From Date</label>
@@ -73,12 +169,8 @@
                       <th data-ordering="false">SR No.</th>
                       <th data-ordering="false"> Date </th>
                       <th data-ordering="false">Project Name </th>
-                      <th data-ordering="false">Name</th>
-                      
-                      <th data-ordering="false">Clock In</th>
-                      <th data-ordering="false">Clock Out</th>
-
-                      <th data-ordering="false">Over Time</th>
+                      <th data-ordering="false">Labour Name</th>
+                      <th data-ordering="false">Created By</th>
                       <th data-ordering="false">Action</th>
                     </tr>
                   </thead>
@@ -107,7 +199,7 @@
 
 
 
-
+{% comment %} 
 <!-- clockin -->
 <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" id="clockInModal"
   aria-labelledby="myLargeModalLabel-1" aria-hidden="true">
@@ -179,7 +271,7 @@
       </div>
     </div>
   </div>
-</div>
+</div> {% endcomment %}
 
 
 <button onclick="topFunction()" class="btn btn-danger btn-icon" id="back-to-top">
@@ -258,48 +350,12 @@
         )
       );
       formData.append(
-        "employee",
+        "labour",
         getValueOrDefault(
-          formElement.querySelector('select[name="employee"]').value
+          formElement.querySelector('select[name="labour"]').value
         )
       );
-      formData.append(
-        "date",
-        getValueOrDefault(
-          formElement.querySelector('input[name="date"]').value
-        )
-      );
-
-      formData.append(
-        "over_time",
-        getValueOrDefault(
-          formElement.querySelector('input[name="over_time"]').value
-        )
-      );
-      clock_in = formElement.querySelector('input[name="clock_in"]').value
-      clock_out = formElement.querySelector('input[name="clock_out"]').value
-
-      if (clock_in) {
-        formData.append(
-          "clock_in",
-          getValueOrDefault(
-            formElement.querySelector('input[name="clock_in"]').value
-          )
-        );
-
-      }
-
-      if (clock_out) {
-
-        formData.append(
-          "clock_out",
-          getValueOrDefault(
-            formElement.querySelector('input[name="clock_out"]').value
-          )
-        );
-
-      }
-
+    
 
 
       requiredKeys.forEach(function (key) {
@@ -320,7 +376,7 @@
       }
 
       $.ajax({
-        url: "/add_employeeattendance/", //change
+        url: "/add_site_allocation/", //change
         type: "POST",
         headers: {
           "X-CSRFToken": csrftoken,
@@ -458,7 +514,7 @@
 
     try {
       fetch(
-        `/employee-attendence-list/${selectedValue}/?page=${page}&start_date=${from}&end_date=${to}`
+        `/lab-site-allocation-list/${selectedValue}/?page=${page}&start_date=${from}&end_date=${to}`
       ) //CHANGE URL
         .then((response) => {
           if (response.status === 200) {
@@ -532,21 +588,15 @@
 
     // From amount
     const td4 = document.createElement("td");
-    td4.textContent = get_value(data.employee_name);
+    td4.textContent = get_value(data.labour_name);
     newRow.appendChild(td4);
 
     // From amount
     const td5 = document.createElement("td");
-    td5.textContent = get_value(data.clock_in);
+    td5.textContent = get_value(data.created_by_name);
     newRow.appendChild(td5);
 
-    const td6 = document.createElement("td");
-    td6.textContent = get_value(data.clock_out);
-    newRow.appendChild(td6);
-
-    const td7 = document.createElement("td");
-    td7.textContent = get_value(data.over_time);
-    newRow.appendChild(td7);
+  
 
 
     // Transfer Items
