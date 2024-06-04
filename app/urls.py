@@ -55,6 +55,7 @@ urlpatterns = [
 #----- Vendor Registration -----
 
     path('vendor/', api.vendor, name='vendors'),
+    path('vendor-list/', api.vendor_list, name='vendors-list'),
     path('add_vendor/', api.add_vendor, name='add_vendor'),
     path('update_vendor/<int:pk>/', api.update_vendor, name='update_vendor'),
     path('delete_vendor/<int:pk>/', api.delete_vendor, name='delete_vendor'),
@@ -75,6 +76,8 @@ urlpatterns = [
 #----- Purchase List -----
 
     path('purchaselist/',api.purchaselist,name='purchaselist'), 
+
+    path('project-purchase-history/<int:pk>/',api.project_purchaselist,name='project-purchase-history'),
     # path('purchase-filter/<str:pk>/', api.purchase_filter, name="purchase_filter"),
 
 #-------------------------- Quatation --------------------
@@ -291,7 +294,7 @@ urlpatterns = [
 
     # employee attendence
     path('attendance/employee',views.employee_attendance,name= 'employee-labour-attendance'), #render only
-    path('add_employeeattendance', views.add_employeeattendance, name='add_employeelabourattendance'),
+    path('add_employeeattendance/', views.add_employeeattendance, name='add_employeelabourattendance'),
     path('employee_companylabourattendance/<int:pk>/', views.update_employeeattendance, name='update_employeeabourattendance'),
     path('employee_companylabourattendance/<int:pk>/', views.delete_employeeattendance, name='delete_employeelabourattendance'),
     path('employeelabourattendancelist/<str:pk>/', views.employeeattendancelist, name="employeelabourattendancelist"),
@@ -300,27 +303,15 @@ urlpatterns = [
     path('make-employee-present/<int:pk>/',views.make_employee_present,name='make_employee_present'),
 
 
+
+    path('employee-clockin',views.employee_clock_in,name ='employe-clockin'),
+    path('employee-clockout/<int:pk>/',views.employee_clock_out,name = 'employe-clockout'),
+
 # --------
 
+# ACCOUNTS ---------------------------------
 
-
-
-
-# salary
-
-   
     path('profit-loss/<str:pk>/',views.profit_and_loss,name="profit-and-loss"),
-
-
-
-
-
-#    path('api/projects/', api.getprojectlist, name='project-list'),
-
-
-
-
-
     path('pettycash/', views.pettycash, name='pettycash'),
     path('add_pettycash/', views.add_pettycash, name='add_pettycash'),
     path('update_pettycash/<int:pk>/', views.update_pettycash, name='update_pettycash'),
@@ -372,7 +363,9 @@ urlpatterns = [
     
 
 
+# revision
 
+path('purchase-track/<int:pk>/<int:site_or_inventory>/' , views.item_price_track,name="item_price_track"),
 
 
 
@@ -420,9 +413,28 @@ urlpatterns = [
     path('dailytask/', views.dailytask, name='dailytask'),  
     path('add_dailytask/', views.add_dailytask, name='add_dailytask'),  
     path('update_dailytask/<int:pk>/', views.update_dailytask, name='update_dailytask'), 
+<<<<<<< HEAD
     path('delete_dailytask/<int:pk>/', views.delete_dailytask, name='delete_dailytask'),  
     path('dailytask-list/', views.dailytask_list, name='dailytask-list'),
     path('dailytask-list/<int:pk>/',  views.dailytask_list, name='dailytask-detail'),
+=======
+    path('delete_dailytask/<int:pk>/', views.delete_dailytask, name='delete_dailytask'), 
+
+    path('dailytask-list/', views.dailytask_list, name='dailytask-list'),  
+
+
+  
+
+
+
+
+    path('dailysitestockusage/', api.dailysitestockusage, name='dailysitestockusage'), 
+    path('add_dailysitestockusage/',api.add_dailysitestockusage, name='add_dailysitestockusage'),
+    path('stockusagelist/', api.sitestockusage, name="dailysitestockusagelist"),
+    path('dailysitestockusagelist/<int:pk>/', api.dailysitestockusagelist, name='dailysitestock-usagelist'), 
+
+   path('dailysitestockusage/', api.dailysitestockusage, name='dailysitestockusage'),
+>>>>>>> origin/cms
 
 
 
@@ -478,15 +490,19 @@ urlpatterns = [
 
     path('user-list/', api.user_list, name='user-list'),
     path('contractor-list/', api.contractoratt_list, name='contractor-list'),
+<<<<<<< HEAD
     path('sub-contract-list/', api.sub_contract_list, name='sub-contract-list'),
     path('sub-contract-list/<int:project_id>/', api.get_sub_contract_lists , name='get_sub_contract_lists'),
+=======
+    path('sub-contract-list/<int:pk>/', api.sub_contract_list, name='sub-contract-list'),
+>>>>>>> origin/cms
 
    
     path('employee-profile/<int:pk>/', api.get_employee_profile, name='get-employee-profile'),
 
 
 
-    path('dailysitestockusage/', api.dailysitestockusage, name='dailysitestockusage'),
+ 
 
 
 

@@ -59,6 +59,10 @@ class TransferInvoiceAdmin(admin.ModelAdmin):
 class TransferItemsAdmin(admin.ModelAdmin):
     list_display =[ 'id']
 
+@admin.register(DailySiteStockUsage)
+class DailySiteStockUsageAdmin(admin.ModelAdmin):
+    list_display =[ 'id']
+
 @admin.register(Contractor)
 class ContractorAdmin(admin.ModelAdmin):
     list_display = ('id',)
@@ -131,15 +135,10 @@ admin.site.register(OTP)
 admin.site.register(Salary)
 admin.site.register(SalaryReceipt)
 admin.site.register(SalaryPaymentHistory)
-admin.site.register(Attendance)
 
 
 @admin.register(Expense)
 class ExpenseAdmin(admin.ModelAdmin):
-    list_display = ('id',)  
-
-@admin.register(Dailytask)
-class DailytaskAdmin(admin.ModelAdmin):
     list_display = ('id',)  
 
 @admin.register(Files)
@@ -164,6 +163,7 @@ class PettyCashAdmin(admin.ModelAdmin):
 
 admin.site.register(PaymentHistory)
 
+admin.site.register(ProcessStatus)
 admin.site.register(SiteAllocation)
 
 # @admin.register(SiteAllocation)

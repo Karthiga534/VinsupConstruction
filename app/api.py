@@ -38,6 +38,21 @@ def vendor(request):  #change name
     context= {'queryset': queryset,"location":"vendors","pages" :pages,"search":search}   #change location name 
     return render(request,"purchase/vendor.html",context)    #change template name 
 
+
+@api_view(['GET'])
+@login_required(login_url='login')
+def vendor_list(request):  #change name 
+    user=request.user
+    allow,msg= check_user(request,VendorRegistration,instance=False)  # CHANGE model
+    if not allow:
+         context ={"unauthorized":msg}
+         return render(request,"login.html",context)      
+    querysets = VendorRegistration.objects.filter(company=request.user.company).order_by("-id")   #change query
+    ser = VendorRegistrationSerializer(querysets,many=True)
+    return Response(ser.data)
+
+
+
 @api_view(['POST'])
 @login_required(login_url='login')
 def add_vendor (request):  # CHANGE name
@@ -234,7 +249,33 @@ def purchaselist(request):
     context = {'queryset': queryset,"location": "purchaselist","pages": pages,"search": search,'vendor_names': vendors,}
     return render(request, "purchase/purchaselist.html", context)
 
+@login_required(login_url='login')
+def project_purchaselist(request,pk):
+    user = request.user
+    allow, msg = check_user(request, PurchaseInvoice, instance=False)
+    if not allow:
+        context = {"unauthorized": msg}
+        return render(request, "login.html", context)
+    vendors = VendorRegistration.objects.filter(company=request.user.company).order_by("-id")
+    # querysets = PurchaseInvoice.objects.filter(company=request.user.company).order_by("-id")
+    # if pk:
+    #     querysets= querysets.filter(site__id=pk)
+    
+    querysets =PurchaseInvoice.objects.none()
+    queryset, pages, search = customPagination(request, PurchaseInvoice, querysets)
+   
+    pid =pk
+    inventory = True
 
+    project ={}
+
+    if pk !=0:
+        project = get_object_or_404(Project,id=pk)
+        inventory = False
+    
+    context = {'queryset': queryset,"location": "project-purchase-history","pages": pages,
+               "search": search,'pid':pk,"project":project,"inventry":inventory,'vendors':vendors}
+    return render(request, "stock/sitePurchase.html", context)
 
 #Inventory Management
 #--------------------
@@ -442,26 +483,28 @@ def add_transfer(request):
     # print(invoice_data)
 
     table = invoice_data.pop('table')  # Use request.data to get JSON data
-    invoice_serializer = TransferInvoiceSerializer(data=invoice_data)
-    if invoice_serializer.is_valid():
-        invoice = invoice_serializer.save()
-        if table:
-            try:
-                tdata = json.loads(table)
-                for data in tdata:
-                    data['invoice'] = invoice.id
-                    items_serializer = TransferItemsSerializer(data=data)
-                    if items_serializer.is_valid():
-                        items_serializer.save()
-                    else:
-                        invoice.delete()
-                        return JsonResponse(items_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-            except json.JSONDecodeError:
-                invoice.delete()
-                return JsonResponse({'error': 'Invalid JSON format'}, status=status.HTTP_400_BAD_REQUEST)
-        return JsonResponse(invoice_serializer.data, status=status.HTTP_201_CREATED)
-    else:
-        return JsonResponse(invoice_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    with transaction.atomic():
+        invoice_serializer = TransferInvoiceSerializer(data=invoice_data)
+        if invoice_serializer.is_valid():
+            invoice = invoice_serializer.save()
+            if table:
+                try:
+                    tdata = json.loads(table)
+                    for data in tdata:
+                        data['invoice'] = invoice.id
+                        items_serializer = TransferItemsSerializer(data=data)
+                        if items_serializer.is_valid():
+                            items_serializer.save()
+                        else:
+                            invoice.delete()
+                            return JsonResponse(items_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                except json.JSONDecodeError:
+                    invoice.delete()
+                    return JsonResponse({'error': 'Invalid JSON format'}, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse(invoice_serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return JsonResponse(invoice_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 
@@ -1332,8 +1375,8 @@ def add_quatation(request):
     if not allow:
         return JsonResponse({'details': [msg]}, status=status.HTTP_401_UNAUTHORIZED)
     invoice_data = request.POST.copy().dict()
-    if user.admin:
-        invoice_data['company'] = user.company.id
+    # if user.admin:
+    invoice_data['company'] = user.company.id
     print(request.data)
     table=request.POST.get('table')
 
@@ -1348,6 +1391,7 @@ def add_quatation(request):
                     items_serializer = QuatationItemsSerializer(data=data)
                     if items_serializer.is_valid():
                         items_serializer.save()
+                        # return JsonResponse(items_serializer.data ,status=201)
                     else:
                         invoice.delete()
                         return JsonResponse(items_serializer.errors ,status=status.HTTP_400_BAD_REQUEST)
@@ -1458,7 +1502,7 @@ def update_quatationitem(request, pk):
 def deletequatationitem(request, pk):
     try:
         # Assuming you want to filter by company associated with the user
-        quatation = QuatationItems.objects.get(pk=pk, company=request.user.company)
+        quatation = QuatationItems.objects.get(pk=pk)
     except QuatationItems.DoesNotExist:
         return Response({'error': 'Item not found'}, status=status.HTTP_404_NOT_FOUND)
     
@@ -2122,9 +2166,7 @@ def contractoratt_list(request):
 #     return Response(sub_contracts)
 
 @api_view(['GET'])
-def sub_contract_list(request):
-    sub_contracts = ProjectSubContract.objects.values('id', 'name', 'project_id')
-    return Response(sub_contracts)
+
 
 @api_view(['GET'])
 def get_sub_contract_lists(request, project_id):
@@ -2138,37 +2180,138 @@ def get_sub_contract_lists(request, project_id):
 
 #------------------------------------------------Daily Site Stock Usage----------------------------------------
 
+@login_required(login_url='login')
 def dailysitestockusage(request):
     user = request.user
     allow, msg = check_user(request, DailySiteStockUsage, instance=False)
     if not allow:
         context = {"unauthorized": msg}
         return render(request, "login.html", context)
-    
-    uom = Uom.objects.filter(company=user.company).order_by("-id")
-    site = Project.objects.filter(company=user.company).order_by("-id")
-    
+
+    subcontractors = ProjectSubContract.objects.filter(company=user.company).order_by("-id")
+    projects = Project.objects.filter(company=user.company).order_by("-id")
+
     from_site = request.GET.get('from', "")
     items = []
     if from_site:
-        pro = site.filter(id=from_site).last()
-        items = SiteStock.objects.filter(project=pro)
+        pro = projects.filter(id=from_site).last()
+        subcontractors = ProjectSubContract.objects.filter(project=pro)
     else:
         items = InventoryStock.objects.filter(company=user.company).order_by("-id")
-    
-    
-    querysets = DailySiteStockUsage.objects.filter(project__company=user.company).order_by("-id")
+
+    #querysets = DailySiteStockUsage.objects.filter(company=user.company).order_by("-id")
+    querysets = DailySiteStockUsage.objects.all().order_by("-id")
     queryset, pages, search = customPagination(request, DailySiteStockUsage, querysets)
-    
+   
+
     context = {
         'queryset': queryset,
-        "location": "dailysitestockusage",
+        "location": "transfer",
         "pages": pages,
         "search": search,
-        "site": site,
-        "uom": uom,
+        "projects": projects,
+        "subcontractors": subcontractors,
         "inventory": user.company,
-        'items': items
+        'items': items,
+      
+        
     }
+    return render(request, "sitestock/dailysitestockusage.html", context)
+
+@login_required(login_url='login')
+def sitestockusage(request):
+    user = request.user
+    allow, msg = check_user(request, DailySiteStockUsage, instance=False)
+    if not allow:
+        context = {"unauthorized": msg}
+        return render(request, "login.html", context)
+
+    subcontractors = ProjectSubContract.objects.filter(company=user.company).order_by("-id")
+    projects = Project.objects.filter(company=user.company).order_by("-id")
+
+    from_site = request.GET.get('from', "")
+    # items = []
+    # if from_site:
+    #     pro = projects.filter(id=from_site).last()
+    #     subcontractors = ProjectSubContract.objects.filter(project=pro)
+    # else:
+    #     items = InventoryStock.objects.filter(company=user.company).order_by("-id")
+
+    #querysets = DailySiteStockUsage.objects.filter(company=user.company).order_by("-id")
+    # querysets = DailySiteStockUsage.objects.all().order_by("-id")
+    # queryset, pages, search = customPagination(request, DailySiteStockUsage, querysets)
+   
+
+    context = {
+        # 'queryset': queryset,
+        "location": "transfer",
+        # "pages": pages,
+        # "search": search,
+        "projects": projects,
+        "subcontractors": subcontractors,
+        # "inventory": user.company,
+        # 'items': items,
+      
+        
+    }
+    return render(request, "sitestock/dailysitestockusagelist.html", context)
+
+
+
+
+@api_view(['POST'])
+@login_required(login_url='login')
+def add_dailysitestockusage(request):
+    user = request.user
+    allow, msg = check_user(request, DailySiteStockUsage, instance=False)
+    if not allow:
+        return JsonResponse({'details': [msg]}, status=status.HTTP_401_UNAUTHORIZED)
     
-    return render(request, "dailysitestockusage.html", context)
+    table = request.POST.get('table', None)
+    if table:
+        try:
+            tdata = json.loads(table)
+            for data in tdata:
+                data["company"]=user.company.id
+                items_serializer = DailySiteStockUsageSerializer(data=data)
+                if items_serializer.is_valid():
+                    items_serializer.save()
+                else:
+                    return JsonResponse(items_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON format'}, status=status.HTTP_400_BAD_REQUEST)
+        return JsonResponse({'message': 'Success'}, status=status.HTTP_201_CREATED)
+    else:
+        return JsonResponse({'error': 'No data provided'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+@login_required(login_url='login')
+def dailysitestockusagelist(request, pk):
+    user = request.user
+    allow, msg = check_user(request, DailySiteStockUsage, instance=False)
+    if not allow:
+        context = {"unauthorized": msg}
+        return render(request, "login.html", context)
+    querysets = DailySiteStockUsage.objects.filter(company=request.user.company).order_by("-id")
+    projectid= get_int_or_zero(pk)
+    if projectid !=0:
+        querysets =querysets.filter(project__id=projectid)
+    subcontractid =request.GET.get('subcontract')
+    subcontid= get_int_or_zero(subcontractid)
+    if subcontid:
+        querysets =querysets.filter(subcontract__id=subcontid)
+    # ser = DailySiteStockUsageSerializer(querysets,many=True)
+    return PaginationAndFilter(querysets, request, DailySiteStockUsageSerializer,date_field='created_at')
+    
+
+
+
+
+
+
+
+
+   
+
+

@@ -139,7 +139,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="myLargeModalLabel">Invoice History </h5>
+                    <h5 class="modal-title" id="myLargeModalLabel">Payment History </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -149,14 +149,14 @@
                                 <tr>
                                     <th>S.no</th>
                                     <th>Date</th>
-                                    <th>Invoice Id</th>
+                                    <th>Payment Id</th>
                                     <th>From date</th>
                                     <th>To date</th>
                                     <th>Amount</th>
                                     <th>Paid</th>
                                     <!-- <th>Pending</th> -->
                                     <th>Payment Mode</th>
-                                    <!-- <th>Status</th> -->
+                                    <th>Status</th>
 
                                     <!-- <th>Action</th> -->
 
@@ -230,6 +230,13 @@
                             </div>
 
                             <hr class="mt-2">
+                            
+                            <div class="col-lg-4 col-md-4 col-xs-6 col-12">
+                                <label for="" class="form-label mt-2">Payment Id :</label>
+                                <input type="text" class="form-control" id="transaction_id" name="transaction_id"
+                                    >
+                                <span id="transaction_idError" class="error-message"></span>
+                            </div>
 
                             <input type="number" class="form-control" id="hidden_total_amount"
                                 name="hidden_total_amount" hidden>
@@ -965,7 +972,7 @@
                 var formData = new FormData();
 
                 var requiredKeys = ["payment_period_start", "payment_period_end", "amount_paid", "payment_method", 'amount'];   //change
-
+                
 
                 formData.append('payment_period_start', getValueOrDefault(formElement.querySelector('input[name="payment_period_start"]').value));              //change
                 formData.append('payment_period_end', getValueOrDefault(formElement.querySelector('input[name="payment_period_end"]').value));
@@ -979,6 +986,12 @@
 
 
                 const strictTotal = getValueOrDefault(formElement.querySelector('input[name="hidden_total_amount"]').value);
+
+                const payid = getValueOrDefault(formElement.querySelector('input[name="transaction_id"]').value);
+
+                if (payid){
+                    formData.append("transaction_id",payid)
+                }
 
                 if (isNaN(paidAmount) || paidAmount < 0) {
                     errors["amount_paid"] = ['Please enter a valid positive number for the paid amount.'];

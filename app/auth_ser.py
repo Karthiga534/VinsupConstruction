@@ -435,3 +435,24 @@ class EmpCRUD(viewsets.ModelViewSet):
     permission_classes=[AllowAny]
     serializer_class = EmployeesSerializer
     queryset = Employees.objects.all()
+
+
+
+class CompanygetSerializer(serializers.ModelSerializer):
+    assetlist=AssetListSerialiser(many=True)
+    class Meta:
+        model = Company
+        fields = '__all__'
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data ["plan_name"] = instance.plan.name if instance.plan else None
+        return data
+
+class CompanyAdminProfileSerializer(serializers.ModelSerializer):
+    company = CompanygetSerializer()
+    owner = OwnergetSerializer()
+
+    class Meta:
+        model = CustomUser
+        fields = ('id', 'name', 'email', 'phone_number', 'company', 'owner',  'proof', 'image', 'admin')

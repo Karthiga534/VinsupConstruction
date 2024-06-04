@@ -616,7 +616,7 @@
 																			<input type="date" class="form-control"
 																				id="{{i.id}}_start_date"
 																				name="start_date"
-																				value="{{i.start_date}}" />
+																				value="{{ i.start_date|date:'Y-m-d' }}" />
 
 																			<span id="{{i.id}}_start_dateError"
 																				class="error-message"></span>
@@ -631,7 +631,7 @@
 
 																			<input type="date" class="form-control"
 																				id="{{i.id}}_end_date" name="end_date"
-																				value="{{i.start_date}}" />
+																				value="{{i.end_date |date:'Y-m-d'}}" />
 
 																			<span id="{{i.id}}_end_dateError"
 																				class="error-message"></span>
@@ -831,8 +831,8 @@
 																			<span class="file-span">
 																				<a target="_blank"
 																					href="{{ i.modeldesign.url}}">
-																					{{i.modeldesign |filename
-																					}}</a></span>
+																					{{i.modeldesign |filename }}
+																					</a></span>
 																			<!-- <div class="p-1"
 																				style="width:92%;border:1px solid gray;font-size:12px">
 																				<a
@@ -858,8 +858,8 @@
 																			<span class="file-span">
 																				<a target="_blank"
 																					href="{{ i.modeldesign.url}}">
-																					{{i.modeldesign |filename
-																					}}</a></span>
+																					{{i.modeldesign |filename }}
+																					</a></span>
 																			<!-- <div class="p-1"
 																				style="width:92%;border:1px solid gray;font-size:12px">
 																				<a

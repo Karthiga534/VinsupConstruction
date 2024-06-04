@@ -11,6 +11,7 @@
     <meta content="Premium Multipurpose Admin & Dashboard Template" name="description">
     <meta content="Themesbrand" name="author">
     <link href="{% static 'assets/css/style.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'assets/css/table.css' %}" rel="stylesheet" type="text/css">
     <!-- App favicon -->
     <link href="{% static 'assets/images/favi.jpg' %}" rel="shortcut icon">
     <!-- plugin css -->
@@ -739,12 +740,7 @@
                             <span data-key="">Dailytask</span>
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link menu-link" href="{% url 'dailysitestockusage' %}">
-                            <i class="mdi mdi-finance"></i>
-                            <span data-key="">Daily SiteStockUsage</span>
-                        </a>
-                    </li>
+                   
                    
                     <li class="nav-item">
                         <a class="nav-link menu-link" href="{% url 'viewstock' %}">
@@ -754,9 +750,15 @@
                     </li>
 
                     <li class="nav-item">
+                        <a class="nav-link menu-link" href="{% url 'dailysitestockusagelist'%}">
+                            <i class="mdi mdi-debug-step-over"></i>
+                            <span data-key="">Daily Site Stock List</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link menu-link" href="{% url 'transferlist' %}">
                             <i class="mdi mdi-debug-step-over"></i>
-                            <span data-key="">Transfer Lists</span>
+                            <span data-key="">Transfer List</span>
                         </a>
                     </li>
                     <li class="nav-item">

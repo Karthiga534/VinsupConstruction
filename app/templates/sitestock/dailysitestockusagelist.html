@@ -6,267 +6,363 @@
 <!-- Begin page -->
 <div id="layout-wrapper">
 
+	<div class="main-content">
 
-    <div class="main-content">
+		<div class="page-content">
+			<div class="container-fluid">
 
-        <div class="page-content">
-            <div class="container-fluid">
+				<!-- start page title -->
+				<div class="row">
+					<div class="col-12">
+						<div class="page-title-box d-sm-flex align-items-center justify-content-between">
+							<h4 class="mb-sm-0">Daily Site Stock Usage Management</h4>
 
-                <!-- start page title -->
-                <div class="row">
-                    <div class="col-12">
-                        <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                            <h4 class="mb-sm-0">View  daily site stock </h4>
+							<div class="page-title-right">
+								<ol class="breadcrumb m-0">
+									<li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
+									<li class="breadcrumb-item active">aily Site Stock Usage</li>
+								</ol>
+							</div>
+						</div>
+					</div>
+				</div>
 
-                            <div class="page-title-right">
-                                <ol class="breadcrumb m-0">
-                                    <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
-                                    <li class="breadcrumb-item active">stock</li>
-                                </ol>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- end page title -->
+				<div class="row">
+					<div class="col-lg-12">
+						<div class="card">
+							<div class="card-header">
 
-                <!-- end page title 
+								<div class="row">
+									<div class="col-xl-6 col-lg-6 col-md-6 col-12">
+										<h2>daily Site Stock Usage List </h2>
+									</div>
+									<div class="col-xl-4 col-lg-4 col-md-4 col-12"></div>
+									<div class="col-xl-2 col-lg-2 col-md-2 col-12">
+										<a href="{% url 'dailysitestockusage' %}" type="button" class="btn btn-info"
+											style="float:right;">Add Sitestock</a>
 
-                    <div class="alert alert-danger" role="alert">
-                        This is <strong>Datatable</strong> page in wihch we have used <b>jQuery</b> with cnd link!
-                    </div> -->
+									</div>
+								</div>
+								<div class="card-body">
+									<div class="row">
+										<div class="mb-3 mt-4" style="width: 200px;">
+											<label for="project" class="form-label"> Project:</label>
+											<select class="form-select" id="project">
+												<!-- <option value="-1"> All </option> -->
+												<option value="0">All</option>
 
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="card">
-                            <div class="card-header">
+												{% for project in projects %}
 
-                                <div class="row">
-                                    <div class="col-xl-6 col-lg-6 col-md-6 col-12">
-                                        <h2>Maintain  Daily Site stocks</h2>
-                                    </div>
-                                    <div class="col-xl-4 col-lg-4 col-md-4 col-12"></div>
-                                    <div class="col-xl-2 col-lg-2 col-md-2 col-12">
+												<option value="{{ project.id }}">{{ project.proj_name }}</option>
 
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card-body">
-                                <form method="GET" action="{% url 'dailysitestockusage' %}">
-                                    <div class="row">
-                                        <div class="col-xl-3 col-lg-3 col-md-3 col-xs-6 col-12">
+												{% endfor %}
+											</select>
+											<span id="projectError" class="error-message"></span>
+										</div>
 
-                                            <label for="" class="form-label">Site Name : </label>
+										<!-- Subcontractor Dropdown -->
+										<div class="mb-3 mt-4" style="width: 200px;">
+											<label for="subcontractor" class="form-label">Subcontractor:</label>
+											<select class="form-select" id="subcontractor" name="subcontractor">
 
-                                            <select class="form-select mb-3" aria-label="Default select example"
-                                                name="site" id="fromsite">
+												<option value="0" selected>--------</option>
 
-                                                <option value="0" selected>Inventory</option>
-                                                {% for i in site %}
-
-                                                {% if selectedSite|stringformat:"s" == i.id|stringformat:"s" %}
-
-                                                <option value="{{ i.id }}" selected>{{ i.site_location }}</option>
-                                                {% else %}
-                                                <option value="{{ i.id }}">{{ i.site_location }} </option>
-                                                {% endif %}
-                                                {% endfor %}
-                                            </select>
+												{% for subcontract in subcontractors %}
 
 
-                                        </div>
-                                        <div class="col-xl-3 col-lg-3 col-md-3 col-xs-6 col-12">
-                                            <label for="exampleInputdate" class="form-label">From Date</label>
-                                            <input type="date" class="form-control" id="fromdate">
-                                        </div>
-                                        <div class="col-xl-3 col-lg-3 col-md-3 col-xs-6 col-12">
-                                            <label for="exampleInputdate" class="form-label">To Date</label>
-                                            <input type="date" class="form-control" id="todate">
-                                        </div>
-                                        <div class="col-xl-3 col-lg-3 col-md-3 col-xs-6 col-12">
-                                            <br>
-                                            <!-- <button type="submit"
-                                                class="btn btn-primary waves-effect waves-light mt-2">Get
-                                            </button> -->
-                                        </div>
-                                        <div class="col-xl-3 col-lg-3 col-md-3 col-xs-6 col-12">
+												<option value="{{ subcontract.id }}">
+													{{ subcontract.display_contractor_dropdown }}</option>
 
-                                        </div>
-                                        <div class="col-xl-3 col-lg-3 col-md-3 col-xs-6 col-12">
+												{% endfor %}
+											</select>
+											<span id="subcontractorError" class="error-message"></span>
+										</div>
+										<div class="col-xl-3 col-lg-3 col-md-3 col-xs-6 col-12">
+											<br><br><button type="button"
+												class="btn btn-primary waves-effect waves-light mt-2">Get
+												Report</button>
+										</div>
+									</div>
+									<hr>
+									<table id="example"
+										class="table table-bordered dt-responsive nowrap table-striped align-middle"
+										style="width:100%">
+										<thead>
+											<tr>
 
-                                        </div>
-                                    </div>
-                                </form>
-                                <hr>
-                                <div class="card">
-                                    <div class="card-body">
-                                        <table id="example"
-                                            class="table table-bordered dt-responsive nowrap table-striped align-middle"
-                                            style="width:100%">
-                                            <thead>
-                                                <tr>
-                                                    <!-- <th scope="col" style="width: 10px;">
-                                                        <div class="form-check">
-                                                            <input class="form-check-input fs-15" type="checkbox"
-                                                                id="checkAll" value="option">
-                                                        </div>
-                                                    </th> -->
-                                                    <th data-ordering="false">S No.</th>
-                                                    <th data-ordering="false">Item Name</th>
-                                                   
-                                                    <th data-ordering="false">Weight / Qty</th>
-                                                    <th data-ordering="false">Usage Quantity</th>
-                                                    <th data-ordering="false">Unit</th>
-                                                    <!-- <th data-ordering="false">Total Amount</th> -->
+												<th data-ordering="false">S No.</th>
+												<th data-ordering="false">Item name</th>
+												<th data-ordering="false">Qty</th>
+												<th data-ordering="false">Project</th>
+												<th data-ordering="false">Subcontractor</th>
+												<th data-ordering="false">Unit</th>
+												<th data-ordering="false">Action</th>
 
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <!-- {% for i in queryset %}
-                                                <tr>
-                                                    <th scope="row">
-                                                        <div class="form-check">
-                                                            <input class="form-check-input fs-15" type="checkbox"
-                                                                name="checkAll" value="option1">
-                                                        </div>
-                                                    </th>
-                                                    <td>{{forloop.counter}}</td>
-                                                    <td>{{i.item.item}}</td>
-                                                    <td>{{i.item.price}}</td>
-                                                    <td>{{i.qty}}</td>
-                                                    <td>{{i.unit}}</td>
-                                                    <td>{{i.get_total}}</td>
-
-                                                </tr>
-
-                                                {% endfor %} -->
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- container-fluid -->
-            </div>
-            <!-- End Page-content -->
-
-
-        </div>
-        <!-- end main content-->
-
-    </div>
-    <!-- END layout-wrapper -->
+											</tr>
+										</thead>
+										<tbody>
 
 
 
-    <!--start back-to-top-->
-    <button onclick="topFunction()" class="btn btn-danger btn-icon" id="back-to-top">
-        <i class="ri-arrow-up-line"></i>
-    </button>
-    <!--end back-to-top-->
+										</tbody>
+									</table>
 
-    <!--preloader-->
-    <div id="preloader">
-        <div id="status">
-            <div class="spinner-border text-primary avatar-sm" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
-        </div>
-    </div>
+
+									<div id="results-container"></div>
+									<div id="pagination-container"></div>
+
+
+
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- container-fluid -->
+				</div>
+				<!-- End Page-content -->
+
+
+			</div>
+			<!-- end main content-->
+
+		</div>
+		<!-- END layout-wrapper -->
+
+
+
+
+		<div class="modal fade bs-example-modal-lg1" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+			aria-hidden="true">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="myLargeModalLabel">Sitestock Item List </h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<div class="table-responsive">
+							<table class="table table-bordered">
+								<thead>
+									<tr>
+										<th>S.no</th>
+										<th>Item Name</th>
+										<th>Qty</th>
+										<th>Project</th>
+										<th>Subcontractor</th>
+										<th>Unit</th>
+
+									</tr>
+								</thead>
+								<tbody id="modalTableBody">
+									<!-- Modal table body will be populated dynamically -->
+								</tbody>
+							</table>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button class="btn btn-link link-success fw-medium shadow-none" data-bs-dismiss="modal"><i
+								class="ri-close-line me-1 align-middle"></i> Close</button>
+						<button type="button" class="btn btn-primary">Save</button>
+					</div>
+				</div>
+			</div>
+		</div>
 
 
 
 
 
-    <script>
 
-        var qtyError = false;
+		<!--start back-to-top-->
+		<button onclick="topFunction()" class="btn btn-danger btn-icon" id="back-to-top">
+			<i class="ri-arrow-up-line"></i>
+		</button>
+		<!--end back-to-top-->
 
-        var priceError = false;
-
-        document.addEventListener('DOMContentLoaded', function () {
-
-            const dropdown = document.getElementById('fromsite');
-            const tableBody = document.querySelector('#example tbody');
-
-            // on dom loaded 
-            const initialSelectedValue = dropdown.value; 
-            fetchData(initialSelectedValue,tableBody);
-
-            // fetch table data API
-            dropdown.addEventListener('change', function () {
-                console.log(dropdown, tableBody)
-                const selectedValue = dropdown.value;
-                fetchData(selectedValue,tableBody);
-            });
-
-        });
+		<!--preloader-->
+		<div id="preloader">
+			<div id="status">
+				<div class="spinner-border text-primary avatar-sm" role="status">
+					<span class="visually-hidden">Loading...</span>
+				</div>
+			</div>
+		</div>
 
 
-        // fetch data
-        function fetchData(selectedValue,tableBody) {
-            try {
-                fetch(`/transfer/${selectedValue}/`)
-                    .then(response => {
-                        if (response.status === 200) {
-                            console.log('Data fetched');
-                            return response.json();
-                        } else if (response.status === 404) {
-                            throw new Error('Resource not found');
-                        } else if (response.ok) {
-                            throw new Error(`HTTP error! Status: ${response.status}`);
-                        } else {
-                            throw new Error('Network response was not ok');
-                        }
-                    })
-                    .then(data => {
-                        tableBody.innerHTML = '';
+		<script>
 
-                        data.forEach((item, index) => {
-                            const newRow = createTableRow(index + 1, item);
-                            tableBody.appendChild(newRow);
-                        });
+			const existingPaginationContainer = document.getElementById('pagination-container');
 
-                    })
-                    .catch(error => {
-                        console.error('Error fetching data:', error);
-                        showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
-                    });
-            } catch (error) {
-                console.error('Error in fetch operation:', error);
-            }
-        }
+			const dropdown = document.getElementById('project');
+			const dropdown2 = document.getElementById('subcontractor');
+			const tableBody = document.querySelector('#example tbody');
 
 
-        // MANIPULATE TABLE DATA
-        function createTableRow(serialNumber, data) {
-            const newRow = document.createElement('tr');
-            newRow.setAttribute('data-item-id', data.id);
-            newRow.innerHTML = `
+			// // from and to
+			// const fromdate = document.getElementById('fromdate');
+			// const todate = document.getElementById('todate');
 
-            <!-- 	<th scope="row">
-						<div class="form-check">
-							<input class="form-check-input fs-15 item-checkbox"
-								type="checkbox" name="checkAll" value="${data.item.id}">
-						</div>           --!>
-					</th>
-					<td>${serialNumber}</td>
-					<td>${data.item.item}</td>
-					
+			// var qtyError = false;
 
-					<td>${data.qty}</td>
-                    <td> </td>
-                    <td>${data.unit}</td>
-                    
-					`;
+			// var priceError = false;
 
-            return newRow;
-        }
+			var currentPage = 1;
+
+			document.addEventListener('DOMContentLoaded', function () {
+
+				// const dropdown = document.getElementById('fromsite');
+				// const tableBody = document.querySelector('#example tbody');
+
+				// on dom loaded 
+				const initialSelectedValue = dropdown.value;
+				fetchData(1);
+
+				// fetch table data API
+				dropdown.addEventListener('change', function () {
+
+					fetchData(currentPage);
+				});
+
+				dropdown2.addEventListener('change', function () {
+
+					fetchData(currentPage);
+				});
+
+				// todate.addEventListener('change', function () {
+
+				// 	fetchData(currentPage);
+				// });
+
+				// fromdate.addEventListener('change', function () {
+
+				// 	fetchData(currentPage);
+				// });
+
+			});
 
 
-    </script>
+			// fetch data
+			function fetchData(page) {
+
+				const selectedValue = dropdown.value;
+				const selectedValue2 = dropdown2.value;
+				// const from = fromdate?.value || ""
+				// const to = todate?.value || ""
+				// console.log(fromdate ,todate)
+				try {
+					fetch(`/dailysitestockusagelist/${selectedValue}/?page=${page}&subcontract=${selectedValue2}`)
+						.then(response => {
+							if (response.ok) {
+								console.log('Data fetched');
+								return response.json();
+							} else {
+								throw new Error(`HTTP error! Status: ${response.status}`);
+							}
+						})
+						.then(data => {
+							tableBody.innerHTML = '';
+							renderDataOrMessage(tableBody, data, page)
+						})
+						.catch(error => {
+							console.error('Error fetching data:', error);
+							showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+						});
+				} catch (error) {
+					console.error('Error in fetch operation:', error);
+				}
+			}
 
 
 
-    {% endblock header2 %}
+			// render table or message
+
+			function renderDataOrMessage(data, page) {
+				if (data && Array.isArray(data.results) && data.results.length > 0) {
+					data.results.forEach((item, index) => {
+						const newRow = createTableRow(index + 1, item);
+						tableBody.appendChild(newRow);
+					});
+					renderPagination(data, page);
+				} else {
+					tableBody.innerHTML = '<tr><td colspan="6">No data available.</td></tr>';
+					existingPaginationContainer.innerHTML = '';
+				}
+			}
+
+			function createTableRow(serialNumber, data) {
+				const newRow = document.createElement('tr');
+
+				const serialCell = document.createElement('td');
+				serialCell.textContent = serialNumber;
+				newRow.appendChild(serialCell);
+
+				const itemNameCell = document.createElement('td');
+				itemNameCell.textContent =get_value( data.item_name);
+				newRow.appendChild(itemNameCell);
+
+				const qtyCell = document.createElement('td');
+				qtyCell.textContent =get_value (data.qty);
+				newRow.appendChild(qtyCell);
+
+				const projectCell = document.createElement('td');
+				projectCell.textContent =get_value (data.project_name);
+				newRow.appendChild(projectCell);
+
+				const subcontractorCell = document.createElement('td');
+				subcontractorCell.textContent =get_value (data.subcontractor);
+				newRow.appendChild(subcontractorCell);
+
+				const unitCell = document.createElement('td');
+				unitCell.textContent =get_value (data.unit_name);
+				newRow.appendChild(unitCell);
+
+				// const actionCell = document.createElement('td');
+
+				// newRow.appendChild(actionCell);
+
+				return newRow;
+			}
+
+			// nested table
+			function populateModalTable(transferItems, modalTableBody) {
+				modalTableBody.innerHTML = ''; // Clear previous data
+
+				transferItems.forEach((tItem, index) => {
+					const modalRow = document.createElement('tr');
+
+					const serialCell = document.createElement('td');
+					serialCell.textContent = index + 1;
+					modalRow.appendChild(serialCell);
+
+					const itemNameCell = document.createElement('td');
+					itemNameCell.textContent = tItem.item_name || 'N/A';
+					modalRow.appendChild(itemNameCell);
+
+
+					const qtyCell = document.createElement('td');
+					qtyCell.textContent = tItem.qty || 'N/A';
+					modalRow.appendChild(qtyCell);
+
+
+					const projectCell = document.createElement('td');
+					projectCell.textContent = tItem.project || 'N/A';
+					modalRow.appendChild(projectCell);
+
+					const subcontractorCell = document.createElement('td');
+					subcontractorCell.textContent = tItem.subcontractor || 'N/A';
+					modalRow.appendChild(subcontractorCell);
+
+
+
+					const unitCell = document.createElement('td');
+					unitCell.textContent = tItem.item_unit || 'N/A';
+					modalRow.appendChild(unitCell);
+
+					modalTableBody.appendChild(modalRow);
+				});
+			}
+
+
+		</script>
+
+		{% endblock header2 %}

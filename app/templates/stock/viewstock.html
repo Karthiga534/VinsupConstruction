@@ -41,19 +41,20 @@
                             <div class="card-header">
 
                                 <div class="row">
-                                    <div class="col-xl-6 col-lg-6 col-md-6 col-12">
+                                    <div class="col">
                                         <h2>Maintain Site stocks</h2>
                                     </div>
-                                    <div class="col-xl-4 col-lg-4 col-md-4 col-12"></div>
-                                    <div class="col-xl-2 col-lg-2 col-md-2 col-12">
-
-                                    </div>
+                                    
+                                    <!-- <div class="col text-end" >
+                                        <button class="btn btn-info" onclick="routePage('project-purchase-history')">  view Purchase History </button>
+                                       
+                                    </div> -->
                                 </div>
                             </div>
                             <div class="card-body">
                                 <form method="GET" action="{% url 'viewstock' %}">
                                     <div class="row">
-                                        <div class="col-xl-3 col-lg-3 col-md-3 col-xs-6 col-12">
+                                        <div class="col-4">
 
                                             <label for="" class="form-label">Site Name : </label>
 
@@ -74,17 +75,14 @@
 
 
                                         </div>
-                                        <div class="col-xl-3 col-lg-3 col-md-3 col-xs-6 col-12">
+                                        <div class="col">
                                             <br>
-                                            <!-- <button type="submit"
-                                                class="btn btn-primary waves-effect waves-light mt-2">Get
-                                            </button> -->
-                                        </div>
-                                        <div class="col-xl-3 col-lg-3 col-md-3 col-xs-6 col-12">
+                                            <button type="submit" onclick="getReport(this,'example')"
+                                                class="btn btn-primary waves-effect waves-light mt-2">Get Report
+                                            </button>
 
-                                        </div>
-                                        <div class="col-xl-3 col-lg-3 col-md-3 col-xs-6 col-12">
-
+                                            <button type="button" class="btn btn-info waves-effect waves-light mt-2" onclick="routePage('project-purchase-history')">  
+                                                view Purchase History </button>
                                         </div>
                                     </div>
                                 </form>
@@ -105,9 +103,10 @@
                                                     <th data-ordering="false">S No.</th>
                                                     <th data-ordering="false">Item Name</th>
                                                     <th data-ordering="false">price</th>
-                                                    <th data-ordering="false">Weight / Qty</th>
+                                                    <th data-ordering="false">Qty</th>
                                                     <th data-ordering="false">Unit</th>
                                                     <th data-ordering="false">Total Amount</th>
+                                                    <th data-ordering="false">Price History</th>
 
                                                 </tr>
                                             </thead>
@@ -151,6 +150,51 @@
 
 
 
+        <!-- modal table -->
+        <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+        id="purchaseHistoryModal" data-bs-keyboard="false" data-bs-backdrop="static" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="item_name"></h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>S.no</th>
+                                    <th>Purchase Date</th>
+                                    <th>Vendor</th>
+                                    <th>Project</th>
+                                    <!-- <th>Item</th> -->
+                                    <th>Unit</th>
+                                    <th>Price</th>
+
+                                </tr>
+                            </thead>
+                            <tbody id="modalTableBody">
+                                <!-- Modal table body will be populated dynamically -->
+
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-link link-success fw-medium shadow-none" data-bs-dismiss="modal"><i
+                            class="ri-close-line me-1 align-middle"></i> Close</button>
+                    <!-- <button type="button" class="btn btn-primary">Save</button> -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
     <!--start back-to-top-->
     <button onclick="topFunction()" class="btn btn-danger btn-icon" id="back-to-top">
         <i class="ri-arrow-up-line"></i>
@@ -176,11 +220,14 @@
 
         var priceError = false;
 
+       
+
         document.addEventListener('DOMContentLoaded', function () {
 
             const dropdown = document.getElementById('fromsite');
             const tableBody = document.querySelector('#example tbody');
 
+            
             // on dom loaded 
             const initialSelectedValue = dropdown.value; 
             fetchData(initialSelectedValue,tableBody);
@@ -193,6 +240,14 @@
             });
 
         });
+
+
+        function routePage(url,id)
+        {
+            const dropdown = document.getElementById('fromsite');
+            let pid= dropdown.value
+            window.location.href =`/${url}/${pid}/`
+        }
 
 
         // fetch data
@@ -230,29 +285,139 @@
         }
 
 
+
+
         // MANIPULATE TABLE DATA
         function createTableRow(serialNumber, data) {
+            // const newRow = document.createElement('tr');
+            // newRow.setAttribute('data-item-id', data.id);
+            // newRow.innerHTML = `
+
+            // <!-- 	<th scope="row">
+            // 			<div class="form-check">
+            // 				<input class="form-check-input fs-15 item-checkbox"
+            // 					type="checkbox" name="checkAll" value="${data.item.id}">
+            // 			</div>           --!>
+            // 		</th>
+            // 		<td>${serialNumber}</td>
+            // 		<td>${data.item.item}</td>
+            // 		<td>${data.price}</td>
+
+            // 		<td>${data.qty}</td>
+            //         <td>${data.unit}</td>
+            //         <td>${formatAmount(data.get_total)}</td>
+            //         <td>${data.qty}</td>
+            // 		`;
+
+            // return newRow;
+
+
             const newRow = document.createElement('tr');
             newRow.setAttribute('data-item-id', data.id);
-            newRow.innerHTML = `
 
-            <!-- 	<th scope="row">
-						<div class="form-check">
-							<input class="form-check-input fs-15 item-checkbox"
-								type="checkbox" name="checkAll" value="${data.item.id}">
-						</div>           --!>
-					</th>
-					<td>${serialNumber}</td>
-					<td>${data.item.item}</td>
-					<td>${data.price}</td>
+            const idCell = createSerialCell(serialNumber);
+            newRow.appendChild(idCell);
 
-					<td>${data.qty}</td>
-                    <td>${data.unit}</td>
-                    <td>${currencyFormatter.format(data.get_total)}</td>
-					`;
+            const td2 = createTableCell(get_value(data.item.item));
+            newRow.appendChild(td2);
+
+            const td3 = createTableCell(get_value(data.price));
+            newRow.appendChild(td3);
+
+            const td4 = createTableCell(get_value(data.qty));
+            newRow.appendChild(td4);
+
+            const td5 = createTableCell(get_value(data.unit));
+            newRow.appendChild(td5);
+
+            const td6 = createTableCell(get_value(formatAmount(data.get_total)));
+            newRow.appendChild(td6);
+
+
+            // actioncell
+            const actionCell = document.createElement('td');
+
+            actionCell.innerHTML = `<button class="btn btn-soft-secondary btn-sm dropdown" type="button" onclick="openCustomDataModal('purchaseHistoryModal')">
+                
+                  View Price
+              </button>`;
+            newRow.appendChild(actionCell);
+
+            // click event
+            actionCell.addEventListener('click', () => {
+                // populateModalTable(data.get_purchase_items, modalTableBody);
+                fetchModalData(data.id)
+            });
 
             return newRow;
+
+
         }
+
+
+
+        function fetchModalData(itemid) {
+            try {
+                fetch(`/purchase-track/${itemid}/1/`)
+                    .then(response => {
+                        if (response.status === 200) {
+                            console.log('Data fetched');
+                            return response.json();
+                        } else if (response.status === 404) {
+                            throw new Error('Resource not found');
+                        } else if (response.ok) {
+                            throw new Error(`HTTP error! Status: ${response.status}`);
+                        } else {
+                            throw new Error('Network response was not ok');
+                        }
+                    })
+                    .then(data => {
+
+                        const itemnameElement =document.getElementById('item_name')
+
+                        itemnameElement.innerText =data.item_name + "  Price History"
+
+                        populateModalTable(data?.data, modalTableBody);
+                        // tableBody.innerHTML = '';
+
+                        // data.forEach((item, index) => {
+                        //     const newRow = createTableRow(index + 1, item);
+                        //     tableBody.appendChild(newRow);
+                        // });
+
+                    })
+                    .catch(error => {
+                        console.error('Error fetching data:', error);
+                        showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+                    });
+            } catch (error) {
+                console.error('Error in fetch operation:', error);
+            }
+        }
+
+
+
+        // nested table
+        function populateModalTable(items, modalTableBody) {
+            modalTableBody.innerHTML = ''; // Clear previous data
+
+            
+
+            items?.forEach((tItem, index) => {
+                const modalRow = document.createElement('tr');
+
+                modalRow.appendChild(createSerialCell(index + 1));
+                modalRow.appendChild(createTableCell(tItem.purchase_info.created_at));
+                modalRow.appendChild(createTableCell(tItem.purchase_info.vendor_name));
+                modalRow.appendChild(createTableCell(tItem.purchase_info.site_name));
+                // modalRow.appendChild(createTableCell(tItem.item_name));
+                modalRow.appendChild(createTableCell(tItem.unit_name));
+                modalRow.appendChild(createAmountCell(tItem.price));
+                modalTableBody.appendChild(modalRow);
+            });
+
+        }
+
 
 
     </script>
