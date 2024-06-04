@@ -25,6 +25,10 @@ from rest_framework.decorators import api_view, permission_classes
 from app.utils import PaginationAndFilter, customPagination,check_user,get_current_month,filter_by_month_range,get_company
 
 
+from django.urls import reverse
+from django.core.mail import send_mail
+from django.utils.crypto import get_random_string
+from .forms import PasswordResetRequestForm, SetPasswordForm
 
 
 paginator = PageNumberPagination()
@@ -2724,26 +2728,426 @@ def payment_process(request, project_id):
         return render(request, 'project/payment_process.html', {'project': project, 'payment_methods': payment_methods})
     
 
-# revision
+reset_codes = {}
 
+def password_reset_request_view(request):
+    if request.method == "POST":
+        form = PasswordResetRequestForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data["email"]
+            user = CustomUser.objects.filter(email=email).first()
+            if user:
+                reset_code = get_random_string(length=6)
+                reset_codes[email] = reset_code
+                send_mail(
+                    "Password Reset",
+                    f"Your reset code is: {reset_code}",
+                    "noreply@example.com",
+                    [email],
+                    fail_silently=False,
+                )
+                return redirect(reverse("password_reset_confirm"))
+    else:
+        form = PasswordResetRequestForm()
+    return render(request, "password_reset_request.html", {"form": form})
+
+def password_reset_confirm_view(request):
+    if request.method == "POST":
+        form = SetPasswordForm(request.POST)
+        if form.is_valid():
+            new_password = form.cleaned_data["new_password"]
+            code = request.POST.get("code")
+            email = None
+
+            # Find the email associated with the reset code
+            for key, value in reset_codes.items():
+                if value == code:
+                    email = key
+                    break
+
+            if email:
+                user = CustomUser.objects.filter(email=email).first()
+                if user:
+                    user.set_password(new_password)
+                    user.save()
+                    reset_codes.pop(email)
+                    return redirect(reverse("login"))
+                else:
+                    form.add_error(None, "User not found")
+            else:
+                form.add_error(None, "Invalid reset code")
+    else:
+        form = SetPasswordForm()
+    
+    return render(request, "password_reset_confirm.html", {"form": form})
+
+
+
+
+#--------------------------------------Daily Task-----------------------------------
+
+@login_required(login_url='login')
+def dailytask(request):  #change name 
+    user=request.user
+    allow,msg= check_user(request,Dailytask,instance=False)  # CHANGE model
+    if not allow:
+         context ={"unauthorized":msg}
+         return render(request,"login.html",context)    
+      
+    querysets = Dailytask.objects.filter(company=request.user.company).order_by("-id")
+    project = Project.objects.filter(company=request.user.company).order_by("-id") 
+    subcontract =ProjectSubContract.objects.filter(company=request.user.company).order_by("-id")
+    # subcontract_item =ProjectSubContractUnitRates.objects.all().order_by("-id")
+    uom =Uom.objects.filter(company=request.user.company).order_by("-id")
+    queryset,pages,search =customPagination(request,Expense,querysets)    #change, model
+    context= {'queryset': queryset,
+              "location":"dailytask",
+              "pages" :pages,
+              "projects":project,   
+              "subcontracts":subcontract,
+              "uoms": uom,
+              "search":search,
+              }   #change location name 
+    return render(request,"dailytask.html",context)    #change template name
+
+@api_view(['POST'])
+@login_required(login_url='login')
+def add_dailytask (request):  # CHANGE name
+    user=request.user
+    allow,msg= check_user(request,Dailytask,instance=False)  # CHANGE model
+    if not allow:
+        return JsonResponse({'details':[msg]}, status=status.HTTP_401_UNAUTHORIZED)
+    
+    request_data=request.POST.copy().dict()
+    # attachments = request.FILES.get("attachment",None) 
+
+    if user.admin:
+        request_data['company'] = user.company.id
+
+    # if attachments: 
+    #      request_data['attachment'] = attachments
+
+    serializer = dailyTaskSerializer(data=request_data)   # CHANGE serializer
+    if serializer.is_valid():  
+        serializer.save()
+        return JsonResponse( serializer.data, status=status.HTTP_201_CREATED)
+    else:
+        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['PUT'])
+@login_required(login_url='login')
+def update_dailytask(request, pk):  # CHANGE name
+    user=request.user
+
+    try:
+        instance = Dailytask.objects.get(id=pk)  # CHANGE model
+    except Dailytask.DoesNotExist:              # CHANGE model
+        return JsonResponse({'details': ['Item does not exist']}, status=404)
+
+    allow,msg= check_user(request,Dailytask,instance=instance)  # CHANGE model
+    if not allow:
+        return JsonResponse({'details':[msg]}, status=status.HTTP_401_UNAUTHORIZED)
+
+    serializer = dailyTaskSerializer(instance, data=request.data,partial=True)   # CHANGE Serializer
+    if serializer.is_valid():  
+        serializer.save()
+        return JsonResponse( serializer.data, status=200)
+    else:
+        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['DELETE'])
+@login_required(login_url='login')
+def delete_dailytask(request,pk):
+    user=request.user
+    try:
+        instance = Dailytask.objects.get(id=pk)  # CHANGE model
+        allow,msg= check_user(request,Dailytask,instance=instance)  # CHANGE model
+        if not allow:
+            return JsonResponse({'details':[msg]}, status=status.HTTP_401_UNAUTHORIZED)
+        instance.delete()
+        return JsonResponse( {'details': ['success']},status=204)
+    except Dailytask.DoesNotExist:  # CHANGE model
+        return JsonResponse({'details': ['Item does not exist']}, status=404)
+    
+
+
+@login_required(login_url='login')
+def site_allocation(request):
+    user=request.user
+    allow,msg= check_user(request,SiteAllocation,instance=False)  # CHANGE model
+    if not allow:
+         context ={"unauthorized":msg}
+         return render(request,"login.html",context)    
+    employee =Employee.objects.filter(company = user.company).order_by("-id")
+
+    project=Project.objects.filter(company=request.user.company).order_by("-id")
+    # projectsubcontractor = CompanyLabours.objects.filter(company=request.user.company).order_by("-id")
+    # querysets = ProjectLabourAttendence.objects.filter(company=request.user.company).order_by("-id")   #change query
+    # queryset,pages,search =customPagination(request,ProjectLabourAttendence,querysets)    #change, model
+    # context= {'queryset': queryset,"location":"employee-labour-attendance","pages" :pages,"search":search,'projectsubcontractor':projectsubcontractor,"project":project}   #change location name 
+    context ={"employee":employee, "project":project}
+    return render(request, 'emp_site_allocation.html',context)
+
+@api_view(['POST'])
+@login_required(login_url='login')
+def add_site_allocation(request):
+    user = request.user
+    allow, msg = check_user(request, SiteAllocation, instance=False)
+    
+    if not allow:
+        return JsonResponse({'details': [msg]}, status=status.HTTP_401_UNAUTHORIZED)
+    
+    request_data = request.POST.copy().dict()
+    
+    if user.admin:
+        request_data['company'] = user.company.id
+    
+    serializer = SiteAllocationEmployeeSerializer(data=request_data)
+    
+    if serializer.is_valid():
+        site_allocation = serializer.save(created_by=user)
+        return JsonResponse(SiteAllocationEmployeeSerializer(site_allocation).data, status=status.HTTP_201_CREATED)
+    else:
+        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
-@permission_classes([AllowAny])
-# @login_required(login_url='login')    
-def item_price_track(request,pk,site_or_inventory):
-    if site_or_inventory ==0:
-        item =get_object_or_404(InventoryStock,id=pk)
-    else :
-        item =get_object_or_404(SiteStock,id=pk)
-    purchase_records =item.purchase_history
-    serializers = PurchaseItemsPriceTrackSerializer(purchase_records,many=True)
-    data = serializers.data
-
-    item_name =item.item.item if item.item else None
+@login_required(login_url='login')
+def site_allocation_list(request, pk):  # change name 
+    user = request.user
+    allow, msg = check_user(request, SiteAllocation, instance=False)  # CHANGE model
+    if not allow:
+        context = {"unauthorized": msg}
+        return render(request, "login.html", context)    
     
-    results={
-        "data" : data,
-        "item_name" :item_name
-    }
+    company, _ = get_user_company(user)
+    pk = int(pk)
 
-    return Response(results)
+    if pk != 0:
+        querysets = SiteAllocation.objects.filter(employee__id=pk, company__in=company)
+        return PaginationAndFilter(querysets, request, SiteAllocationEmployeeSerializer, date_field="date")
+    
+    querysets = SiteAllocation.objects.filter(company__in=company).order_by('-id')
+    return PaginationAndFilter(querysets, request, SiteAllocationEmployeeSerializer, date_field="date")
+
+
+@login_required(login_url='login')
+def lab_site_allocation(request):
+    user=request.user
+    allow,msg= check_user(request,SiteAllocation,instance=False)  # CHANGE model
+    if not allow:
+         context ={"unauthorized":msg}
+         return render(request,"login.html",context)    
+    employee =CompanyLabours.objects.filter(company = user.company).order_by("-id")
+
+    project=Project.objects.filter(company=request.user.company).order_by("-id")
+    # projectsubcontractor = CompanyLabours.objects.filter(company=request.user.company).order_by("-id")
+    # querysets = ProjectLabourAttendence.objects.filter(company=request.user.company).order_by("-id")   #change query
+    # queryset,pages,search =customPagination(request,ProjectLabourAttendence,querysets)    #change, model
+    # context= {'queryset': queryset,"location":"employee-labour-attendance","pages" :pages,"search":search,'projectsubcontractor':projectsubcontractor,"project":project}   #change location name 
+    context ={"employee":employee, "project":project}
+    return render(request, 'lab_site_allocation.html',context)
+
+@api_view(['POST'])
+@login_required(login_url='login')
+def add_lab_site_allocation(request):
+    user = request.user
+    allow, msg = check_user(request, SiteAllocation, instance=False)
+    
+    if not allow:
+        return JsonResponse({'details': [msg]}, status=status.HTTP_401_UNAUTHORIZED)
+    
+    request_data = request.POST.copy().dict()
+    
+    if user.admin:
+        request_data['company'] = user.company.id
+    
+    serializer = SiteAllocationLabourSerializer(data=request_data)
+    
+    if serializer.is_valid():
+        site_allocation = serializer.save(created_by=user)
+        return JsonResponse(SiteAllocationLabourSerializer(site_allocation).data, status=status.HTTP_201_CREATED)
+    else:
+        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+@login_required(login_url='login')
+def lab_site_allocation_list(request, pk):  # change name 
+    user = request.user
+    allow, msg = check_user(request, SiteAllocation, instance=False)  # CHANGE model
+    if not allow:
+        context = {"unauthorized": msg}
+        return render(request, "login.html", context)    
+    
+    company, _ = get_user_company(user)
+    pk = int(pk)
+
+    if pk != 0:
+        querysets = SiteAllocation.objects.filter(labour__id=pk, company__in=company)
+        return PaginationAndFilter(querysets, request, SiteAllocationLabourSerializer, date_field="date")
+    
+    querysets = SiteAllocation.objects.filter(company__in=company).order_by('-id')
+    return PaginationAndFilter(querysets, request, SiteAllocationLabourSerializer, date_field="date")
+
+
+# def purchase_details(request, purchase_id):
+#     purchase = get_object_or_404(PurchaseInvoice, id=purchase_id)
+#     items = PurchaseItems.objects.filter(invoice=purchase)
+    
+#     data = {
+#         'invoice_id': purchase.invoice_id,
+        
+#         'vendor_name': purchase.vendor.vendorname if purchase.vendor else '',
+#         'total_amount': str(purchase.total_amount),
+#         'paid': str(purchase.paid),
+#         'pending': str(purchase.pending),
+#         'created_at': purchase.created_at.strftime('%Y-%m-%d'),
+#         'items': [
+#             {
+#                 'item_name': item.name,
+#                 'quantity': str(item.qty),
+#                 'unit': item.unit.name if item.unit else '',
+#                 'amount': str(item.sub_total)
+#             }
+#             for item in items
+#         ],
+#     }
+#     return JsonResponse(data)
+
+# def purchase_details(request, purchase_id):
+#     purchase = get_object_or_404(PurchaseInvoice, id=purchase_id)
+#     items = PurchaseItems.objects.filter(invoice=purchase)
+    
+#     # Calculate balance
+#     balance = purchase.total_amount - purchase.paid
+    
+#     data = {
+#         'site_name': purchase.site.site_location if purchase.site else '',
+#         'company_name': purchase.vendor_company,
+#         'gst': purchase.gst if purchase.gst else '',
+#         'tax': str(purchase.tax),
+#         'contact_no': purchase.contact_no if purchase.contact_no else '',
+#         'invoice_id': purchase.invoice_id,
+#         'vendor_name': purchase.vendor.vendorname if purchase.vendor else '',
+#         'total_amount': str(purchase.total_amount),
+#         'paid': str(purchase.paid),
+#         'pending': str(purchase.pending),
+#         'balance': str(balance),  # Include balance in the response
+#         'created_at': purchase.created_at.strftime('%Y-%m-%d'),
+#         'items': [
+#             {
+#                 'item_name': item.name,
+#                 'quantity': str(item.qty),
+#                 'unit': item.unit.name if item.unit else '',
+#                 'amount': str(item.sub_total)
+#             }
+#             for item in items
+#         ],
+#     }
+#     return JsonResponse(data)
+
+
+# from django.http import JsonResponse
+
+# def update_purchase_details(request, purchase_id):
+#     if request.method == 'POST':
+#         # Retrieve the updated data from the request
+#         updated_data = request.POST  # Assuming the updated data is sent via POST request
+        
+#         # Retrieve the PurchaseInvoice instance
+#         purchase = get_object_or_404(PurchaseInvoice, id=purchase_id)
+        
+#         # Update the fields of the PurchaseInvoice instance with the new data
+#         purchase.site = updated_data.get('site_name')
+#         purchase.vendor_company = updated_data.get('company_name')
+#         purchase.gst = updated_data.get('gst')
+#         purchase.tax = updated_data.get('tax')
+#         purchase.contact_no = updated_data.get('contact_no')
+#         purchase.invoice_id = updated_data.get('invoice_id')
+#         purchase.vendor.vendorname = updated_data.get('vendor_name')
+#         purchase.total_amount = updated_data.get('total_amount')
+#         purchase.paid = updated_data.get('paid')
+#         purchase.pending = updated_data.get('pending')
+#         purchase.created_at = updated_data.get('created_at')
+        
+#         # Save the changes
+#         purchase.save()
+        
+#         # Return a success response
+#         return JsonResponse({'message': 'Purchase details updated successfully'})
+#     else:
+#         # If the request method is not POST, return an error response
+#         return JsonResponse({'error': 'Invalid request method'})
+
+
+from django.http import JsonResponse
+
+def purchase_details(request, purchase_id):
+    purchase = get_object_or_404(PurchaseInvoice, id=purchase_id)
+    items = PurchaseItems.objects.filter(invoice=purchase)
+    
+    if request.method == 'GET':
+        balance = purchase.total_amount - purchase.paid
+        data = {
+            'site_name': purchase.site.site_location if purchase.site else '',
+            'company_name': purchase.vendor_company,
+            'gst': purchase.gst if purchase.gst else '',
+            'tax': str(purchase.tax),
+            'contact_no': purchase.contact_no if purchase.contact_no else '',
+            'invoice_id': purchase.invoice_id,
+            'vendor_name': purchase.vendor.vendorname if purchase.vendor else '',
+            'total_amount': str(purchase.total_amount),
+            'paid': str(purchase.paid),
+            'pending': str(purchase.pending),
+            'balance': str(balance),
+            'created_at': purchase.created_at.strftime('%Y-%m-%d'),
+            'items': [
+                {
+                    'item_name': item.name,
+                    'quantity': str(item.qty),
+                    'unit': item.unit.name if item.unit else '',
+                    'amount': str(item.sub_total)
+                }
+                for item in items
+            ],
+        }
+        return JsonResponse(data)
+    
+    elif request.method == 'POST':
+        try:
+            updated_data = json.loads(request.body)
+            purchase.site = updated_data.get('site', purchase.site)
+            purchase.vendor_company = updated_data.get('company_name', purchase.vendor_company)
+            purchase.gst = updated_data.get('gst', purchase.gst)
+            purchase.tax = updated_data.get('tax', purchase.tax)
+            purchase.contact_no = updated_data.get('contact_no', purchase.contact_no)
+            purchase.invoice_id = updated_data.get('invoice_id', purchase.invoice_id)
+                
+            for item_data in updated_data.get('items', []):
+                item_id = item_data.get('id')
+                item_name = item_data.get('item_name')
+                quantity = item_data.get('quantity')
+                unit = item_data.get('unit')
+                amount = item_data.get('amount')
+                    
+                if item_id:
+                    item = PurchaseItems.objects.get(id=item_id)
+                    item.name = item_name
+                    item.qty = quantity
+                    item.unit = Uom.objects.get(name=unit) if unit else None
+                    item.sub_total = amount
+                    item.save()
+                else:
+                    PurchaseItems.objects.create(
+                        invoice=purchase,
+                        name=item_name,
+                        qty=quantity,
+                        unit=Uom.objects.get(name=unit) if unit else None,
+                        sub_total=amount
+                    )
+            purchase.save()
+            return JsonResponse({'message': 'Purchase details updated successfully'})
+    
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON format'}, status=400)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)

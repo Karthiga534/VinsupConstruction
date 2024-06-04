@@ -91,98 +91,12 @@
                                             <th data-ordering="false">Pending Amount</th>
                                             <th data-ordering="false">Status</th>
                                             <th data-ordering="false">Action</th>
+                                            <th data-ordering="false">All Details</th>
 
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <!-- {% for i in queryset %}
-                                            <tr>
-                                                <th scope="row">
-                                                    <div class="form-check">
-                                                        <input class="form-check-input fs-15" type="checkbox" name="checkAll" value="option1">
-                                                    </div>
-                                                </th>
-                                                <td>{{ forloop.counter }}</td>
-												<td>{{ i.created_at }}</td>
-                                                <td>{{ i.invoice_id }}</td>
-                                                <td>{{ i.vendor }}</td>                                               
-                                                <td>{{ i.total_amount }}</td>                                                
-                                                <td>{{ i.paid }}</td>                                                
-                                                <td>{{ i.pending }}</td>                                                
-                                                <td>
-                                                     <div class="dropdown d-inline-block">
-                                                        <button class="btn btn-soft-secondary btn-sm dropdown view-btn" type="button" data-bs-toggle="modal"
-														 aria-expanded="false" onclick="openModal('viewModal','{{ i.id }}')" >
-                                                            <i class="ri-eye-fill align-middle" ></i>
-                                                        </button>
-														<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" 
-														id="viewModal_{{i.id}}"
-														aria-labelledby="myLargeModalLabel" aria-hidden="true" >
-															<div class="modal-dialog modal-lg">
-																<div class="modal-content">
-																	<div class="modal-header">
-																		<h5 class="modal-title" id="myLargeModalLabel">Purchase Item Details</h5>
-																		<button type="button" class="btn-close" data-bs-dismiss="modal" onclick="clearErrors()" aria-label="Close">
-																			
-																		</button>
-																	</div>
-																	<hr>
-																	<div class="modal-body">
-																		<div class="table-responsive">
-																			<table class="table table-bordered">
-                                                                                <thead>
-																				<tr>
-																					<th>S.no</th>
-																					<th>Item</th>
-																					<th>Qty</th>
-																					<th>Unit</th>
-																					<th>Amount</th>
-																				</tr>
-                                                                                </thead>
-                                                                                <tbody>
-                                                                                    {% for j in i.get_purchase_items %}
-                                                                                    <tr>
-                                                                                        
-                                                                                        <td>{{ forloop.counter }}</td>
-                                                                                        <td>
-																						{% if j.item %}
-																							{{ j.item.item }} 
-																						{% else %}
-																							{{ j.name }}
-																						{% endif %} 
-																					    </td>
-                                                                                        <td>{{ j.qty }}</td>
-                                                                                        <td>{{ j.unit }}</td>                                               
-                                                                                        <td>{{ j.sub_total }}</td>                                        
-                                                                                                
-                                                                                    </tr> 
-                                                                                    {% endfor %}
-                                                                                </tbody>
-																			</table>
-																		</div>
-																	</div>
-																	<hr>
-																	<div class="modal-footer">
-																		<button class="btn btn-link link-success fw-medium shadow-none" data-bs-dismiss="modal" onclick="clearErrors()" >
-													
-																			<i class="ri-close-line me-1 align-middle"></i> Close</button>
-																		<button type="button" class="btn btn-primary ">Save </button>
-																	</div>
-																</div>
-																
-															</div>
-														
-														</div>
-														<button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                            <i class="ri-pencil-fill align-middle"></i>
-                                                        </button>
-														<button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                            <i class="ri-delete-bin-fill align-middle"></i>
-                                                        </button>                                             
-                                                    </div> 
-                                                </td>
-                                            </tr>   
-                                            {% endfor %}                                          -->
+                                        
                                     </tbody>
 
 
@@ -245,6 +159,25 @@
         </div>
     </div>
 
+
+<!-- All Details Modal -->
+<div class="modal fade" id="allDetailsModal" tabindex="-1" aria-labelledby="allDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="allDetailsModalLabel">Purchase Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Details will be populated here dynamically -->
+                <div id="allDetailsContent"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 
     <!--start back-to-top-->
@@ -309,7 +242,7 @@
             });
 
 
-        });
+        });  
 
 
         // fetch data
@@ -380,6 +313,8 @@
             const td7 = createTableCell(get_value(data.pending));
             newRow.appendChild(td7);
 
+            
+
 
             const td8 = createStatusCell(get_value(data.status_name),data.status_class);
          
@@ -424,14 +359,198 @@
         //---------------
 
 
+         function createTableRow(serialNumber, data) {
+            const newRow = document.createElement('tr');
+            newRow.setAttribute('data-item-id', data.id);
+        
+            const idCell = createSerialCell(serialNumber);
+            newRow.appendChild(idCell);
+        
+            const td2 = createTableCell(get_value(data.created_at));
+            newRow.appendChild(td2);
+        
+            const td3 = createTableCell(get_value(data.invoice_id));
+            newRow.appendChild(td3);
+        
+            const td4 = createTableCell(get_value(data.vendor_name));
+            newRow.appendChild(td4);
+        
+            const td5 = createAmountCell(get_value(data.total_amount));
+            newRow.appendChild(td5);
+        
+            const td6 = createTableCell(get_value(data.paid));
+            newRow.appendChild(td6);
+        
+            const td7 = createTableCell(get_value(data.pending));
+            newRow.appendChild(td7);
+        
+            // View Action Cell
+            const actionCell = createViewActionCell('invoiceHistoryModal');
+            newRow.appendChild(actionCell);
+        
+            // All Details Button
+            const detailsCell = document.createElement('td');
+            const detailsButton = document.createElement('button');
+            detailsButton.className = 'btn btn-secondary';
+            detailsButton.textContent = 'All Details';
+            detailsButton.addEventListener('click', () => {
+                showAllDetails(data.id);
+            });
+            detailsCell.appendChild(detailsButton);
+            newRow.appendChild(detailsCell);
+        
+            // Click event for View Action Cell
+            actionCell.addEventListener('click', () => {
+                populateModalTable(data.get_purchase_items, modalTableBody);
+            });
+        
+            return newRow;
+        }
+        
+        function showAllDetails(purchaseId) {
+            // Fetch details using the purchaseId
+            fetch(`/purchase-details/${purchaseId}/`)
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        throw new Error('Failed to fetch details');
+                    }
+                })
+                .then(data => {
+                    // Populate the modal with the fetched details
+                    const detailsContent = document.getElementById('allDetailsContent');
+                    detailsContent.innerHTML = generateDetailsHTML(data);
+                    // Show the modal
+                    const allDetailsModal = new bootstrap.Modal(document.getElementById('allDetailsModal'));
+                    allDetailsModal.show();
+                })
+                .catch(error => {
+                    console.error('Error fetching details:', error);
+                    alert('Error fetching details');
+                });
+        } 
+        
 
 
+        
+        function updatePurchaseDetails(purchaseId) {
+            const form = document.getElementById('updateDetailsForm');
+            const formData = new FormData(form);
+            const updatedData = {};
+            
+            // Convert FormData to JSON object
+            formData.forEach((value, key) => {
+                updatedData[key] = value;
+            });
+        
+            // Log the updated data for debugging (optional)
+            console.log('Updated data:', updatedData);
+            
+            fetch(`/purchase-details/${purchaseId}/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    // Include CSRF token if needed
+                    'X-CSRFToken': getCSRFToken(), // Define getCSRFToken() function as needed
+                },
+                body: JSON.stringify(updatedData),
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Failed to update details');
+                }
+            })
+            .then(data => {
+                console.log('Purchase details updated successfully:', data);
+                // Optionally update UI or perform other actions
+            })
+            .catch(error => {
+                console.error('Error updating details:', error);
+                alert('Error updating details');
+            });
+        }
+        
 
+          function generateDetailsHTML(data) {
+            let itemsHTML = data.items.map((item, index) => `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td><input type="text" class="form-control" value="${item.item_name}" data-index="${index}" data-key="item_name"></td>
+                    <td><input type="text" class="form-control" value="${item.quantity}" data-index="${index}" data-key="quantity"></td>
+                    <td><input type="text" class="form-control" value="${item.unit}" data-index="${index}" data-key="unit"></td>
+                    <td><input type="text" class="form-control" value="${item.amount}" data-index="${index}" data-key="amount"></td>
+                </tr>
+            `).join('');
+        
+            return `
+                <form id="updateDetailsForm">
+                    <div class="mb-3">
+                        <label for="site" class="form-label"><strong>Site Name:</strong></label>
+                        <input type="text" class="form-control" id="site" value="${data.site_name}" data-key="site_name">
+                    </div>
+                    <div class="mb-3">
+                        <label for="invoiceId" class="form-label"><strong>Invoice ID:</strong></label>
+                        <input type="text" class="form-control" id="invoiceId" value="${data.invoice_id}" data-key="invoice_id">
+                    </div>
+                    <div class="mb-3">
+                        <label for="companyName" class="form-label"><strong>Company Name:</strong></label>
+                        <input type="text" class="form-control" id="companyName" value="${data.company_name}" data-key="company_name">
+                    </div>
+                    <div class="mb-3">
+                        <label for="gst" class="form-label"><strong>GST:</strong></label>
+                        <input type="text" class="form-control" id="gst" value="${data.gst}" data-key="gst">
+                    </div>
+                    <div class="mb-3">
+                        <label for="tax" class="form-label"><strong>Tax:</strong></label>
+                        <input type="text" class="form-control" id="tax" value="${data.tax}" data-key="tax">
+                    </div>
+                    <div class="mb-3">
+                        <label for="contactNo" class="form-label"><strong>Contact Number:</strong></label>
+                        <input type="text" class="form-control" id="contactNo" value="${data.contact_no}" data-key="contact_no">
+                    </div>
+                    <div class="mb-3">
+                        <label for="pendingAmount" class="form-label"><strong>Pending Amount:</strong></label>
+                        <input type="text" class="form-control" id="pendingAmount" value="${data.pending}" data-key="pending">
+                    </div>
+                    <div class="mb-3">
+                        <label for="paidAmount" class="form-label"><strong>Paid Amount:</strong></label>
+                        <input type="text" class="form-control" id="paidAmount" value="${data.paid}" data-key="paid">
+                    </div>
+                    <div class="mb-3">
+                        <label for="balance" class="form-label"><strong>Balance:</strong></label>
+                        <input type="text" class="form-control" id="balance" value="${data.balance}" data-key="balance">
+                    </div>
+                    <div class="mb-3">
+                        <label for="createdAt" class="form-label"><strong>Date:</strong></label>
+                        <input type="text" class="form-control" id="createdAt" value="${data.created_at}" data-key="created_at">
+                    </div>
+                    <!-- Additional fields can be added here -->
+                    <hr>
+                    <h5>Items</h5>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>S.no</th>
+                                <th>Item Name</th>
+                                <th>Quantity</th>
+                                <th>Unit</th>
+                                <th>Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody id="itemsTableBody">
+                            ${itemsHTML}
+                        </tbody>
+                    </table>
+                    <button type="button" class="btn btn-primary" onclick="updatePurchaseDetails({{ purchase_id }})">Update</button>
 
+                </form>
+            `;
+        }
 
-
-
-
+        
     </script>
 
     {% endblock header2 %}

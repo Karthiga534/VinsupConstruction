@@ -44,7 +44,7 @@
 									{% csrf_token %}
 									<fieldset>
 										<div class="row">
-											<div class="col-md-4">
+											<div class="col-md-3">
 												<label for="site" class="form-label">Project :</label>
 												<select class="form-select mb-3" aria-label="Default select example"
 													id="site" name="site">
@@ -56,15 +56,15 @@
 												<span id="siterError" class="error-message"></span>
 											</div>
 
-										</div>
-										<div class="row">
-											<div class="col-md-4">
+										
+									
+											<div class="col-md-3">
 												<label for="" class="form-label">Invoice No :</label>
 												<input type="text" class="form-control" id="invoice_id"
 													name="invoice_id">
 												<span id="invoice_idError" class="error-message"></span>
 											</div>
-											<div class="col-md-4">
+											<div class="col-md-3">
 												<label for="vendor" class="form-label">Vendor Name:</label>
 												<select class="form-select mb-3" aria-label="Default select example"
 													id="vendor" name="vendor">
@@ -76,33 +76,34 @@
 												<span id="vendorError" class="error-message"></span>
 											</div>
 
-											<div class="col-md-4">
+											<div class="col-md-3">
 												<label for="" class="form-label">Company Name :</label>
 												<input type="text" class="form-control" id="vendor_company"
 													name="vendor_company">
 												<span id="vendor_companyError" class="error-message"></span>
 											</div>
 											
-											<div class="col-md-4 mt-2">
+											<div class="col-md-3 ">
 												<label for="" class="form-label">Date :</label>
 												<input type="date" class="form-control" id="created_at"
 													name="created_at">
 												<span class="error-message" id="created_atError"></span>
 											</div>
 
-											<div class="col-md-4 mt-2">
+											<div class="col-md-3">
 												<label for="" class="form-label">Gst No :</label>
 												<input type="text" class="form-control" id="gst" name="gst">
 												<span id="gstError" class="error-message"></span>
 											</div>
-											<div class="col-md-4 mt-2">
+											
+											<div class="col-md-3 ">
 												<label for="" class="form-label">Contact No :</label>
 												<input type="text" class="form-control" id="contact_no"
 													name="contact_no">
 												<span id="contact_noError" class="error-message"></span>
 											</div>
+										
 										</div>
-
 									</fieldset>
 									<hr>
 
@@ -234,23 +235,29 @@
 
 									<fieldset>
 										<div class="row">
-											<div class="col-md-4">
+											<div class="col-md-3">
 												<label for="" class="form-label">Total amount :</label>
 												<input type="text" class="form-control" id="total_amount"
 													name="total_amount">
 												<span id="total_amountError" class="error-message"></span>
 											</div>
-											<div class="col-md-4">
+											<div class="col-md-3">
 												<label for="" class="form-label">Paid Amount :</label>
 												<input type="text" class="form-control" id="paid" name="paid"
 													onchange="calculatePurchasependingAmount(this)">
 												<span id="paidError" class="error-message"></span>
 
 											</div>
-											<div class="col-md-4">
+											<div class="col-md-3">
 												<label for="" class="form-label">Pending Amount :</label>
 												<input type="text" class="form-control" id="pending" name="pending">
 												<span id="pendingError" class="error-message"></span>
+											</div>
+											<div class="col-md-3 ">
+												<label for="" class="form-label">Tax :</label>
+												<input type="text" class="form-control" id="tax"
+													name="tax">
+												<span id="taxError" class="error-message"></span>
 											</div>
 										</div>
 										<br>
@@ -465,6 +472,7 @@
 			var requiredKeys = ['vendor_company']
 
 			formData.append('vendor', getValueOrDefault(formElement.querySelector('select[name="vendor"]').value));            //change
+			formData.append('tax', getValueOrDefault(formElement.querySelector('input[name="tax"]').value));
 			formData.append('gst', getValueOrDefault(formElement.querySelector('input[name="gst"]').value));
 			formData.append('contact_no', getValueOrDefault(formElement.querySelector('input[name="contact_no"]').value));
 			formData.append('vendor_company', getValueOrDefault(formElement.querySelector('input[name="vendor_company"]').value));

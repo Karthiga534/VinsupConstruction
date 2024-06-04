@@ -1,0 +1,491 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block header2 %}
+<!-- Begin page -->
+<div id="layout-wrapper">
+	<div class="main-content">
+
+		<div class="page-content">
+			<div class="container-fluid">
+				<!-- start page title -->
+				<div class="row">
+					<div class="col-12">
+						<div class="page-title-box d-sm-flex align-items-center justify-content-between">
+							<h4 class="mb-sm-0">Daily Site Stock Usage Management</h4>
+							<div class="page-title-right">
+								<ol class="breadcrumb m-0">
+									<li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
+									<li class="breadcrumb-item active">Daily Site Stock Usage</li>
+								</ol>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-lg-12">
+						<div class="card">
+							<div class="card-body">
+								<div class="row">
+									<div class="col-lg-10 col-md-10">
+										<h4> Site Stock Usage </h4>
+									</div>
+									<div class="col-lg-2 col-md-2">
+										<a href="{% url 'dailysitestockusage' %}" class="btn btn-info" style="float:right;">SiteStock List</a>
+									</div>
+								</div>
+								<hr>
+
+								<form id="createForm" enctype="multipart/form-data">
+									{% csrf_token %}
+
+									<div class="row">
+										<div class="col-md-4 mb-3 mt-4">
+											<label for="project" class="form-label">Project:</label>
+											<select class="form-select" id="project" name="project">
+											
+												<option value="0">All</option>
+											
+												{% for project in projects %}
+												<!--  -->
+												<option value="{{ project.id }}">{{ project.proj_name }}</option>
+												
+												{% endfor %}
+											</select>
+											<span id="projectError" class="error-message"></span>
+										</div>
+										
+										<div class="col-md-4 mb-3 mt-4">
+											<label for="subcontractor" class="form-label">Subcontractor:</label>
+											<select class="form-select" id="subcontractor" name="subcontractor">
+												
+												<option value="0" selected>--------</option>
+										
+												{% for subcontract in subcontractors %}
+										
+												<option value="{{ subcontract.id }}">{{ subcontract.display_contractor_dropdown }}</option>
+											
+												{% endfor %}
+											</select>
+											<span id="subcontractorError" class="error-message"></span>
+										</div>
+									
+										<div class="col-md-4 mb-3 mt-4">
+											<label for="date" class="form-label">Date:</label>
+											<input type="date" class="form-control" id="date" name="date">
+											<span id="dateError" class="error-message"></span>
+										</div>
+									</div>
+									
+									<hr>
+									<h4>Site stock usage items </h4>
+								
+									<div class="card-body">
+										<table id="tab1"
+											class="table table-bordered dt-responsive nowrap table-striped align-middle"
+											style="width:100%">
+											<thead>
+												<tr>
+													<th scope="col" style="width: 10px;">
+														<div class="form-check">
+															<input class="form-check-input fs-15" type="checkbox"
+																id="checkAll" value="option">
+														</div>
+													</th>
+													<th>SR No.</th>
+													<th>Item</th>
+
+													<th>Unit</th>
+
+													<th>Qty</th>
+
+													<th>Supply Qty</th>
+													
+												</tr>
+											</thead>
+											<tbody>
+
+												{% for i in items %}
+												<tr data-item-id="{{ i.id }}">
+
+													<th scope="row">
+														<div class="form-check">
+															<input class="form-check-input fs-15 item-checkbox"
+																type="checkbox" name="checkAll" value="{{i.item.id}}">
+														</div>
+													</th>
+													<td>{{ forloop.counter }}</td>
+													<td>{{i.item.item}}</td>
+													<td>{{i.unit}}</td>
+
+													<td>{{i.qty}}</td>
+                                                    <td><input type="text" class="form-control supply-qty" name="qty"
+                                                        min="0" max="{{i.qty}} data-item="{{ i.item.item }}">
+                                                       
+                                                    <div class="text-danger supplyQtyError"></div>
+                                                </td>
+																																				
+												</tr>
+												{% endfor %}
+											</tbody>
+										</table>
+
+										<p class="text-center mt-2">
+											<button class="btn btn-link link-success fw-medium shadow-none"
+												data-bs-dismiss="modal" onclick="clearErrors()">
+
+												<i class="ri-close-line me-1 align-middle"></i> Close</button>
+
+											<button type="button" class="btn btn-primary"
+												onclick="createFunction(this)">Save
+											</button>
+											</p>
+									</div>
+
+								</form>
+
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- container-fluid -->
+			</div>
+			<!-- End Page-content -->
+		<footer class="footer">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-sm-6">
+							<script>
+								document.write(new Date().getFullYear())
+							</script>
+							© vinsup.
+						</div>
+						<div class="col-sm-6">
+							<div class="text-sm-end d-none d-sm-block">
+								Design & Develop by vinsup
+							</div>
+						</div>
+					</div>
+				</div>
+			</footer>
+		</div>
+		<!-- end main content-->
+	</div>
+	<!-- END layout-wrapper -->
+	<!--start back-to-top-->
+	<button onclick="topFunction()" class="btn btn-danger btn-icon" id="back-to-top">
+		<i class="ri-arrow-up-line"></i>
+	</button>
+	<!--end back-to-top-->
+	<!--preloader-->
+	<div id="preloader">
+		<div id="status">
+			<div class="spinner-border text-primary avatar-sm" role="status">
+				<span class="visually-hidden">Loading...</span>
+			</div>
+		</div>
+	</div>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script>
+
+		var qtyError = false;
+
+		var priceError = false;
+
+		document.addEventListener('DOMContentLoaded', function () {
+
+			const dropdown = document.getElementById('project');
+			const tableBody = document.querySelector('#tab1 tbody');
+
+
+			// fetch table data API
+			dropdown.addEventListener('change', function () {
+				console.log(dropdown, tableBody)
+
+				const selectedValue = dropdown.value;
+				try {
+					fetch(`/transfer/${selectedValue}/`)
+						.then(response => {
+							if (response.status === 200) {
+								console.log('Data fetched');
+								return response.json();
+							} else if (response.status === 404) {
+								throw new Error('Resource not found');
+							} else if (response.ok) {
+								throw new Error(`HTTP error! Status: ${response.status}`);
+							} else {
+								throw new Error('Network response was not ok');
+							}
+						})
+						.then(data => {
+							tableBody.innerHTML = '';
+
+							data.forEach((item, index) => {
+								const newRow = createTableRow(index + 1, item);
+								tableBody.appendChild(newRow);
+							});
+
+						})
+						.catch(error => {
+							console.error('Error fetching data:', error);
+							showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+
+						});
+				} catch (error) {
+					console.error('Error in fetch operation:', error);
+				}
+
+			});
+
+			attachInputListeners()
+
+		});
+
+
+		function attachInputListeners() {
+			const tableBody = document.querySelector('#tab1 tbody');
+
+			tableBody.addEventListener('input', function (event) {
+				const target = event.target;
+				if (target.classList.contains('supply-qty')) {
+					handleSupplyQtyInput(target);
+				} else if (target.classList.contains('amount')) {
+					handleAmountInput(target);
+				}
+			});
+		}
+
+		function handleSupplyQtyInput(input) {
+			const value = parseInt(input.value);
+			const max = parseInt(input.getAttribute('max'));
+			const errorElement = input.nextElementSibling;
+
+			if (isNaN(value) || value > max || value < 0) {
+				errorElement.textContent = 'Supply quantity exceeded';
+			} else {
+				errorElement.textContent = '';
+			}
+		}
+
+
+		// GET ALL TABLE DATA FROM FORM
+		function getTableData() {
+
+			const checkboxes = document.querySelectorAll('.item-checkbox:checked');
+			const selectedItemsArray = [];
+
+			let proceed = true;
+
+			// console.log(checkboxes)
+
+			checkboxes.forEach(checkbox => {
+				const itemRow = checkbox.closest('tr');
+				const itemId = itemRow.dataset.itemId;
+
+				const item = itemRow.querySelector('.item-checkbox').value;
+				const supplyQtyInput = itemRow.querySelector('.supply-qty');
+
+				const supplyQty = supplyQtyInput?.value
+				// const amount = itemRow.querySelector('.amount')?.value;
+				const unit = itemRow.querySelector('.supply-unit')?.value;
+				// const totalAmount = itemRow.querySelector('.total-amount')?.value;
+
+				const max = parseInt(supplyQtyInput.getAttribute('max'));
+
+
+
+				if (isNaN(supplyQty) || supplyQty > max || supplyQty < 0) {
+					proceed =false;
+					return ;
+					
+				}
+
+				selectedItemsArray.push({
+					stock: itemId,
+					// item: item,
+					qty: supplyQty,
+					unit:unit,
+					// price: amount,
+					// total_amount: totalAmount
+				});
+			});
+
+			console.log(selectedItemsArray);
+
+			return [proceed, selectedItemsArray];
+
+		}
+
+
+		// MANIPULATE TABLE DATA
+		function createTableRow(serialNumber, data) {
+			const newRow = document.createElement('tr');
+			newRow.setAttribute('data-item-id', data.id);
+			newRow.innerHTML = `
+
+					<th scope="row">
+						<div class="form-check">
+							<input class="form-check-input fs-15 item-checkbox"
+								type="checkbox" name="checkAll" value="${data.item.id}">
+						</div>
+					</th>
+					<td>${serialNumber}</td>
+					<td>${data.item}</td>
+					<td>${data.unit}</td>
+					<input type="text" class="form-control supply-unit" name="unit" value="${data.item.unit}" hidden>
+					<td>${data.qty}</td>
+
+					<td><input type="text" class="form-control supply-qty" name="qty"
+							min="0" max="${data.qty}"
+							onchange="calculateTotalAmount(this)"
+							data-item="${data.item.item}">
+						<div class="text-danger supplyQtyError"></div>
+					</td>
+
+				
+
+					`;
+
+			return newRow;
+		}
+
+
+	</script>
+	<script>
+		// create form
+
+		function createFunction(button) {
+			clearErrors()
+			const [proceed, table_Data] = getTableData();
+			console.log(table_Data?.length)
+
+			if (!proceed) {
+				return
+			}
+
+			if (table_Data?.length <= 0) {
+				// Array is not empty
+				console.log('selectedItemsArray is not empty:', table_Data);
+				showToast("Please select Items First", '', deleteMessage?.bgColor);
+				return
+			}
+
+
+			var formId = `createForm`;   //change
+			var formElement = document.getElementById(formId);
+			try {
+				disableButton(button);
+				var isValid = true;
+				var errors = {};
+				var formData = new FormData();
+
+				var requiredKeys = [];   //change
+
+				//var requiredKeys = ['vendor_company']
+
+				
+				var tableData = [];
+				project=getValueOrDefault(formElement.querySelector('select[name="project"]').value)
+				subcontract=getValueOrDefault(formElement.querySelector('select[name="subcontractor"]').value)
+				date=getValueOrDefault(formElement.querySelector('input[name="date"]').value)
+
+				table_Data.forEach((item)=> {
+					// console.log(this)
+
+					// var rowData = {};
+					// rowData['item'] = $(this).find('select[name^="item"]').val();
+					
+					// rowData['unit'] = $(this).find('select[name^="unit"]').val();
+					
+					// rowData['qty'] = $(this).find('input[name^="qty"]').val();
+					item['proj_name'] = project
+					item['subcontract'] = subcontract
+					item['date'] = date
+				
+					// tableData.push(rowData);
+				});
+
+
+				console.log(table_Data)
+
+
+				requiredKeys.forEach(function (key) {
+					var value = formData.get(key);
+					if (!value.trim()) {
+						isValid = false;
+						errors[key] = ['This field may not be blank.'];
+					}
+				});
+
+				if (!isValid) {
+					enableButton(button);
+					console.log(errors);
+					handleCreateErrors(errors);
+					return;
+				} else {
+					$(`#${formId} input, #${formId} button`).prop('disabled', true);
+
+				}
+
+				formData.append("table", JSON.stringify(table_Data))
+
+				$.ajax({
+					url: '/add_dailysitestockusage/',                //change
+					type: 'POST',
+					headers: {
+						'X-CSRFToken': csrftoken,
+					},
+					data: formData,
+					processData: false,
+					contentType: false,
+					success: function (response, status, xhr) {
+						console.error(status);
+						if (xhr.status === 201) {
+							showToast(successMesssage?.message, '', successMesssage?.bgColor);
+							window.location.href = '/dailysitestockusagelist';
+						} else {
+							console.error(error);
+							restoreForm(formId, button)
+
+						}
+					},
+					error: function (xhr, status, error) {
+						console.log(xhr, status, error);
+						if (xhr.status === 400) {
+							if (xhr?.responseJSON || xhr?.responseJSON?.errors) {
+
+								handleCreateErrors(transformErrors(xhr.responseJSON));
+								restoreForm(formId, button)
+
+							} else {
+								showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+								restoreForm(formId, button)
+
+							}
+						}
+						else if (xhr.status === 401 || 404) {
+							showToast(xhr?.responseJSON?.details, '', errorAlertMessage?.bgColor);
+							restoreForm(formId, button)
+
+						}
+						else {
+							showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+							restoreForm(formId, button)
+
+						}
+					}
+
+				});
+			} catch (error) {
+				showToast(errorOccured?.message, '', errorOccured?.bgColor);
+				restoreForm(formId, button)
+				console.error(error);
+			}
+		}
+
+	</script>
+ 
+    
+{% endblock header2 %}

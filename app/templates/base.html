@@ -573,13 +573,37 @@
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link menu-link" href="#sidebarLayouts" data-bs-toggle="collapse" role="button"
-                            aria-expanded="false" aria-controls="sidebarLayouts">
+                        <a class="nav-link menu-link" href="#sidebarSiteAllocation" data-bs-toggle="collapse" role="button"
+                            aria-expanded="false" aria-controls="sidebarSiteAllocation">
+                            <i class="mdi mdi-comment-text-outline"></i>
+                            <span data-key="">Site Allocation</span>
+                        </a>
+                        <div class="collapse menu-dropdown" id="sidebarSiteAllocation">
+                            <ul class="nav nav-sm flex-column">
+                                <li class="nav-item">
+                                    <a class="nav-link menu-link" href="{% url 'site_allocation' %}">
+                                        <i class="mdi mdi-finance"></i>
+                                        <span data-key="">Employee Site Allocation</span>
+                                    </a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a class="nav-link menu-link" href="{% url 'lab_site_allocation' %}">
+                                        <i class="mdi mdi-finance"></i>
+                                        <span data-key="">Labour Site Allocation</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link menu-link" href="#sidebarAttendance" data-bs-toggle="collapse" role="button"
+                            aria-expanded="false" aria-controls="sidebarAttendance">
                             <i class="mdi mdi-comment-text-outline"></i>
                             <span data-key="">Attendance</span>
-
                         </a>
-                        <div class="collapse menu-dropdown" id="sidebarLayouts">
+                        <div class="collapse menu-dropdown" id="sidebarAttendance">
                             <ul class="nav nav-sm flex-column">
                                 <li class="nav-item">
                                     <a class="nav-link menu-link" href="{% url 'proattendance' %}">
@@ -593,7 +617,6 @@
                                         <span data-key="">Labours</span>
                                     </a>
                                 </li>
-
                                 <li class="nav-item">
                                     <a class="nav-link menu-link" href="{% url 'employee-labour-attendance' %}">
                                         <i class="mdi mdi-ballot-outline"></i>
@@ -603,6 +626,7 @@
                             </ul>
                         </div>
                     </li>
+                    
 
                     <li class="nav-item">
                         <a class="nav-link menu-link" href="{% url 'purchaselist' %}">
@@ -709,6 +733,15 @@
                         </a>
                     </li>
 
+
+                    <li class="nav-item">
+                        <a class="nav-link menu-link" href="{% url 'dailytask' %}">
+                            <i class="mdi mdi-finance"></i>
+                            <span data-key="">Dailytask</span>
+                        </a>
+                    </li>
+                   
+                   
                     <li class="nav-item">
                         <a class="nav-link menu-link" href="{% url 'viewstock' %}">
                             <i class="mdi mdi-chart-bar-stacked"></i>
@@ -717,9 +750,15 @@
                     </li>
 
                     <li class="nav-item">
+                        <a class="nav-link menu-link" href="{% url 'dailysitestockusagelist'%}">
+                            <i class="mdi mdi-debug-step-over"></i>
+                            <span data-key="">Daily Site Stock List</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link menu-link" href="{% url 'transferlist' %}">
                             <i class="mdi mdi-debug-step-over"></i>
-                            <span data-key="">Transfer Lists</span>
+                            <span data-key="">Transfer List</span>
                         </a>
                     </li>
                     <li class="nav-item">

@@ -3,12 +3,12 @@ import random
 from .models import *
 from decimal import Decimal
 from django.conf import settings
+from app.auth_models import Company
 # from .models import Purchase
 from rest_framework import serializers
 from rest_framework.serializers import *
 from django.contrib.auth.hashers import make_password
 from .models import PurchaseItems, MaterialLibrary, InventoryStock
-from app.auth_models import Company
 
 
 
@@ -375,6 +375,8 @@ class TransferItemsSerializer(ModelSerializer):
         fields = "__all__"
 
 
+
+
     def create(self, validated_data):
         invoice =validated_data.get('invoice')
         qty = validated_data.get('qty')
@@ -537,6 +539,15 @@ def update_destiny_qty(destiny, qty):
 
 
 #------ Project Sub Category ------ new  
+
+
+
+class DailySiteStockUsageSerializer(ModelSerializer):
+    
+
+    class Meta:
+        model = DailySiteStockUsage
+        fields = "__all__"
     
 class ProjectSubContractSerializer(ModelSerializer):
     class Meta:
@@ -681,6 +692,8 @@ class InventoryStockSerializer(ModelSerializer):
         if unit_obj is not None:
             return unit_obj.name
         return None
+    
+
 
 # -------------------------------- contractor -payment -------------------------------------------
 
@@ -1315,3 +1328,55 @@ class PaymentHistorySerializer(serializers.ModelSerializer):
     class Meta:
         model = PaymentHistory
         fields = ['id', 'project', 'date', 'receipt_number', 'payment_mode', 'payment_amount']
+
+
+
+
+class dailyTaskSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Dailytask
+        fields = '__all__'
+# class SiteAllocationSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = SiteAllocation
+#         fields = '__all__'
+
+#     def to_representation(self, instance):
+#         data =super().to_representation(instance)
+#         data ["date"]=instance.get_date
+#         data["project_name"] = instance.project.proj_name if instance.project else None
+#         data["employee_name"] = instance.employee.name if instance.employee else None
+#         data["labour_name"] = "dfsdfsfs"
+#         data["created_by_name"] = instance.created_by.name if instance.created_by else None
+        
+#         return data
+
+
+
+class SiteAllocationEmployeeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SiteAllocation
+        fields = '__all__'
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data["date"] = instance.get_date
+        data["project_name"] = instance.project.proj_name if instance.project else None
+        data["employee_name"] = instance.employee.name if instance.employee else None
+        data["created_by_name"] = instance.created_by.name if instance.created_by else None
+        return data
+    
+class SiteAllocationLabourSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SiteAllocation
+        fields = '__all__'
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data["date"] = instance.get_date
+        data["project_name"] = instance.project.proj_name if instance.project else None
+        data["labour_name"] = instance.labour.name if instance.labour else None
+        data["created_by_name"] = instance.created_by.name if instance.created_by else None
+        return data
+    

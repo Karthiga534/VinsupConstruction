@@ -30,25 +30,49 @@ def validate_unique_email(email):
             pass
 
         
+from django.contrib.auth.models import BaseUserManager
+
 class CustomUserManager(BaseUserManager):
     def create_user(self, phone_number, password=None, pin=None, **extra_fields):
         if not phone_number:
             raise ValueError('The phone number must be set')
-        user = self.model(phone_number=self.normalize_phone_number(phone_number), **extra_fields)
-       
+        
+        # Normalize the phone number
+        phone_number = self.normalize_phone_number(phone_number)
+        
+        # Create the user object with extra fields
+        user = self.model(phone_number=phone_number, **extra_fields)
+        
+        # Set the user's password
+        if password:
+            user.set_password(password)
+        else:
+            user.set_unusable_password()
+        
+        # Set the user's pin if provided
         user.pin = pin
+        
+        # Save the user object to the database
         user.save(using=self._db)
         return user
     
     def create_superuser(self, phone_number, password=None, pin=None, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
-        return self.create_user(phone_number, password, pin, **extra_fields)
+        
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError('Superuser must have is_staff=True.')
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError('Superuser must have is_superuser=True.')
+        
+        # Create the user object and set the password
+        user = self.create_user(phone_number, password, pin, **extra_fields)
+        return user
 
     def normalize_phone_number(self, phone_number):
         normalized_phone_number = phone_number.replace(" ", "").replace("-", "")
         return normalized_phone_number
- 
+
 class CustomUser(AbstractBaseUser, PermissionsMixin):    
     email=models.EmailField(null=True, blank=True,unique=True)
     image = models.ImageField(upload_to='profile_images/', null=True, blank=True)

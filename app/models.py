@@ -1,12 +1,12 @@
+import uuid
 from .utils import *
 from decimal import Decimal
 from django.db import models
+from app.auth_models import *
 from django.db.models import Q
 from django.db.models import Sum
 from django.utils import timezone
 from django.db.models import UniqueConstraint
-from app.auth_models import *
-import uuid
 from django.core.exceptions import ValidationError
 
 
@@ -34,7 +34,7 @@ class ProcessStatus(models.Model):
     classname = models.CharField(max_length=256, null=True, blank=True)
 
     def __str__(self):
-        return f'{self.name}'
+        return f'(self.name)'
 
 class PaymentStatus(models.Model):
     name = models.CharField(max_length=50, null=True, blank=True)
@@ -1198,6 +1198,8 @@ class InventoryStock(models.Model):
         total = self.total_supplied_qty - self.taken_qty
         return  "{:.2f}".format(total)
     
+
+    
     @property
     def display(self):
         if self.item:
@@ -1257,6 +1259,9 @@ class SiteStock(models.Model):
         total = self.qty * self.price
         return  "{:.2f}".format(total)
     
+
+
+    
     @property
     def available_qty(self):
         total = self.total_supplied_qty - self.taken_qty
@@ -1291,6 +1296,7 @@ class PurchaseInvoice(models.Model):
     company= models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
     vendor_company=models.CharField(max_length=255,null=True,blank=True)
     gst= models.CharField(max_length=255,null=True,blank=True)
+    tax= models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
     contact_no= models.CharField(max_length=255,null=True,blank=True)
     invoice_id=models.CharField(max_length=255,null=True,blank=True)
     created_at=models.DateField()
@@ -1624,6 +1630,27 @@ class ProjectSubContract(models.Model):
     @property
     def display_contractor_dropdown(self):
        return self.display + "-->" + self.display_contractor
+    
+
+#    @property
+#    def display_contractor_dropdown(self):
+#         contractors = self.contractor_set.all()  
+#         if not contractors:
+#             return self.contractor_name
+#         return ", ".join(contractor.name for contractor in contractors)
+
+#     def __str__(self):
+
+# @property
+# def display_contractor_dropdown(self):
+#         return self.contractor.name
+
+#     def __str__(self):
+#         return f"{self.project.name} - {self.contractor.name} - {self.contract_amount}"
+
+
+
+
     
     # @property
     # def get_contract_invoice(self):
@@ -2085,30 +2112,6 @@ class ProjectMachineExpense(models.Model):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 class Files(models.Model):
     company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
     project_name =  models.ForeignKey(Project,on_delete=models.CASCADE, null=True, blank=True)
@@ -2151,23 +2154,39 @@ class PettyCash(models.Model):
 
 
 class PaymentHistory(models.Model):
-    project = models.ForeignKey(Project, on_delete=models.CASCADE)
     date = models.DateField()
     receipt_number = models.CharField(max_length=100)
     payment_method = models.ForeignKey(PaymentMethod, on_delete=models.CASCADE, null=True, blank=True)
     payment_amount = models.DecimalField(max_digits=10, decimal_places=2)
 
-
-
-
 class DailySiteStockUsage(models.Model):
-    stock=models.ForeignKey(SiteStock, on_delete=models.CASCADE,null=True,blank=True)
-    Project = models.ForeignKey(Project, on_delete=models.CASCADE,null=True,blank=True)
-    work_done =models.TextField()
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, null=True, blank=True)
+    stock=models.ForeignKey(SiteStock,on_delete=models.CASCADE, null=True, blank=True)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, null=True, blank=True)
+    subcontract=models.ForeignKey(ProjectSubContract,on_delete=models.CASCADE, null=True, blank=True)
+    # work_done=models.TextField()
     date = models.DateField(auto_now_add=True)
     qty = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
     unit = models.ForeignKey(Uom,on_delete=models.CASCADE,null=True,blank=True)
 
+
+
+
+# @property
+#   def get_dailysitestockusage_items(self):
+#         if self.dailysitestockusageitems_set.all():
+#             return self.dailysitestockusageitems_set.all()
+#         return None
+
+class Dailytask(models.Model):
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, null=True, blank=True)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, null=True, blank=True)
+    subcontract=models.ForeignKey(ProjectSubContract,on_delete=models.CASCADE, null=True, blank=True)
+    # subcontract_items=models.ForeignKey(ProjectSubContractUnitRates,on_delete=models.CASCADE, null=True, blank=True)
+    work_done=models.TextField()
+    date=models.DateField(auto_now_add=True)
+    qty=models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
+    unit=models.ForeignKey(Uom, on_delete=models.CASCADE, null=True, blank=True)
 
     # def save(self, *args, **kwargs):
     #     if self.stock:
@@ -2179,14 +2198,16 @@ class DailySiteStockUsage(models.Model):
   
 
 
-
-class DailyTask(models.Model):
-    Project = models.ForeignKey(Project, on_delete=models.CASCADE,null=True,blank=True)
-    subcontrct = models.ForeignKey(ProjectSubContract, on_delete=models.CASCADE,null=True,blank=True)
-    subcontract_items =  models.ForeignKey(ProjectSubContractUnitRates, on_delete=models.CASCADE,null=True,blank=True)
-    work_done =models.TextField()
+class SiteAllocation(models.Model):
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, null=True, blank=True)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE,null=True,blank=True)
+    employee = models.ForeignKey(Employee, on_delete=models.CASCADE, null=True,blank=True)
+    labour = models.ForeignKey(CompanyLabours, on_delete=models.CASCADE, null=True,blank=True)
     date = models.DateField(auto_now_add=True)
-    qty = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
-    unit = models.ForeignKey(Uom,on_delete=models.CASCADE,null=True,blank=True)
+    created_by = models.ForeignKey(CustomUser, on_delete=models.CASCADE,null=True,blank=True)
     
-
+    @property
+    def get_date(self):
+        if self.date:
+            return self.date
+        return "sdfsdf"

@@ -10,8 +10,7 @@ from django.conf.urls.static import static
 from django.contrib.auth.views import LogoutView
 from django.contrib.auth import views as auth_view
 
-
-
+from .views import password_reset_request_view, password_reset_confirm_view
 
 urlpatterns = [
 
@@ -323,9 +322,34 @@ urlpatterns = [
 
 
 
+    #     # employee attendence
+    # path('attendance/employee',views.employee_attendance,name= 'employee-labour-attendance'), #render only
+    # path('add_employeeattendance', views.add_employeeattendance, name='add_employeelabourattendance'),
+    # path('employee_companylabourattendance/<int:pk>/', views.update_employeeattendance, name='update_employeeabourattendance'),
+    # path('employee_companylabourattendance/<int:pk>/', views.delete_employeeattendance, name='delete_employeelabourattendance'),
+    # path('employeelabourattendancelist/<str:pk>/', views.employeeattendancelist, name="employeelabourattendancelist"),
+
+    # path('employee-attendence-list/<str:pk>/',views.employee_attendence_list,name='labour-attendence-list'), #list data
+    # path('make-employee-present/<int:pk>/',views.make_employee_present,name='make_employee_present'),
+
+    path('site_allocation/',views.site_allocation,name= 'site_allocation'), 
+    path('add_site_allocation/', views.add_site_allocation, name='add_site_allocation'),
+    path('site-allocation-list/<str:pk>/',views.site_allocation_list,name='site-allocation-list'), #list data
+
+    path('lab_site_allocation/',views.lab_site_allocation,name= 'lab_site_allocation'), 
+    path('add_lab_site_allocation/', views.add_lab_site_allocation, name='add_lab_site_allocation'),
+    path('lab-site-allocation-list/<str:pk>/',views.lab_site_allocation_list,name='lab-site-allocation-list'), 
+
+
+    path('purchase-details/<int:purchase_id>/', views.purchase_details, name='purchase-details'),
+    # path('update-purchase/<int:purchase_id>/',  views.purchase_details, name='update_purchase_details'),
+
+    
+
+
 # revision
 
-path('purchase-track/<int:pk>/<int:site_or_inventory>/' , views.item_price_track,name="item_price_track"),
+# path('purchase-track/<int:pk>/<int:site_or_inventory>/' , views.item_price_track,name="item_price_track"),
 
 
 
@@ -368,6 +392,29 @@ path('purchase-track/<int:pk>/<int:site_or_inventory>/' , views.item_price_track
     path('add_files/', api.add_files, name='add_files'),
     path('update_files/<int:pk>/', api.update_files, name='update_files'),
     path('delete_files/<int:pk>/', api.delete_files, name='delete_files'),
+
+
+    path('dailytask/', views.dailytask, name='dailytask'),  
+    path('add_dailytask/', views.add_dailytask, name='add_dailytask'),  
+    path('update_dailytask/<int:pk>/', views.update_dailytask, name='update_dailytask'), 
+    path('delete_dailytask/<int:pk>/', views.delete_dailytask, name='delete_dailytask'), 
+
+
+  
+
+
+
+
+    path('dailysitestockusage/', api.dailysitestockusage, name='dailysitestockusage'), 
+    path('add_dailysitestockusage/',api.add_dailysitestockusage, name='add_dailysitestockusage'),
+    # path('dailysitestockusagelist/', api.dailysitestockusagelist, name="dailysitestockusagelist"),
+    path('dailysitestockusagelist/<int:pk>/', api.dailysitestockusagelist, name='dailysitestockusagelist'), 
+
+
+
+
+
+
 
     path('machinaryused-list/', api.machinaryused_list, name='machinaryused-list'),
     path('machinaryused-list/<int:pk>/',  api.machinaryused_list, name='machinaryused-detail'),
@@ -423,6 +470,13 @@ path('purchase-track/<int:pk>/<int:site_or_inventory>/' , views.item_price_track
    
     path('employee-profile/<int:pk>/', api.get_employee_profile, name='get-employee-profile'),
 
+
+
+    path('dailysitestockusage/', api.dailysitestockusage, name='dailysitestockusage'),
+
+
+
+
 ]+static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
 
 admin.site.site_header = "CONSTRUCTION"
@@ -430,6 +484,7 @@ admin.site.site_title = "Construction"
 
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
 
 
 
