@@ -314,6 +314,8 @@ class TransferItemsSerializer(ModelSerializer):
         fields = "__all__"
 
 
+
+
     def create(self, validated_data):
         invoice =validated_data.get('invoice')
         qty = validated_data.get('qty')
@@ -476,6 +478,15 @@ def update_destiny_qty(destiny, qty):
 
 
 #------ Project Sub Category ------ new  
+
+
+
+class DailySiteStockUsageSerializer(ModelSerializer):
+    
+
+    class Meta:
+        model = DailySiteStockUsage
+        fields = "__all__"
     
 class ProjectSubContractSerializer(ModelSerializer):
     class Meta:

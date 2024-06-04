@@ -2111,37 +2111,109 @@ def sub_contract_list(request):
 
 #------------------------------------------------Daily Site Stock Usage----------------------------------------
 
+@login_required(login_url='login')
 def dailysitestockusage(request):
     user = request.user
     allow, msg = check_user(request, DailySiteStockUsage, instance=False)
     if not allow:
         context = {"unauthorized": msg}
         return render(request, "login.html", context)
-    
-    uom = Uom.objects.filter(company=user.company).order_by("-id")
-    site = Project.objects.filter(company=user.company).order_by("-id")
-    
+
+    subcontractors = ProjectSubContract.objects.filter(company=user.company).order_by("-id")
+    projects = Project.objects.filter(company=user.company).order_by("-id")
+
     from_site = request.GET.get('from', "")
     items = []
     if from_site:
-        pro = site.filter(id=from_site).last()
-        items = SiteStock.objects.filter(project=pro)
+        pro = projects.filter(id=from_site).last()
+        subcontractors = ProjectSubContract.objects.filter(project=pro)
     else:
         items = InventoryStock.objects.filter(company=user.company).order_by("-id")
-    
-    
-    querysets = DailySiteStockUsage.objects.filter(project__company=user.company).order_by("-id")
+
+    #querysets = DailySiteStockUsage.objects.filter(company=user.company).order_by("-id")
+    querysets = DailySiteStockUsage.objects.all().order_by("-id")
     queryset, pages, search = customPagination(request, DailySiteStockUsage, querysets)
-    
+   
+
     context = {
         'queryset': queryset,
-        "location": "dailysitestockusage",
+        "location": "transfer",
         "pages": pages,
         "search": search,
-        "site": site,
-        "uom": uom,
+        "projects": projects,
+        "subcontractors": subcontractors,
         "inventory": user.company,
-        'items': items
+        'items': items,
+      
+        
     }
+    return render(request, "sitestock/dailysitestockusage.html", context)
+
+
+
+
+
+
+@api_view(['POST'])
+@login_required(login_url='login')
+def add_dailysitestockusage(request):
+    user = request.user
+    allow, msg = check_user(request, DailySiteStockUsage, instance=False)
+    if not allow:
+        return JsonResponse({'details': [msg]}, status=status.HTTP_401_UNAUTHORIZED)
     
-    return render(request, "dailysitestockusage.html", context)
+    table = request.POST.get('table', None)
+    if table:
+        try:
+            tdata = json.loads(table)
+            for data in tdata:
+                data["company"]=user.company.id
+                items_serializer = DailySiteStockUsageSerializer(data=data)
+                if items_serializer.is_valid():
+                    items_serializer.save()
+                else:
+                    return JsonResponse(items_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON format'}, status=status.HTTP_400_BAD_REQUEST)
+        return JsonResponse({'message': 'Success'}, status=status.HTTP_201_CREATED)
+    else:
+        return JsonResponse({'error': 'No data provided'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+@login_required(login_url='login')
+def dailysitestockusagelist(request):
+    user = request.user
+    allow, msg = check_user(request, DailySiteStockUsage, instance=False)
+    if not allow:
+        context = {"unauthorized": msg}
+        return render(request, "login.html", context)
+
+    projects = Project.objects.filter(company=request.user.company).order_by("-id")
+    subcontractors = ProjectSubContract.objects.filter(company=request.user.company).order_by("-id")
+    querysets = DailySiteStockUsage.objects.filter(company=request.user.company).order_by("-id")
+    
+
+    queryset, pages, search = customPagination(request, DailySiteStockUsage, querysets)
+    context = {
+        'queryset': queryset,
+        'location': "dailysitestockusagelist",
+        'pages': pages,
+        'search': search,
+        'projects': projects,
+        'subcontractors': subcontractors,
+       
+    }
+    return render(request, "sitestock/dailysitestockusagelist.html", context)
+    
+
+
+
+
+
+
+
+
+   
+
+

@@ -2047,13 +2047,23 @@ class PaymentHistory(models.Model):
     payment_amount = models.DecimalField(max_digits=10, decimal_places=2)
 
 class DailySiteStockUsage(models.Model):
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, null=True, blank=True)
     stock=models.ForeignKey(SiteStock,on_delete=models.CASCADE, null=True, blank=True)
     project = models.ForeignKey(Project, on_delete=models.CASCADE, null=True, blank=True)
     subcontract=models.ForeignKey(ProjectSubContract,on_delete=models.CASCADE, null=True, blank=True)
-    work_done=models.TextField()
+    # work_done=models.TextField()
     date = models.DateField(auto_now_add=True)
     qty=models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
     unit=models.ForeignKey(Uom,on_delete=models.CASCADE, null=True, blank=True)
+
+
+
+
+# @property
+#   def get_dailysitestockusage_items(self):
+#         if self.dailysitestockusageitems_set.all():
+#             return self.dailysitestockusageitems_set.all()
+#         return None
 
 class Dailytask(models.Model):
     company = models.ForeignKey(Company, on_delete=models.CASCADE, null=True, blank=True)

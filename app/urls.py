@@ -384,7 +384,18 @@ urlpatterns = [
     path('dailytask/', views.dailytask, name='dailytask'),  
     path('add_dailytask/', views.add_dailytask, name='add_dailytask'),  
     path('update_dailytask/<int:pk>/', views.update_dailytask, name='update_dailytask'), 
-    path('delete_dailytask/<int:pk>/', views.delete_dailytask, name='delete_dailytask'),  
+    path('delete_dailytask/<int:pk>/', views.delete_dailytask, name='delete_dailytask'), 
+
+
+  
+
+
+
+
+    path('dailysitestockusage/', api.dailysitestockusage, name='dailysitestockusage'), 
+    path('add_dailysitestockusage/',api.add_dailysitestockusage, name='add_dailysitestockusage'),
+    # path('dailysitestockusagelist/', api.dailysitestockusagelist, name="dailysitestockusagelist"),
+    path('dailysitestockusagelist/', api.dailysitestockusagelist, name='dailysitestockusagelist'), 
 
 
 

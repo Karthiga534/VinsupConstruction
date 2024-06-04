@@ -59,6 +59,10 @@ class TransferInvoiceAdmin(admin.ModelAdmin):
 class TransferItemsAdmin(admin.ModelAdmin):
     list_display =[ 'id']
 
+@admin.register(DailySiteStockUsage)
+class DailySiteStockUsageAdmin(admin.ModelAdmin):
+    list_display =[ 'id']
+
 @admin.register(Contractor)
 class ContractorAdmin(admin.ModelAdmin):
     list_display = ('id',)

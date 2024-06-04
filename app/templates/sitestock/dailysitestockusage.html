@@ -13,11 +13,11 @@
 				<div class="row">
 					<div class="col-12">
 						<div class="page-title-box d-sm-flex align-items-center justify-content-between">
-							<h4 class="mb-sm-0">Transfer Management</h4>
+							<h4 class="mb-sm-0">Daily Site Stock Usage Management</h4>
 							<div class="page-title-right">
 								<ol class="breadcrumb m-0">
 									<li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
-									<li class="breadcrumb-item active">Transfer</li>
+									<li class="breadcrumb-item active">Daily Site Stock Usage</li>
 								</ol>
 							</div>
 						</div>
@@ -30,10 +30,10 @@
 							<div class="card-body">
 								<div class="row">
 									<div class="col-lg-10 col-md-10">
-										<h4> Transfer </h4>
+										<h4> Site Stock Usage </h4>
 									</div>
 									<div class="col-lg-2 col-md-2">
-										<a href="{% url 'dailysitestocklist' %}" class="btn btn-info" style="float:right;">Transfer List</a>
+										<a href="{% url 'dailysitestockusage' %}" class="btn btn-info" style="float:right;">SiteStock List</a>
 									</div>
 								</div>
 								<hr>
@@ -42,66 +42,45 @@
 									{% csrf_token %}
 
 									<div class="row">
-										
-										<div class="col-md-6 mb-2">
-											<label for="" class="form-label">From Site :</label>
-
-											<form id="transferForm" action="{% url 'add_transfer' %}" method="POST">
-                                                {% csrf_token %}
-                                                
-                                                <!-- From Project Dropdown -->
-                                                <div class="mb-3">
-                                                    <label for="fromproject" class="form-label">From Project:</label>
-                                                    <select class="form-select" id="fromproject" name="fromproject">
-                                                        {% if selectedProject|stringformat:"s" == "0" %}
-                                                        <option value="0" selected>Inventory</option>
-                                                        {% else %}
-                                                        <option value="0">Inventory</option>
-                                                        {% endif %}
-                                            
-                                                        {% for project in projects %}
-                                                        {% if selectedProject|stringformat:"s" == project.id|stringformat:"s" %}
-                                                        <option value="{{ project.id }}" selected>{{ project.proj_name }}</option>
-                                                        {% else %}
-                                                        <option value="{{ project.id }}">{{ project.proj_name }}</option>
-                                                        {% endif %}
-                                                        {% endfor %}
-                                                    </select>
-                                                </div>
-                                            
-                                                <!-- Subcontractor Dropdown -->
-                                                <div class="mb-3">
-                                                    <label for="subcontractor" class="form-label">Subcontractor:</label>
-                                                    <select class="form-select" id="subcontractor" name="subcontractor">
-                                                        {% if selectedSubcontractor|stringformat:"s" == "0" %}
-                                                        <option value="0" selected>None</option>
-                                                        {% else %}
-                                                        <option value="0">None</option>
-                                                        {% endif %}
-                                            `   
-                                                        {% for subcontract in subcontractors %}
-                                                        {% if selectedSubcontractor|stringformat:"s" == subcontract.id|stringformat:"s" %}
-                                                        <option value="{{ subcontract.id }}" selected>{{ subcontract.display_contractor_dropdown }}</option>
-                                                        {% else %}
-                                                        <option value="{{ subcontract.id }}">{{ subcontract.display_contractor_dropdown }}</option>
-                                                        {% endif %}
-                                                        {% endfor %}
-                                                    </select>
-                                                </div>
-                                            </form>
-											<span id="fromsubcontractorError" class="error-message"></span>
-										</div>
-										<!-- <button type="submit"> submit</button> -->
-										
-
-										<div class="col-md-6 mb-2">
-											<label for="" class="form-label">Date :</label>
-											<input type="date" class="form-control" id="created_at" name="created_at">
+										<div class="col-md-4 mb-3 mt-4">
+											<label for="project" class="form-label">Project:</label>
+											<select class="form-select" id="project" name="project">
+											
+												<option value="0">All</option>
+											
+												{% for project in projects %}
+												<!--  -->
+												<option value="{{ project.id }}">{{ project.proj_name }}</option>
+												
+												{% endfor %}
+											</select>
+											<span id="projectError" class="error-message"></span>
 										</div>
 										
+										<div class="col-md-4 mb-3 mt-4">
+											<label for="subcontractor" class="form-label">Subcontractor:</label>
+											<select class="form-select" id="subcontractor" name="subcontractor">
+												
+												<option value="0" selected>--------</option>
+										
+												{% for subcontract in subcontractors %}
+										
+												<option value="{{ subcontract.id }}">{{ subcontract.display_contractor_dropdown }}</option>
+											
+												{% endfor %}
+											</select>
+											<span id="subcontractorError" class="error-message"></span>
+										</div>
+									
+										<div class="col-md-4 mb-3 mt-4">
+											<label for="date" class="form-label">Date:</label>
+											<input type="date" class="form-control" id="date" name="date">
+											<span id="dateError" class="error-message"></span>
+										</div>
 									</div>
+									
 									<hr>
-									<h4>Sitestock usage Items </h4>
+									<h4>Site stock usage items </h4>
 								
 									<div class="card-body">
 										<table id="tab1"
@@ -142,6 +121,11 @@
 													<td>{{i.unit}}</td>
 
 													<td>{{i.qty}}</td>
+                                                    <td><input type="text" class="form-control supply-qty" name="qty"
+                                                        min="0" max="{{i.qty}} data-item="{{ i.item.item }}">
+                                                       
+                                                    <div class="text-danger supplyQtyError"></div>
+                                                </td>
 																																				
 												</tr>
 												{% endfor %}
@@ -204,19 +188,25 @@
 		</div>
 	</div>
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-		<script>
+	<script>
+
 		var qtyError = false;
+
 		var priceError = false;
+
 		document.addEventListener('DOMContentLoaded', function () {
-			const dropdown = document.getElementById('fromsite');
+
+			const dropdown = document.getElementById('project');
 			const tableBody = document.querySelector('#tab1 tbody');
+
+
 			// fetch table data API
 			dropdown.addEventListener('change', function () {
 				console.log(dropdown, tableBody)
 
 				const selectedValue = dropdown.value;
 				try {
-					fetch(`/dailysitestockusage/${selectedValue}/`)
+					fetch(`/transfer/${selectedValue}/`)
 						.then(response => {
 							if (response.status === 200) {
 								console.log('Data fetched');
@@ -279,36 +269,6 @@
 			}
 		}
 
-		function handleAmountInput(input) {
-			const value = parseInt(input.value);
-			const errorElement = input.nextElementSibling;
-
-			if (isNaN(value) || value < 0) {
-				errorElement.textContent = 'Invalid Price';
-			} else {
-				errorElement.textContent = '';
-			}
-		}
-
-		// calculate total amount
-		function calculateTotalAmount(input) {
-			const row = input.closest('tr');
-			const supplyQtyInput = row.querySelector('.supply-qty');
-			const amountInput = row.querySelector('.amount');
-			const totalAmountSpan = row.querySelector('.total_amount');
-
-			const supplyQty = parseFloat(supplyQtyInput.value);
-			const amount = parseFloat(amountInput.value);
-
-			if (!isNaN(supplyQty) && !isNaN(amount)) {
-				totalAmountSpan.textContent = (supplyQty * amount).toFixed(2);
-				totalAmountSpan.value = (supplyQty * amount).toFixed(2);
-			} else {
-				totalAmountSpan.textContent = '';
-				totalAmountSpan.value = '';
-			}
-		}
-
 
 		// GET ALL TABLE DATA FROM FORM
 		function getTableData() {
@@ -328,9 +288,9 @@
 				const supplyQtyInput = itemRow.querySelector('.supply-qty');
 
 				const supplyQty = supplyQtyInput?.value
-				const amount = itemRow.querySelector('.amount')?.value;
+				// const amount = itemRow.querySelector('.amount')?.value;
 				const unit = itemRow.querySelector('.supply-unit')?.value;
-				const totalAmount = itemRow.querySelector('.total-amount')?.value;
+				// const totalAmount = itemRow.querySelector('.total-amount')?.value;
 
 				const max = parseInt(supplyQtyInput.getAttribute('max'));
 
@@ -343,12 +303,12 @@
 				}
 
 				selectedItemsArray.push({
-					stock_id: itemId,
-					item: item,
+					stock: itemId,
+					// item: item,
 					qty: supplyQty,
-					// unit:unit,
-					price: amount,
-					total_amount: totalAmount
+					unit:unit,
+					// price: amount,
+					// total_amount: totalAmount
 				});
 			});
 
@@ -372,9 +332,9 @@
 						</div>
 					</th>
 					<td>${serialNumber}</td>
-					<td>${data.item.item}</td>
+					<td>${data.item}</td>
 					<td>${data.unit}</td>
-
+					<input type="text" class="form-control supply-unit" name="unit" value="${data.item.unit}" hidden>
 					<td>${data.qty}</td>
 
 					<td><input type="text" class="form-control supply-qty" name="qty"
@@ -384,16 +344,7 @@
 						<div class="text-danger supplyQtyError"></div>
 					</td>
 
-					<td><input type="text" class="form-control amount" id="amount"
-							value="${data.price}" id="amount_${serialNumber}"
-							onchange="calculateTotalAmount(this)" name="amount">
-
-						<div class="text-danger amountError"></div>
-					</td>
-					<td>
-						<input type="text" class="form-control total_amount" readonly
-							id="total_amount_${serialNumber}" name="total_amount">
-					</td>
+				
 
 					`;
 
@@ -402,10 +353,6 @@
 
 
 	</script>
-
-
-
-
 	<script>
 		// create form
 
@@ -434,29 +381,34 @@
 				var errors = {};
 				var formData = new FormData();
 
-				var requiredKeys = ['fromsite', "tosite"];   //change
+				var requiredKeys = [];   //change
 
 				//var requiredKeys = ['vendor_company']
 
-				formData.append('fromproject', getValueOrDefault(formElement.querySelector('select[name="fromproject"]').value));
-				formData.append('tosite', getValueOrDefault(formElement.querySelector('select[name="tosite"]').value));            //change
-
+				
 				var tableData = [];
-				$('#tabl tbody tr').each(function () {
-					console.log(this)
+				project=getValueOrDefault(formElement.querySelector('select[name="project"]').value)
+				subcontract=getValueOrDefault(formElement.querySelector('select[name="subcontractor"]').value)
+				date=getValueOrDefault(formElement.querySelector('input[name="date"]').value)
 
-					var rowData = {};
-					rowData['item'] = $(this).find('select[name^="item"]').val();
-					rowData['name'] = $(this).find('input[name^="name"]').val();
-					rowData['unit'] = $(this).find('select[name^="unit"]').val();
-					rowData['amount'] = $(this).find('input[name^="amount"]').val();
-					rowData['qty'] = $(this).find('input[name^="qty"]').val();
-					rowData['total_amount'] = $(this).find('input[name^="total_amount"]').val();
-					tableData.push(rowData);
+				table_Data.forEach((item)=> {
+					// console.log(this)
+
+					// var rowData = {};
+					// rowData['item'] = $(this).find('select[name^="item"]').val();
+					
+					// rowData['unit'] = $(this).find('select[name^="unit"]').val();
+					
+					// rowData['qty'] = $(this).find('input[name^="qty"]').val();
+					item['proj_name'] = project
+					item['subcontract'] = subcontract
+					item['date'] = date
+				
+					// tableData.push(rowData);
 				});
 
 
-				console.log(tableData)
+				console.log(table_Data)
 
 
 				requiredKeys.forEach(function (key) {
@@ -480,7 +432,7 @@
 				formData.append("table", JSON.stringify(table_Data))
 
 				$.ajax({
-					url: '/add_transfer/',                //change
+					url: '/add_dailysitestockusage/',                //change
 					type: 'POST',
 					headers: {
 						'X-CSRFToken': csrftoken,
@@ -492,7 +444,7 @@
 						console.error(status);
 						if (xhr.status === 201) {
 							showToast(successMesssage?.message, '', successMesssage?.bgColor);
-							window.location.href = '/transferlist';
+							window.location.href = '/dailysitestockusagelist';
 						} else {
 							console.error(error);
 							restoreForm(formId, button)
@@ -534,4 +486,6 @@
 		}
 
 	</script>
-	{% endblock header2 %}
+ 
+    
+{% endblock header2 %}
