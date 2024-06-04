@@ -25,12 +25,13 @@ class WorkStatus(models.Model):
     code = models.CharField(max_length=50, null=True, blank=True)
 
     def __str__(self):
-        return self.name
+        return f'{self.name}'
 
 
 class ProcessStatus(models.Model):
     name = models.CharField(max_length=50, null=True, blank=True)
     code = models.CharField(max_length=50, null=True, blank=True)
+    classname = models.CharField(max_length=256, null=True, blank=True)
 
     def __str__(self):
         return f'(self.name)'
@@ -38,6 +39,7 @@ class ProcessStatus(models.Model):
 class PaymentStatus(models.Model):
     name = models.CharField(max_length=50, null=True, blank=True)
     code = models.CharField(max_length=50, null=True, blank=True)
+    
 
     def __str__(self):
         return self.name
@@ -45,13 +47,14 @@ class PaymentStatus(models.Model):
 class PaymentMethod(models.Model):
     name = models.CharField(max_length=50, null=True, blank=True)
     code = models.CharField(max_length=50, null=True, blank=True)
+   
 
     def __str__(self):
         return self.name
 
 class ContractType(models.Model):
     name = models.CharField(max_length=50, null=True, blank=True)
-    code = models.CharField(max_length=50, null=True, blank=True)
+    code = models.CharField(max_length=256, null=True, blank=True)
 
     def __str__(self):
         return self.name
@@ -59,7 +62,7 @@ class ContractType(models.Model):
 class Duration(models.Model):
     company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
     name=models.CharField(max_length=100,null=True,blank=True)
-    code = models.CharField(max_length=50, null=True, blank=True)
+    code = models.CharField(max_length=256, null=True, blank=True)
 
 
     def __str__(self):
@@ -69,6 +72,7 @@ class Priority(models.Model):
     company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
     name=models.CharField(max_length=100,null=True,blank=True)
     code = models.CharField(max_length=50, null=True, blank=True)
+    
 
 
     def __str__(self):
@@ -353,6 +357,13 @@ class MaterialLibrary(models.Model):
     class Meta:
         #    unique_together to enforce uniqueness across multiple fields
         unique_together = ('item', 'company', 'unit')
+
+
+    @property
+    def purchase_history(self):
+        if self.purchaseitems_set.all():
+                return self.purchaseitems_set.all()
+        return None
         
 class OthersLibrary(models.Model):
     company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
@@ -692,14 +703,15 @@ class Employee(models.Model):
         pending= net_salary
         if is_paid:
             for i in is_paid:
-                paid +=i.get_paid_amount
-                pending +=i.get_pending_amount
+                paid +=i.amount_paid
+                pending -=i.amount_paid
 
         start_date=get_date(start_date)
         end_date =get_date(end_date)
-        is_paid =False
+        ispaid =False if paid < net_salary  else True
         net_salary = "{:.2f}".format(net_salary)
-        return net_salary ,paid,pending ,start_date , end_date,is_paid
+        pending = "{:.2f}".format(pending)
+        return net_salary ,paid,pending ,start_date , end_date,ispaid
     
 
 
@@ -1122,6 +1134,34 @@ class Project(models.Model):
         if amt >0 :
             return amt
         return amt
+    
+
+    @property
+    def total_purchase_amount(self):
+        pamount=0
+        purchasehistory=self.purchaseinvoice_set.all()
+        print(purchasehistory)
+        if purchasehistory:
+            pamount =sum( get_amount_or_zero(i.total_amount) for i in purchasehistory) 
+        return pamount
+    
+
+
+    @property
+    def total_purchase_paid_amount(self):
+        pamount=0
+        purchasehistory=self.purchaseinvoice_set.all()
+        print(purchasehistory)
+        if purchasehistory:
+            pamount =sum( get_amount_or_zero(i.paid) for i in purchasehistory) 
+        return pamount
+    
+
+    @property
+    def total_purchase_pending_amount(self):
+      return self.total_purchase_amount -self.total_purchase_paid_amount
+
+
 
 # ----------------------------- stock management ---------------------------------- ---------------------------------------------------- 
 
@@ -1166,6 +1206,13 @@ class InventoryStock(models.Model):
             return self.item.item
         if self.name:
             return self.name
+        return None
+    
+    @property
+    def purchase_history(self):
+        if self.item:  
+            if self.item.purchase_history:
+                return self.item.purchase_history
         return None
 
         
@@ -1221,6 +1268,13 @@ class SiteStock(models.Model):
         return  "{:.2f}".format(total)
     
 
+    @property
+    def purchase_history(self):
+        if self.item:  
+            if self.item.purchase_history:
+                return self.item.purchase_history
+        return None
+
 
 
 class DailyMaterialUsage(models.Model):
@@ -1274,7 +1328,7 @@ class PurchaseInvoice(models.Model):
     def save(self, *args, **kwargs):
         self.full_clean()  #
         if not self.status:
-            self.status,_ =ProcessStatus.objects.get_or_create(code=0)
+            self.status,_ =ProcessStatus.objects.get_or_create(code=2)
         if not self.invoice_id:
             # Generate or set the invoice_id if not already provided
             # You can generate it based on your specific requirements
@@ -1285,9 +1339,6 @@ class PurchaseInvoice(models.Model):
 
 
     def generate_unique_identifier(self):
-        # Implement your logic to generate a unique identifier for the invoice_id
-        # This could be a random string, timestamp, or any other unique identifier
-        # For simplicity, let's assume it's a random string
         import random
         import string
         return ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
@@ -1319,6 +1370,12 @@ class PurchaseItems(models.Model):
 
     def __str__(self):
         return self.name or self.item.display
+    
+    @property
+    def purchase_info(self):
+        if self.invoice:
+            return self.invoice
+        return None
 # ----------------------------------- QUOTATION -----------------------------------------------------------------------------        
 
 class Quatation(models.Model):
@@ -1331,6 +1388,12 @@ class Quatation(models.Model):
 
     #created by Employee , Status
 
+
+    def save(self, *args, **kwargs):
+        self.full_clean()  #
+        if not self.quatation_id:
+            self.quatation_id = f'{generate_unique_identifier(self.company)}{self.id}'
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.quatation_id
@@ -1373,6 +1436,13 @@ class TransferInvoice(models.Model):
     item_delivered =models.BooleanField(default=False)
     received_by =models.ForeignKey(Employee, on_delete=models.CASCADE,null=True,blank=True)
 
+
+    def save(self, *args, **kwargs):
+        self.full_clean()  #
+        if not self.invoice_id:
+            self.invoice_id = f'{generate_unique_identifier(self.company)}{self.id}'
+        super().save(*args, **kwargs)
+    
     @property
     def get_transfer_items(self):
         if self.transferitems_set.all():
@@ -1481,11 +1551,11 @@ class SalaryPaymentHistory(models.Model):
     receipt = models.ForeignKey(SalaryReceipt, on_delete=models.CASCADE, null=True, blank=True)
     created_by=models.ForeignKey(Employee,null=True,blank=True, on_delete=models.CASCADE)
     payment_date = models.DateField(auto_now_add=True)
-
     amount_paid = models.DecimalField(max_digits=10, decimal_places=2)
     payment_method = models.ForeignKey(PaymentMethod, on_delete=models.CASCADE, null=True, blank=True)
     transaction_id = models.CharField(max_length=100,null=True, blank=True)
     payment_receipt = models.FileField(upload_to='salary_receipts/', null=True, blank=True)
+
 
 
     @property
@@ -2079,6 +2149,9 @@ class PettyCash(models.Model):
     site_location = models.ForeignKey(Project, on_delete=models.CASCADE,null=True, blank=True ) 
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE, null=True, blank=True) 
     attachment  =models.FileField(upload_to="doc")
+
+
+
 
 class PaymentHistory(models.Model):
     date = models.DateField()

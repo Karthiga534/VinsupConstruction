@@ -11,6 +11,12 @@ from rest_framework.response import Response
 date_format = "%Y-%m-%d"
 PAGE_SIZE = 10
 
+
+def generate_unique_identifier(self):
+    return ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+
+
+
 def customPagination(request,Klass,queryset,serializer_class=None):
     search_query = request.GET.get('search',"")
     if search_query:

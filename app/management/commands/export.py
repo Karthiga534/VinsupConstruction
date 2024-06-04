@@ -23,6 +23,7 @@ class Command(BaseCommand):
             {'model_name': 'Priority', 'app_name': 'app', 'file_name': 'Priority.json'},
 
             {'model_name': 'PaymentSchedule', 'app_name': 'app', 'file_name': 'PaymentSchedule.json'},
+             {'model_name': 'ProcessStatus', 'app_name': 'app', 'file_name': 'ProcessStatus.json'},
           
         ]
 

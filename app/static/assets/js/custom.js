@@ -589,11 +589,21 @@ function get_filename(value) {
 
 
 // Helper function to create custom status cells
-const createStatusCell = (status) => {
+const createStatusCell = (status, className) => {
   const cell = document.createElement('td');
   const statusComponent = document.createElement('span');
   statusComponent.textContent = status;
-  statusComponent.style.color = status === 'Paid' ? 'green' : 'red';
+  if (className) {
+    let classList = className.split(' ')
+    console.log(classList)
+    statusComponent.classList.add(...classList)
+    cell.appendChild(statusComponent);
+    return cell;
+  }
+  else {
+    statusComponent.style.color = status === 'Paid' ? 'green' : 'red';
+  }
+
   cell.appendChild(statusComponent);
   return cell;
 };
@@ -661,13 +671,22 @@ const createPayActionCell = (modalId) => {
 
 
 
-function createPaidCell(value) {
+function createPaidCell(value, amount) {
   const cell = document.createElement('td');
   const span = document.createElement('span');
 
   const i = document.createElement('i')
 
+  if (parseFloat(amount) === 0) {
+ 
+    span.classList.add("badge", "bg-success-subtle", "text-info", "fs-12");
+    span.textContent = "Nill";
 
+    span.appendChild(i)
+    cell.appendChild(span)
+
+    return cell;
+  }
 
   if (parseFloat(value) > 0 || value === true) {
 
@@ -711,6 +730,7 @@ function createPaidStatusCell(value, text) {
 
   return cell;
 }
+
 
 
 
@@ -790,7 +810,7 @@ function restoreAllForms() {
 function getReport(button, tableId) {
   // Show loader
   button.disabled = true;
-  const btnText = button.innerText ;
+  const btnText = button.innerText;
   button.innerText = 'Generating Report...';
 
   const table = document.getElementById(tableId);
@@ -802,23 +822,23 @@ function getReport(button, tableId) {
 
   // Get table headers
   for (let i = 0; i < headers.length; i++) {
-      if (headers[i].innerText.toLowerCase() !== 'action') {
-          csv += '"' + headers[i].innerText + '"' + (i < headers.length - 1 ? ',' : '');
-      } else {
-          columnsToSkip.push(i);
-      }
+    if (headers[i].innerText.toLowerCase() !== 'action') {
+      csv += '"' + headers[i].innerText + '"' + (i < headers.length - 1 ? ',' : '');
+    } else {
+      columnsToSkip.push(i);
+    }
   }
   csv += '\n';
 
   // Iterate over rows to build the CSV
   for (let i = 1; i < rows.length; i++) { // Start from 1 to skip header row
-      const cells = rows[i].getElementsByTagName('td');
-      for (let j = 0; j < cells.length; j++) {
-          if (!columnsToSkip.includes(j)) {
-              csv += '"' + cells[j].innerText + '"' + (j < cells.length - 1 ? ',' : '');
-          }
+    const cells = rows[i].getElementsByTagName('td');
+    for (let j = 0; j < cells.length; j++) {
+      if (!columnsToSkip.includes(j)) {
+        csv += '"' + cells[j].innerText + '"' + (j < cells.length - 1 ? ',' : '');
       }
-      csv += '\n';
+    }
+    csv += '\n';
   }
 
   // Trigger the download of the CSV file

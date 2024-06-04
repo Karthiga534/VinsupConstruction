@@ -125,7 +125,7 @@ class   PurchaseItemsSerializer(serializers.ModelSerializer):
         inventory_item, inventory_created = InventoryStock.objects.get_or_create(item = item,unit=unit,company=company)
 
         # if site  is there set item purchased for particular site so no need to manipulate inventory stock
-        inventory_item.qty = ( 0 if site else Decimal(inventory_item.qty)) + qty_to_add
+        inventory_item.qty = ( 0 if site else Decimal(qty_to_add )) + Decimal(inventory_item.qty)
         if not inventory_item.price:
             inventory_item.price =  Decimal(validated_data.get('price', 0))
         inventory_item.total_amount = inventory_item.qty * inventory_item.price
@@ -142,6 +142,7 @@ class   PurchaseItemsSerializer(serializers.ModelSerializer):
         # validated_data['name'] = item_name  # Add 'name' field to validated_data
         validated_data['unit'] = unit  # Add 'unit' field to validated_data
         validated_data['item'] = item
+        validated_data ['name'] = item.item if item and  item.item else None
        
         validated_data['inventory'] = inventory_item
         purchase_item = super().create(validated_data)  # Create PurchaseItems instance
@@ -157,7 +158,33 @@ class   PurchaseItemsSerializer(serializers.ModelSerializer):
         return data
 
 
+# ------------------------- price track --------------------------------------------------
+class PurchaseInvoiceInfoSerializer(ModelSerializer):
+    class Meta:
+        model = PurchaseInvoice
+        fields =['id',"created_at",]
 
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data ["vendor_name"] = instance.vendor.display if instance.vendor else None
+        data ['site_name'] = instance.site.display if instance.site else None
+        return data
+
+
+class   PurchaseItemsPriceTrackSerializer(serializers.ModelSerializer):
+    purchase_info= PurchaseInvoiceInfoSerializer    (many=False)
+    class Meta:
+        model = PurchaseItems
+        fields =['id',"purchase_info","price"]
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        # data ["item_name"] = instance.item.item if instance.item else None
+        data ['unit_name'] = instance.unit.name if instance.unit else None
+        return data
+
+# ------------------------------------ ------------------------------------------------------
 
 class PurchaseInvoiceListSerializer(ModelSerializer):
     get_purchase_items =PurchaseItemsSerializer(many=True,read_only=True)
@@ -169,7 +196,12 @@ class PurchaseInvoiceListSerializer(ModelSerializer):
     def to_representation(self, instance):
         data = super().to_representation(instance)
         data ["vendor_name"] = instance.vendor.display if instance.vendor else None
-        # data ['unit_name'] = instance.unit.name if instance.unit else None
+        data ["status_name"] = instance.status.name if instance.status else None
+        data ["status_code"] = instance.status.code if instance.status else None
+        data ["status_class"] = instance.status.classname if instance.status else None
+        # data ['total_purchase_amount'] =instance.total_purchase_amount
+        # data ['total_purchase_paid_amount'] =instance.total_purchase_paid_amount
+       
         return data
 
 class QuatationItemsSerializer(ModelSerializer):
@@ -521,6 +553,16 @@ class ProjectSubContractSerializer(ModelSerializer):
     class Meta:
         model = ProjectSubContract
         fields = "__all__"
+
+class ProjectSubContractDdropSerializer(ModelSerializer):
+    class Meta:
+        model = ProjectSubContract
+        fields = ('id',)
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data ['display_contractor_dropdown'] =instance.display_contractor
+        return data
 
 class ProjectSubContractUnitRatesSerializer(ModelSerializer):
     class Meta:
@@ -904,13 +946,32 @@ class LabourSalaryReceiptHistorySerializer(ModelSerializer):
         SalaryPaymentHistory.objects.create(**data)
         return instance
     
+# -----------
+
+class EmployeeSalaryHistorySerializer(ModelSerializer):
+    
+    class Meta:
+        model = SalaryReceipt
+        fields = '__all__'
+
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data ["payment_method"] =instance.get_payment_method
+        # data ["get_paid_amount"] =instance.get_paid_amount
+        # data['get_pending_amount'] =instance.get_pending_amount
+        # data ['get_total_amount'] =instance.get_total_amount
+        # data['is_paid'] =instance.is_paid
+        return data
+    
+
 
     
 class EmployeeSalarySerializer(serializers.ModelSerializer):
-    # get_salary_receipts = EmployeeSalaryReceiptHistorySerializer(many=True,read_only=True)
+    get_payment_receipt = EmployeeSalaryHistorySerializer(many=True,read_only=True)
     class Meta:
         model = Employee
-        fields =('id',"name")
+        fields =('id',"name",'get_payment_receipt')
 
 
     def to_representation(self, instance):
@@ -1074,7 +1135,7 @@ class AttendenceSerialiser(serializers.ModelSerializer):
         data ["employee"]  = instance.employee.id if instance.employee else None
         data ["project_name"]  = instance.project.display if instance.project else None
         data ["atten_id"]  = instance.id
-        data['date'] =get_today()
+        # data['date'] =get_today()
         
         return data
 

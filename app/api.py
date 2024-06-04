@@ -38,6 +38,21 @@ def vendor(request):  #change name
     context= {'queryset': queryset,"location":"vendors","pages" :pages,"search":search}   #change location name 
     return render(request,"purchase/vendor.html",context)    #change template name 
 
+
+@api_view(['GET'])
+@login_required(login_url='login')
+def vendor_list(request):  #change name 
+    user=request.user
+    allow,msg= check_user(request,VendorRegistration,instance=False)  # CHANGE model
+    if not allow:
+         context ={"unauthorized":msg}
+         return render(request,"login.html",context)      
+    querysets = VendorRegistration.objects.filter(company=request.user.company).order_by("-id")   #change query
+    ser = VendorRegistrationSerializer(querysets,many=True)
+    return Response(ser.data)
+
+
+
 @api_view(['POST'])
 @login_required(login_url='login')
 def add_vendor (request):  # CHANGE name
@@ -234,7 +249,33 @@ def purchaselist(request):
     context = {'queryset': queryset,"location": "purchaselist","pages": pages,"search": search,'vendor_names': vendors,}
     return render(request, "purchase/purchaselist.html", context)
 
+@login_required(login_url='login')
+def project_purchaselist(request,pk):
+    user = request.user
+    allow, msg = check_user(request, PurchaseInvoice, instance=False)
+    if not allow:
+        context = {"unauthorized": msg}
+        return render(request, "login.html", context)
+    vendors = VendorRegistration.objects.filter(company=request.user.company).order_by("-id")
+    # querysets = PurchaseInvoice.objects.filter(company=request.user.company).order_by("-id")
+    # if pk:
+    #     querysets= querysets.filter(site__id=pk)
+    
+    querysets =PurchaseInvoice.objects.none()
+    queryset, pages, search = customPagination(request, PurchaseInvoice, querysets)
+   
+    pid =pk
+    inventory = True
 
+    project ={}
+
+    if pk !=0:
+        project = get_object_or_404(Project,id=pk)
+        inventory = False
+    
+    context = {'queryset': queryset,"location": "project-purchase-history","pages": pages,
+               "search": search,'pid':pk,"project":project,"inventry":inventory,'vendors':vendors}
+    return render(request, "stock/sitePurchase.html", context)
 
 #Inventory Management
 #--------------------
@@ -442,26 +483,28 @@ def add_transfer(request):
     # print(invoice_data)
 
     table = invoice_data.pop('table')  # Use request.data to get JSON data
-    invoice_serializer = TransferInvoiceSerializer(data=invoice_data)
-    if invoice_serializer.is_valid():
-        invoice = invoice_serializer.save()
-        if table:
-            try:
-                tdata = json.loads(table)
-                for data in tdata:
-                    data['invoice'] = invoice.id
-                    items_serializer = TransferItemsSerializer(data=data)
-                    if items_serializer.is_valid():
-                        items_serializer.save()
-                    else:
-                        invoice.delete()
-                        return JsonResponse(items_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-            except json.JSONDecodeError:
-                invoice.delete()
-                return JsonResponse({'error': 'Invalid JSON format'}, status=status.HTTP_400_BAD_REQUEST)
-        return JsonResponse(invoice_serializer.data, status=status.HTTP_201_CREATED)
-    else:
-        return JsonResponse(invoice_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    with transaction.atomic():
+        invoice_serializer = TransferInvoiceSerializer(data=invoice_data)
+        if invoice_serializer.is_valid():
+            invoice = invoice_serializer.save()
+            if table:
+                try:
+                    tdata = json.loads(table)
+                    for data in tdata:
+                        data['invoice'] = invoice.id
+                        items_serializer = TransferItemsSerializer(data=data)
+                        if items_serializer.is_valid():
+                            items_serializer.save()
+                        else:
+                            invoice.delete()
+                            return JsonResponse(items_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                except json.JSONDecodeError:
+                    invoice.delete()
+                    return JsonResponse({'error': 'Invalid JSON format'}, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse(invoice_serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return JsonResponse(invoice_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 
@@ -1332,8 +1375,8 @@ def add_quatation(request):
     if not allow:
         return JsonResponse({'details': [msg]}, status=status.HTTP_401_UNAUTHORIZED)
     invoice_data = request.POST.copy().dict()
-    if user.admin:
-        invoice_data['company'] = user.company.id
+    # if user.admin:
+    invoice_data['company'] = user.company.id
     print(request.data)
     table=request.POST.get('table')
 
@@ -1348,6 +1391,7 @@ def add_quatation(request):
                     items_serializer = QuatationItemsSerializer(data=data)
                     if items_serializer.is_valid():
                         items_serializer.save()
+                        # return JsonResponse(items_serializer.data ,status=201)
                     else:
                         invoice.delete()
                         return JsonResponse(items_serializer.errors ,status=status.HTTP_400_BAD_REQUEST)
@@ -2111,10 +2155,13 @@ def contractoratt_list(request):
     return Response(contractors)
 
 @api_view(['GET'])
-def sub_contract_list(request):
-    sub_contract = ProjectSubContract.objects.values('id', 'name', )
-    sub_contracts = [{'id': sub_contract['id'], 'name': sub_contract['name']} for sub_contract in sub_contract]
-    return Response(sub_contracts)
+def sub_contract_list(request,pk):
+    user_company = request.user.company  
+    sub_contract = ProjectSubContract.objects.filter(company=user_company,project=pk)
+    ser =ProjectSubContractDdropSerializer(sub_contract,many=True)
+   
+    return Response(ser.data)
+
 
 
 #------------------------------------------------Daily Site Stock Usage----------------------------------------

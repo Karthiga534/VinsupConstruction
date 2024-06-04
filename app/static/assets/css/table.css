@@ -1,0 +1,40 @@
+ :root {
+    --table-font-family: Arial, sans-serif;
+    --table-font-size: 14px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--table-font-family);
+    font-size: var(--table-font-size);
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 10px;
+}
+
+th {
+    text-transform: capitalize;
+    background-color: #f2f2f2;
+    /* font-weight: bold; */
+    text-align: center !important;
+}
+
+thead:first-child {
+    background-color: #8ad5d3aa;
+}
+
+tr:nth-child(even) {
+    background-color: #d8dad883;
+}
+
+
+tr:hover {
+    background-color: #ddd;
+}
+
+th:first-letter {
+    text-transform: uppercase; 
+}
