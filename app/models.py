@@ -1522,6 +1522,7 @@ class SalaryPaymentHistory(models.Model):
 class ProjectSubContract(models.Model):
     company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
     project = models.ForeignKey(Project, on_delete=models.CASCADE,null=True,blank=True)
+    name= models.CharField(max_length=255,null=True,blank=True)
     type = models.ForeignKey(ContractType, on_delete=models.CASCADE,null=True,blank=True)
     contractor = models.ForeignKey(Contractor, on_delete=models.CASCADE,null=True,blank=True)
     start_date = models.DateField()
@@ -2081,6 +2082,7 @@ class PettyCash(models.Model):
     attachment  =models.FileField(upload_to="doc")
 
 class PaymentHistory(models.Model):
+    project = models.ForeignKey(Project, on_delete=models.CASCADE) 
     date = models.DateField()
     receipt_number = models.CharField(max_length=100)
     payment_method = models.ForeignKey(PaymentMethod, on_delete=models.CASCADE, null=True, blank=True)
@@ -2092,6 +2094,7 @@ class PaymentHistory(models.Model):
 class DailySiteStockUsage(models.Model):
     stock=models.ForeignKey(SiteStock, on_delete=models.CASCADE,null=True,blank=True)
     Project = models.ForeignKey(Project, on_delete=models.CASCADE,null=True,blank=True)
+    subcontrct = models.ForeignKey(ProjectSubContract, on_delete=models.CASCADE,null=True,blank=True)
     work_done =models.TextField()
     date = models.DateField(auto_now_add=True)
     qty = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
@@ -2109,7 +2112,8 @@ class DailySiteStockUsage(models.Model):
 
 
 
-class DailyTask(models.Model):
+class Dailytask(models.Model):
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, null=True, blank=True)
     Project = models.ForeignKey(Project, on_delete=models.CASCADE,null=True,blank=True)
     subcontrct = models.ForeignKey(ProjectSubContract, on_delete=models.CASCADE,null=True,blank=True)
     subcontract_items =  models.ForeignKey(ProjectSubContractUnitRates, on_delete=models.CASCADE,null=True,blank=True)

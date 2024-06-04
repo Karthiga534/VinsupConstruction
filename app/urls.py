@@ -344,6 +344,12 @@ urlpatterns = [
     path('site_allocation/',views.site_allocation,name= 'site_allocation'), 
     path('add_site_allocation/', views.add_site_allocation, name='add_site_allocation'),
     path('site-allocation-list/<str:pk>/',views.site_allocation_list,name='site-allocation-list'), #list data
+    path('site_allocationemployee/<int:employee_id>/', views.site_allocationemployee, name='site_allocationemployee'),
+
+
+
+    path('delete_site_allocation_list/<int:pk>/', views.delete_site_allocation_list, name='delete_site_allocation_list'),
+
 
     path('lab_site_allocation/',views.lab_site_allocation,name= 'lab_site_allocation'), 
     path('add_lab_site_allocation/', views.add_lab_site_allocation, name='add_lab_site_allocation'),
@@ -351,7 +357,17 @@ urlpatterns = [
 
 
     path('purchase-details/<int:purchase_id>/', views.purchase_details, name='purchase-details'),
-    # path('update-purchase/<int:purchase_id>/',  views.purchase_details, name='update_purchase_details'),
+    #path('update-purchase/<int:purchase_id>/',  views.purchase_details, name='update_purchase_details'),
+    path('purchase_update/<int:pk>/', views.update_purchase, name='update_purchase'),
+
+    path('purchasetableupdate/<str:id>/', views.purchasetableupdate, name='purchasetableupdate'),
+
+    # path('purchaseitems/<int:pk>/', views.update_purchase_item, name='update_purchase_item'),
+
+    path('quatation_update/<int:pk>/', views.update_quatation, name='update_quatation'),
+    path('quatationtableupdate/<str:id>/', views.quatationtableupdate, name='quatationtableupdate'),
+
+
 
     
 
@@ -405,7 +421,8 @@ urlpatterns = [
     path('add_dailytask/', views.add_dailytask, name='add_dailytask'),  
     path('update_dailytask/<int:pk>/', views.update_dailytask, name='update_dailytask'), 
     path('delete_dailytask/<int:pk>/', views.delete_dailytask, name='delete_dailytask'),  
-
+    path('dailytask-list/', views.dailytask_list, name='dailytask-list'),
+    path('dailytask-list/<int:pk>/',  views.dailytask_list, name='dailytask-detail'),
 
 
 
@@ -462,6 +479,7 @@ urlpatterns = [
     path('user-list/', api.user_list, name='user-list'),
     path('contractor-list/', api.contractoratt_list, name='contractor-list'),
     path('sub-contract-list/', api.sub_contract_list, name='sub-contract-list'),
+    path('sub-contract-list/<int:project_id>/', api.get_sub_contract_lists , name='get_sub_contract_lists'),
 
    
     path('employee-profile/<int:pk>/', api.get_employee_profile, name='get-employee-profile'),
