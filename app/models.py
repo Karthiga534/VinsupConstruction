@@ -1249,6 +1249,13 @@ class SiteStock(models.Model):
         # Define unique_together to enforce uniqueness across multiple fields
         unique_together = ('item', 'company', 'unit','project')
 
+    
+    @property
+    def display(self):
+        if self.item:
+            return self.item.item
+        return self.name
+
     def save(self, *args, **kwargs):
         if not self.total_supplied_qty:
            self.total_supplied_qty =self.qty

@@ -548,6 +548,14 @@ class DailySiteStockUsageSerializer(ModelSerializer):
     class Meta:
         model = DailySiteStockUsage
         fields = "__all__"
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data ['item_name'] =instance.stock.display if instance.stock else None
+        data ['project_name'] = instance.project.dispaly if instance.project else None
+        data ['unit_name'] = instance.unit.name if instance.unit else None
+        data ["subcontractor_name"] =instance.subcontract.display if instance.subcontract else None
+        return data
     
 class ProjectSubContractSerializer(ModelSerializer):
     class Meta:

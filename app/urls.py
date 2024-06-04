@@ -349,7 +349,7 @@ urlpatterns = [
 
 # revision
 
-# path('purchase-track/<int:pk>/<int:site_or_inventory>/' , views.item_price_track,name="item_price_track"),
+path('purchase-track/<int:pk>/<int:site_or_inventory>/' , views.item_price_track,name="item_price_track"),
 
 
 
@@ -399,6 +399,8 @@ urlpatterns = [
     path('update_dailytask/<int:pk>/', views.update_dailytask, name='update_dailytask'), 
     path('delete_dailytask/<int:pk>/', views.delete_dailytask, name='delete_dailytask'), 
 
+    path('dailytask-list/', views.dailytask_list, name='dailytask-list'),  
+
 
   
 
@@ -407,9 +409,10 @@ urlpatterns = [
 
     path('dailysitestockusage/', api.dailysitestockusage, name='dailysitestockusage'), 
     path('add_dailysitestockusage/',api.add_dailysitestockusage, name='add_dailysitestockusage'),
-    # path('dailysitestockusagelist/', api.dailysitestockusagelist, name="dailysitestockusagelist"),
-    path('dailysitestockusagelist/<int:pk>/', api.dailysitestockusagelist, name='dailysitestockusagelist'), 
+    path('stockusagelist/', api.sitestockusage, name="dailysitestockusagelist"),
+    path('dailysitestockusagelist/<int:pk>/', api.dailysitestockusagelist, name='dailysitestock-usagelist'), 
 
+   path('dailysitestockusage/', api.dailysitestockusage, name='dailysitestockusage'),
 
 
 
@@ -472,7 +475,7 @@ urlpatterns = [
 
 
 
-    path('dailysitestockusage/', api.dailysitestockusage, name='dailysitestockusage'),
+ 
 
 
 

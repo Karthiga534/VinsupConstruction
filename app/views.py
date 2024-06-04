@@ -2786,6 +2786,21 @@ def password_reset_confirm_view(request):
 
 #--------------------------------------Daily Task-----------------------------------
 
+@api_view(['GET'])
+@login_required(login_url='login')
+def dailytask_list(request):
+    user=request.user
+    allow,msg= check_user(request,Dailytask,instance=False)  # CHANGE model
+    if not allow:
+         context ={"unauthorized":msg}
+         return render(request,"login.html",context)    
+      
+    querysets = Dailytask.objects.filter(company=request.user.company).order_by("-id")
+    ser = dailyTaskSerializer(querysets,many=True)
+    return Response (ser.data)
+
+
+
 @login_required(login_url='login')
 def dailytask(request):  #change name 
     user=request.user
@@ -3151,3 +3166,26 @@ def purchase_details(request, purchase_id):
             return JsonResponse({'error': 'Invalid JSON format'}, status=400)
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
+
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+# @login_required(login_url='login')    
+def item_price_track(request,pk,site_or_inventory):
+    if site_or_inventory ==0:
+        item =get_object_or_404(InventoryStock,id=pk)
+    else :
+        item =get_object_or_404(SiteStock,id=pk)
+    purchase_records =item.purchase_history
+    serializers = PurchaseItemsPriceTrackSerializer(purchase_records,many=True)
+    data = serializers.data
+
+    item_name =item.item.item if item.item else None
+    
+    results={
+        "data" : data,
+        "item_name" :item_name
+    }
+
+    return Response(results)

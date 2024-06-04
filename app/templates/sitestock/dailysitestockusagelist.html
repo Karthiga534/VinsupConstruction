@@ -40,326 +40,329 @@
 									<div class="col-xl-2 col-lg-2 col-md-2 col-12">
 										<a href="{% url 'dailysitestockusage' %}" type="button" class="btn btn-info"
 											style="float:right;">Add Sitestock</a>
-										
-								</div>
-							</div>
-							<div class="card-body">
-								<div class="row">
-									<div class="mb-3 mt-4" style="width: 200px;">
-										<label for="project" class="form-label"> Project:</label>
-										<select class="form-select" id="project" >
-											<!-- <option value="-1"> All </option> -->
-											<option value="0">All</option>
-																		
-											{% for project in projects %}
-																																	
-											<option value="{{ project.id }}">{{ project.proj_name }}</option>
-											
-											{% endfor %}
-										</select>
-										<span id="projectError" class="error-message"></span>
-									</div>
-								
-									<!-- Subcontractor Dropdown -->
-									<div class="mb-3 mt-4" style="width: 200px;">
-										<label for="subcontractor" class="form-label">Subcontractor:</label>
-										<select class="form-select" id="subcontractor" name="subcontractor">
-											
-											<option value="0" selected>--------</option>
-																						
-											{% for subcontract in subcontractors %}
-											
-											
-											<option value="{{ subcontract.id }}">{{ subcontract.display_contractor_dropdown }}</option>
-											
-											{% endfor %}
-										</select>
-										<span id="subcontractorError" class="error-message"></span>
-									</div>
-									<div class="col-xl-3 col-lg-3 col-md-3 col-xs-6 col-12">
-										<br><br><button type="button"
-											class="btn btn-primary waves-effect waves-light mt-2">Get Report</button>
+
 									</div>
 								</div>
-								<hr>
-								<table id="example"
-									class="table table-bordered dt-responsive nowrap table-striped align-middle"
-									style="width:100%">
-									<thead>
-										<tr>
-											
-											<th data-ordering="false">S No.</th>
-											<th data-ordering="false">Item name</th>
-											<th data-ordering="false">Qty</th>
-											<th data-ordering="false">Project</th>
-											<th data-ordering="false">Subcontractor</th>
-											<th data-ordering="false">Unit</th>
-										    <th data-ordering="false">Action</th>
+								<div class="card-body">
+									<div class="row">
+										<div class="mb-3 mt-4" style="width: 200px;">
+											<label for="project" class="form-label"> Project:</label>
+											<select class="form-select" id="project">
+												<!-- <option value="-1"> All </option> -->
+												<option value="0">All</option>
 
-										</tr>
-									</thead>
-									<tbody>
+												{% for project in projects %}
 
-										
+												<option value="{{ project.id }}">{{ project.proj_name }}</option>
 
-									</tbody>
-								</table>
+												{% endfor %}
+											</select>
+											<span id="projectError" class="error-message"></span>
+										</div>
 
+										<!-- Subcontractor Dropdown -->
+										<div class="mb-3 mt-4" style="width: 200px;">
+											<label for="subcontractor" class="form-label">Subcontractor:</label>
+											<select class="form-select" id="subcontractor" name="subcontractor">
 
-								<div id="results-container"></div>
-								<div id="pagination-container"></div>
+												<option value="0" selected>--------</option>
+
+												{% for subcontract in subcontractors %}
 
 
+												<option value="{{ subcontract.id }}">
+													{{ subcontract.display_contractor_dropdown }}</option>
 
+												{% endfor %}
+											</select>
+											<span id="subcontractorError" class="error-message"></span>
+										</div>
+										<div class="col-xl-3 col-lg-3 col-md-3 col-xs-6 col-12">
+											<br><br><button type="button"
+												class="btn btn-primary waves-effect waves-light mt-2">Get
+												Report</button>
+										</div>
+									</div>
+									<hr>
+									<table id="example"
+										class="table table-bordered dt-responsive nowrap table-striped align-middle"
+										style="width:100%">
+										<thead>
+											<tr>
+
+												<th data-ordering="false">S No.</th>
+												<th data-ordering="false">Item name</th>
+												<th data-ordering="false">Qty</th>
+												<th data-ordering="false">Project</th>
+												<th data-ordering="false">Subcontractor</th>
+												<th data-ordering="false">Unit</th>
+												<th data-ordering="false">Action</th>
+
+											</tr>
+										</thead>
+										<tbody>
+
+
+
+										</tbody>
+									</table>
+
+
+									<div id="results-container"></div>
+									<div id="pagination-container"></div>
+
+
+
+								</div>
 							</div>
 						</div>
 					</div>
+					<!-- container-fluid -->
 				</div>
-				<!-- container-fluid -->
-			</div>
-			<!-- End Page-content -->
+				<!-- End Page-content -->
 
+
+			</div>
+			<!-- end main content-->
 
 		</div>
-		<!-- end main content-->
-
-	</div>
-	<!-- END layout-wrapper -->
+		<!-- END layout-wrapper -->
 
 
 
 
-	<div class="modal fade bs-example-modal-lg1" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
-		aria-hidden="true">
-		<div class="modal-dialog modal-lg">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title" id="myLargeModalLabel">Sitestock Item List </h5>
-					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-				</div>
-				<div class="modal-body">
-					<div class="table-responsive">
-						<table class="table table-bordered">
-							<thead>
-								<tr>
-									<th>S.no</th>
-									<th>Item Name</th>
-									<th>Qty</th>
-									<th>Project</th>
-									<th>Subcontractor</th>
-									<th>Unit</th>
-									
-								</tr>
-							</thead>
-							<tbody id="modalTableBody">
-								<!-- Modal table body will be populated dynamically -->
-							</tbody>
-						</table>
+		<div class="modal fade bs-example-modal-lg1" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+			aria-hidden="true">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="myLargeModalLabel">Sitestock Item List </h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<div class="table-responsive">
+							<table class="table table-bordered">
+								<thead>
+									<tr>
+										<th>S.no</th>
+										<th>Item Name</th>
+										<th>Qty</th>
+										<th>Project</th>
+										<th>Subcontractor</th>
+										<th>Unit</th>
+
+									</tr>
+								</thead>
+								<tbody id="modalTableBody">
+									<!-- Modal table body will be populated dynamically -->
+								</tbody>
+							</table>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button class="btn btn-link link-success fw-medium shadow-none" data-bs-dismiss="modal"><i
+								class="ri-close-line me-1 align-middle"></i> Close</button>
+						<button type="button" class="btn btn-primary">Save</button>
 					</div>
 				</div>
-				<div class="modal-footer">
-					<button class="btn btn-link link-success fw-medium shadow-none" data-bs-dismiss="modal"><i
-							class="ri-close-line me-1 align-middle"></i> Close</button>
-					<button type="button" class="btn btn-primary">Save</button>
+			</div>
+		</div>
+
+
+
+
+
+
+		<!--start back-to-top-->
+		<button onclick="topFunction()" class="btn btn-danger btn-icon" id="back-to-top">
+			<i class="ri-arrow-up-line"></i>
+		</button>
+		<!--end back-to-top-->
+
+		<!--preloader-->
+		<div id="preloader">
+			<div id="status">
+				<div class="spinner-border text-primary avatar-sm" role="status">
+					<span class="visually-hidden">Loading...</span>
 				</div>
 			</div>
 		</div>
-	</div>
 
 
+		<script>
+
+			const existingPaginationContainer = document.getElementById('pagination-container');
+
+			const dropdown = document.getElementById('project');
+			const dropdown2 = document.getElementById('subcontractor');
+			const tableBody = document.querySelector('#example tbody');
 
 
+			// // from and to
+			// const fromdate = document.getElementById('fromdate');
+			// const todate = document.getElementById('todate');
 
+			// var qtyError = false;
 
-	<!--start back-to-top-->
-	<button onclick="topFunction()" class="btn btn-danger btn-icon" id="back-to-top">
-		<i class="ri-arrow-up-line"></i>
-	</button>
-	<!--end back-to-top-->
+			// var priceError = false;
 
-	<!--preloader-->
-	<div id="preloader">
-		<div id="status">
-			<div class="spinner-border text-primary avatar-sm" role="status">
-				<span class="visually-hidden">Loading...</span>
-			</div>
-		</div>
-	</div>
+			var currentPage = 1;
 
+			document.addEventListener('DOMContentLoaded', function () {
 
-	<script>
+				// const dropdown = document.getElementById('fromsite');
+				// const tableBody = document.querySelector('#example tbody');
 
-		const existingPaginationContainer = document.getElementById('pagination-container');
+				// on dom loaded 
+				const initialSelectedValue = dropdown.value;
+				fetchData(1);
 
-		const dropdown = document.getElementById('project');
-		const tableBody = document.querySelector('#example tbody');
+				// fetch table data API
+				dropdown.addEventListener('change', function () {
 
+					fetchData(currentPage);
+				});
 
-		// // from and to
-		// const fromdate = document.getElementById('fromdate');
-		// const todate = document.getElementById('todate');
+				dropdown2.addEventListener('change', function () {
 
-		// var qtyError = false;
+					fetchData(currentPage);
+				});
 
-		// var priceError = false;
+				// todate.addEventListener('change', function () {
 
-		// var currentPage = 1;
+				// 	fetchData(currentPage);
+				// });
 
-		document.addEventListener('DOMContentLoaded', function () {
+				// fromdate.addEventListener('change', function () {
 
-			// const dropdown = document.getElementById('fromsite');
-			// const tableBody = document.querySelector('#example tbody');
+				// 	fetchData(currentPage);
+				// });
 
-			// on dom loaded 
-			const initialSelectedValue = dropdown.value;
-			fetchData( 1);
-
-			// fetch table data API
-			dropdown.addEventListener('change', function () {
-	
-				fetchData( currentPage);
 			});
 
-			// todate.addEventListener('change', function () {
-	
-			// 	fetchData(currentPage);
-			// });
 
-			// fromdate.addEventListener('change', function () {
-				
-			// 	fetchData(currentPage);
-			// });
+			// fetch data
+			function fetchData(page) {
 
-		});
-
-
-		// fetch data
-		function fetchData(page) {
-	
-			const selectedValue = dropdown.value;
-			// const from = fromdate?.value || ""
-			// const to = todate?.value || ""
-			// console.log(fromdate ,todate)
-			try {
-				fetch(`/dailysitestockusagelist/${selectedValue}/?page=${page}`)
-				.then(response => {
-                    if (response.ok) {
-                        console.log('Data fetched');
-                        return response.json();
-                    } else {
-                        throw new Error(`HTTP error! Status: ${response.status}`);
-                    }
-                })
-					.then(data => {
-						tableBody.innerHTML = '';
-						renderDataOrMessage(tableBody, data, page)
-					})
-					.catch(error => {
-						console.error('Error fetching data:', error);
-						showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
-					});
-			} catch (error) {
-				console.error('Error in fetch operation:', error);
+				const selectedValue = dropdown.value;
+				const selectedValue2 = dropdown2.value;
+				// const from = fromdate?.value || ""
+				// const to = todate?.value || ""
+				// console.log(fromdate ,todate)
+				try {
+					fetch(`/dailysitestockusagelist/${selectedValue}/?page=${page}&subcontract=${selectedValue2}`)
+						.then(response => {
+							if (response.ok) {
+								console.log('Data fetched');
+								return response.json();
+							} else {
+								throw new Error(`HTTP error! Status: ${response.status}`);
+							}
+						})
+						.then(data => {
+							tableBody.innerHTML = '';
+							renderDataOrMessage(tableBody, data, page)
+						})
+						.catch(error => {
+							console.error('Error fetching data:', error);
+							showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+						});
+				} catch (error) {
+					console.error('Error in fetch operation:', error);
+				}
 			}
-		}
 
 
 
-		// render table or message
+			// render table or message
 
-		function renderDataOrMessage(data, page) {
-        if (data && Array.isArray(data.results) && data.results.length > 0) {
-            data.results.forEach((item, index) => {
-                const newRow = createTableRow(index + 1, item);
-                tableBody.appendChild(newRow);
-            });
-            renderPagination(data, page);
-        } else {
-            tableBody.innerHTML = '<tr><td colspan="6">No data available.</td></tr>';
-            existingPaginationContainer.innerHTML = '';
-        }
-    }
+			function renderDataOrMessage(data, page) {
+				if (data && Array.isArray(data.results) && data.results.length > 0) {
+					data.results.forEach((item, index) => {
+						const newRow = createTableRow(index + 1, item);
+						tableBody.appendChild(newRow);
+					});
+					renderPagination(data, page);
+				} else {
+					tableBody.innerHTML = '<tr><td colspan="6">No data available.</td></tr>';
+					existingPaginationContainer.innerHTML = '';
+				}
+			}
 
-		function createTableRow(serialNumber, data) {
-        const newRow = document.createElement('tr');
-
-        const serialCell = document.createElement('td');
-        serialCell.textContent = serialNumber;
-        newRow.appendChild(serialCell);
-
-        const itemNameCell = document.createElement('td');
-        itemNameCell.textContent = data.item_name;
-        newRow.appendChild(itemNameCell);
-
-        const qtyCell = document.createElement('td');
-        qtyCell.textContent = data.qty;
-        newRow.appendChild(qtyCell);
-
-        const projectCell = document.createElement('td');
-        projectCell.textContent = data.project;
-        newRow.appendChild(projectCell);
-
-        const subcontractorCell = document.createElement('td');
-        subcontractorCell.textContent = data.subcontractor;
-        newRow.appendChild(subcontractorCell);
-
-        const unitCell = document.createElement('td');
-        unitCell.textContent = data.unit;
-        newRow.appendChild(unitCell);
-
-        const actionCell = document.createElement('td');
-        // Add action button logic here
-        newRow.appendChild(actionCell);
-
-        return newRow;
-    }
-
-		// nested table
-		function populateModalTable(transferItems, modalTableBody) {
-			modalTableBody.innerHTML = ''; // Clear previous data
-
-			transferItems.forEach((tItem, index) => {
-				const modalRow = document.createElement('tr');
+			function createTableRow(serialNumber, data) {
+				const newRow = document.createElement('tr');
 
 				const serialCell = document.createElement('td');
-				serialCell.textContent = index + 1;
-				modalRow.appendChild(serialCell);
+				serialCell.textContent = serialNumber;
+				newRow.appendChild(serialCell);
 
 				const itemNameCell = document.createElement('td');
-				itemNameCell.textContent = tItem.item_name || 'N/A';
-				modalRow.appendChild(itemNameCell);
-
+				itemNameCell.textContent =get_value( data.item_name);
+				newRow.appendChild(itemNameCell);
 
 				const qtyCell = document.createElement('td');
-				qtyCell.textContent = tItem.qty || 'N/A';
-				modalRow.appendChild(qtyCell);
-
+				qtyCell.textContent =get_value (data.qty);
+				newRow.appendChild(qtyCell);
 
 				const projectCell = document.createElement('td');
-				projectCell.textContent = tItem.project || 'N/A';
-				modalRow.appendChild(projectCell);
+				projectCell.textContent =get_value (data.project_name);
+				newRow.appendChild(projectCell);
 
 				const subcontractorCell = document.createElement('td');
-				subcontractorCell.textContent = tItem.subcontractor || 'N/A';
-				modalRow.appendChild(subcontractorCell);
-
-
+				subcontractorCell.textContent =get_value (data.subcontractor);
+				newRow.appendChild(subcontractorCell);
 
 				const unitCell = document.createElement('td');
-				unitCell.textContent = tItem.item_unit || 'N/A';
-				modalRow.appendChild(unitCell);
-								
-				modalTableBody.appendChild(modalRow);
-			});
-		}
+				unitCell.textContent =get_value (data.unit_name);
+				newRow.appendChild(unitCell);
+
+				// const actionCell = document.createElement('td');
+
+				// newRow.appendChild(actionCell);
+
+				return newRow;
+			}
+
+			// nested table
+			function populateModalTable(transferItems, modalTableBody) {
+				modalTableBody.innerHTML = ''; // Clear previous data
+
+				transferItems.forEach((tItem, index) => {
+					const modalRow = document.createElement('tr');
+
+					const serialCell = document.createElement('td');
+					serialCell.textContent = index + 1;
+					modalRow.appendChild(serialCell);
+
+					const itemNameCell = document.createElement('td');
+					itemNameCell.textContent = tItem.item_name || 'N/A';
+					modalRow.appendChild(itemNameCell);
 
 
-	</script>
+					const qtyCell = document.createElement('td');
+					qtyCell.textContent = tItem.qty || 'N/A';
+					modalRow.appendChild(qtyCell);
 
-{% endblock header2 %}
+
+					const projectCell = document.createElement('td');
+					projectCell.textContent = tItem.project || 'N/A';
+					modalRow.appendChild(projectCell);
+
+					const subcontractorCell = document.createElement('td');
+					subcontractorCell.textContent = tItem.subcontractor || 'N/A';
+					modalRow.appendChild(subcontractorCell);
 
 
 
-	
+					const unitCell = document.createElement('td');
+					unitCell.textContent = tItem.item_unit || 'N/A';
+					modalRow.appendChild(unitCell);
 
-   
+					modalTableBody.appendChild(modalRow);
+				});
+			}
+
+
+		</script>
+
+		{% endblock header2 %}
