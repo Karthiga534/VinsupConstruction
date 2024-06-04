@@ -365,7 +365,7 @@ urlpatterns = [
 
 # revision
 
-path('purchase-track/<int:pk>/<int:site_or_inventory>/' , views.item_price_track,name="item_price_track"),
+# path('purchase-track/<int:pk>/<int:site_or_inventory>/' , views.item_price_track,name="item_price_track"),
 
 
 
@@ -420,8 +420,6 @@ path('purchase-track/<int:pk>/<int:site_or_inventory>/' , views.item_price_track
 =======
     path('delete_dailytask/<int:pk>/', views.delete_dailytask, name='delete_dailytask'), 
 
-    path('dailytask-list/', views.dailytask_list, name='dailytask-list'),  
-
 
   
 
@@ -430,8 +428,8 @@ path('purchase-track/<int:pk>/<int:site_or_inventory>/' , views.item_price_track
 
     path('dailysitestockusage/', api.dailysitestockusage, name='dailysitestockusage'), 
     path('add_dailysitestockusage/',api.add_dailysitestockusage, name='add_dailysitestockusage'),
-    path('stockusagelist/', api.sitestockusage, name="dailysitestockusagelist"),
-    path('dailysitestockusagelist/<int:pk>/', api.dailysitestockusagelist, name='dailysitestock-usagelist'), 
+    # path('dailysitestockusagelist/', api.dailysitestockusagelist, name="dailysitestockusagelist"),
+    path('dailysitestockusagelist/<int:pk>/', api.dailysitestockusagelist, name='dailysitestockusagelist'), 
 
    path('dailysitestockusage/', api.dailysitestockusage, name='dailysitestockusage'),
 >>>>>>> origin/cms
@@ -502,7 +500,7 @@ path('purchase-track/<int:pk>/<int:site_or_inventory>/' , views.item_price_track
 
 
 
- 
+    path('dailysitestockusage/', api.dailysitestockusage, name='dailysitestockusage'),
 
 
 

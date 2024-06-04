@@ -2786,21 +2786,6 @@ def password_reset_confirm_view(request):
 
 #--------------------------------------Daily Task-----------------------------------
 
-@api_view(['GET'])
-@login_required(login_url='login')
-def dailytask_list(request):
-    user=request.user
-    allow,msg= check_user(request,Dailytask,instance=False)  # CHANGE model
-    if not allow:
-         context ={"unauthorized":msg}
-         return render(request,"login.html",context)    
-      
-    querysets = Dailytask.objects.filter(company=request.user.company).order_by("-id")
-    ser = dailyTaskSerializer(querysets,many=True)
-    return Response (ser.data)
-
-
-
 @login_required(login_url='login')
 def dailytask(request):  #change name 
     user=request.user
@@ -3262,15 +3247,6 @@ def quatationtableupdate(request, id):
         
         return redirect('quatationlist')
     
-    inventory = InventoryStock.objects.all()
-    uom = Uom.objects.all()
-
-    return render(request, 'quatation/quatationupdate.html', {
-        'item': item,
-        'inventory': inventory,
-        'uom': uom,
-    })
-=======
         except json.JSONDecodeError:
             return JsonResponse({'error': 'Invalid JSON format'}, status=400)
         except Exception as e:
@@ -3298,4 +3274,4 @@ def item_price_track(request,pk,site_or_inventory):
     }
 
     return Response(results)
->>>>>>> origin/cms
+

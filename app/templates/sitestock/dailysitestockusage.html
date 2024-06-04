@@ -332,7 +332,7 @@
 						</div>
 					</th>
 					<td>${serialNumber}</td>
-					<td>${data.item.item}</td>
+					<td>${data.item}</td>
 					<td>${data.unit}</td>
 					<input type="text" class="form-control supply-unit" name="unit" value="${data.item.unit}" hidden>
 					<td>${data.qty}</td>
@@ -444,7 +444,7 @@
 						console.error(status);
 						if (xhr.status === 201) {
 							showToast(successMesssage?.message, '', successMesssage?.bgColor);
-							window.location.href = '/stockusagelist/';
+							window.location.href = '/dailysitestockusagelist';
 						} else {
 							console.error(error);
 							restoreForm(formId, button)

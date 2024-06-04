@@ -1502,7 +1502,7 @@ def update_quatationitem(request, pk):
 def deletequatationitem(request, pk):
     try:
         # Assuming you want to filter by company associated with the user
-        quatation = QuatationItems.objects.get(pk=pk)
+        quatation = QuatationItems.objects.get(pk=pk, company=request.user.company)
     except QuatationItems.DoesNotExist:
         return Response({'error': 'Item not found'}, status=status.HTTP_404_NOT_FOUND)
     
@@ -2218,43 +2218,7 @@ def dailysitestockusage(request):
     }
     return render(request, "sitestock/dailysitestockusage.html", context)
 
-@login_required(login_url='login')
-def sitestockusage(request):
-    user = request.user
-    allow, msg = check_user(request, DailySiteStockUsage, instance=False)
-    if not allow:
-        context = {"unauthorized": msg}
-        return render(request, "login.html", context)
 
-    subcontractors = ProjectSubContract.objects.filter(company=user.company).order_by("-id")
-    projects = Project.objects.filter(company=user.company).order_by("-id")
-
-    from_site = request.GET.get('from', "")
-    # items = []
-    # if from_site:
-    #     pro = projects.filter(id=from_site).last()
-    #     subcontractors = ProjectSubContract.objects.filter(project=pro)
-    # else:
-    #     items = InventoryStock.objects.filter(company=user.company).order_by("-id")
-
-    #querysets = DailySiteStockUsage.objects.filter(company=user.company).order_by("-id")
-    # querysets = DailySiteStockUsage.objects.all().order_by("-id")
-    # queryset, pages, search = customPagination(request, DailySiteStockUsage, querysets)
-   
-
-    context = {
-        # 'queryset': queryset,
-        "location": "transfer",
-        # "pages": pages,
-        # "search": search,
-        "projects": projects,
-        "subcontractors": subcontractors,
-        # "inventory": user.company,
-        # 'items': items,
-      
-        
-    }
-    return render(request, "sitestock/dailysitestockusagelist.html", context)
 
 
 
@@ -2285,7 +2249,7 @@ def add_dailysitestockusage(request):
         return JsonResponse({'error': 'No data provided'}, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['GET'])
+
 @login_required(login_url='login')
 def dailysitestockusagelist(request, pk):
     user = request.user
@@ -2293,16 +2257,23 @@ def dailysitestockusagelist(request, pk):
     if not allow:
         context = {"unauthorized": msg}
         return render(request, "login.html", context)
+
+    projects = Project.objects.filter(company=request.user.company).order_by("-id")
+    subcontractors = ProjectSubContract.objects.filter(company=request.user.company).order_by("-id")
     querysets = DailySiteStockUsage.objects.filter(company=request.user.company).order_by("-id")
-    projectid= get_int_or_zero(pk)
-    if projectid !=0:
-        querysets =querysets.filter(project__id=projectid)
-    subcontractid =request.GET.get('subcontract')
-    subcontid= get_int_or_zero(subcontractid)
-    if subcontid:
-        querysets =querysets.filter(subcontract__id=subcontid)
-    # ser = DailySiteStockUsageSerializer(querysets,many=True)
-    return PaginationAndFilter(querysets, request, DailySiteStockUsageSerializer,date_field='created_at')
+    
+
+    queryset, pages, search = customPagination(request, DailySiteStockUsage, querysets)
+    context = {
+        'queryset': queryset,
+        'location': "dailysitestockusagelist",
+        'pages': pages,
+        'search': search,
+        'projects': projects,
+        'subcontractors': subcontractors,
+       
+    }
+    return render(request, "sitestock/dailysitestockusagelist.html", context)
     
 
 
