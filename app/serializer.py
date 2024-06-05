@@ -9,6 +9,7 @@ from rest_framework import serializers
 from rest_framework.serializers import *
 from django.contrib.auth.hashers import make_password
 from .models import PurchaseItems, MaterialLibrary, InventoryStock
+from django.db import transaction
 
 
 
@@ -17,6 +18,10 @@ from .models import PurchaseItems, MaterialLibrary, InventoryStock
 date_format = "%Y-%m-%d"
 # date_format =settings.DATE_FORMAT
 
+class ProcessStatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProcessStatus
+        fields = '__all__'
 
 
 class UomSerializer(ModelSerializer):
@@ -75,6 +80,67 @@ class PurchaseInvoiceSerializer(ModelSerializer):
             raise e
         
 
+
+class PurchaseInvoiceStatusSerializer(ModelSerializer):
+    class Meta:
+        model = PurchaseInvoice
+        fields = "__all__"
+
+    def update(self, instance, validated_data):
+        status = validated_data.get('status')
+        company = validated_data.get('company')
+        site =instance.site
+        deliver = ProcessStatus.objects.filter(code=0).last()
+        if status == deliver and instance.status !=deliver and not instance.is_delivered :
+            print(status)
+
+            # Determine target queryset
+            target_queryset = instance.site.stock if instance.site else instance.company.get_inventory
+            purchase_items = instance.get_purchase_items
+
+            # Dictionary to store item quantities
+            purchase_item_quantities = {}
+
+            # Extract item IDs and quantities from purchase_items
+            for item in purchase_items:
+                if hasattr(item, 'item'):
+                    item_id = item.item.id if hasattr(item.item, 'id') else item.item
+                    purchase_item_quantities[item_id] = {
+                        'qty': item.qty,
+                        'unit': item.unit,
+                        'price' : item.price
+                    }
+
+            print(purchase_item_quantities.items())
+
+            with transaction.atomic():
+                # Update quantities in target_queryset based on purchase_item_quantities
+                for item_id, details in purchase_item_quantities.items():
+                    qty = details['qty']
+                    # unit = Uom.objects.filter(id=details['unit']).last()
+                    unit = details['unit']
+                    price = details ["price"]
+                    
+                    # Ensure both item and unit are valid before proceeding
+                    item = MaterialLibrary.objects.filter(id=item_id).last()
+                    if not item:
+                        continue
+
+                    target_item = target_queryset.filter(item=item, unit=unit).first()
+                    if target_item:
+                        target_item.qty += qty
+                        target_item.save()
+                    else:
+                        print('pppppppppppp')
+                        # Determine the model dynamically based on the target_queryset
+                        model_class = target_queryset.model
+                        print(model_class)
+                        # Create a new instance of the model dynamically
+                        new_item = model_class(item=item, qty=qty, unit=unit,company=company,project=site,price=price)
+                        new_item.save()
+                validated_data['is_delivered'] =True
+
+        return super().update(instance, validated_data)
 
 
 
@@ -552,7 +618,7 @@ class DailySiteStockUsageSerializer(ModelSerializer):
     def to_representation(self, instance):
         data = super().to_representation(instance)
         data ['item_name'] =instance.stock.display if instance.stock else None
-        data ['project_name'] = instance.project.dispaly if instance.project else None
+        data ['project_name'] = instance.project.display if instance.project else None
         data ['unit_name'] = instance.unit.name if instance.unit else None
         data ["subcontractor_name"] =instance.subcontract.display if instance.subcontract else None
         return data
@@ -1345,6 +1411,13 @@ class dailyTaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = Dailytask
         fields = '__all__'
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data ['project_name'] = instance.project.display if instance.project else None
+        data ['unit_name'] = instance.unit.name if instance.unit else None
+        data ["subcontractor_name"] =instance.subcontract.display if instance.subcontract else None
+        return data 
 # class SiteAllocationSerializer(serializers.ModelSerializer):
 #     class Meta:
 #         model = SiteAllocation

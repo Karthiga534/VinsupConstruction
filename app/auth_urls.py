@@ -36,6 +36,7 @@ urlpatterns = [
 
 # superuser 
 urlpatterns += [
+    path('',html.Index , name="admin-user-dashboard"),
     path('login-admin',html.login_admin,name="login-admin"),
     path('logout-admin',html.logout_admin,name="logout-admin"),
     path('v-dashboard',html.Index, name="admin-dashboard"),
@@ -66,6 +67,13 @@ urlpatterns += [
     path('add_branch/<int:pk>/' ,html.add_branch,name="add-branch")
 
 
+]
+
+
+urlpatterns += [
+
+    path('password_reset/', password_reset_request_view, name='password_reset_request'),
+    path('password_reset_confirm/', password_reset_confirm_view, name='password_reset_confirm'),
 ]
 
 

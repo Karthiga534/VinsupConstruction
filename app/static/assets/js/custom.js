@@ -1,17 +1,30 @@
 var csrftoken = getCookie("csrftoken");
 const successMesssage = { "message": "Successfully Added", "bgColor": "bg-success" }
+const statusMesssage = { "message": "Status Changed", "bgColor": "bg-primary" }
 const updateMessage = { "message": "Updated Successfully ", "bgColor": "bg-success" }
 const deleteMessage = { "message": "Deleted Successfully", "bgColor": "bg-info" }
 const errorAlertMessage = { "message": "something went wrong", "bgColor": "bg-danger" }
 const errorOccured = { "message": "An error occured", "bgColor": "bg-danger" }
 
-const pageLength = 10;
+let pageLength = 20;
 const TruncateLength = 20;
 const TruncateExt = "...";
 
 function goBack() {
   window.history.back();
 }
+
+let envVariable;
+
+document.addEventListener("DOMContentLoaded", function() {
+  console.log('Environment Variable:', window.myEnvVar.PAGINATION_SIZE);
+  envVariable =window.myEnvVar
+  // pageLength = envVariable?.PAGINATION_SIZE || pageLength
+
+  
+});
+
+
 
 
 // console.log(successMesssage)

@@ -34,7 +34,7 @@ class ProcessStatus(models.Model):
     classname = models.CharField(max_length=256, null=True, blank=True)
 
     def __str__(self):
-        return f'(self.name)'
+        return f'{self.name}'
 
 class PaymentStatus(models.Model):
     name = models.CharField(max_length=50, null=True, blank=True)
@@ -1167,7 +1167,7 @@ class Project(models.Model):
 
 
 class InventoryStock(models.Model):
-    company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
+    company=models.ForeignKey(Company,related_name='inventory_stocks', on_delete=models.CASCADE,null=True,blank=True)
     item=models.ForeignKey(MaterialLibrary, on_delete=models.CASCADE,null=True,blank=True)
     name= models.CharField(max_length=255,null=True,blank=True)
     total_supplied_qty=models.DecimalField(max_digits=10, decimal_places=2, default=0.0) 
@@ -1341,7 +1341,6 @@ class PurchaseInvoice(models.Model):
             # You can generate it based on your specific requirements
             # For example, combining company_id with a unique identifier
             self.invoice_id = f'{self.company_id}-{self.generate_unique_identifier()}'
-
         super().save(*args, **kwargs)
 
 

@@ -52,7 +52,7 @@
                                             <div class="modal-content">
                                                 <form id="createForm" enctype="multipart/form-data">
                                                     <div class="modal-header">
-                                                        <h5 class="modal-title" id="myLargeModalLabel">Project Category
+                                                        <h5 class="modal-title" id="myLargeModalLabel">Add Project Category
                                                         </h5>
                                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                             aria-label="Close" onclick="clearErrors()">
@@ -143,53 +143,23 @@
                                         <td>
                                             <div class="btn-group" role="group">
                                                 <button class="btn btn-soft-secondary btn-sm me-2" type="button" data-id="{{i.id}}" onclick="openModal('viewModal', '{{ i.id }}')">
-                                                    <i class="ri-eye-fill align-bottom me-2 text-muted"></i> View
+                                                    <!-- <i class="ri-eye-fill align-bottom me-2 text-muted"></i> -->
+                                                    View
                                                 </button>
-                                                <button class="btn btn-primary btn-sm me-2" type="button" data-bs-toggle="modal" onclick="openModal('editModal','{{ i.id }}')">
-                                                    <i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit
+                                                <button class="btn btn-soft-primary btn-sm me-2" type="button" onclick="openModal('editModal','{{ i.id }}')">
+                                                    <!-- <i class="ri-pencil-fill align-bottom me-2 text-muted"></i>  -->
+                                                    Edit
                                                 </button>
-                                                <button class="btn btn-danger btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#deleteModal{{ i.id }}">
-                                                    <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete
+                                                <button class="btn btn-soft-danger btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#deleteModal{{ i.id }}">
+                                                    <!-- <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i>  -->
+                                                    Delete
                                                 </button>
                                             </div>
 
                                             <!-- view modal -->
 
 
-                                            {% comment %} <div class="modal fade bs-example-modal-lg" id="procatview" tabindex="-1"
-                                                role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-                                                <div class="modal-dialog modal-lg">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h5 class="modal-title" id="myLargeModalLabel">View Project
-                                                                Category</h5>
-                                                            <button type="button" class="btn-close"
-                                                                data-bs-dismiss="modal" aria-label="Close">
-                                                            </button>
-                                                        </div>
-                                                        <hr>
-                                                        <div class="modal-body">
-                                                            <div class="row">
-                                                                <div class="col-md-6">
-                                                                    <label for="{{i.id}}_name" class="form-label">category Name
-                                                                        :</label>
-                                                                    <input type="text" class="form-control" id="{{i.id}}_name"
-                                                                        value="{{i.name}}" name="name" readonly>
-                                                                </div>
-                                                                <div class="col-md-6">
-                                                                    <label for="" class="form-label">Description
-                                                                        :</label>
-                                                                    <input type="text" class="form-control" id=""
-                                                                        value="{{i.description}}" readonly>
-                                                                </div>
-
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <!-- /.modal-content -->
-                                                </div>
-                                                <!-- /.modal-dialog -->
-                                            </div> {% endcomment %}
+                                       
 
 
                                             <div class="modal fade" id="viewModal_{{i.id}}" tabindex="-1" role="dialog" aria-labelledby="viewModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
@@ -200,7 +170,7 @@
                                             
                                                         <div class="modal-header">
                                             
-                                                            <h5 class="modal-title" id="viewModalLabel">View Project</h5>
+                                                            <h5 class="modal-title" id="viewModalLabel">View Category '{{ i.name }}'</h5>
                                             
                                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="CloseModel('viewModal', '{{i.id}}')"></button>
                                             
@@ -246,8 +216,8 @@
                                                 <div class="modal-dialog modal-lg">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
-                                                            <h5 class="modal-title" id="myLargeModalLabel">Edit Project
-                                                                Category</h5>
+                                                            <h5 class="modal-title" id="myLargeModalLabel">Edit Category '{{ i.name }}'
+                                                               </h5>
                                                             <button type="button" class="btn-close"
                                                                 data-bs-dismiss="modal" aria-label="Close"
                                                                 onclick="CloseModel('editModal','{{i.id}}')">
@@ -315,8 +285,8 @@
                                                     <div class="modal-content">
                                                         <div class="modal-header">
                                                             <h5 class="modal-title"
-                                                                id="deleteModalLabel-{{ forloop.counter }}"> Delete
-                                                                Role </h5>
+                                                                id="deleteModalLabel-{{ forloop.counter }}"> Delete  Category
+                                                               '{{i.name}}'</h5>
                                                             <button type="button" class="btn-close"
                                                                 data-bs-dismiss="modal" aria-label="Close"></button>
                                                         </div>

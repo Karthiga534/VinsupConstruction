@@ -7,10 +7,11 @@ import string
 import random
 from django.utils import timezone
 from rest_framework.response import Response
+import os
 
 date_format = "%Y-%m-%d"
-PAGE_SIZE = 10
-
+# PAGE_SIZE = 10
+PAGE_SIZE = os.getenv("PAGINATION_SIZE")
 
 def generate_unique_identifier(self):
     return ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
