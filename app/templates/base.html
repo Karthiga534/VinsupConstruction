@@ -71,12 +71,14 @@
     </div>
 
     {% block header-segment %}
+    {% include 'appbar.html'%}
+ 
 
     {% endblock header-segment %}
 
 
     <!-- Left Sidebar End -->
-
+    {% block scrollbar %}
     {% include 'sidebar.html'%}
  
     {% endblock scrollbar %}
