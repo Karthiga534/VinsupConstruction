@@ -1015,6 +1015,8 @@ class Project(models.Model):
     aggeaments =models.FileField(upload_to="doc")
     proj_category = models.ForeignKey(ProjectCategory, on_delete=models.CASCADE,null=True,blank=True)
     status = models.ForeignKey(WorkStatus, on_delete=models.CASCADE,null=True,blank=True)
+    description = models.TextField(null=True,blank=True) 
+    terms_conditions = models.TextField(null=True,blank=True)
 
     def __str__(self):
         return f"{self.proj_name} - {self.site_location}"
@@ -1248,13 +1250,6 @@ class SiteStock(models.Model):
     class Meta:
         # Define unique_together to enforce uniqueness across multiple fields
         unique_together = ('item', 'company', 'unit','project')
-
-    
-    @property
-    def display(self):
-        if self.item:
-            return self.item.item
-        return self.name
 
     def save(self, *args, **kwargs):
         if not self.total_supplied_qty:
@@ -2168,6 +2163,7 @@ class PettyCash(models.Model):
 class PaymentHistory(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE, null=True, blank=True)
     date = models.DateField(null=True,blank=True)
+    img =models.FileField(upload_to="doc",null=True,blank=True)
     receipt_number = models.CharField(max_length=100)
     payment_method = models.ForeignKey(PaymentMethod, on_delete=models.CASCADE, null=True, blank=True)
     payment_amount = models.DecimalField(max_digits=10, decimal_places=2)

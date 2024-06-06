@@ -2724,18 +2724,39 @@ def delete_pettycash(request,pk):
     except PettyCash.DoesNotExist:  # CHANGE model
         return JsonResponse({'details': ['Item does not exist']}, status=404)
     
+# def clientcash(request, pk):
+#     project = get_object_or_404(Project, pk=pk)
+#     payment_methods = PaymentMethod.objects.all()  # Get all payment methods
+#     payment_history = PaymentHistory.objects.filter(project=project)  # Get payment history for this project
+
+#     total_paid_amount = payment_history.aggregate(total_paid=Sum('payment_amount'))['total_paid']
+#     total_paid_amount = total_paid_amount if total_paid_amount else 0
+    
+#     # Calculate pending amount
+#     pending_amount = project.estimation - total_paid_amount
+    
+
+
+#     client_name = project.client
+#     contact_no = project.contact_no
+
+#     context = {
+#         'client_name': client_name,
+#         'contact_no': contact_no,
+#         'project': project , 'payment_methods': payment_methods, 'payment_history': payment_history,'total_paid_amount': total_paid_amount,
+#         'pending_amount': pending_amount
+#     }
+
+#     return render(request, 'project\clientcash.html', context)
+
 def clientcash(request, pk):
     project = get_object_or_404(Project, pk=pk)
-    payment_methods = PaymentMethod.objects.all()  # Get all payment methods
-    payment_history = PaymentHistory.objects.filter(project=project)  # Get payment history for this project
-
+    payment_methods = PaymentMethod.objects.all()
+    payment_history = PaymentHistory.objects.filter(project=project)
+    
     total_paid_amount = payment_history.aggregate(total_paid=Sum('payment_amount'))['total_paid']
     total_paid_amount = total_paid_amount if total_paid_amount else 0
-    
-    # Calculate pending amount
     pending_amount = project.estimation - total_paid_amount
-    
-
 
     client_name = project.client
     contact_no = project.contact_no
@@ -2743,38 +2764,58 @@ def clientcash(request, pk):
     context = {
         'client_name': client_name,
         'contact_no': contact_no,
-        'project': project , 'payment_methods': payment_methods, 'payment_history': payment_history,'total_paid_amount': total_paid_amount,
-        'pending_amount': pending_amount
+        'project': project,
+        'payment_methods': payment_methods,
+        'payment_history': payment_history,
+        'total_paid_amount': total_paid_amount,
+        'pending_amount': pending_amount,
     }
 
-    return render(request, 'project\clientcash.html', context)
+    return render(request, 'project/clientcash.html', context)
 
-
-@login_required(login_url='login')
-def payment_process(request, project_id):
-    project = get_object_or_404(Project, pk=project_id)
-    payment_methods = PaymentMethod.objects.all()  # Get all payment methods
-
+# API view
+@api_view(['GET', 'POST'])
+def clientcashpay(request, pk):
+    project = get_object_or_404(Project, pk=pk)
+    payment_history = PaymentHistory.objects.filter(project=project)
+    
     if request.method == 'POST':
-        date = request.POST.get('date')
-        receipt_number = request.POST.get('receipt_number')
-        payment_method_id = request.POST.get('payment_method')  # Retrieve selected payment method ID
-        payment_amount = request.POST.get('payment_amount')
-        # is_paid = request.POST.get('is_paid') == 'yes'
+        data = request.data.copy()
+        data['project'] = project.id  # Set the project field
+        serializer = PaymentHistorySerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        payment_method = PaymentMethod.objects.get(pk=payment_method_id)  # Get the selected payment method object
+    return Response("This endpoint only supports POST requests.", status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
-        PaymentHistory.objects.create(
-            project=project,
-            date=date,
-            receipt_number=receipt_number,
-            payment_method=payment_method,
-            payment_amount=payment_amount,
-            # is_paid=is_paid
-        )
-        return redirect('clientcash', pk=project.id)  # Provide the pk argument
-    else:
-        return render(request, 'project/payment_process.html', {'project': project, 'payment_methods': payment_methods})
+
+# @login_required(login_url='login')
+# def payment_process(request, project_id):
+#     project = get_object_or_404(Project, pk=project_id)
+#     payment_methods = PaymentMethod.objects.all()  # Get all payment methods
+
+#     if request.method == 'POST':
+#         date = request.POST.get('date')
+#         receipt_number = request.POST.get('receipt_number')
+#         payment_method_id = request.POST.get('payment_method')  # Retrieve selected payment method ID
+#         payment_amount = request.POST.get('payment_amount')
+#         # is_paid = request.POST.get('is_paid') == 'yes'
+
+#         payment_method = PaymentMethod.objects.get(pk=payment_method_id)  # Get the selected payment method object
+
+#         PaymentHistory.objects.create(
+#             project=project,
+#             date=date,
+#             receipt_number=receipt_number,
+#             payment_method=payment_method,
+#             payment_amount=payment_amount,
+#             # is_paid=is_paid
+#         )
+#         return redirect('clientcash', pk=project.id)  # Provide the pk argument
+#     else:
+#         return render(request, 'project/payment_process.html', {'project': project, 'payment_methods': payment_methods})
     
 
 
@@ -2905,7 +2946,7 @@ def delete_dailytask(request,pk):
     except Dailytask.DoesNotExist:  # CHANGE model
         return JsonResponse({'details': ['Item does not exist']}, status=404)
     
-
+#-------------------------------------------------> Employee Site Allocation <---------------------------------------
 
 @login_required(login_url='login')
 def site_allocation(request):
@@ -2919,6 +2960,25 @@ def site_allocation(request):
     project=Project.objects.filter(company=request.user.company).order_by("-id")
     context ={"employee":employee, "project":project}
     return render(request, 'site_allocation/emp_site_allocation.html',context)
+
+@api_view(['GET'])
+@login_required(login_url='login')
+def site_allocation_list(request, pk):  # change name 
+    user = request.user
+    allow, msg = check_user(request, SiteAllocation, instance=False)  # CHANGE model
+    if not allow:
+        context = {"unauthorized": msg}
+        return render(request, "login.html", context)    
+    
+    company, _ = get_user_company(user)
+    pk = int(pk)
+
+    if pk != 0:
+        querysets = SiteAllocation.objects.filter(employee__id=pk, company__in=company).exclude(employee__isnull=True)
+        return PaginationAndFilter(querysets, request, SiteAllocationEmployeeSerializer, date_field="date")
+    
+    querysets = SiteAllocation.objects.filter(company__in=company).exclude(employee__isnull=True).order_by('-id')
+    return PaginationAndFilter(querysets, request, SiteAllocationEmployeeSerializer, date_field="date")
 
 @api_view(['POST'])
 @login_required(login_url='login')
@@ -2942,59 +3002,36 @@ def add_site_allocation(request):
     else:
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(['GET'])
-@login_required(login_url='login')
-def site_allocation_list(request, pk):  # change name 
-    user = request.user
-    allow, msg = check_user(request, SiteAllocation, instance=False)  # CHANGE model
-    if not allow:
-        context = {"unauthorized": msg}
-        return render(request, "login.html", context)    
-    
-    company, _ = get_user_company(user)
-    pk = int(pk)
-
-    if pk != 0:
-        querysets = SiteAllocation.objects.filter(employee__id=pk, company__in=company)
-        return PaginationAndFilter(querysets, request, SiteAllocationEmployeeSerializer, date_field="date")
-    
-    querysets = SiteAllocation.objects.filter(company__in=company).order_by('-id')
-    return PaginationAndFilter(querysets, request, SiteAllocationEmployeeSerializer, date_field="date")
-
-@api_view(['DELETE'])
-@login_required(login_url='login')
-def delete_site_allocation_list(request, pk):
-    user = request.user
-    try:
-        instance = SiteAllocation.objects.get(id=pk)  # CHANGE model
-        allow, msg = check_user(request, SiteAllocation, instance=instance)  # CHANGE model
-        if not allow:
-            return JsonResponse({'details': [msg]}, status=status.HTTP_401_UNAUTHORIZED)
-        instance.delete()
-        return JsonResponse({'details': ['success']}, status=204)
-    except SiteAllocation.DoesNotExist:  # CHANGE model
-        return JsonResponse({'details': ['Item does not exist']}, status=404)
-
-
 @api_view(['GET', 'PUT'])
-def site_allocationemployee(request, employee_id):
-    if request.method == 'GET':
-        site_allocations = SiteAllocation.objects.filter(employee_id=employee_id)
-        serializer = SiteAllocationEmployeeSerializer(site_allocations, many=True)
-        return Response(serializer.data)
-
-    elif request.method == 'PUT':
+@login_required(login_url='login')
+def site_allocationemployee(request, pk):  
+    if request.method == 'PUT':
         try:
-            site_allocation = SiteAllocation.objects.get(employee_id=employee_id)
+            site_allocation = SiteAllocation.objects.get(pk=pk)
         except SiteAllocation.DoesNotExist:
-            return Response({'detail': 'Site allocation not found'}, status=status.HTTP_404_NOT_FOUND)
-
-        serializer = SiteAllocationEmployeeSerializer(site_allocation, data=request.data, partial=True)
+            return Response({'detail': 'Site allocation not found.'}, status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = SiteAllocationEmployeeSerializer(site_allocation, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['DELETE'])
+@login_required(login_url='login')
+def delete_site_allocation_list(request, pk):
+    try:
+        site = SiteAllocation.objects.get(id=pk)
+        allow, msg = check_user(request, SiteAllocation, instance=site)
+        if not allow:
+            return JsonResponse({'details': [msg]}, status=status.HTTP_401_UNAUTHORIZED)
+        site.delete()
+        return JsonResponse({'details': 'Site allocation deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
+    except SiteAllocation.DoesNotExist:
+        return JsonResponse({'details': 'Site allocation does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
+
+#-------------------------------------------------> Labour Site Allocation <---------------------------------------
 
 @login_required(login_url='login')
 def lab_site_allocation(request):
@@ -3009,6 +3046,25 @@ def lab_site_allocation(request):
     context ={"employee":employee, "project":project}
     return render(request, 'site_allocation/lab_site_allocation.html',context)
 
+@api_view(['GET'])
+@login_required(login_url='login')
+def lab_site_allocation_list(request, pk):  # change name 
+    user = request.user
+    allow, msg = check_user(request, SiteAllocation, instance=False)  # CHANGE model
+    if not allow:
+        context = {"unauthorized": msg}
+        return render(request, "login.html", context)    
+    
+    company, _ = get_user_company(user)
+    pk = int(pk)
+
+    if pk != 0:
+        querysets = SiteAllocation.objects.filter(labour__id=pk, company__in=company).exclude(labour__isnull=True)
+        return PaginationAndFilter(querysets, request, SiteAllocationLabourSerializer, date_field="date")
+    
+    querysets = SiteAllocation.objects.filter(company__in=company).exclude(labour__isnull=True).order_by('-id')
+    return PaginationAndFilter(querysets, request, SiteAllocationLabourSerializer, date_field="date")
+    
 @api_view(['POST'])
 @login_required(login_url='login')
 def add_lab_site_allocation(request):
@@ -3031,28 +3087,21 @@ def add_lab_site_allocation(request):
     else:
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-
-
-
-
-@api_view(['GET'])
+@api_view(['GET', 'PUT'])
 @login_required(login_url='login')
-def lab_site_allocation_list(request, pk):  # change name 
-    user = request.user
-    allow, msg = check_user(request, SiteAllocation, instance=False)  # CHANGE model
-    if not allow:
-        context = {"unauthorized": msg}
-        return render(request, "login.html", context)    
-    
-    company, _ = get_user_company(user)
-    pk = int(pk)
+def site_allocationlabour(request, pk):  
+    if request.method == 'PUT':
+        try:
+            site_allocation = SiteAllocation.objects.get(pk=pk)
+        except SiteAllocation.DoesNotExist:
+            return Response({'detail': 'Site allocation not found.'}, status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = SiteAllocationLabourSerializer(site_allocation, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    if pk != 0:
-        querysets = SiteAllocation.objects.filter(labour__id=pk, company__in=company)
-        return PaginationAndFilter(querysets, request, SiteAllocationLabourSerializer, date_field="date")
-    
-    querysets = SiteAllocation.objects.filter(company__in=company).order_by('-id')
-    return PaginationAndFilter(querysets, request, SiteAllocationLabourSerializer, date_field="date")
 
 
 def purchase_details(request, purchase_id):
@@ -3086,6 +3135,33 @@ def purchase_details(request, purchase_id):
         ],
     }
     return JsonResponse(data)
+
+@api_view(['GET'])
+@login_required(login_url='login')
+def get_purchase(request, pk):
+    try:
+        purchase = PurchaseInvoice.objects.get(pk=pk)
+    except PurchaseInvoice.DoesNotExist:
+        return HttpResponseNotFound('<h1>purchase not found</h1>')
+
+    if request.method == 'GET':
+        projects = Project.objects.filter(company=request.user.company).order_by("-id") 
+        vendors = VendorRegistration.objects.filter(company=request.user.company).order_by("-id") 
+        items = MaterialLibrary.objects.filter(company=request.user.company).order_by("-id")
+        uom = Uom.objects.filter(company=request.user.company).order_by("-id")
+        inventory = InventoryStock.objects.filter(company=request.user.company).order_by("-id")
+  
+        context = {
+            'purchase': purchase,
+            'pk': pk,
+            'uom': uom,
+            'projects': projects,
+            'vendors': vendors,
+            'items': items,
+            'inventory': inventory,
+        }
+        return render(request, 'purchase/purchasedetails.html', context)
+    
 @api_view(['PUT', 'GET'])
 @login_required(login_url='login')
 def update_purchase(request, pk):
@@ -3118,36 +3194,36 @@ def update_purchase(request, pk):
             return Response(purchase_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         purchase_serializer.save()
 
-        # table_data = request.data.get('table_data')
-        # if table_data:
-        #     try:
-        #         table_data = json.loads(table_data)
-        #         for data in table_data:
-        #             if 'id' in data:
-        #                 # Update existing PurchaseItems
-        #                 purchase_item = PurchaseItems.objects.get(id=data['id'])
-        #                 items_serializer = PurchaseItemsSerializer(purchase_item, data=data, partial=True)
-        #             else:
-        #                 # Create new PurchaseItems instance
-        #                 data['invoice'] = purchase.id
-        #                 items_serializer = PurchaseItemsSerializer(data=data)
-                    
-        #             if items_serializer.is_valid():
-        #                 items_serializer.save()
-        #             else:
-        #                 # Return detailed errors if serialization fails
-        #                 return Response(items_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        #     except json.JSONDecodeError:
-        #         return JsonResponse({'error': 'Invalid JSON format'}, status=status.HTTP_400_BAD_REQUEST)
-        #     except PurchaseItems.DoesNotExist:
-        #         return JsonResponse({'error': 'PurchaseItem does not exist'}, status=status.HTTP_404_NOT_FOUND)
-
-        # Serialize and return the updated purchase data
         purchase_serializer = PurchaseInvoiceSerializer(purchase)
         return Response(purchase_serializer.data)
     else:
         return JsonResponse({'error': 'Invalid request method'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
+@api_view(['GET'])
+@login_required(login_url='login')
+def get_quatation(request, pk):
+    try:
+        quatation = Quatation.objects.get(pk=pk)
+    except Quatation.DoesNotExist:
+        return HttpResponseNotFound('<h1>Quatation not found</h1>')
+
+    if request.method == 'GET':
+        projects = Project.objects.filter(company=request.user.company).order_by("-id") 
+        employees = Employee.objects.filter(company=request.user.company).order_by("-id") 
+        # status =WorkStatus.objects.filter().order_by("-id")
+        uom = Uom.objects.filter(company=request.user.company).order_by("-id")
+        inventory=InventoryStock.objects.filter(company=request.user.company).order_by("-id")
+  
+        context = {
+            'quatation': quatation,
+            'pk':pk,
+            'uom': uom,
+            'projects': projects,
+            'employees': employees ,
+            # 'status': status,
+            'inventory': inventory,
+        }
+        return render(request, 'quatation/quatationdetails.html', context)
 
 @api_view(['PUT', 'GET'])
 @login_required(login_url='login')

@@ -40,8 +40,7 @@
 									<div class="col-xl-2 col-lg-2 col-md-2 col-12">
 										<a href="{% url 'dailysitestockusage' %}" type="button" class="btn btn-info"
 											style="float:right;">Add Sitestock</a>
-
-									</div>
+										
 								</div>
 								<div class="card-body">
 									<div class="row">
@@ -107,26 +106,25 @@
 									</table>
 
 
-									<div id="results-container"></div>
-									<div id="pagination-container"></div>
+								<div id="results-container"></div>
+								<div id="pagination-container"></div>
 
 
 
-								</div>
 							</div>
 						</div>
 					</div>
-					<!-- container-fluid -->
 				</div>
-				<!-- End Page-content -->
-
-
+				<!-- container-fluid -->
 			</div>
-			<!-- end main content-->
+			<!-- End Page-content -->
+
 
 		</div>
-		<!-- END layout-wrapper -->
+		<!-- end main content-->
 
+	</div>
+	<!-- END layout-wrapper -->
 
 
 
@@ -199,8 +197,14 @@
 							onclick="makePresent(this)">Save</button>
 					</div>
 				</div>
+				<div class="modal-footer">
+					<button class="btn btn-link link-success fw-medium shadow-none" data-bs-dismiss="modal"><i
+							class="ri-close-line me-1 align-middle"></i> Close</button>
+					<button type="button" class="btn btn-primary">Save</button>
+				</div>
 			</div>
 		</div>
+	</div>
 
 		<!--start back-to-top-->
 		<button onclick="topFunction()" class="btn btn-danger btn-icon" id="back-to-top">
@@ -208,122 +212,154 @@
 		</button>
 		<!--end back-to-top-->
 
-		<!--preloader-->
-		<div id="preloader">
-			<div id="status">
-				<div class="spinner-border text-primary avatar-sm" role="status">
-					<span class="visually-hidden">Loading...</span>
-				</div>
+	<!--preloader-->
+	<div id="preloader">
+		<div id="status">
+			<div class="spinner-border text-primary avatar-sm" role="status">
+				<span class="visually-hidden">Loading...</span>
 			</div>
 		</div>
+	</div>
 
 
-		<script>
+	<script>
 
-			const existingPaginationContainer = document.getElementById('pagination-container');
+		const existingPaginationContainer = document.getElementById('pagination-container');
 
 			const dropdown = document.getElementById('project');
 			const dropdown2 = document.getElementById('subcontract');
 			const tableBody = document.querySelector('#example tbody');
 
 
-			// // from and to
-			// const fromdate = document.getElementById('fromdate');
-			// const todate = document.getElementById('todate');
+		// // from and to
+		// const fromdate = document.getElementById('fromdate');
+		// const todate = document.getElementById('todate');
 
-			// var qtyError = false;
+		// var qtyError = false;
 
-			// var priceError = false;
+		// var priceError = false;
 
-			var currentPage = 1;
+		// var currentPage = 1;
 
-			document.addEventListener('DOMContentLoaded', function () {
+		document.addEventListener('DOMContentLoaded', function () {
 
-				// const dropdown = document.getElementById('fromsite');
-				// const tableBody = document.querySelector('#example tbody');
+			// const dropdown = document.getElementById('fromsite');
+			// const tableBody = document.querySelector('#example tbody');
 
-				// on dom loaded 
-				const initialSelectedValue = dropdown.value;
-				fetchData(1);
+			// on dom loaded 
+			const initialSelectedValue = dropdown.value;
+			fetchData( 1);
 
-				// fetch table data API
-				dropdown.addEventListener('change', function () {
-
-					fetchData(currentPage);
-				});
-
-				dropdown2.addEventListener('change', function () {
-
-					fetchData(currentPage);
-				});
-
-				// todate.addEventListener('change', function () {
-
-				// 	fetchData(currentPage);
-				// });
-
-				// fromdate.addEventListener('change', function () {
-
-				// 	fetchData(currentPage);
-				// });
-
+			// fetch table data API
+			dropdown.addEventListener('change', function () {
+	
+				fetchData( currentPage);
 			});
 
+			// todate.addEventListener('change', function () {
+	
+			// 	fetchData(currentPage);
+			// });
 
-			// fetch data
-			function fetchData(page) {
+			// fromdate.addEventListener('change', function () {
+				
+			// 	fetchData(currentPage);
+			// });
 
-				const selectedValue = dropdown.value;
-				const selectedValue2 = dropdown2.value;
-				// const from = fromdate?.value || ""
-				// const to = todate?.value || ""
-				// console.log(fromdate ,todate)
-				try {
-					fetch(`/dailysitestockusagelist/${selectedValue}/?page=${page}&subcontract=${selectedValue2}`)
-						.then(response => {
-							if (response.ok) {
-								console.log('Data fetched');
-								return response.json();
-							} else {
-								throw new Error(`HTTP error! Status: ${response.status}`);
-							}
-						})
-						.then(data => {
-							tableBody.innerHTML = '';
-							renderDataOrMessage(tableBody, data, page)
-						})
-						.catch(error => {
-							console.error('Error fetching data:', error);
-							showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
-						});
-				} catch (error) {
-					console.error('Error in fetch operation:', error);
-				}
-			}
+		});
 
 
-
-			// render table or message
-
-			function renderDataOrMessage(data, page) {
-				if (data && Array.isArray(data.results) && data.results.length > 0) {
-					data.results.forEach((item, index) => {
-						const newRow = createTableRow(index + 1, item);
-						tableBody.appendChild(newRow);
+		// fetch data
+		function fetchData(page) {
+	
+			const selectedValue = dropdown.value;
+			// const from = fromdate?.value || ""
+			// const to = todate?.value || ""
+			// console.log(fromdate ,todate)
+			try {
+				fetch(`/dailysitestockusagelist/${selectedValue}/?page=${page}`)
+				.then(response => {
+                    if (response.ok) {
+                        console.log('Data fetched');
+                        return response.json();
+                    } else {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                })
+					.then(data => {
+						tableBody.innerHTML = '';
+						renderDataOrMessage(tableBody, data, page)
+					})
+					.catch(error => {
+						console.error('Error fetching data:', error);
+						showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
 					});
-					renderPagination(data, page);
-				} else {
-					tableBody.innerHTML = '<tr><td colspan="6">No data available.</td></tr>';
-					existingPaginationContainer.innerHTML = '';
-				}
+			} catch (error) {
+				console.error('Error in fetch operation:', error);
 			}
+		}
 
-			function createTableRow(serialNumber, data) {
-				const newRow = document.createElement('tr');
+
+
+		// render table or message
+
+		function renderDataOrMessage(data, page) {
+        if (data && Array.isArray(data.results) && data.results.length > 0) {
+            data.results.forEach((item, index) => {
+                const newRow = createTableRow(index + 1, item);
+                tableBody.appendChild(newRow);
+            });
+            renderPagination(data, page);
+        } else {
+            tableBody.innerHTML = '<tr><td colspan="6">No data available.</td></tr>';
+            existingPaginationContainer.innerHTML = '';
+        }
+    }
+
+		function createTableRow(serialNumber, data) {
+        const newRow = document.createElement('tr');
+
+        const serialCell = document.createElement('td');
+        serialCell.textContent = serialNumber;
+        newRow.appendChild(serialCell);
+
+        const itemNameCell = document.createElement('td');
+        itemNameCell.textContent = data.item_name;
+        newRow.appendChild(itemNameCell);
+
+        const qtyCell = document.createElement('td');
+        qtyCell.textContent = data.qty;
+        newRow.appendChild(qtyCell);
+
+        const projectCell = document.createElement('td');
+        projectCell.textContent = data.project;
+        newRow.appendChild(projectCell);
+
+        const subcontractorCell = document.createElement('td');
+        subcontractorCell.textContent = data.subcontractor;
+        newRow.appendChild(subcontractorCell);
+
+        const unitCell = document.createElement('td');
+        unitCell.textContent = data.unit;
+        newRow.appendChild(unitCell);
+
+        const actionCell = document.createElement('td');
+        // Add action button logic here
+        newRow.appendChild(actionCell);
+
+        return newRow;
+    }
+
+		// nested table
+		function populateModalTable(transferItems, modalTableBody) {
+			modalTableBody.innerHTML = ''; // Clear previous data
+
+			transferItems.forEach((tItem, index) => {
+				const modalRow = document.createElement('tr');
 
 				const serialCell = document.createElement('td');
-				serialCell.textContent = serialNumber;
-				newRow.appendChild(serialCell);
+				serialCell.textContent = index + 1;
+				modalRow.appendChild(serialCell);
 
 				const itemNameCell = document.createElement('td');
 				itemNameCell.textContent = get_value(data.item_name);
@@ -350,6 +386,9 @@
 				actionCell.innerHTML = ` <button class="btn btn-soft-secondary btn-sm dropdown" type="button" onclick="opencustomModal('stockHistoryModal')" >
 							<i class="ri-eye-fill align-middle"></i>
 			 				</button>`
+				const subcontractorCell = document.createElement('td');
+				subcontractorCell.textContent =get_value (data.subcontractor_name);
+				newRow.appendChild(subcontractorCell);
 
 				newRow.appendChild(actionCell);
 
@@ -363,6 +402,8 @@
 
 
 			}
+
+		}
 
 			// nested table
 			// function populateModalTable(transferItems, modalTableBody) {
@@ -394,6 +435,7 @@
 			// 		modalRow.appendChild(subcontractor_nameCell);
 
 
+	
 
 			// 		const unitCell = document.createElement('td');
 			// 		unitCell.textContent = tItem.item_unit || 'N/A';

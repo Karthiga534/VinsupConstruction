@@ -322,10 +322,11 @@ urlpatterns = [
     path('delete_pettycash/<int:pk>/', views.delete_pettycash, name='delete_pettycash'),
 
     path('clientcash/<int:pk>/',views.clientcash,name='clientcash'),
-    path('payment-process/<int:project_id>/', views.payment_process, name='payment-process'),
+    path('clientcashpay/<int:pk>/', views.clientcashpay, name='clientcashpay'),
+    # path('payment-process/<int:project_id>/', views.payment_process, name='payment-process'),
 
 
-
+ 
     #     # employee attendence
     # path('attendance/employee',views.employee_attendance,name= 'employee-labour-attendance'), #render only
     # path('add_employeeattendance', views.add_employeeattendance, name='add_employeelabourattendance'),
@@ -339,7 +340,9 @@ urlpatterns = [
     path('site_allocation/',views.site_allocation,name= 'site_allocation'), 
     path('add_site_allocation/', views.add_site_allocation, name='add_site_allocation'),
     path('site-allocation-list/<str:pk>/',views.site_allocation_list,name='site-allocation-list'), #list data
-    path('site_allocationemployee/<int:employee_id>/', views.site_allocationemployee, name='site_allocationemployee'),
+    path('site_allocationemployee/<int:pk>/', views.site_allocationemployee, name='site_allocationemployee'),
+
+    path('site_allocationlabour/<int:pk>/', views.site_allocationlabour, name='site_allocationlabour'),
 
 
 
@@ -354,6 +357,7 @@ urlpatterns = [
     path('purchase-details/<int:purchase_id>/', views.purchase_details, name='purchase-details'),
     #path('update-purchase/<int:purchase_id>/',  views.purchase_details, name='update_purchase_details'),
     path('purchase_update/<int:pk>/', views.update_purchase, name='update_purchase'),
+    path('purchase_details/<int:pk>/', views.get_purchase, name='purchase_details'),
 
     path('purchasetableupdate/<str:id>/', views.purchasetableupdate, name='purchasetableupdate'),
 
@@ -361,6 +365,7 @@ urlpatterns = [
 
     path('quatation_update/<int:pk>/', views.update_quatation, name='update_quatation'),
     path('quatationtableupdate/<str:id>/', views.quatationtableupdate, name='quatationtableupdate'),
+    path('quatation_details/<int:pk>/', views.get_quatation, name='quatation_details'),
 
 
 
@@ -424,8 +429,6 @@ path('purchase-track/<int:pk>/<int:site_or_inventory>/' , views.item_price_track
     path('dailytask-list/<int:pk>/',  views.dailytask_list, name='dailytask-detail'),
     path('delete_dailytask/<int:pk>/', views.delete_dailytask, name='delete_dailytask'), 
 
-    path('dailytask-list/', views.dailytask_list, name='dailytask-list'),  
-
 
 # ------------------ sitestockusage  --------------
 
@@ -437,7 +440,6 @@ path('purchase-track/<int:pk>/<int:site_or_inventory>/' , views.item_price_track
    path('dailysitestockusage/', api.dailysitestockusage, name='dailysitestockusage'),
 
      path('save_data/<int:pk>/', api.save_data, name='save_data'),
-
 
     path('update_sitestockusage/<int:pk>/', api.update_sitestockusage, name='update_sitestockusage'), 
     path('delete_sitestockusage/<int:pk>/', api.delete_sitestockusage, name='delete_sitestockusage'),
@@ -501,6 +503,11 @@ path('purchase-track/<int:pk>/<int:site_or_inventory>/' , views.item_price_track
 
    
     path('employee-profile/<int:pk>/', api.get_employee_profile, name='get-employee-profile'),
+
+
+
+    path('dailysitestockusage/', api.dailysitestockusage, name='dailysitestockusage'),
+
 
 
 

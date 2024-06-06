@@ -147,13 +147,16 @@
                                                 <td>
                                                     <div class="btn-group" role="group">
                                                         <button class="btn btn-soft-secondary btn-sm me-2" type="button" data-id="{{i.id}}" onclick="openModal('viewModal', '{{ i.id }}')">
-                                                            <i class="ri-eye-fill align-bottom me-2 text-muted"></i> View
+                                                            <!-- <i class="ri-eye-fill align-bottom me-2 text-muted"></i> -->
+                                                            View
                                                         </button>
-                                                        <button class="btn btn-primary btn-sm me-2" type="button" data-bs-toggle="modal" onclick="openModal('editModal','{{ i.id }}')">
-                                                            <i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit
+                                                        <button class="btn btn-soft-primary btn-sm me-2" type="button" onclick="openModal('editModal','{{ i.id }}')">
+                                                            <!-- <i class="ri-pencil-fill align-bottom me-2 text-muted"></i>  -->
+                                                            Edit
                                                         </button>
-                                                        <button class="btn btn-danger btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#deleteModal{{ i.id }}">
-                                                            <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete
+                                                        <button class="btn btn-soft-danger btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#deleteModal{{ i.id }}">
+                                                            <!-- <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i>  -->
+                                                            Delete
                                                         </button>
                                                     </div>
         
@@ -163,7 +166,7 @@
                                                         <div class="modal-dialog modal-lg">
                                                             <div class="modal-content">
                                                                 <div class="modal-header">
-                                                                    <h5 class="modal-title" id="viewModalLabel">{{i.name}}</h5>
+                                                                    <h5 class="modal-title" id="viewModalLabel"> {{i.name}}</h5>
                                                                     <button type="button" class="btn-close"
                                                                         data-bs-dismiss="modal" aria-label="Close" >
                                                                     </button>
@@ -175,13 +178,13 @@
                                                                             <label for="{{i.id}}_labour_name" class="form-label">Labour Name
                                                                                 :</label>
                                                                             <input type="text" class="form-control" id="{{i.id}}_labour_name" name="name" 
-                                                                                value="{{i.name}}" disabled/>
+                                                                                value="{{i.name}}" readonly/>
                                                                         </div>
                                                                         <div class="col-md-6">
                                                                             <label for="{{i.id}}_rate" class="form-label">Rate
                                                                                 :</label>
                                                                             <input type="text" class="form-control" id="{{i.id}}_rate"
-                                                                                value="{{i.rate}}"  disabled />
+                                                                                value="{{i.rate}}"  readonly />
                                                                         </div>
                                                                         <div class="col-md-6 mt-2">
                                                                             <label for="{{i.id}}_payment_schedule" class="form-label">Payment Schedule:
@@ -284,7 +287,7 @@
                                                                 <div class="modal-header">
                                                                     <h5 class="modal-title"
                                                                         id="deleteModalLabel-{{ forloop.counter }}"> Delete
-                                                                        Role </h5>
+                                                                        {{i.name}}</h5>
                                                                     <button type="button" class="btn-close"
                                                                         data-bs-dismiss="modal" aria-label="Close"></button>
                                                                 </div>

@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+
+
 {% load static %}
 
 {% block header2 %}
@@ -48,75 +50,67 @@
 
                                             <!-- Form Fields -->
                                             <div class="row">
+                                                
+
                                                 <div class="col-md-4 mt-2">
-                                                    <label for="project">Project:</label>
-                                                    <select class="form-select" id="site" name="site">
-                                                        <option value="{{ purchase.site.id }}" selected>{{ purchase.site }}</option>
-                                                        {% for project in projects %}
-                                                            <option value="{{ project.id }}">{{ project.site_location }}</option>
-                                                        {% endfor %}
-                                                    </select>
+                                                    <label for="site">Project:</label>
+                                                    <input type="text" class="form-control" id="site" name="site" value="{{ purchase.site }}" readonly>
                                                 </div>
 
                                                 <div class="col-md-4 mt-2">
-                                                    <label for="vendor">Vendor:</label>
-                                                    <select class="form-select" id="vendor" name="vendor">
-                                                        <option value="{{ purchase.vendor.id }}" selected>{{ purchase.vendor }}</option>
-                                                        {% for vendor in vendors %}
-                                                            <option value="{{ vendor.id }}">{{ vendor.vendorname }}</option>
-                                                        {% endfor %}
-                                                    </select>
+                                                    <label for="vendor_company">Vendor:</label>
+                                                    <input type="text" class="form-control" id="vendor" name="vendor" value="{{ purchase.vendor }}" readonly>
                                                 </div>
 
                                                 <div class="col-md-4 mt-2">
                                                     <label for="vendor_company">Vendor Company:</label>
-                                                    <input type="text" class="form-control" id="vendor_company" name="vendor_company" value="{{ purchase.vendor_company }}">
+                                                    <input type="text" class="form-control" id="vendor_company" name="vendor_company" value="{{ purchase.vendor_company }}" readonly>
                                                 </div>
 
                                                 <div class="col-md-4 mt-2">
                                                     <label for="gst">GST:</label>
-                                                    <input type="text" class="form-control" id="gst" name="gst" value="{{ purchase.gst }}">
+                                                    <input type="text" class="form-control" id="gst" name="gst" value="{{ purchase.gst }}" readonly>
                                                 </div>
 
                                                 <div class="col-md-4 mt-2">
                                                     <label for="tax">Tax:</label>
-                                                    <input type="text" class="form-control" id="tax" name="tax" value="{{ purchase.tax }}">
+                                                    <input type="text" class="form-control" id="tax" name="tax" value="{{ purchase.tax }}" readonly>
                                                 </div>
 
                                                 <div class="col-md-4 mt-2">
                                                     <label for="contact_no">Contact Number:</label>
-                                                    <input type="text" class="form-control" id="contact_no" name="contact_no" value="{{ purchase.contact_no }}">
+                                                    <input type="text" class="form-control" id="contact_no" name="contact_no" value="{{ purchase.contact_no }}" readonly>
                                                 </div>
 
                                                 <div class="col-md-4 mt-2">
                                                     <label for="invoice_id">Invoice ID:</label>
-                                                    <input type="text" class="form-control" id="invoice_id" name="invoice_id" value="{{ purchase.invoice_id }}">
+                                                    <input type="text" class="form-control" id="invoice_id" name="invoice_id" value="{{ purchase.invoice_id }}" readonly>
                                                 </div>
 
                                                 <div class="col-md-4 mt-2">
                                                     <label for="created_at">Created At:</label>
-                                                    <input type="date" class="form-control" id="created_at" name="created_at" value="{{ purchase.created_at|date:'Y-m-d' }}">
+                                                    <input type="date" class="form-control" id="created_at" name="created_at" value="{{ purchase.created_at|date:'Y-m-d' }}" readonly>
                                                 </div>
 
                                                 <div class="col-md-4 mt-2">
                                                     <label for="total_amount">Total Amount:</label>
-                                                    <input type="text" class="form-control" id="total_amount" name="total_amount" value="{{ purchase.total_amount }}">
+                                                    <input type="text" class="form-control" id="total_amount" name="total_amount" value="{{ purchase.total_amount }}" readonly>
                                                 </div>
 
                                                 <div class="col-md-4 mt-2">
                                                     <label for="paid">Paid:</label>
-                                                    <input type="text" class="form-control" id="paid" name="paid" value="{{ purchase.paid }}">
+                                                    <input type="text" class="form-control" id="paid" name="paid" value="{{ purchase.paid }}" readonly>
                                                 </div>
 
                                                 <div class="col-md-4 mt-2">
                                                     <label for="pending">Pending:</label>
-                                                    <input type="text" class="form-control" id="pending" name="pending" value="{{ purchase.pending }}">
+                                                    <input type="text" class="form-control" id="pending" name="pending" value="{{ purchase.pending }}" readonly>
                                                 </div>
                                             </div>
 
-                                            <div class="text-end mt-3">
-                                                <button type="button" class="btn btn-info" id="saveuom" onclick="updateFunction(this, '{{purchase.id}}')">Update</button>
-                                            </div>
+                                            {% comment %} <div class="text-end mt-3">
+                                                <button type="button" class="btn btn-info" id="saveuom" onclick="updateFunction(this, '{{purchase.id}}')" disabled>Update</button>
+                                            </div> {% endcomment %}
                                         </form>
 
                                         <hr>
@@ -134,7 +128,7 @@
                                                         <th>Rate</th>
                                                         <th>Qty</th>
                                                         <th>Amount</th>
-                                                        <th>Action</th>
+                                                        {% comment %} <th>Action</th> {% endcomment %}
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -145,16 +139,17 @@
                                                         <td>
                                                             <form method="POST" action="{% url 'purchasetableupdate' item.id %}">
                                                                 {% csrf_token %}
-                                                                <select class="form-select" name="item">
+                                                                <select class="form-select" name="item" readonly>
                                                                     <option value="">Select Item</option>
                                                                     {% for i in items %}
                                                                         <option value="{{ i.id }}" {% if i.id == item.item.id %} selected {% endif %}>{{ i.item }}</option>
                                                                     {% endfor %}
                                                                 </select>
+                                                                
                                                         </td>
                                                         <!-- Unit -->
                                                         <td>
-                                                            <select class="form-select" name="unit">
+                                                            <select class="form-select" name="unit" readonly>
                                                                 <option value="">Select Unit</option>
                                                                 {% for unit in uom %}
                                                                     <option value="{{ unit.id }}" {% if unit.id == item.unit.id %} selected {% endif %}>{{ unit.name }}</option>
@@ -163,19 +158,19 @@
                                                         </td>
                                                         <!-- Rate -->
                                                         <td>
-                                                            <input type="text" class="form-control" name="price" value="{{ item.price }}">
+                                                            <input type="text" class="form-control" name="price" value="{{ item.price }}" readonly>
                                                         </td>
                                                         <!-- Qty -->
                                                         <td>
-                                                            <input type="text" class="form-control" name="qty" value="{{ item.qty }}">
+                                                            <input type="text" class="form-control" name="qty" value="{{ item.qty }}" readonly>
                                                         </td>
                                                         <!-- Amount (Sub Total) -->
                                                         <td>
-                                                            <input type="text" class="form-control" name="sub_total" value="{{ item.sub_total }}">
+                                                            <input type="text" class="form-control" name="sub_total" value="{{ item.sub_total }}" readonly>
                                                         </td>
-                                                        <td>
+                                                        {% comment %} <td>
                                                             <button type="submit" class="btn btn-info" >Update</button>
-                                                        </td>
+                                                        </td> {% endcomment %}
                                                             </form>
                                                     </tr>
                                                     {% endfor %}
@@ -478,4 +473,4 @@
 		</script>
 
 
-        {% endblock header2 %}
+        {% endblock header2 %}>

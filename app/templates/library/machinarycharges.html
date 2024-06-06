@@ -149,13 +149,16 @@
                                         <td>
                                             <div class="btn-group" role="group">
                                                 <button class="btn btn-soft-secondary btn-sm me-2" type="button" data-id="{{i.id}}" onclick="openModal('viewModal', '{{ i.id }}')">
-                                                    <i class="ri-eye-fill align-bottom me-2 text-muted"></i> View
+                                                    <!-- <i class="ri-eye-fill align-bottom me-2 text-muted"></i> -->
+                                                    View
                                                 </button>
-                                                <button class="btn btn-primary btn-sm me-2" type="button" data-bs-toggle="modal" onclick="openModal('editModal','{{ i.id }}')">
-                                                    <i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit
+                                                <button class="btn btn-soft-primary btn-sm me-2" type="button" onclick="openModal('editModal','{{ i.id }}')">
+                                                    <!-- <i class="ri-pencil-fill align-bottom me-2 text-muted"></i>  -->
+                                                    Edit
                                                 </button>
-                                                <button class="btn btn-danger btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#deleteModal{{ i.id }}">
-                                                    <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete
+                                                <button class="btn btn-soft-danger btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#deleteModal{{ i.id }}">
+                                                    <!-- <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i>  -->
+                                                    Delete
                                                 </button>
                                             </div>
 
