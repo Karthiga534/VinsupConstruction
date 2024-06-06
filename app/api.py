@@ -2183,14 +2183,28 @@ def contractoratt_list(request):
     contractors = [{'id': contractor['id'], 'name': contractor['name']} for contractor in contractor]
     return Response(contractors)
 
-@api_view(['GET'])
-def sub_contract_list(request,pk):
-    user_company = request.user.company  
-    sub_contract = ProjectSubContract.objects.filter(company=user_company,project=pk)
-    ser =ProjectSubContractDdropSerializer(sub_contract,many=True)
-   
-    return Response(ser.data)
+# @api_view(['GET'])
+# def sub_contract_list(request):
+#     sub_contract = ProjectSubContract.objects.values('id', )
+#     sub_contracts = [{'id': sub_contract['id'], 'name': sub_contract['name']} for sub_contract in sub_contract]
+#     return Response(sub_contracts)
 
+# @api_view(['GET'])
+# def sub_contract_list(request):
+#     sub_contracts = ProjectSubContract.objects.values('id', 'name')  # Include 'name' field in values()
+#     return Response(sub_contracts)
+
+@api_view(['GET'])
+
+
+@api_view(['GET'])
+def get_sub_contract_lists(request, project_id):
+    try:
+        sub_contracts = ProjectSubContract.objects.filter(project_id=project_id)
+        serializer = ProjectSubContractSerializer(sub_contracts, many=True)
+        return Response(serializer.data)
+    except ProjectSubContract.DoesNotExist:
+        return Response({'error': 'Project Sub Contract not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
 #------------------------------------------------ Daily Site Stock Usage----------------------------------------
@@ -2203,14 +2217,14 @@ def dailysitestockusage(request):
         context = {"unauthorized": msg}
         return render(request, "login.html", context)
 
-    subcontractors = ProjectSubContract.objects.filter(company=user.company).order_by("-id")
+    subcontracts = ProjectSubContract.objects.filter(company=user.company).order_by("-id")
     projects = Project.objects.filter(company=user.company).order_by("-id")
 
     from_site = request.GET.get('from', "")
     items = []
     if from_site:
         pro = projects.filter(id=from_site).last()
-        subcontractors = ProjectSubContract.objects.filter(project=pro)
+        subcontracts = ProjectSubContract.objects.filter(project=pro)
     else:
         items = InventoryStock.objects.filter(company=user.company).order_by("-id")
 
@@ -2225,7 +2239,7 @@ def dailysitestockusage(request):
         "pages": pages,
         "search": search,
         "projects": projects,
-        "subcontractors": subcontractors,
+        "subcontracts": subcontracts,
         "inventory": user.company,
         'items': items,
       
@@ -2241,7 +2255,7 @@ def sitestockusage(request):
         context = {"unauthorized": msg}
         return render(request, "login.html", context)
 
-    subcontractors = ProjectSubContract.objects.filter(company=user.company).order_by("-id")
+    subcontracts = ProjectSubContract.objects.filter(company=user.company).order_by("-id")
     projects = Project.objects.filter(company=user.company).order_by("-id")
 
     from_site = request.GET.get('from', "")
@@ -2338,6 +2352,41 @@ def dailysitestockusagelist(request, pk):
         querysets =querysets.filter(subcontract__id=subcontid)
     # ser = DailySiteStockUsageSerializer(querysets,many=True)
     return PaginationAndFilter(querysets, request, DailySiteStockUsageSerializer,date_field='created_at')
+
+
+
+
+@api_view(['POST'])
+@login_required(login_url='login')
+def save_data(request, pk):  
+    if request.method == "POST":
+        try:
+            # Retrieve data from the request
+            subcontract_name = request.POST.get('subcontract_name')
+            project_name = request.POST.get('project_name')
+            qty = request.POST.get('qty')
+            unit_name = request.POST.get('unit_name')
+            item_name = request.POST.get('item_name')
+
+            obj, created = DailySiteStockUsage.objects.update_or_create(
+                id=pk,
+                defaults={
+                    'subcontract_name': subcontract_name,
+                    'project_name': project_name,
+                    'qty': qty,
+                    'unit_name': unit_name,
+                    'item_name': item_name
+                   
+                }
+            )
+            # Return success response
+            return JsonResponse({'success': True, 'message': 'Data saved successfully.'}, status=200)
+        except Exception as e:
+            # Return error response
+            return JsonResponse({'success': False, 'message': str(e)}, status=400)
+    else:
+        # Return method not allowed response for non-POST requests
+        return JsonResponse({'success': False, 'message': 'Method not allowed.'}, status=405)
     
 
 

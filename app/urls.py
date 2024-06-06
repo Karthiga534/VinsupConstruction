@@ -339,6 +339,12 @@ urlpatterns = [
     path('site_allocation/',views.site_allocation,name= 'site_allocation'), 
     path('add_site_allocation/', views.add_site_allocation, name='add_site_allocation'),
     path('site-allocation-list/<str:pk>/',views.site_allocation_list,name='site-allocation-list'), #list data
+    path('site_allocationemployee/<int:employee_id>/', views.site_allocationemployee, name='site_allocationemployee'),
+
+
+
+    path('delete_site_allocation_list/<int:pk>/', views.delete_site_allocation_list, name='delete_site_allocation_list'),
+
 
     path('lab_site_allocation/',views.lab_site_allocation,name= 'lab_site_allocation'), 
     path('add_lab_site_allocation/', views.add_lab_site_allocation, name='add_lab_site_allocation'),
@@ -346,7 +352,17 @@ urlpatterns = [
 
 
     path('purchase-details/<int:purchase_id>/', views.purchase_details, name='purchase-details'),
-    # path('update-purchase/<int:purchase_id>/',  views.purchase_details, name='update_purchase_details'),
+    #path('update-purchase/<int:purchase_id>/',  views.purchase_details, name='update_purchase_details'),
+    path('purchase_update/<int:pk>/', views.update_purchase, name='update_purchase'),
+
+    path('purchasetableupdate/<str:id>/', views.purchasetableupdate, name='purchasetableupdate'),
+
+    # path('purchaseitems/<int:pk>/', views.update_purchase_item, name='update_purchase_item'),
+
+    path('quatation_update/<int:pk>/', views.update_quatation, name='update_quatation'),
+    path('quatationtableupdate/<str:id>/', views.quatationtableupdate, name='quatationtableupdate'),
+
+
 
     
 
@@ -403,6 +419,9 @@ path('purchase-track/<int:pk>/<int:site_or_inventory>/' , views.item_price_track
     path('dailytask/', views.dailytask, name='dailytask'),  
     path('add_dailytask/', views.add_dailytask, name='add_dailytask'),  
     path('update_dailytask/<int:pk>/', views.update_dailytask, name='update_dailytask'), 
+    # path('delete_dailytask/<int:pk>/', views.delete_dailytask, name='delete_dailytask'),  
+    # path('dailytask-list/', views.dailytask_list, name='dailytask-list'),
+    path('dailytask-list/<int:pk>/',  views.dailytask_list, name='dailytask-detail'),
     path('delete_dailytask/<int:pk>/', views.delete_dailytask, name='delete_dailytask'), 
 
     path('dailytask-list/', views.dailytask_list, name='dailytask-list'),  
@@ -415,7 +434,10 @@ path('purchase-track/<int:pk>/<int:site_or_inventory>/' , views.item_price_track
     path('stockusagelist/', api.sitestockusage, name="dailysitestockusagelist"),
     path('dailysitestockusagelist/<int:pk>/', api.dailysitestockusagelist, name='dailysitestock-usagelist'), 
 
-    path('dailysitestockusage/', api.dailysitestockusage, name='dailysitestockusage'),
+   path('dailysitestockusage/', api.dailysitestockusage, name='dailysitestockusage'),
+
+     path('save_data/<int:pk>/', api.save_data, name='save_data'),
+
 
     path('update_sitestockusage/<int:pk>/', api.update_sitestockusage, name='update_sitestockusage'), 
     path('delete_sitestockusage/<int:pk>/', api.delete_sitestockusage, name='delete_sitestockusage'),
@@ -473,7 +495,9 @@ path('purchase-track/<int:pk>/<int:site_or_inventory>/' , views.item_price_track
 
     path('user-list/', api.user_list, name='user-list'),
     path('contractor-list/', api.contractoratt_list, name='contractor-list'),
-    path('sub-contract-list/<int:pk>/', api.sub_contract_list, name='sub-contract-list'),
+    # path('sub-contract-list/', api.sub_contract_list, name='sub-contract-list'),
+    path('sub-contract-list/<int:project_id>/', api.get_sub_contract_lists , name='get_sub_contract_lists'),
+    # path('sub-contract-list/<int:pk>/', api.sub_contract_list, name='sub-contract-list'),
 
    
     path('employee-profile/<int:pk>/', api.get_employee_profile, name='get-employee-profile'),

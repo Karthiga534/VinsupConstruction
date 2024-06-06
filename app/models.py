@@ -1599,6 +1599,7 @@ class SalaryPaymentHistory(models.Model):
 class ProjectSubContract(models.Model):
     company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
     project = models.ForeignKey(Project, on_delete=models.CASCADE,null=True,blank=True)
+    name= models.CharField(max_length=255,null=True,blank=True)
     type = models.ForeignKey(ContractType, on_delete=models.CASCADE,null=True,blank=True)
     contractor = models.ForeignKey(Contractor, on_delete=models.CASCADE,null=True,blank=True)
     start_date = models.DateField()
