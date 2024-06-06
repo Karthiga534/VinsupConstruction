@@ -2266,7 +2266,10 @@ def dailysitestockusage(request):
         "location": "transfer",
         "projects": projects,
         "subcontracts": subcontracts,
- 
+        # "inventory": user.company,
+        # 'items': items,
+      
+        
     }
     return render(request, "sitestock/dailysitestockusagelist.html", context)
 
