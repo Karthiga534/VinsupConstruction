@@ -69,7 +69,12 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+      #  'GMS.middleware.RedirectUnauthorizedMiddleware',
+     'constructionpro.middleware.APIKeyMiddleware' , # api middleware
 ]
+
+EXTERNAL_API_KEY =os.getenv('EXTERNAL_API_KEY')
 
 ROOT_URLCONF = 'constructionpro.urls'
 
@@ -106,25 +111,25 @@ WSGI_APPLICATION = 'constructionpro.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     },
-# }
-
-
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.getenv("psql_database"),
-        'USER': os.getenv('psql_user'),
-        'PASSWORD': os.getenv('psql_password'),
-        'HOST': os.getenv('psql_host'),
-        'PORT': os.getenv('psql_port'),
-    }
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    },
 }
+
+
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': os.getenv("psql_database"),
+#         'USER': os.getenv('psql_user'),
+#         'PASSWORD': os.getenv('psql_password'),
+#         'HOST': os.getenv('psql_host'),
+#         'PORT': os.getenv('psql_port'),
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -245,3 +250,50 @@ CORS_ALLOW_HEADERS = (
 CORS_ALLOW_ALL_ORIGINS = True 
 CORS_ALLOW_CREDENTIALS = True
 
+
+
+
+
+
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+EMAIL_HOST = 'smtp.gmail.com' 
+EMAIL_PORT = 587  
+EMAIL_USE_TLS = True  
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')  
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')  
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL') 
+
+
+
+
+
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'handlers': {
+#         'file': {
+#             'level': 'INFO',  
+#             'class': 'logging.FileHandler',
+#             'filename': 'myapp.log',  
+#         },
+#         'console': {
+#             'level': 'INFO',  
+#             'class': 'logging.StreamHandler',
+#         },
+#     },
+#     'loggers': {
+#         'django': {
+#             'handlers': ['console'],
+#             'level': 'WARNING',
+#             'propagate': True,
+#         },
+#         'app': {  
+#             'handlers': ['file', 'console'],
+#             'level': 'DEBUG',  
+#             'propagate': False,
+#         },
+#     },
+# }

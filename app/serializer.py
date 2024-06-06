@@ -376,12 +376,12 @@ class EmployeeSerializer(ModelSerializer):
         print(password)
         phone=user_data["phone_number"]
         user = CustomUser.objects.create(**user_data)
-        # user.is_employee=True
-        # user.save()
-        # msg=""
-        # send_sms=""
-        validated_data["user"] =user    
+        user.is_employee=True
+        user.save()
+        validated_data["user"] =user           
         employee = super().create(validated_data)
+        msg=f"Welcome {user.name} Your Employee account created successfully. This is your password {password} and Mpin {user.pin} vinsupinfotech."
+        send_sms(user.phone_number,msg,templateid=False)
         return employee
 
 def get_pin():

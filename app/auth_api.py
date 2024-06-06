@@ -32,6 +32,8 @@ from django.utils.crypto import get_random_string
 # from django.shortcuts import render, redirect, get_object_or_404
 # from rest_framework.decorators import api_view, permission_classes
 
+from django.conf import settings
+
 message_server_error = "message sending error"
 message_server_error_status = 303
 
@@ -329,6 +331,9 @@ def get_me(request):
 
 reset_codes = {}
 
+# DEFAULT_FROM_EMAIL = settings.DEFAULT_FROM_EMAIL
+
+
 def password_reset_request_view(request):
     error={}
     if request.method == "POST":
@@ -341,15 +346,15 @@ def password_reset_request_view(request):
             user = CustomUser.objects.filter(email=email).first()
             if user:
                 reset_code = get_random_string(length=6)
-                reset_codes[email] = reset_code
-
-                send_mail(
-                    "Password Reset",
-                    f"Your reset code is: {reset_code}",
-                    "noreply@example.com",
-                    [email],
-                    fail_silently=False,
-                )
+                # reset_codes[email] = reset_code
+                send_password_reset_email(request,email,reset_code)
+                # send_mail(
+                #     "Password Reset",
+                #     f"Your reset code is: {reset_code}",
+                #     settings.DEFAULT_FROM_EMAIL,
+                #     [email],
+                #     fail_silently=False,
+                # )
                 OTP.objects.create(user=user,otp=reset_code)
                 return redirect(reverse("password_reset_confirm"))
             error['email'] = 'Email id with user not found'
@@ -360,7 +365,7 @@ def password_reset_request_view(request):
 
 
 def password_reset_confirm_view(request):
-    error = {}
+    error = {"otp":"","user":""}
     print(request.method)
     if request.method == "POST":
             form = SetPasswordForm(request.POST)
@@ -399,3 +404,26 @@ def password_reset_confirm_view(request):
     return render(request, "password_reset_confirm.html", {"form": form,'error':error})
 
 
+
+
+import logging
+from django.core.mail import send_mail
+from django.conf import settings
+from django.http import HttpResponse
+
+logger = logging.getLogger("app")
+
+def send_password_reset_email(request, email, reset_code):
+    print('poooooooo')
+    try:
+        send_mail(
+            "Password Reset",
+            f"Your reset code is: {reset_code}",
+            settings.DEFAULT_FROM_EMAIL,
+            [email],
+            fail_silently=False,
+        )
+        return HttpResponse('Password reset email sent successfully')
+    except Exception as e:
+        logger.error(f'Error sending password reset email to {email}: {e}')
+        return HttpResponse(f'Error sending password reset email: {e}')
