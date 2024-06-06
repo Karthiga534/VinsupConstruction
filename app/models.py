@@ -1427,6 +1427,8 @@ class QuatationItems(models.Model):
         #     return  self.name
         if self.inventory:
             return self.inventory.display
+        if self.item:
+            return self.item.item
         return None
 
 
