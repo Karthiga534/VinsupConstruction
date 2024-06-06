@@ -118,6 +118,7 @@ class   PurchaseItemsSerializer(serializers.ModelSerializer):
 
         inventory_item, inventory_created = InventoryStock.objects.get_or_create(item = item,unit=unit)
 
+        inventory_item.qty = ( 0 if site else Decimal(inventory_item.qty)) + qty_to_add
         # if site  is there set item purchased for particular site so no need to manipulate inventory stock
         inventory_item.qty = ( 0 if site else Decimal(qty_to_add )) + Decimal(inventory_item.qty)
         if not inventory_item.price:
@@ -613,6 +614,14 @@ class DailySiteStockUsageSerializer(ModelSerializer):
     class Meta:
         model = DailySiteStockUsage
         fields = "__all__"
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data ['item_name'] =instance.stock.display if instance.stock else None
+        data ['project_name'] = instance.project.display if instance.project else None
+        data ['unit_name'] = instance.unit.name if instance.unit else None
+        data ["subcontract_name"] =instance.subcontract.display if instance.subcontract else None
+        return data
     
 class ProjectSubContractSerializer(ModelSerializer):
     class Meta:

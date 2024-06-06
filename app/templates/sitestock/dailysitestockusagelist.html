@@ -20,7 +20,7 @@
 							<div class="page-title-right">
 								<ol class="breadcrumb m-0">
 									<li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
-									<li class="breadcrumb-item active">aily Site Stock Usage</li>
+									<li class="breadcrumb-item active">daily Site Stock Usage</li>
 								</ol>
 							</div>
 						</div>
@@ -42,68 +42,68 @@
 											style="float:right;">Add Sitestock</a>
 										
 								</div>
-							</div>
-							<div class="card-body">
-								<div class="row">
-									<div class="mb-3 mt-4" style="width: 200px;">
-										<label for="project" class="form-label"> Project:</label>
-										<select class="form-select" id="project" >
-											<!-- <option value="-1"> All </option> -->
-											<option value="0">All</option>
-																		
-											{% for project in projects %}
-																																	
-											<option value="{{ project.id }}">{{ project.proj_name }}</option>
-											
-											{% endfor %}
-										</select>
-										<span id="projectError" class="error-message"></span>
-									</div>
-								
-									<!-- Subcontractor Dropdown -->
-									<div class="mb-3 mt-4" style="width: 200px;">
-										<label for="subcontractor" class="form-label">Subcontractor:</label>
-										<select class="form-select" id="subcontractor" name="subcontractor">
-											
-											<option value="0" selected>--------</option>
-																						
-											{% for subcontract in subcontractors %}
-											
-											
-											<option value="{{ subcontract.id }}">{{ subcontract.display_contractor_dropdown }}</option>
-											
-											{% endfor %}
-										</select>
-										<span id="subcontractorError" class="error-message"></span>
-									</div>
-									<div class="col-xl-3 col-lg-3 col-md-3 col-xs-6 col-12">
-										<br><br><button type="button"
-											class="btn btn-primary waves-effect waves-light mt-2">Get Report</button>
-									</div>
-								</div>
-								<hr>
-								<table id="example"
-									class="table table-bordered dt-responsive nowrap table-striped align-middle"
-									style="width:100%">
-									<thead>
-										<tr>
-											
-											<th data-ordering="false">S No.</th>
-											<th data-ordering="false">Item name</th>
-											<th data-ordering="false">Qty</th>
-											<th data-ordering="false">Project</th>
-											<th data-ordering="false">Subcontractor</th>
-											<th data-ordering="false">Unit</th>
-										    <th data-ordering="false">Action</th>
+								<div class="card-body">
+									<div class="row">
+										<div class="mb-3 mt-4" style="width: 200px;">
+											<label for="project" class="form-label"> Project:</label>
+											<select class="form-select" id="project" name="project">
+												<!-- <option value="-1"> All </option> -->
+												<option value="0">All</option>
 
-										</tr>
-									</thead>
-									<tbody>
+												{% for project in projects %}
 
-										
+												<option value="{{ project.id }}">{{ project.proj_name }}</option>
 
-									</tbody>
-								</table>
+												{% endfor %}
+											</select>
+											<span id="projectError" class="error-message"></span>
+										</div>
+
+										<!-- Subcontractor Dropdown -->
+										<div class="mb-3 mt-4" style="width: 200px;">
+											<label for="subcontract" class="form-label">Subcontract:</label>
+											<select class="form-select" id="subcontract" name="subcontract">
+
+												<option value="0" selected>--------</option>
+
+												{% for subcontract in subcontracts %}
+
+
+												<option value="{{ subcontract.id }}">
+													{{ subcontract.display_contractor_dropdown }}</option>
+
+												{% endfor %}
+											</select>
+											<span id="subcontractError" class="error-message"></span>
+										</div>
+										<div class="col-xl-3 col-lg-3 col-md-3 col-xs-6 col-12">
+											<br><br><button type="button"
+												class="btn btn-primary waves-effect waves-light mt-2">Get
+												Report</button>
+										</div>
+									</div>
+									<hr>
+									<table id="example"
+										class="table table-bordered dt-responsive nowrap table-striped align-middle"
+										style="width:100%">
+										<thead>
+											<tr>
+
+												<th data-ordering="false">S No.</th>
+												<th data-ordering="false">Item name</th>
+												<th data-ordering="false">Qty</th>
+												<th data-ordering="false">Project</th>
+												<th data-ordering="false">Subcontract</th>
+												<th data-ordering="false">Unit</th>
+												<th data-ordering="false">Action</th>
+
+											</tr>
+										</thead>
+										<tbody>
+
+										</tbody>
+
+									</table>
 
 
 								<div id="results-container"></div>
@@ -128,33 +128,73 @@
 
 
 
+		<div class="modal fade bs-example-modal-lg1" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+			aria-hidden="true" id="stockHistoryModal">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="myLargeModalLabel"> </h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<form id="editForm">
+							<div class="row">
+								<div class="row">
+									<div class="col-4">
+										<label for="item_name" class="form-label">Item Name</label>
+										<input type="text" id="item_name" class="form-control" name="item_name"
+											value="">
+									</div>
+									<div class="col-4 ">
+										<label for="" class="form-label"> Qty</label>
+										<input type="text" class="form-control" name="qty" value="">
+									</div>
+									<div class="col-4">
+										<label for="unit_name" class="form-label">Unit</label>
+										<input type="text" id="unit_name" class="form-control" name="unit_name"
+											value="">
+									</div>
+									<div class="col-4">
+										<label for="project" class="form-label">Project:</label>
+										<select class="form-select" id="project" name="project">
 
-	<div class="modal fade bs-example-modal-lg1" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
-		aria-hidden="true">
-		<div class="modal-dialog modal-lg">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title" id="myLargeModalLabel">Sitestock Item List </h5>
-					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-				</div>
-				<div class="modal-body">
-					<div class="table-responsive">
-						<table class="table table-bordered">
-							<thead>
-								<tr>
-									<th>S.no</th>
-									<th>Item Name</th>
-									<th>Qty</th>
-									<th>Project</th>
-									<th>Subcontractor</th>
-									<th>Unit</th>
-									
-								</tr>
-							</thead>
-							<tbody id="modalTableBody">
-								<!-- Modal table body will be populated dynamically -->
-							</tbody>
-						</table>
+											<option value="0" selected>--------</option>
+
+											{% for project in projects %}
+											<!--  -->
+											<option value="{{ project.id }}">{{ project.proj_name }}</option>
+
+											{% endfor %}
+										</select>
+										<span id="projectError" class="error-message"></span>
+									</div>
+
+									<div class="col-4">
+										<label for="subcontract" class="form-label">Subcontract:</label>
+										<select class="form-select" id="subcontract" name="subcontract">
+
+											<option value="0" selected>--------</option>
+
+											{% for subcontract in subcontracts %}
+
+											<option value="{{ subcontract.id }}">{{
+												subcontract.display_contractor_dropdown }}</option>
+
+											{% endfor %}
+										</select>
+										<span id="subcontractError" class="error-message"></span>
+									</div>
+
+								</div>
+							</div>
+						</form>
+
+					</div>
+					<div class="modal-footer">
+						<button class="btn btn-link link-success fw-medium shadow-none" data-bs-dismiss="modal"><i
+								class="ri-close-line me-1 align-middle"></i> Close</button>
+						<button type="button" id="stockModal" class="btn btn-primary" 
+							onclick="makePresent(this)">Save</button>
 					</div>
 				</div>
 				<div class="modal-footer">
@@ -166,16 +206,11 @@
 		</div>
 	</div>
 
-
-
-
-
-
-	<!--start back-to-top-->
-	<button onclick="topFunction()" class="btn btn-danger btn-icon" id="back-to-top">
-		<i class="ri-arrow-up-line"></i>
-	</button>
-	<!--end back-to-top-->
+		<!--start back-to-top-->
+		<button onclick="topFunction()" class="btn btn-danger btn-icon" id="back-to-top">
+			<i class="ri-arrow-up-line"></i>
+		</button>
+		<!--end back-to-top-->
 
 	<!--preloader-->
 	<div id="preloader">
@@ -191,8 +226,9 @@
 
 		const existingPaginationContainer = document.getElementById('pagination-container');
 
-		const dropdown = document.getElementById('project');
-		const tableBody = document.querySelector('#example tbody');
+			const dropdown = document.getElementById('project');
+			const dropdown2 = document.getElementById('subcontract');
+			const tableBody = document.querySelector('#example tbody');
 
 
 		// // from and to
@@ -326,40 +362,267 @@
 				modalRow.appendChild(serialCell);
 
 				const itemNameCell = document.createElement('td');
-				itemNameCell.textContent = tItem.item_name || 'N/A';
-				modalRow.appendChild(itemNameCell);
-
+				itemNameCell.textContent = get_value(data.item_name);
+				newRow.appendChild(itemNameCell);
 
 				const qtyCell = document.createElement('td');
-				qtyCell.textContent = tItem.qty || 'N/A';
-				modalRow.appendChild(qtyCell);
+				qtyCell.textContent = get_value(data.qty);
+				newRow.appendChild(qtyCell);
+
+				const project_nameCell = document.createElement('td');
+				project_nameCell.textContent = get_value(data.project_name);
+				newRow.appendChild(project_nameCell);
+
+				const subcontract_nameCell = document.createElement('td');
+				subcontract_nameCell.textContent = get_value(data.subcontract_name);
+				newRow.appendChild(subcontract_nameCell);
+
+				const unit_nameCell = document.createElement('td');
+				unit_nameCell.textContent = get_value(data.unit_name);
+				newRow.appendChild(unit_nameCell);
+
+				const actionCell = document.createElement('td');
+
+				//Action Cell
+				actionCell.innerHTML = ` <button class="btn btn-soft-secondary btn-sm dropdown" type="button" onclick="opencustomModal('stockHistoryModal')" >
+							<i class="ri-eye-fill align-middle"></i>
+			 				</button>`
 
 
-				const projectCell = document.createElement('td');
-				projectCell.textContent = tItem.project || 'N/A';
-				modalRow.appendChild(projectCell);
-
-				const subcontractorCell = document.createElement('td');
-				subcontractorCell.textContent = tItem.subcontractor || 'N/A';
-				modalRow.appendChild(subcontractorCell);
+				newRow.appendChild(actionCell);
 
 
+				actionCell.addEventListener('click', () => {
 
-				const unitCell = document.createElement('td');
-				unitCell.textContent = tItem.item_unit || 'N/A';
-				modalRow.appendChild(unitCell);
-								
-				modalTableBody.appendChild(modalRow);
-			});
-		}
+					payModalData(data)
+				});
+
+				return newRow;
+
+
+			}
+
+			// nested table
+			// function populateModalTable(transferItems, modalTableBody) {
+			// 	modalTableBody.innerHTML = ''; // Clear previous data
+
+			// 	transferItems.forEach((tItem, index) => {
+			// 		const modalRow = document.createElement('tr');
+
+			// 		const serialCell = document.createElement('td');
+			// 		serialCell.textContent = index + 1;
+			// 		modalRow.appendChild(serialCell);
+
+			// 		const itemNameCell = document.createElement('td');
+			// 		itemNameCell.textContent = tItem.item_name || 'N/A';
+			// 		modalRow.appendChild(itemNameCell);
+
+
+			// 		const qtyCell = document.createElement('td');
+			// 		qtyCell.textContent = tItem.qty || 'N/A';
+			// 		modalRow.appendChild(qtyCell);
+
+
+			// 		const project_nameCell = document.createElement('td');
+			// 		project_nameCell.textContent = tItem.project_name || 'N/A';
+			// 		modalRow.appendChild(project_nameCell);
+
+			// 		const subcontractor_nameCell = document.createElement('td');
+			// 		subcontractor_nameCell.textContent = tItem.subcontractor_name || 'N/A';
+			// 		modalRow.appendChild(subcontractor_nameCell);
 
 
 	</script>
 
-{% endblock header2 %}
+			// 		const unitCell = document.createElement('td');
+			// 		unitCell.textContent = tItem.item_unit || 'N/A';
+			// 		modalRow.appendChild(unitCell);
+
+			// 		modalTableBody.appendChild(modalRow);
+			// 	});
+			// }
+
+
+			// 		
+
+
+			// openModal
+			function opencustomModal(modalId) {
+
+				const stockHistoryModal = new bootstrap.Modal(document.getElementById(modalId));
+
+				stockHistoryModal.show();
+			}
 
 
 
-	
 
-   
+			function makePresent(button) {
+
+				var modalSelector = button.getAttribute('data-target');
+				const formId = "stockHistoryModal"
+
+				const saveId = button.getAttribute('data-id')
+				var formElement = document.getElementById(formId);
+
+				var formData = new FormData();
+				try {
+					disableButton(button);
+					var isValid = true;
+					var errors = {};
+					var formData = new FormData();
+
+					var requiredKeys = [];   //changes
+
+
+					const subcontract_name = getValueOrDefault(formElement.querySelector('select[name="subcontract_name]').value);
+					const project_name = getValueOrDefault(formElement.querySelector('select[name="project_name"]').value);
+					const qty = getValueOrDefault(formElement.querySelector('input[name="qty"]').value);
+					const unit_name = getValueOrDefault(formElement.querySelector('input[name="unit_name"]').value);
+					const item_name= getValueOrDefault(formElement.querySelector('input[name="item_name"]').value);
+
+					
+
+					if (subcontract_name) {
+						formData.append('subcontract_name', subcontract_name);
+					}
+
+					if (project_name) {
+						formData.append('project_name', project_name);
+					}
+
+					if (unit_name) {
+						formData.append('unit_name', unit_name);
+
+					}
+					if (qty) {
+						formData.append('qty', qty);
+
+					}
+					if (item_name) {
+						formData.append('item_name', item_name);
+
+					}
+
+					
+
+
+					requiredKeys.forEach(function (key) {
+						var value = formData.get(key);
+						if (!value.trim()) {
+							isValid = false;
+							errors[key] = ['This field is required.'];
+						}
+					});
+
+					if (!isValid) {
+						enableButton(button);
+						// console.log(errors);
+						handleCreateErrors(errors);
+						return;
+					} else {
+						$(`#${formId} input, #${formId} button`).prop('disabled', true);
+
+					}
+
+					$.ajax({
+						url: `/save_data/${saveId}/`,                //change
+						type: 'POST',
+						headers: {
+							'X-CSRFToken': csrftoken,
+						},
+						data: formData,
+						processData: false,
+						contentType: false,
+						success: function (response, status, xhr) {
+							console.error(status);
+							if (xhr.status === 200) {
+
+								showToast(successMesssage?.message, '', successMesssage?.bgColor);
+								fetchData(currentPage, reload = true)
+								closeHistoryModal(modalSelector)
+								restoreForm(formId, button)
+
+							} else {
+
+								restoreForm(formId, button)
+								showToast(
+									errorAlertMessage?.message,
+									"",
+									errorAlertMessage?.bgColor
+								);
+
+							}
+						},
+						error: function (xhr, status, error) {
+							// console.log(xhr, status, error);
+							if (xhr.status === 400) {
+								if (xhr?.responseJSON || xhr?.responseJSON?.errors) {
+									handleCreateErrors(transformErrors(xhr.responseJSON));
+									restoreForm(formId, button)
+
+
+								} else {
+									showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+									restoreForm(formId, button)
+
+								}
+							}
+							else if (xhr.status === 401 || xhr.status === 404) {
+
+								showToast(xhr?.responseJSON?.details || errorOccured.message, '', errorAlertMessage?.bgColor);
+								restoreForm(formId, button)
+
+
+							}
+							else {
+								// showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+								restoreForm(formId, button)
+
+							}
+						}
+					});
+				} catch (error) {
+					showToast(errorOccured?.message, '', errorOccured?.bgColor);
+					restoreForm(formId, button)
+					console.error(error);
+				}
+
+			}
+
+			function payModalData(data) {
+				const formId = 'editForm'
+				var formElement = document.getElementById(formId);
+
+				// modalheader.innerText = `${data.labour_name} details`
+
+				const I1 = formElement.querySelector('input[name="qty"]')
+				I1.value = data.qty;
+
+				const I2 = formElement.querySelector('input[name="item_name"]')
+				I2.value = data.item_name;
+
+				const I3 = formElement.querySelector('select[name="project_name"]')
+				I3.value = data.project_name;
+
+				const I4 = formElement.querySelector('input[name="unit_name"]')
+				I4.value = data.unit_name;
+
+				const I5 = formElement.querySelector('select[name="subcontract_name"]')
+				I.value = data.subcontract_name;
+
+				const saveButton = document.querySelector('#stockModal');   //id change
+				saveButton.setAttribute("data-id", data.id)
+
+
+
+			}
+
+
+
+
+
+		</script>
+
+
+		{% endblock header2 %}

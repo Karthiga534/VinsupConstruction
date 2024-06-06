@@ -417,6 +417,9 @@ path('purchase-track/<int:pk>/<int:site_or_inventory>/' , views.item_price_track
     path('dailytask/', views.dailytask, name='dailytask'),  
     path('add_dailytask/', views.add_dailytask, name='add_dailytask'),  
     path('update_dailytask/<int:pk>/', views.update_dailytask, name='update_dailytask'), 
+    # path('delete_dailytask/<int:pk>/', views.delete_dailytask, name='delete_dailytask'),  
+    # path('dailytask-list/', views.dailytask_list, name='dailytask-list'),
+    path('dailytask-list/<int:pk>/',  views.dailytask_list, name='dailytask-detail'),
     path('delete_dailytask/<int:pk>/', views.delete_dailytask, name='delete_dailytask'), 
 
 
@@ -431,6 +434,8 @@ path('purchase-track/<int:pk>/<int:site_or_inventory>/' , views.item_price_track
     path('dailysitestockusagelist/<int:pk>/', api.dailysitestockusagelist, name='dailysitestockusagelist'), 
 
    path('dailysitestockusage/', api.dailysitestockusage, name='dailysitestockusage'),
+
+     path('save_data/<int:pk>/', api.save_data, name='save_data'),
 
 
 
@@ -486,6 +491,8 @@ path('purchase-track/<int:pk>/<int:site_or_inventory>/' , views.item_price_track
 
     path('user-list/', api.user_list, name='user-list'),
     path('contractor-list/', api.contractoratt_list, name='contractor-list'),
+    # path('sub-contract-list/', api.sub_contract_list, name='sub-contract-list'),
+    path('sub-contract-list/<int:project_id>/', api.get_sub_contract_lists , name='get_sub_contract_lists'),
     # path('sub-contract-list/<int:pk>/', api.sub_contract_list, name='sub-contract-list'),
 
    
