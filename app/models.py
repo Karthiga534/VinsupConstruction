@@ -2159,6 +2159,7 @@ class PettyCash(models.Model):
 class PaymentHistory(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE, null=True, blank=True)
     date = models.DateField(null=True,blank=True)
+    img =models.FileField(upload_to="doc",null=True,blank=True)
     receipt_number = models.CharField(max_length=100)
     payment_method = models.ForeignKey(PaymentMethod, on_delete=models.CASCADE, null=True, blank=True)
     payment_amount = models.DecimalField(max_digits=10, decimal_places=2)

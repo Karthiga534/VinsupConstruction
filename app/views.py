@@ -2718,18 +2718,39 @@ def delete_pettycash(request,pk):
     except PettyCash.DoesNotExist:  # CHANGE model
         return JsonResponse({'details': ['Item does not exist']}, status=404)
     
+# def clientcash(request, pk):
+#     project = get_object_or_404(Project, pk=pk)
+#     payment_methods = PaymentMethod.objects.all()  # Get all payment methods
+#     payment_history = PaymentHistory.objects.filter(project=project)  # Get payment history for this project
+
+#     total_paid_amount = payment_history.aggregate(total_paid=Sum('payment_amount'))['total_paid']
+#     total_paid_amount = total_paid_amount if total_paid_amount else 0
+    
+#     # Calculate pending amount
+#     pending_amount = project.estimation - total_paid_amount
+    
+
+
+#     client_name = project.client
+#     contact_no = project.contact_no
+
+#     context = {
+#         'client_name': client_name,
+#         'contact_no': contact_no,
+#         'project': project , 'payment_methods': payment_methods, 'payment_history': payment_history,'total_paid_amount': total_paid_amount,
+#         'pending_amount': pending_amount
+#     }
+
+#     return render(request, 'project\clientcash.html', context)
+
 def clientcash(request, pk):
     project = get_object_or_404(Project, pk=pk)
-    payment_methods = PaymentMethod.objects.all()  # Get all payment methods
-    payment_history = PaymentHistory.objects.filter(project=project)  # Get payment history for this project
-
+    payment_methods = PaymentMethod.objects.all()
+    payment_history = PaymentHistory.objects.filter(project=project)
+    
     total_paid_amount = payment_history.aggregate(total_paid=Sum('payment_amount'))['total_paid']
     total_paid_amount = total_paid_amount if total_paid_amount else 0
-    
-    # Calculate pending amount
     pending_amount = project.estimation - total_paid_amount
-    
-
 
     client_name = project.client
     contact_no = project.contact_no
@@ -2737,38 +2758,58 @@ def clientcash(request, pk):
     context = {
         'client_name': client_name,
         'contact_no': contact_no,
-        'project': project , 'payment_methods': payment_methods, 'payment_history': payment_history,'total_paid_amount': total_paid_amount,
-        'pending_amount': pending_amount
+        'project': project,
+        'payment_methods': payment_methods,
+        'payment_history': payment_history,
+        'total_paid_amount': total_paid_amount,
+        'pending_amount': pending_amount,
     }
 
-    return render(request, 'project\clientcash.html', context)
+    return render(request, 'project/clientcash.html', context)
 
-
-@login_required(login_url='login')
-def payment_process(request, project_id):
-    project = get_object_or_404(Project, pk=project_id)
-    payment_methods = PaymentMethod.objects.all()  # Get all payment methods
-
+# API view
+@api_view(['GET', 'POST'])
+def clientcashpay(request, pk):
+    project = get_object_or_404(Project, pk=pk)
+    payment_history = PaymentHistory.objects.filter(project=project)
+    
     if request.method == 'POST':
-        date = request.POST.get('date')
-        receipt_number = request.POST.get('receipt_number')
-        payment_method_id = request.POST.get('payment_method')  # Retrieve selected payment method ID
-        payment_amount = request.POST.get('payment_amount')
-        # is_paid = request.POST.get('is_paid') == 'yes'
+        data = request.data.copy()
+        data['project'] = project.id  # Set the project field
+        serializer = PaymentHistorySerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        payment_method = PaymentMethod.objects.get(pk=payment_method_id)  # Get the selected payment method object
+    return Response("This endpoint only supports POST requests.", status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
-        PaymentHistory.objects.create(
-            project=project,
-            date=date,
-            receipt_number=receipt_number,
-            payment_method=payment_method,
-            payment_amount=payment_amount,
-            # is_paid=is_paid
-        )
-        return redirect('clientcash', pk=project.id)  # Provide the pk argument
-    else:
-        return render(request, 'project/payment_process.html', {'project': project, 'payment_methods': payment_methods})
+
+# @login_required(login_url='login')
+# def payment_process(request, project_id):
+#     project = get_object_or_404(Project, pk=project_id)
+#     payment_methods = PaymentMethod.objects.all()  # Get all payment methods
+
+#     if request.method == 'POST':
+#         date = request.POST.get('date')
+#         receipt_number = request.POST.get('receipt_number')
+#         payment_method_id = request.POST.get('payment_method')  # Retrieve selected payment method ID
+#         payment_amount = request.POST.get('payment_amount')
+#         # is_paid = request.POST.get('is_paid') == 'yes'
+
+#         payment_method = PaymentMethod.objects.get(pk=payment_method_id)  # Get the selected payment method object
+
+#         PaymentHistory.objects.create(
+#             project=project,
+#             date=date,
+#             receipt_number=receipt_number,
+#             payment_method=payment_method,
+#             payment_amount=payment_amount,
+#             # is_paid=is_paid
+#         )
+#         return redirect('clientcash', pk=project.id)  # Provide the pk argument
+#     else:
+#         return render(request, 'project/payment_process.html', {'project': project, 'payment_methods': payment_methods})
     
 
 

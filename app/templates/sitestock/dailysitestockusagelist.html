@@ -400,6 +400,8 @@
 
 			}
 
+		}
+
 			// nested table
 			// function populateModalTable(transferItems, modalTableBody) {
 			// 	modalTableBody.innerHTML = ''; // Clear previous data
@@ -430,7 +432,7 @@
 			// 		modalRow.appendChild(subcontractor_nameCell);
 
 
-	</script>
+	
 
 			// 		const unitCell = document.createElement('td');
 			// 		unitCell.textContent = tItem.item_unit || 'N/A';
@@ -458,7 +460,7 @@
 			function makePresent(button) {
 
 				var modalSelector = button.getAttribute('data-target');
-				const formId = "stockHistoryModal"
+				const formId = "editForm"
 
 				const saveId = button.getAttribute('data-id')
 				var formElement = document.getElementById(formId);

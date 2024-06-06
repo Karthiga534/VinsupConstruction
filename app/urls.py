@@ -322,7 +322,8 @@ urlpatterns = [
     path('delete_pettycash/<int:pk>/', views.delete_pettycash, name='delete_pettycash'),
 
     path('clientcash/<int:pk>/',views.clientcash,name='clientcash'),
-    path('payment-process/<int:project_id>/', views.payment_process, name='payment-process'),
+    path('clientcashpay/<int:pk>/', views.clientcashpay, name='clientcashpay'),
+    # path('payment-process/<int:project_id>/', views.payment_process, name='payment-process'),
 
 
  
@@ -433,13 +434,12 @@ path('purchase-track/<int:pk>/<int:site_or_inventory>/' , views.item_price_track
 
     path('dailysitestockusage/', api.dailysitestockusage, name='dailysitestockusage'), 
     path('add_dailysitestockusage/',api.add_dailysitestockusage, name='add_dailysitestockusage'),
-    # path('dailysitestockusagelist/', api.dailysitestockusagelist, name="dailysitestockusagelist"),
-    path('dailysitestockusagelist/<int:pk>/', api.dailysitestockusagelist, name='dailysitestockusagelist'), 
+    path('stockusagelist/', api.sitestockusage, name="dailysitestockusagelist"),
+    path('dailysitestockusagelist/<int:pk>/', api.dailysitestockusagelist, name='dailysitestock-usagelist'), 
 
    path('dailysitestockusage/', api.dailysitestockusage, name='dailysitestockusage'),
 
      path('save_data/<int:pk>/', api.save_data, name='save_data'),
-
 
     path('update_sitestockusage/<int:pk>/', api.update_sitestockusage, name='update_sitestockusage'), 
     path('delete_sitestockusage/<int:pk>/', api.delete_sitestockusage, name='delete_sitestockusage'),

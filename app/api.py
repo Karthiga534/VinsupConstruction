@@ -1140,12 +1140,23 @@ def add_project (request):  # CHANGE name
         serializer.save()
         return JsonResponse( serializer.data, status=status.HTTP_201_CREATED)
     else:
-        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)        
+        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)      
+
+
 
 @api_view(['PUT'])
 @login_required(login_url='login')
 def update_project(request, pk):  # CHANGE name
     user=request.user
+    request_data=request.POST.copy().dict()
+    modeldesign = request.FILES.get("modeldesign",None)
+    aggeaments = request.FILES.get("aggeaments",None) 
+    if user.admin:
+        request_data['company'] = user.company.id    
+    if modeldesign:
+         request_data['modeldesign'] = modeldesign    
+    if aggeaments: 
+         request_data['aggeaments'] = aggeaments 
     try:
         instance = Project.objects.get(id=pk)  # CHANGE model
     except Project.DoesNotExist:              # CHANGE model
@@ -1154,7 +1165,7 @@ def update_project(request, pk):  # CHANGE name
     if not allow:
         return JsonResponse({'details':[msg]}, status=status.HTTP_401_UNAUTHORIZED)
     print('enter')
-    serializer = ProjectSerializer(instance, data=request.data,partial=True)   # CHANGE Serializer
+    serializer = ProjectSerializer(instance, data=request_data,partial=True)   # CHANGE Serializer
     if serializer.is_valid():  
         serializer.save()
         return JsonResponse( serializer.data, status=200)
@@ -2324,7 +2335,29 @@ def add_dailysitestockusage(request):
     else:
         return JsonResponse({'error': 'No data provided'}, status=status.HTTP_400_BAD_REQUEST)
 
+@login_required(login_url='login')
+def sitestockusage(request):
+    user = request.user
+    allow, msg = check_user(request, DailySiteStockUsage, instance=False)
+    if not allow:
+        context = {"unauthorized": msg}
+        return render(request, "login.html", context)
 
+    subcontracts = ProjectSubContract.objects.filter(company=user.company).order_by("-id")
+    projects = Project.objects.filter(company=user.company).order_by("-id")
+
+    from_site = request.GET.get('from', "")
+  
+    context = {
+        "location": "transfer",
+        "projects": projects,
+        "subcontracts": subcontracts,
+        # "inventory": user.company,
+        # 'items': items,
+      
+        
+    }
+    return render(request, "sitestock/dailysitestockusagelist.html", context)
 
 @login_required(login_url='login')
 def dailysitestockusagelist(request, pk):
@@ -2350,15 +2383,15 @@ def dailysitestockusagelist(request, pk):
        
     }
     return render(request, "sitestock/dailysitestockusagelist.html", context)
-    projectid= get_int_or_zero(pk)
-    if projectid !=0:
-        querysets =querysets.filter(project__id=projectid)
-    subcontractid =request.GET.get('subcontract')
-    subcontid= get_int_or_zero(subcontractid)
-    if subcontid:
-        querysets =querysets.filter(subcontract__id=subcontid)
-    # ser = DailySiteStockUsageSerializer(querysets,many=True)
-    return PaginationAndFilter(querysets, request, DailySiteStockUsageSerializer,date_field='created_at')
+    # projectid= get_int_or_zero(pk)
+    # if projectid !=0:
+    #     querysets =querysets.filter(project__id=projectid)
+    # subcontractid =request.GET.get('subcontract')
+    # subcontid= get_int_or_zero(subcontractid)
+    # if subcontid:
+    #     querysets =querysets.filter(subcontract__id=subcontid)
+    # # ser = DailySiteStockUsageSerializer(querysets,many=True)
+    # return PaginationAndFilter(querysets, request, DailySiteStockUsageSerializer,date_field='created_at')
 
 
 

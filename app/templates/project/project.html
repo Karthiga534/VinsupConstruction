@@ -72,23 +72,7 @@
 																		class="error-message"></span>
 																</div>
 
-																{% comment %} <div class="col-md-4">
-																	<label for="" class="form-label">Select category
-																		:</label>
-																	<select class="form-select mb-3"
-																		aria-label="Default select example"
-																		name="category" id="category">
-
-																		<option value="">----------------</option>
-																		{% for i in category %}
-																		<option value="{{i.id}}">{{i.name}} </option>
-																		{% endfor %}
-
-																	</select>
-																	<span id="categoryError"
-																		class="error-message"></span>
-																</div> {% endcomment %}
-
+																
 																<div class="col-md-4">
 																	<label for="" class="form-label">Select Category
 																		:</label>
@@ -106,13 +90,6 @@
 																		class="error-message"></span>
 																</div>
 
-																{% comment %} <div class="col-md-4 mt-2">
-																	<label for="" class="form-label">project Id
-																		: </label>
-																	<input type="text" class="form-control" id="">
-																	<span id="contact_noError"
-																		class="error-message"></span>
-																</div> {% endcomment %}
 
 																<div class="col-md-4 mt-2">
 																	<label for="" class="form-label">Project Name
@@ -173,21 +150,6 @@
 																</div>
 
 
-																<!-- <div class="col-md-4 mt-2">
-																	<label for="" class="form-label">Duration :</label>
-																	<select class="form-select mb-3"
-																		aria-label="Default select example"
-																		name="duration">
-
-																		<option value="">----------------</option>
-																		{% for i in duration %}
-																		<option value="{{i.id}}">{{i.name}} </option>
-																		{% endfor %}
-
-																	</select>
-																	<span id="durationError"
-																		class="error-message"></span>
-																</div> -->
 
 
 																<div class="col-md-4 mt-2">
@@ -384,9 +346,9 @@
 														<i class="ri-more-fill align-middle"></i>
 													</button>
 													<ul class="dropdown-menu dropdown-menu-end">
-														<li><a class="dropdown-item" data-id="{{i.id}}"
+														<li><a class="dropdown-item" href="#!"  data-id="{{i.id}}"
 																onclick="openModal('viewModal', '{{ i.id }}')"><i
-																	class="ri-eye-fill align-bottom me-2 text-muted"></i>
+																 class="ri-eye-fill align-bottom me-2 text-muted"></i>
 																View</a></li>
 														<li><a class="dropdown-item edit-item-btn"
 																data-bs-toggle="modal" href="#!"

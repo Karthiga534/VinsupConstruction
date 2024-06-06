@@ -3,13 +3,13 @@ import random
 from .models import *
 from decimal import Decimal
 from django.conf import settings
+from django.db import transaction
 from app.auth_models import Company
 # from .models import Purchase
 from rest_framework import serializers
 from rest_framework.serializers import *
 from django.contrib.auth.hashers import make_password
 from .models import PurchaseItems, MaterialLibrary, InventoryStock
-from django.db import transaction
 
 
 
@@ -1464,11 +1464,15 @@ class PettyCashSerializer(serializers.ModelSerializer):
         model = PettyCash
         fields = ['id', 'amount', 'attachment', 'company', 'date', 'employee', 'particular', 'site_location','payment_method'] 
 
+# class PaymentHistorySerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = PaymentHistory
+#         fields = ['id', 'project', 'date', 'receipt_number', 'payment_mode', 'payment_amount']
+
 class PaymentHistorySerializer(serializers.ModelSerializer):
     class Meta:
         model = PaymentHistory
-        fields = ['id', 'project', 'date', 'receipt_number', 'payment_mode', 'payment_amount']
-
+        fields = ['id', 'project', 'date', 'img','receipt_number', 'payment_method', 'payment_amount']
 
 
 
@@ -1484,6 +1488,7 @@ class dailyTaskSerializer(serializers.ModelSerializer):
         data ['unit_name'] = instance.unit.name if instance.unit else None
         data ["subcontractor_name"] =instance.subcontract.display if instance.subcontract else None
         return data 
+    
 # class SiteAllocationSerializer(serializers.ModelSerializer):
 #     class Meta:
 #         model = SiteAllocation

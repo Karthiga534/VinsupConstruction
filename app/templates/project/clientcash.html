@@ -122,11 +122,8 @@
                                                     <button type="button" class="btn btn-primary btn-sm custom-button"
                                                         data-bs-toggle="modal" data-bs-target=".bs-example-modal-lg">+
                                                         Add
-                                                        expense</button>
+                                                        Receipt</button>
 
-                                                    <!-- <a href="{% url 'payment-process' project_id=project.id %}"
-                                                        class="btn btn-primary btn-sm custom-button"
-                                                        id="create-receipt-btn"> + Create Receipt</a> -->
 
                                                 </div>
 
@@ -182,10 +179,18 @@
                                                                                         <input type="number" class="form-control" name="payment_amount" id="payment_amount" min="0.01" step="0.01">
                                                                                         <span id="payment_amountError" class="error-message"></span>
                                                                                     </div>
+                                                                                    <div class="col-md-6">
+                                                                                        <label for="" class="form-label">Upload Receipt
+                                                                                            :</label>
+                                                                                        <input type="file" class="form-control" id="img"
+                                                                                            name="img">
+                                                                                        <span id="imgError"
+                                                                                            class="error-message"></span>
+                                                                                    </div>
                                                                                 </div>
                                                                                 <div class="row mt-3 justify-content-center">
                                                                                     <div class="col-md-6">
-                                                                                        <button type="button" onclick="createFunction(this, {{ project.id }})" class="btn btn-primary d-block mx-auto">Submit Payment</button>
+                                                                                        <button type="button" onclick="createFunction(this, {{ project.id }})" class="btn btn-primary d-block mx-auto">Submit</button>
                                                                                     </div>
                                                                                 </div>
                                                                             </form>
@@ -212,6 +217,7 @@
                                                         <th>Receipt Number</th>
                                                         <th>Payment Method</th>
                                                         <th>Payment Amount</th>
+                                                        <th>Receipt</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -221,6 +227,16 @@
                                                         <td>{{ payment.receipt_number }}</td>
                                                         <td>{{ payment.payment_method }}</td>
                                                         <td>{{ payment.payment_amount }}</td>
+                                                        <td>
+                                                            {% if payment.img %}
+                                                                <a href="{{ payment.img.url }}" target="_blank">{{ payment.img.name|filename }}</a>
+                                                            {% else %}
+                                                                No Image
+                                                            {% endif %}
+                                                        </td>
+                                                        
+                                                            
+
                                                     </tr>
                                                     {% endfor %}
                                                 </tbody>
@@ -250,7 +266,7 @@
         <script>
 
 
-            const posturl = "clientcash";
+            const posturl = "clientcashpay";
 
 function createFunction(button, pk) {
     var formId = `createForm`;
