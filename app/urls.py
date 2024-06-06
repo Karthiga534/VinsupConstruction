@@ -10,7 +10,7 @@ from django.conf.urls.static import static
 from django.contrib.auth.views import LogoutView
 from django.contrib.auth import views as auth_view
 
-from .views import password_reset_request_view, password_reset_confirm_view
+
 
 urlpatterns = [
 
@@ -33,6 +33,8 @@ urlpatterns = [
     # path('save_data/<int:id>/', views.save_data, name='save_data'),
 
 #------------------------ Company Staff --------------------
+
+    path('process-status', views.get_process_status, name='process-status'),
 
 #---- Employee Role ----
 
@@ -78,6 +80,8 @@ urlpatterns = [
     path('purchaselist/',api.purchaselist,name='purchaselist'), 
 
     path('project-purchase-history/<int:pk>/',api.project_purchaselist,name='project-purchase-history'),
+
+    path("purchase-status-change/<int:pk>/",api.purchase_status_change, name = 'purchase-status-change') ,
     # path('purchase-filter/<str:pk>/', api.purchase_filter, name="purchase_filter"),
 
 #-------------------------- Quatation --------------------
@@ -414,6 +418,8 @@ path('purchase-track/<int:pk>/<int:site_or_inventory>/' , views.item_price_track
     path('delete_files/<int:pk>/', api.delete_files, name='delete_files'),
 
 
+
+# -------------------- dailytask --------------------------------------
     path('dailytask/', views.dailytask, name='dailytask'),  
     path('add_dailytask/', views.add_dailytask, name='add_dailytask'),  
     path('update_dailytask/<int:pk>/', views.update_dailytask, name='update_dailytask'), 
@@ -423,10 +429,7 @@ path('purchase-track/<int:pk>/<int:site_or_inventory>/' , views.item_price_track
     path('delete_dailytask/<int:pk>/', views.delete_dailytask, name='delete_dailytask'), 
 
 
-  
-
-
-
+# ------------------ sitestockusage  --------------
 
     path('dailysitestockusage/', api.dailysitestockusage, name='dailysitestockusage'), 
     path('add_dailysitestockusage/',api.add_dailysitestockusage, name='add_dailysitestockusage'),
@@ -438,8 +441,11 @@ path('purchase-track/<int:pk>/<int:site_or_inventory>/' , views.item_price_track
      path('save_data/<int:pk>/', api.save_data, name='save_data'),
 
 
+    path('update_sitestockusage/<int:pk>/', api.update_sitestockusage, name='update_sitestockusage'), 
+    path('delete_sitestockusage/<int:pk>/', api.delete_sitestockusage, name='delete_sitestockusage'),
 
 
+# -----------------------------------------------------------------
 
 
     path('machinaryused-list/', api.machinaryused_list, name='machinaryused-list'),

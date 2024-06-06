@@ -263,6 +263,10 @@ def project_purchaselist(request,pk):
     
     querysets =PurchaseInvoice.objects.none()
     queryset, pages, search = customPagination(request, PurchaseInvoice, querysets)
+
+    status =ProcessStatus.objects.all()
+
+    print(status)
    
     pid =pk
     inventory = True
@@ -273,12 +277,37 @@ def project_purchaselist(request,pk):
         project = get_object_or_404(Project,id=pk)
         inventory = False
     
-    context = {'queryset': queryset,"location": "project-purchase-history","pages": pages,
+    context = {'queryset': queryset,"location": "project-purchase-history","pages": pages,"status":status,
                "search": search,'pid':pk,"project":project,"inventry":inventory,'vendors':vendors}
     return render(request, "stock/sitePurchase.html", context)
 
+
+@api_view(['POST'])
+@login_required(login_url='login')
+def purchase_status_change(request,pk):
+    user =request.user
+    try:
+        instance = PurchaseInvoice.objects.get(id=pk)  # CHANGE model
+    except PurchaseInvoice.DoesNotExist:              # CHANGE model
+        return JsonResponse({'details': 'Category object does not exist'}, status=404)
+    allow,msg= check_user(request,PurchaseInvoice,instance=instance)  # CHANGE model
+    if not allow:
+        return JsonResponse({'details':[msg]}, status=status.HTTP_401_UNAUTHORIZED)
+    print('pppppppppppppppppppppppppp')
+    serializer = PurchaseInvoiceStatusSerializer(instance, data=request.data,partial=True)   # CHANGE Serializer
+    if serializer.is_valid():  
+        serializer.save()
+        stat = instance.status
+        ser = ProcessStatusSerializer(stat,many=False)
+        return JsonResponse( ser.data, status=200)
+    else:
+        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+
+
 #Inventory Management
-#--------------------
+#-------------------------------------------
 
 @login_required(login_url='login')
 def inventory(request):  #change name 
@@ -1075,7 +1104,7 @@ def project(request):  #change name
          return render(request,"login.html",context)      
     querysets = Project.objects.filter(company=request.user.company).order_by("-id")   #change query
     category =ProjectCategory.objects.filter(company=request.user.company).order_by("-id")
-    engineer =Employee.objects.filter(company=request.user.company).order_by("-id")
+    engineer =Employee.objects.filter(company=request.user.company,user__disable = False).order_by("-id")
     duration =Duration.objects.all()
     priority =Priority.objects.all()
     print(category)
@@ -2176,7 +2205,7 @@ def get_sub_contract_lists(request, project_id):
         return Response({'error': 'Project Sub Contract not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
-#------------------------------------------------Daily Site Stock Usage----------------------------------------
+#------------------------------------------------ Daily Site Stock Usage----------------------------------------
 
 @login_required(login_url='login')
 def dailysitestockusage(request):
@@ -2221,33 +2250,53 @@ def dailysitestockusage(request):
     projects = Project.objects.filter(company=user.company).order_by("-id")
 
     from_site = request.GET.get('from', "")
-    # items = []
-    # if from_site:
-    #     pro = projects.filter(id=from_site).last()
-    #     subcontractors = ProjectSubContract.objects.filter(project=pro)
-    # else:
-    #     items = InventoryStock.objects.filter(company=user.company).order_by("-id")
-
-    #querysets = DailySiteStockUsage.objects.filter(company=user.company).order_by("-id")
-    # querysets = DailySiteStockUsage.objects.all().order_by("-id")
-    # queryset, pages, search = customPagination(request, DailySiteStockUsage, querysets)
-   
-
+  
     context = {
-        # 'queryset': queryset,
         "location": "transfer",
-        # "pages": pages,
-        # "search": search,
         "projects": projects,
         "subcontracts": subcontracts,
-        # "inventory": user.company,
-        # 'items': items,
-      
-        
+ 
     }
     return render(request, "sitestock/dailysitestockusagelist.html", context)
 
+# site stock update 
+@api_view(['PUT'])
+@login_required(login_url='login')
+def update_sitestockusage(request, pk):  
+    user=request.user
 
+    try:
+        instance = DailySiteStockUsage.objects.get(id=pk)  
+    except DailySiteStockUsage.DoesNotExist:             
+        return JsonResponse({'details': ['Item does not exist']}, status=404)
+
+    allow,msg= check_user(request,DailySiteStockUsage,instance=instance)  
+    if not allow:
+        return JsonResponse({'details':[msg]}, status=status.HTTP_401_UNAUTHORIZED)
+
+    serializer = DailySiteStockUsageSerializer(instance, data=request.data,partial=True)   
+    if serializer.is_valid():  
+        serializer.save()
+        return JsonResponse( serializer.data, status=200)
+    else:
+        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+# dlete stock usage
+@api_view(['DELETE'])
+@login_required(login_url='login')
+def delete_sitestockusage(request,pk):
+    user=request.user
+    try:
+        instance = DailySiteStockUsage.objects.get(id=pk) 
+        allow,msg= check_user(request,DailySiteStockUsage,instance=instance)  
+        if not allow:
+            return JsonResponse({'details':[msg]}, status=status.HTTP_401_UNAUTHORIZED)
+        instance.delete()
+        return JsonResponse( {'details': ['success']},status=204)
+    except Dailytask.DoesNotExist:  
+        return JsonResponse({'details': ['Item does not exist']}, status=404)
+    
 
 
 @api_view(['POST'])
@@ -2350,7 +2399,7 @@ def save_data(request, pk):
 
 
 
-
+# --------------------------------------------------------------------------
 
 
 

@@ -34,7 +34,7 @@ class ProcessStatus(models.Model):
     classname = models.CharField(max_length=256, null=True, blank=True)
 
     def __str__(self):
-        return f'(self.name)'
+        return f'{self.name}'
 
 class PaymentStatus(models.Model):
     name = models.CharField(max_length=50, null=True, blank=True)
@@ -969,9 +969,9 @@ class VendorQuatation(models.Model):
 
 class Contractor(models.Model):
     company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
-    name = models.CharField(max_length=100)
-    contact_no = models.CharField(max_length=15)
-    address = models.CharField(max_length=255)
+    name = models.CharField(max_length=100,null=True,blank=True)
+    contact_no = models.CharField(max_length=15,null=True,blank=True)
+    address = models.CharField(max_length=255,null=True,blank=True)
     area = models.CharField(max_length=100,null=True,blank=True)
     rate = models.DecimalField(max_digits=10, decimal_places=2)
     unit=models.ForeignKey(Uom, on_delete=models.CASCADE,null=True,blank=True)
@@ -982,8 +982,8 @@ class Contractor(models.Model):
     male_unskilled = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     female_skilled = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     female_unskilled = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    category = models.ForeignKey(Contractcategory, on_delete=models.CASCADE)
-    start_date=models.DateField()
+    category = models.ForeignKey(Contractcategory, on_delete=models.CASCADE,null=True,blank=True)
+    start_date=models.DateField(null=True,blank=True)
 
     def __str__(self):
         return self.name
@@ -1169,7 +1169,7 @@ class Project(models.Model):
 
 
 class InventoryStock(models.Model):
-    company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
+    company=models.ForeignKey(Company,related_name='inventory_stocks', on_delete=models.CASCADE,null=True,blank=True)
     item=models.ForeignKey(MaterialLibrary, on_delete=models.CASCADE,null=True,blank=True)
     name= models.CharField(max_length=255,null=True,blank=True)
     total_supplied_qty=models.DecimalField(max_digits=10, decimal_places=2, default=0.0) 
@@ -1336,7 +1336,6 @@ class PurchaseInvoice(models.Model):
             # You can generate it based on your specific requirements
             # For example, combining company_id with a unique identifier
             self.invoice_id = f'{self.company_id}-{self.generate_unique_identifier()}'
-
         super().save(*args, **kwargs)
 
 
@@ -1409,6 +1408,7 @@ class Quatation(models.Model):
 class QuatationItems(models.Model):
     invoice=models.ForeignKey(Quatation, on_delete=models.CASCADE,null=True,blank=True)
     inventory=models.ForeignKey(InventoryStock, on_delete=models.CASCADE,null=True,blank=True)   #change
+    item =models.ForeignKey(MaterialLibrary,on_delete=models.CASCADE,null=True,blank=True)
     name= models.CharField(max_length=255,null=True,blank=True)
     qty=models.DecimalField(max_digits=10, decimal_places=2, default=0.0)   #change
     unit=models.ForeignKey(Uom, on_delete=models.CASCADE,null=True,blank=True)    #change
@@ -2157,8 +2157,8 @@ class PettyCash(models.Model):
 
 
 class PaymentHistory(models.Model):
-    project = models.ForeignKey(Project, on_delete=models.CASCADE) 
-    date = models.DateField()
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, null=True, blank=True)
+    date = models.DateField(null=True,blank=True)
     receipt_number = models.CharField(max_length=100)
     payment_method = models.ForeignKey(PaymentMethod, on_delete=models.CASCADE, null=True, blank=True)
     payment_amount = models.DecimalField(max_digits=10, decimal_places=2)
@@ -2172,9 +2172,6 @@ class DailySiteStockUsage(models.Model):
     date = models.DateField(auto_now_add=True)
     qty = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
     unit = models.ForeignKey(Uom,on_delete=models.CASCADE,null=True,blank=True)
-
-
-
 
 # @property
 #   def get_dailysitestockusage_items(self):

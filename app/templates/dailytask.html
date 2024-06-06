@@ -41,7 +41,7 @@
                                     <div class="col-xl-2 col-lg-2 col-md-2 col-12">
                                         <button type="button" class="btn btn-info" style="float:right;"
                                             data-bs-toggle="modal" data-bs-target=".bs-example-modal-lg">+ Add
-                                           </button>
+                                        </button>
                                         <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog"
                                             aria-labelledby="myLargeModalLabel" aria-hidden="true">
                                             <div class="modal-dialog modal-lg">
@@ -68,7 +68,7 @@
                                                                         <span id="dateError"
                                                                             class="error-message"></span>
                                                                     </div>
-                                                                    
+
                                                                     <div class="col-md-6 mt-2">
                                                                         <label for="id_qty"
                                                                             class="form-label">Quantity:</label>
@@ -84,8 +84,9 @@
                                                                             name="unit">
                                                                             <option value=""> ------- </option>
                                                                             {% for uom in uoms %}
-                                                                            <option value="{{ uom.id }}">{{ uom.name }}</option>
-                                                                            
+                                                                            <option value="{{ uom.id }}">{{ uom.name }}
+                                                                            </option>
+
                                                                             {% endfor %}
                                                                         </select>
                                                                         <span id="unitError"
@@ -94,42 +95,54 @@
                                                                     <div class="col-md-6 mt-2">
                                                                         <label for="id_project"
                                                                             class="form-label">Project:</label>
-                                                                        <select class="form-select" id="project" name="project">
-                                                                           
+                                                                        <select class="form-select" id="project"
+                                                                            name="project">
+
                                                                             <option value=""> ------- </option>
                                                                             {% for i in projects %}
                                                                             <option value="{{ i.id }}">{{i.proj_name }}
-                                                                                </option>
+                                                                            </option>
                                                                             {% endfor %}
                                                                         </select>
                                                                         <span id="projectError"
                                                                             class="error-message"></span>
                                                                     </div>
                                                                     <div class="col-md-6 mt-2">
-                                                                        <label for="id_subcontract" class="form-label">Subcontract:</label>
-                                                                        <select class="form-select" id="subcontract" name="subcontract">
+                                                                        <label for="id_subcontract"
+                                                                            class="form-label">Subcontract:</label>
+                                                                        <select class="form-select" id="subcontract"
+                                                                            name="subcontract">
                                                                             <option value=""> ------- </option>
                                                                             {% for subcontract in subcontracts %}
-                                                                                <option value="{{ subcontract.id }}">{{ subcontract.display_contractor_dropdown }}</option>
+                                                                            <option value="{{ subcontract.id }}">{{
+                                                                                subcontract.display_contractor_dropdown
+                                                                                }}</option>
                                                                             {% endfor %}
                                                                         </select>
-                                                                        <span id="subcontractError" class="error-message"></span>
+                                                                        <span id="subcontractError"
+                                                                            class="error-message"></span>
                                                                     </div>
 
-
+                                                                </div>
 
                                                                 <div class="row mt-2">
-                                                                        <label for="work_done"
-                                                                            class="form-label">Work_done:</label>
-                                                                            <textarea name="work_done" class="form-control" id="work_done" rows="4"></textarea>
+                                                                    <div>
+
+
+                                                                        <label for="work_done" class="form-label">Work
+                                                                            Done:</label>
+                                                                        <textarea name="work_done" class="form-control"
+                                                                            id="work_done" rows="4"></textarea>
                                                                         <span id="work_doneError"
                                                                             class="error-message"></span>
-                                                                    </div> 
-                                                                    
+                                                                    </div>
+
                                                                 </div>
+
+
                                                             </form>
                                                         </div>
-                                                        
+
 
                                                         <hr>
                                                         <div class="modal-footer">
@@ -166,7 +179,7 @@
                                             <th data-ordering="false">Project</th>
                                             <th data-ordering="false">Subcontract</th>
                                             <!-- <th data-ordering="false">subcontract_items</th> -->
-                                            <th data-ordering="false" class="work_done">Work_done</th>
+                                            <th data-ordering="false" class="work_done">Work done</th>
                                             <th data-ordering="false">Qty</th>
                                             <th data-ordering="false">Unit</th>
                                             <th data-ordering="false">Action</th>
@@ -200,13 +213,11 @@
                                                                 data-bs-target="#procatview"><i
                                                                     class="ri-eye-fill align-bottom me-2 text-muted"></i>
                                                                 View</a></li> -->
-                                                        <li><a class="dropdown-item edit-item-btn"
-                                                                data-bs-toggle="modal" href="#!"
+                                                        <li><a class="dropdown-item edit-item-btn" href="#!"
                                                                 onclick="openModal('viewModal','{{ i.id }}')"><i
                                                                     class="ri-eye-fill align-bottom me-2 text-muted"></i>
                                                                 View</a></li>
-                                                        <li><a class="dropdown-item edit-item-btn"
-                                                                data-bs-toggle="modal" href="#!"
+                                                        <li><a class="dropdown-item edit-item-btn" href="#!"
                                                                 onclick="openModal('editModal','{{ i.id }}')"><i
                                                                     class="ri-pencil-fill align-bottom me-2 text-muted"></i>
                                                                 Edit</a></li>
@@ -244,9 +255,10 @@
                                                                             :</label>
                                                                         <input type="text" class="form-control"
                                                                             id="{{i.id}}_date" name="date"
-                                                                            value="{{i.date}}" disabled />
+                                                                            value="{{i.date |date:'Y-m-d'  }}"
+                                                                            disabled />
                                                                     </div>
-                                                                    
+
                                                                     <div class="col-md-6 mt-2">
                                                                         <label for="{{i.id}}_qty"
                                                                             class="form-label">Quantity :</label>
@@ -274,10 +286,11 @@
                                                                         <label for="{{i.id}}_subcontract"
                                                                             class="form-label">subcontract :</label>
                                                                         <input type="text" class="form-control"
-                                                                            id="{{i.id}}_subcontract" value="{{i.subcontract.display_contractor_dropdown }}"
+                                                                            id="{{i.id}}_subcontract"
+                                                                            value="{{i.subcontract.display_contractor_dropdown }}"
                                                                             disabled />
                                                                     </div>
-<!-- 
+                                                                    <!-- 
                                                                     <div class="col-md-6 mt-2">
                                                                         <label for="{{i.id}}_subcontract_items"
                                                                             class="form-label">Subcontract Items
@@ -286,17 +299,28 @@
                                                                             id="{{i.id}}_subcontract_items"
                                                                             value="{{i.subcontract_items}}" disabled />
                                                                     </div> -->
-                                                                    <div class="row mt-2">
-                                                                        <label for="{{i.id}}_work_done"
-                                                                            class="form-label">Work Done :</label>
-                                                                        <textarea class="form-control"
-                                                                            id="{{i.id}}_work_done"
-                                                                            disabled>{{i.work_done}}</textarea>
-                                                                    </div>
-
-
 
                                                                 </div>
+
+
+                                                                <div class="row mt-2">
+
+                                                                    <div>
+
+                                                                    
+                                                                    <label for="{{i.id}}_work_done"
+                                                                        class="form-label">Work Done :</label>
+                                                                    <textarea class="form-control"
+                                                                        id="{{i.id}}_work_done"
+                                                                        disabled>{{i.work_done}}</textarea>
+
+
+                                                                    </div>
+                                                                </div>
+
+
+
+
                                                             </div>
 
                                                             <div class="modal-footer mt-3">
@@ -336,11 +360,11 @@
                                                                             <label for="{{ i.id }}_date">Date:</label>
                                                                             <input type="date" class="form-control"
                                                                                 name="date" id="{{ i.id }}_date"
-                                                                                value="{{ i.date|date:'Y-m-d' }}" />
+                                                                                value="{{ i.date |date:'Y-m-d'  }}" />
                                                                             <span id="{{i.id}}_dateError"
                                                                                 class="error-message"></span>
                                                                         </div>
-                                                                       
+
                                                                         <div class="col-md-6 ">
                                                                             <label
                                                                                 for="{{ i.id }}_qty">Quantity:</label>
@@ -351,16 +375,16 @@
                                                                                 class="error-message"></span>
                                                                         </div>
                                                                         <div class="col-md-6 mt-2">
-                                                                            <label
-                                                                                for="{{ i.id }}_unit">Unit:</label>
+                                                                            <label for="{{ i.id }}_unit">Unit:</label>
                                                                             <select class="form-select"
                                                                                 id="{{ i.id }}_unit" name="unit">
                                                                                 <option value="{{ i.unit.id }}"
                                                                                     selected>{{ i.unit }}</option>
-                                                                               
+
                                                                                 {% for uom in uoms %}
-                                                                                <option value="{{ uom.id }}">{{ uom.name }}</option>
-                                                                                   
+                                                                                <option value="{{ uom.id }}">{{ uom.name
+                                                                                    }}</option>
+
                                                                                 {% endfor %}
                                                                             </select>
                                                                             <span id="{{i.id}}_unitError"
@@ -377,8 +401,9 @@
                                                                                 <option value="" disabled>
                                                                                     ---------------- </option>
                                                                                 {% for project in projects %}
-                                                                                <option value="{{ project.id }}">{{ project.proj_name }}</option>
-                                                                                   
+                                                                                <option value="{{ project.id }}">{{
+                                                                                    project.proj_name }}</option>
+
                                                                                 {% endfor %}
                                                                             </select>
                                                                             <span id="{{i.id}}_projectError"
@@ -391,13 +416,17 @@
                                                                                 id="{{ i.id }}_subcontract"
                                                                                 name="subcontract">
                                                                                 <option value="{{ i.subcontract.id }}"
-                                                                                    selected>{{ i.subcontract.display_contractor_dropdown }}
+                                                                                    selected>{{
+                                                                                    i.subcontract.display_contractor_dropdown
+                                                                                    }}
                                                                                 </option>
                                                                                 <option value="" disabled>
                                                                                     ---------------- </option>
                                                                                 {% for subcontract in subcontracts %}
-                                                                                <option value="{{ subcontract.id }}">{{subcontract.display_contractor_dropdown }}</option>
-                                                                                    
+                                                                                <option value="{{ subcontract.id }}">
+                                                                                    {{subcontract.display_contractor_dropdown
+                                                                                    }}</option>
+
                                                                                 {% endfor %}
                                                                             </select>
                                                                             <span id="{{i.id}}_subcontractError"
@@ -432,7 +461,8 @@
                                                                                 Done:</label>
                                                                             <textarea class="form-control"
                                                                                 id="{{ i.id }}_work_done"
-                                                                                name="work_done" rows="4">{{ i.work_done }}</textarea>
+                                                                                name="work_done"
+                                                                                rows="4">{{ i.work_done }}</textarea>
                                                                             <span id="{{i.id}}_work_doneError"
                                                                                 class="error-message"></span>
                                                                         </div>
@@ -585,7 +615,7 @@
                 var requiredKeys = ['date'];   //change
 
 
-                
+
                 formData.append('date', getValueOrDefault(formElement.querySelector('input[name="date"]').value));
                 formData.append('project', getValueOrDefault(formElement.querySelector('select[name="project"]').value));
                 formData.append('subcontract', getValueOrDefault(formElement.querySelector('select[name="subcontract"]').value));
@@ -595,7 +625,7 @@
                 formData.append('unit', getValueOrDefault(formElement.querySelector('select[name="unit"]').value));
 
 
-               
+
                 // var attachment = document.querySelector('#createForm input[type="file"]').files[0];
                 // if (attachment) {
                 //     formData.append("attachment", attachment);
@@ -698,7 +728,7 @@
                 // formData.append('subcontract_items', getValueOrDefault(formElement.querySelector('select[name="subcontract_items"]').value));
                 formData.append('work_done', getValueOrDefault(formElement.querySelector('textarea[name="work_done"]').value));
                 formData.append('qty', getValueOrDefault(formElement.querySelector('input[name="qty"]').value));
-                
+
                 formData.append('unit', getValueOrDefault(formElement.querySelector('select[name="unit"]').value));
 
 
