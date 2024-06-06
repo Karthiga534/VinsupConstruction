@@ -983,7 +983,7 @@ class Contractor(models.Model):
     female_skilled = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     female_unskilled = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     category = models.ForeignKey(Contractcategory, on_delete=models.CASCADE)
-    start_date=models.DateField()
+    start_date=models.DateField(null=True,blank=True)
 
     def __str__(self):
         return self.name
