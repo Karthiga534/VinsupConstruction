@@ -118,12 +118,9 @@ class   PurchaseItemsSerializer(serializers.ModelSerializer):
 
         inventory_item, inventory_created = InventoryStock.objects.get_or_create(item = item,unit=unit)
 
-<<<<<<< HEAD
         inventory_item.qty = ( 0 if site else Decimal(inventory_item.qty)) + qty_to_add
-=======
         # if site  is there set item purchased for particular site so no need to manipulate inventory stock
         inventory_item.qty = ( 0 if site else Decimal(qty_to_add )) + Decimal(inventory_item.qty)
->>>>>>> origin/cms
         if not inventory_item.price:
             inventory_item.price =  Decimal(validated_data.get('price', 0))
         inventory_item.total_amount = inventory_item.qty * inventory_item.price

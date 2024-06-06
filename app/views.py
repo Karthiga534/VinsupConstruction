@@ -3228,7 +3228,6 @@ def purchasetableupdate(request, id):
         
         return redirect('purchaselist')
     
-<<<<<<< HEAD
     items = MaterialLibrary.objects.all()
     uom = Uom.objects.all()
 
@@ -3270,11 +3269,10 @@ def quatationtableupdate(request, id):
         'inventory': inventory,
         'uom': uom,
     })
-=======
-        except json.JSONDecodeError:
-            return JsonResponse({'error': 'Invalid JSON format'}, status=400)
-        except Exception as e:
-            return JsonResponse({'error': str(e)}, status=500)
+        # except json.JSONDecodeError:
+        #     return JsonResponse({'error': 'Invalid JSON format'}, status=400)
+        # except Exception as e:
+        #     return JsonResponse({'error': str(e)}, status=500)
 
 
 
@@ -3298,4 +3296,3 @@ def item_price_track(request,pk,site_or_inventory):
     }
 
     return Response(results)
->>>>>>> origin/cms
