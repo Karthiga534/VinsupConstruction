@@ -414,6 +414,8 @@ path('purchase-track/<int:pk>/<int:site_or_inventory>/' , views.item_price_track
 
    path('dailysitestockusage/', api.dailysitestockusage, name='dailysitestockusage'),
 
+     path('save_data/<int:pk>/', api.save_data, name='save_data'),
+
 
 
 

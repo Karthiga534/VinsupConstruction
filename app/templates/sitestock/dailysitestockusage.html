@@ -46,7 +46,7 @@
 											<label for="project" class="form-label">Project:</label>
 											<select class="form-select" id="project" name="project">
 											
-												<option value="0">All</option>
+												<option value="0" selected>--------</option>
 											
 												{% for project in projects %}
 												<!--  -->
@@ -58,18 +58,18 @@
 										</div>
 										
 										<div class="col-md-4 mb-3 mt-4">
-											<label for="subcontractor" class="form-label">Subcontractor:</label>
-											<select class="form-select" id="subcontractor" name="subcontractor">
+											<label for="subcontract" class="form-label">Subcontract:</label>
+											<select class="form-select" id="subcontract" name="subcontract">
 												
 												<option value="0" selected>--------</option>
 										
-												{% for subcontract in subcontractors %}
+												{% for subcontract in subcontracts %}
 										
 												<option value="{{ subcontract.id }}">{{ subcontract.display_contractor_dropdown }}</option>
 											
 												{% endfor %}
 											</select>
-											<span id="subcontractorError" class="error-message"></span>
+											<span id="subcontractError" class="error-message"></span>
 										</div>
 									
 										<div class="col-md-4 mb-3 mt-4">
@@ -100,6 +100,7 @@
 													<th>Unit</th>
 
 													<th>Qty</th>
+													
 
 													<th>Supply Qty</th>
 													
@@ -197,6 +198,7 @@
 		document.addEventListener('DOMContentLoaded', function () {
 
 			const dropdown = document.getElementById('project');
+			// const dropdown = document.getElementById('subcontract');
 			const tableBody = document.querySelector('#tab1 tbody');
 
 
@@ -388,7 +390,7 @@
 				
 				var tableData = [];
 				project=getValueOrDefault(formElement.querySelector('select[name="project"]').value)
-				subcontract=getValueOrDefault(formElement.querySelector('select[name="subcontractor"]').value)
+				subcontract=getValueOrDefault(formElement.querySelector('select[name="subcontract"]').value)
 				date=getValueOrDefault(formElement.querySelector('input[name="date"]').value)
 
 				table_Data.forEach((item)=> {
@@ -400,7 +402,7 @@
 					// rowData['unit'] = $(this).find('select[name^="unit"]').val();
 					
 					// rowData['qty'] = $(this).find('input[name^="qty"]').val();
-					item['proj_name'] = project
+					item['project'] = project
 					item['subcontract'] = subcontract
 					item['date'] = date
 				

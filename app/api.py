@@ -2174,14 +2174,14 @@ def dailysitestockusage(request):
         context = {"unauthorized": msg}
         return render(request, "login.html", context)
 
-    subcontractors = ProjectSubContract.objects.filter(company=user.company).order_by("-id")
+    subcontracts = ProjectSubContract.objects.filter(company=user.company).order_by("-id")
     projects = Project.objects.filter(company=user.company).order_by("-id")
 
     from_site = request.GET.get('from', "")
     items = []
     if from_site:
         pro = projects.filter(id=from_site).last()
-        subcontractors = ProjectSubContract.objects.filter(project=pro)
+        subcontracts = ProjectSubContract.objects.filter(project=pro)
     else:
         items = InventoryStock.objects.filter(company=user.company).order_by("-id")
 
@@ -2196,7 +2196,7 @@ def dailysitestockusage(request):
         "pages": pages,
         "search": search,
         "projects": projects,
-        "subcontractors": subcontractors,
+        "subcontracts": subcontracts,
         "inventory": user.company,
         'items': items,
       
@@ -2212,7 +2212,7 @@ def sitestockusage(request):
         context = {"unauthorized": msg}
         return render(request, "login.html", context)
 
-    subcontractors = ProjectSubContract.objects.filter(company=user.company).order_by("-id")
+    subcontracts = ProjectSubContract.objects.filter(company=user.company).order_by("-id")
     projects = Project.objects.filter(company=user.company).order_by("-id")
 
     from_site = request.GET.get('from', "")
@@ -2234,7 +2234,7 @@ def sitestockusage(request):
         # "pages": pages,
         # "search": search,
         "projects": projects,
-        "subcontractors": subcontractors,
+        "subcontracts": subcontracts,
         # "inventory": user.company,
         # 'items': items,
       
@@ -2289,6 +2289,41 @@ def dailysitestockusagelist(request, pk):
         querysets =querysets.filter(subcontract__id=subcontid)
     # ser = DailySiteStockUsageSerializer(querysets,many=True)
     return PaginationAndFilter(querysets, request, DailySiteStockUsageSerializer,date_field='created_at')
+
+
+
+
+@api_view(['POST'])
+@login_required(login_url='login')
+def save_data(request, pk):  
+    if request.method == "POST":
+        try:
+            # Retrieve data from the request
+            subcontract_name = request.POST.get('subcontract_name')
+            project_name = request.POST.get('project_name')
+            qty = request.POST.get('qty')
+            unit_name = request.POST.get('unit_name')
+            item_name = request.POST.get('item_name')
+
+            obj, created = DailySiteStockUsage.objects.update_or_create(
+                id=pk,
+                defaults={
+                    'subcontract_name': subcontract_name,
+                    'project_name': project_name,
+                    'qty': qty,
+                    'unit_name': unit_name,
+                    'item_name': item_name
+                   
+                }
+            )
+            # Return success response
+            return JsonResponse({'success': True, 'message': 'Data saved successfully.'}, status=200)
+        except Exception as e:
+            # Return error response
+            return JsonResponse({'success': False, 'message': str(e)}, status=400)
+    else:
+        # Return method not allowed response for non-POST requests
+        return JsonResponse({'success': False, 'message': 'Method not allowed.'}, status=405)
     
 
 
