@@ -111,25 +111,27 @@ WSGI_APPLICATION = 'constructionpro.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     },
-# }
-
-
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.getenv("psql_database"),
-        'USER': os.getenv('psql_user'),
-        'PASSWORD': os.getenv('psql_password'),
-        'HOST': os.getenv('psql_host'),
-        'PORT': os.getenv('psql_port'),
-    }
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    },
 }
+
+
+
+
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': os.getenv("psql_database"),
+#         'USER': os.getenv('psql_user'),
+#         'PASSWORD': os.getenv('psql_password'),
+#         'HOST': os.getenv('psql_host'),
+#         'PORT': os.getenv('psql_port'),
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
