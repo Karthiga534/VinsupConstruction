@@ -288,8 +288,56 @@
 
 
         // MANIPULATE TABLE DATA
-        {% comment %} function createTableRow(serialNumber, data) {
+        //  function createTableRow(serialNumber, data) {
           
+        //     const newRow = document.createElement('tr');
+        //     newRow.setAttribute('data-item-id', data.id);
+
+        //     const idCell = createSerialCell(serialNumber);
+        //     newRow.appendChild(idCell);
+
+        //     const td2 = createTableCell(get_value(data.created_at));
+        //     newRow.appendChild(td2);
+
+        //     const td3 = createTableCell(get_value(data.invoice_id));
+        //     newRow.appendChild(td3);
+
+        //     const td4 = createTableCell(get_value(data.vendor_name));
+        //     newRow.appendChild(td4);
+
+        //     const td5 = createAmountCell(get_value(data.total_amount));
+        //     newRow.appendChild(td5);
+
+        //     const td6 = createTableCell(get_value(data.paid));
+        //     newRow.appendChild(td6);
+
+        //     const td7 = createTableCell(get_value(data.pending));
+        //     newRow.appendChild(td7);
+
+            
+
+
+        //     const td8 = createStatusCell(get_value(data.status_name),data.status_class);
+         
+        //     newRow.appendChild(td8);
+
+        //     // actioncell
+        //     const actionCell = createViewActionCell('invoiceHistoryModal');
+        //     newRow.appendChild(actionCell);
+
+        //     // click event
+        //     actionCell.addEventListener('click', () => {
+        //         populateModalTable(data.get_purchase_items, modalTableBody);
+        //     });
+
+            
+
+        //     return newRow;
+        // } 
+
+
+        // MANIPULATE TABLE DATA
+        function createTableRow(serialNumber, data) {
             const newRow = document.createElement('tr');
             newRow.setAttribute('data-item-id', data.id);
 
@@ -314,83 +362,35 @@
             const td7 = createTableCell(get_value(data.pending));
             newRow.appendChild(td7);
 
-            
-
 
             const td8 = createStatusCell(get_value(data.status_name),data.status_class);
-         
+                
             newRow.appendChild(td8);
 
             // actioncell
             const actionCell = createViewActionCell('invoiceHistoryModal');
             newRow.appendChild(actionCell);
 
-            // click event
             actionCell.addEventListener('click', () => {
-                populateModalTable(data.get_purchase_items, modalTableBody);
-            });
+               populateModalTable(data.get_purchase_items, modalTableBody);
+             });
 
-            
+
+
+            // Create Edit button
+            const editButton = document.createElement('button');
+            editButton.innerHTML = '<i class="fas fa-edit"></i>';
+            editButton.className = 'btn btn-primary edit-btn';
+            editButton.title = 'Edit';
+            editButton.addEventListener('click', () => {
+                const rowDataId = data.id;
+                // Redirect to a new page with the ID
+                window.location.href = `/purchase_update/${rowDataId}/`;
+            });
+            actionCell.appendChild(editButton); 
 
             return newRow;
-        } {% endcomment %}
-
-
-        // MANIPULATE TABLE DATA
-function createTableRow(serialNumber, data) {
-    const newRow = document.createElement('tr');
-    newRow.setAttribute('data-item-id', data.id);
-
-    const idCell = createSerialCell(serialNumber);
-    newRow.appendChild(idCell);
-
-    const td2 = createTableCell(get_value(data.created_at));
-    newRow.appendChild(td2);
-
-    const td3 = createTableCell(get_value(data.invoice_id));
-    newRow.appendChild(td3);
-
-    const td4 = createTableCell(get_value(data.vendor_name));
-    newRow.appendChild(td4);
-
-    const td5 = createAmountCell(get_value(data.total_amount));
-    newRow.appendChild(td5);
-
-    const td6 = createTableCell(get_value(data.paid));
-    newRow.appendChild(td6);
-
-    const td7 = createTableCell(get_value(data.pending));
-    newRow.appendChild(td7);
-
-    // actioncell
-    const actionCell = createViewActionCell('invoiceHistoryModal');
-    newRow.appendChild(actionCell);
-
-    // Click event for viewing details
-    const viewDetailsButton = document.createElement('button');
-    viewDetailsButton.innerHTML = '<i class="fas fa-eye"></i>';
-    viewDetailsButton.className = 'btn btn-info';
-    viewDetailsButton.title = 'View Details';
-    viewDetailsButton.addEventListener('click', () => {
-        populateModalTable(data.get_purchase_items, modalTableBody);
-    });
-    actionCell.appendChild(viewDetailsButton);
-
-    // Create Edit button
-    const editButton = document.createElement('button');
-    editButton.innerHTML = '<i class="fas fa-edit"></i>';
-    editButton.className = 'btn btn-primary edit-btn';
-    editButton.title = 'Edit';
-    editButton.addEventListener('click', () => {
-        // Extract the ID of the row's data
-        const rowDataId = data.id;
-        // Redirect to a new page with the ID
-        window.location.href = `/purchase_update/${rowDataId}/`;
-    });
-    actionCell.appendChild(editButton); 
-
-    return newRow;
-}
+        }
 
 
 
