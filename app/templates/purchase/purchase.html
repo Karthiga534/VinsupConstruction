@@ -222,7 +222,7 @@
 															<div class="dropdown d-inline-block">
 																<button
 																	class="btn btn-soft-secondary btn-sm dropdown add-row"
-																	type="button" data-bs-toggle="dropdown"
+																	type="button" 
 																	aria-expanded="false">
 																	<i class="ri-add-fill align-middle"></i>
 																</button>
@@ -307,6 +307,8 @@
 
 </div>
 <!-- END layout-wrapper -->
+
+
 
 
 
@@ -591,7 +593,7 @@
 				success: function (response, status, xhr) {
 					console.error(status);
 					if (xhr.status === 201) {
-						showToast(successMesssage?.message, '', successMesssage?.bgColor, true);
+						showToast(successMesssage?.message, '', successMesssage?.bgColor, );
 						enableButton(button);
 					} else {
 						console.error(error);
@@ -631,7 +633,7 @@
 			console.error(error);
 		}
 		finally {
-			restoreForm(formId, button)
+			// restoreForm(formId, button)
 		}
 	}
 

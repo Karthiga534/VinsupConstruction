@@ -4,6 +4,8 @@
 
 {% block header2 %}
 
+
+
 <!-- Begin page -->
 <div id="layout-wrapper">
     <div class="main-content">
@@ -44,7 +46,7 @@
                                     </div>
                                 </div>
                             </div>
-                      
+
 
                             {% else %}
 
@@ -61,7 +63,7 @@
                                 </div>
 
                                 <div class="row">
-                                 
+
                                     <div class="col-md-4 mt-2">
                                         <label for="" class="form-label">Client Name:</label>
                                         <input type="text" class="form-control" name="client" value="{{project.client}}"
@@ -107,27 +109,28 @@
                                 <div class="row mt-3">
                                     <div class="col bg-primary-subtle p-3 text-center m-2">
                                         <h5> Total Purchase Amount </h5>
-                                        <h5 id="total_purchase_amount" >{{ project.total_purchase_amount }}</h5>
-                                    
+                                        <h5 id="total_purchase_amount">{{ project.total_purchase_amount }}</h5>
+
                                     </div>
 
                                     <div class="col bg-primary-subtle p-3 text-center m-2">
                                         <h5> Total Paid Amount </h5>
-                                        <h5 id="total_purchase_paid_amount">{{ project.total_purchase_paid_amount }}</h5>
-                                    
+                                        <h5 id="total_purchase_paid_amount">{{ project.total_purchase_paid_amount }}
+                                        </h5>
+
                                     </div>
                                 </div>
-                                
+
                             </div>
 
 
 
                             <div class="card-body">
                                 <div class="row">
-                                    <input type="text" id ="pid" value="{{pid}}" hidden>
+                                    <input type="text" id="pid" value="{{pid}}" hidden>
                                     <div class="col-xl-3 col-lg-3 col-md-3 col-xs-6 col-12">
                                         <label for="vendor" class="form-label">Vendor Name:</label>
-                                        <select class="form-select mb-3" aria-label="Default select example" 
+                                        <select class="form-select mb-3" aria-label="Default select example"
                                             id="filterdropdown1" name="vendor">
                                             <option value="{{0}}">All</option>
                                             {% for vendor in vendors %}
@@ -146,8 +149,8 @@
                                         <input type="date" class="form-control" id="toDate">
                                     </div>
                                     <div class="col-xl-3 col-lg-3 col-md-3 col-xs-6 col-12">
-                                        <br><button type="button"
-                                            class="btn btn-primary waves-effect waves-light mt-2" onclick="getReport(this,'example')">Get Report</button>
+                                        <br><button type="button" class="btn btn-primary waves-effect waves-light mt-2"
+                                            onclick="getReport(this,'example')">Get Report</button>
                                     </div>
 
                                 </div>
@@ -327,6 +330,47 @@
 
 
 
+
+    <div class="modal fade bs-example-modal-md" tabindex="-1" role="dialog" id="statusmodel"
+    aria-labelledby="myLargeModalLabel-1" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myLargeModalLabel-1"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+            <hr>
+            <form id="clocKInForm">
+                <div class="modal-body">
+
+
+                    <div class="row">
+                        <select class="form-select mb-3" aria-label="Default select example"
+                        id="filterdropdown1" name="status">
+                       
+                        {% for i in status %}
+                        <option value="{{ i.id }}">{{ i.name |title }}</option>
+                        {% endfor %}
+                    </select>
+                    </div>
+
+                </div>
+
+            </form>
+
+            <hr>
+            <div class="modal-footer">
+                <button class="btn btn-link link-success fw-medium shadow-none" data-bs-dismiss="modal"><i
+                        class="ri-close-line me-1 align-middle"></i> Close</button>
+                <button type="button"  class="btn btn-primary" id="update-button"
+                    data-target='clockInModal' onclick="updateStatus(this)">Save </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
     <!--start back-to-top-->
     <button onclick="topFunction()" class="btn btn-danger btn-icon" id="back-to-top">
         <i class="ri-arrow-up-line"></i>
@@ -349,7 +393,7 @@
 
         let activePage;
 
-     
+
         // fetch url
         let fetchUrl = "purchase-list"
 
@@ -366,8 +410,8 @@
 
         const pidElement = document.getElementById('pid');
 
-        const total_purchase_amount =document.getElementById('total_purchase_amount')
-        const paidamountelement =document.getElementById('total_purchase_paid_amount')
+        const total_purchase_amount = document.getElementById('total_purchase_amount')
+        const paidamountelement = document.getElementById('total_purchase_paid_amount')
 
         var currentPage = 1;
 
@@ -439,7 +483,7 @@
         }
 
 
-        
+
 
 
         // MANIPULATE TABLE DATA
@@ -471,18 +515,32 @@
             newRow.appendChild(td7);
 
 
-            const td8 = createStatusCell(get_value(data.status_name),data.status_class);
+            const td8 = createStatusCell(get_value(data.status_name), data.status_class);
+            td8.classList.add('status')
             newRow.appendChild(td8);
 
 
+            const actionCell = newRow.insertCell();
 
+
+            actionCell.innerHTML = `<button class="btn btn-soft-secondary btn-sm dropdown" type="button"  onclick="openHistoryModal('invoiceHistoryModal')" >
+        <i class="ri-eye-fill align-middle"></i>
+        </button>
+        <button class="btn btn-soft-secondary btn-sm dropdown" type="button" onclick="openHistoryModal('statusmodel')">
+       Change status
+        </button>
+        `
             // actioncell
-            const actionCell = createViewActionCell('invoiceHistoryModal');
+            // const actionCell = createViewActionCell('invoiceHistoryModal');
             newRow.appendChild(actionCell);
 
             // click event
             actionCell.addEventListener('click', () => {
                 populateModalTable(data.get_purchase_items, modalTableBody);
+
+                payModalData(data)
+
+
             });
 
             return newRow;
@@ -503,11 +561,28 @@
                 modalRow.appendChild(createTableCell(tItem.qty));
                 modalRow.appendChild(createTableCell(tItem.unit_name));
                 modalRow.appendChild(createAmountCell(tItem.sub_total));
-              
+
                 modalTableBody.appendChild(modalRow);
             });
 
         }
+
+
+
+        function payModalData(data) {
+            const formId = 'clocKInForm'
+
+            var formElement = document.getElementById(formId);
+
+            const i1 = formElement.querySelector('select[name="status"]');
+            i1.value = data.status;
+            
+
+            const saveButton = document.querySelector('#update-button');   //id change
+            saveButton.setAttribute("data-id", data.id)
+
+        }
+
 
         //---------------
 
@@ -516,6 +591,147 @@
 
 
 
+        function updateStatus(button) {
+
+            var modalSelector = button.getAttribute('data-target');
+            const formId = "clocKInForm"
+
+            const saveId = button.getAttribute('data-id')
+            var formElement = document.getElementById(formId);
+
+            var formData = new FormData();
+            try {
+                disableButton(button);
+                var isValid = true;
+                var errors = {};
+                var formData = new FormData();
+
+                var requiredKeys = ['status',];   //change
+
+            //     const selectedOption = formElement.querySelector('input[name="status"]:checked');
+            // if (selectedOption) {
+            //     console.log('Selected status:', selectedOption.value);
+            //     // Perform the update logic here
+            //     alert(`Selected status: ${selectedOption.value}`);
+            // } else {
+            //     alert('Please select a status.');
+            // }
+                const selectedOption = getValueOrDefault(formElement.querySelector('select[name="status"]'));
+          
+                formData.append('status', selectedOption.value);
+
+                requiredKeys.forEach(function (key) {
+                    var value = formData.get(key);
+                    if (!value.trim()) {
+                        isValid = false;
+                        errors[key] = ['This field is required.'];
+                    }
+                });
+
+                if (!isValid) {
+                    enableButton(button);
+                    // console.log(errors);
+                    handleCreateErrors(errors);
+                    return;
+                } else {
+                    $(`#${formId} input, #${formId} button`).prop('disabled', true);
+
+                }
+
+                $.ajax({
+                    url: `/purchase-status-change/${saveId}/`,                //change
+                    type: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrftoken,
+                    },
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (response, status, xhr) {
+                        console.error(status);
+                        if (xhr.status === 200) {
+
+                            showToast(statusMesssage?.message, '', statusMesssage?.bgColor);
+                            // fetchData(currentPage, reload = true)
+                            closeHistoryModal(modalSelector)
+                            updateRowStatus(saveId,xhr?.responseJSON)
+                            restoreForm(formId, button)
+
+                        } else {
+
+                            restoreForm(formId, button)
+                            showToast(
+                                errorAlertMessage?.message,
+                                "",
+                                errorAlertMessage?.bgColor
+                            );
+
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        // console.log(xhr, status, error);
+                        if (xhr.status === 400) {
+                            if (xhr?.responseJSON || xhr?.responseJSON?.errors) {
+                                handleCreateErrors(transformErrors(xhr.responseJSON));
+                                // restoreForm(formId, button)
+
+
+                            } else {
+                                showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+                                // restoreForm(formId, button)
+
+                            }
+                        }
+                        else if (xhr.status === 401 || xhr.status === 404) {
+
+                            showToast(xhr?.responseJSON?.details || errorOccured.message, '', errorAlertMessage?.bgColor);
+                            // restoreForm(formId, button)
+
+
+                        }
+                        else {
+                            showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+                            // restoreForm(formId, button)
+
+                        }
+                    }
+                });
+            } catch (error) {
+                showToast(errorOccured?.message, '', errorOccured?.bgColor);
+                // restoreForm(formId, button)
+                console.error(error);
+            }
+
+            finally{
+                restoreForm(formId, button)
+            }
+            
+
+
+
+
+        }
+
+
+
+        function updateRowStatus(itemId, newStatus) {
+        // Find the row by the data-item-id attribute
+        const row = document.querySelector(`tr[data-item-id='${itemId}']`);
+        if (row) {
+            // Find the specific td with class 'status' within that row
+            const statusTd = row.querySelector('td.status');
+            statusTd.innerHTML =''
+            if (statusTd) {
+                const newStatusCell = createStatusCell(newStatus.name, newStatus.classname);
+                statusTd.appendChild(newStatusCell);
+            
+            } else {
+                console.error(`No <td> with class 'status' found in row with data-item-id='${itemId}'`);
+            }
+        } else {
+            console.error(`No row found with data-item-id='${itemId}'`);
+        }
+    }
 
 
 

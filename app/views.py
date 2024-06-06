@@ -31,6 +31,9 @@ from rest_framework.decorators import api_view, permission_classes
 from app.utils import PaginationAndFilter, customPagination,check_user,get_current_month,filter_by_month_range,get_company
 
 
+
+
+
 paginator = PageNumberPagination()
 date_format = "%Y-%m-%d"
 clocked_in_message ='already clocked in for this date'
@@ -286,6 +289,7 @@ def update_emproles(request, id):
 
 
 @api_view(['GET'])
+@login_required(login_url='login')
 def get_emproles(request, id):
     try:
         print("enter")
@@ -296,8 +300,11 @@ def get_emproles(request, id):
         return JsonResponse(data,status=200)
     except EmpRoles.DoesNotExist:
         return JsonResponse({'error': 'Object not found'}, status=404)
-    
+
+
+
 @api_view(['PUT'])
+@login_required(login_url='login')
 def save_emproles(request, id):
     try:
         instance = EmpRoles.objects.get(id=id)
@@ -315,7 +322,10 @@ def save_emproles(request, id):
     else:
         return JsonResponse({'error': ['Invalid request method']}, status=405)    
 
+
+
 @api_view(['DELETE'])
+@login_required(login_url='login')
 def delete_emproles(request, id):
     try:
         print("enter")
@@ -351,7 +361,7 @@ def employee(request):
     queryset,pages,search =customPagination(request,Employee,querysets) 
     roles = EmpRoles.objects.filter(company = request.user.company )
   
-    context= {'queryset': queryset,"location":"contractcategory","pages" :pages,"search":search,"roles" :roles,'form':form}   #change location name 
+    context= {'queryset': queryset,"location":"employee","pages" :pages,"search":search,"roles" :roles,'form':form}   #change location name 
 
     return render(request,"employee/employee.html",context)    #change template name
 
@@ -380,6 +390,7 @@ def employee(request):
 
 
 @api_view(['GET'])
+@login_required(login_url='login')
 def get_employee(request, id):
     try:
         print("enter")
@@ -391,6 +402,7 @@ def get_employee(request, id):
         return JsonResponse({'error': 'Object not found'}, status=404)    
    
 @api_view(['PUT'])
+@login_required(login_url='login')
 def save_employee(request, id):
     try:
         instance = Employee.objects.get(id=id)
@@ -408,6 +420,7 @@ def save_employee(request, id):
         return JsonResponse({'error': 'Invalid request method'}, status=405)    
 
 @api_view(['DELETE'])
+@login_required(login_url='login')
 def delete_employee(request, id):
     try:
         print("enter")
@@ -424,6 +437,7 @@ def delete_employee(request, id):
     
 
 @api_view(['DELETE'])
+@login_required(login_url='login')
 def enable_employee(request, id):
     try:
         print("enter")
@@ -571,6 +585,7 @@ def update_contract_category(request, pk):  # CHANGE name
     else:
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
+
 @api_view(['DELETE'])
 @login_required(login_url='login')
 def delete_contract_category(request,pk):
@@ -714,7 +729,9 @@ def update_machinary_charges(request, pk):  # CHANGE name
         return JsonResponse( serializer.data, status=200)
     else:
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+
+
+
 @api_view(['DELETE'])
 @login_required(login_url='login')
 def delete_machinary_charges(request,pk):
@@ -743,6 +760,8 @@ def labour_roles_and_salary(request):
     payment_schedules = PaymentSchedule.objects.all()
     context = {'queryset': queryset, "location": "labour_roles_and_salary","payment_schedules": payment_schedules, "pages": pages, "search": search}
     return render(request, "library/labourrolesandsalary.html", context)
+
+
 
 @api_view(['POST'])
 @login_required(login_url='login')
@@ -784,6 +803,7 @@ def update_labour_roles_and_salary(request, pk):
     else:
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 @api_view(['DELETE'])
 @login_required(login_url='login')
 def delete_labour_roles_and_salary(request, pk):
@@ -820,6 +840,8 @@ def labours(request):   #change name
     }
     return render(request,"library/labours.html", context)    #change template name
 
+
+
 @api_view(['POST'])
 @login_required(login_url='login')
 def add_labours (request):  # CHANGE name
@@ -843,6 +865,8 @@ def add_labours (request):  # CHANGE name
     else:
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)   
 
+
+
 @api_view(['PUT'])
 @login_required(login_url='login')
 def update_labours(request, pk):  # CHANGE name
@@ -865,7 +889,9 @@ def update_labours(request, pk):  # CHANGE name
         return JsonResponse( serializer.data, status=200)
     else:
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+
+
+
 @api_view(['DELETE'])
 @login_required(login_url='login')
 def delete_labours(request,pk):
@@ -1091,7 +1117,7 @@ def make_labour_payment(request,pk):  #change name
 # -------------------------------------------------------------------------------
 
 
-
+@login_required(login_url='login')
 def employee_salary(request):
     user=request.user
     allow,msg= check_user(request,Employee,instance=False)  # CHANGE model
@@ -1116,6 +1142,7 @@ def employee_salary(request):
 
 
 @api_view(['PUT'])
+@login_required(login_url='login')
 def employee_labour_salary(request,pk):
 
     labour =get_object_or_404(Employee,id=pk)
@@ -1343,6 +1370,7 @@ def signin(request):
 
 
 from datetime import date
+@login_required(login_url='login')
 def contractor_payment_management(request):
 
     user=request.user
@@ -1699,7 +1727,12 @@ from django.db.models import Q
 from .utils import PaginationAndFilter
 
 
-
+@api_view(['GET'])
+@login_required(login_url='login')
+def get_process_status(request):
+    queryset =ProcessStatus.objects.all()
+    ser =ProcessStatusSerializer(queryset,many=True)
+    return Response(ser.data)
 
 
 @login_required(login_url='login')
@@ -1712,7 +1745,7 @@ def uom(request):  #change name
     querysets = Uom.objects.filter(company=request.user.company).order_by("-id")   #change query
     queryset,pages,search =customPagination(request,Uom,querysets)    #change, model
     context= {'queryset': queryset,"location":"uom","pages" :pages,"search":search}   #change location name 
-    return render(request,"Library/uom.html",context)    #change template name
+    return render(request,"library/uom.html",context)    #change template name
 
 @api_view(['POST'])
 @login_required(login_url='login')
@@ -1751,6 +1784,7 @@ def update_uom(request, pk):  # CHANGE name
         return JsonResponse( serializer.data, status=200)
     else:
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+ 
     
 @api_view(['DELETE'])
 @login_required(login_url='login')
@@ -1997,10 +2031,12 @@ def employee_clock_in(request):  # CHANGE name
         request_data['company'] = user.company.id
 
     employee_id = user.employee.id if user.employee else None
+    print(employee_id,"kkkkkkkkkkkkkkkkk")
         
     if not employee_id:
         return JsonResponse({'employee':['This field is required']}, status=400)
     date_str = get_today()
+    request_data['employee'] = employee_id
     # date_format = "%Y-%m-%d"
 
     # try:
@@ -2017,6 +2053,7 @@ def employee_clock_in(request):  # CHANGE name
         serializer.save()
         return JsonResponse( serializer.data, status=status.HTTP_201_CREATED)
     else:
+        print(serializer.errors)
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)   
 
 
@@ -2595,6 +2632,8 @@ def attendancelist(request,pk):  #change name
     querysets =ProjectSubContract.objects.filter(company__in=company)
     return PaginationAndFilter(querysets, request,ProjectSubContractAttendenceSerialiser,date_field ="created_at")
 
+
+
 @login_required(login_url='login')
 def pettycash(request):  #change name 
     user=request.user
@@ -2617,6 +2656,8 @@ def pettycash(request):  #change name
               "payment_method":payment_method,
               }   #change location name 
     return render(request,"expense/pettycash.html",context)    #change template name
+
+
 
 @api_view(['POST'])
 @login_required(login_url='login')
@@ -2702,6 +2743,8 @@ def clientcash(request, pk):
 
     return render(request, 'project\clientcash.html', context)
 
+
+@login_required(login_url='login')
 def payment_process(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     payment_methods = PaymentMethod.objects.all()  # Get all payment methods
@@ -2728,58 +2771,8 @@ def payment_process(request, project_id):
         return render(request, 'project/payment_process.html', {'project': project, 'payment_methods': payment_methods})
     
 
-reset_codes = {}
 
-def password_reset_request_view(request):
-    if request.method == "POST":
-        form = PasswordResetRequestForm(request.POST)
-        if form.is_valid():
-            email = form.cleaned_data["email"]
-            user = CustomUser.objects.filter(email=email).first()
-            if user:
-                reset_code = get_random_string(length=6)
-                reset_codes[email] = reset_code
-                send_mail(
-                    "Password Reset",
-                    f"Your reset code is: {reset_code}",
-                    "noreply@example.com",
-                    [email],
-                    fail_silently=False,
-                )
-                return redirect(reverse("password_reset_confirm"))
-    else:
-        form = PasswordResetRequestForm()
-    return render(request, "password_reset_request.html", {"form": form})
 
-def password_reset_confirm_view(request):
-    if request.method == "POST":
-        form = SetPasswordForm(request.POST)
-        if form.is_valid():
-            new_password = form.cleaned_data["new_password"]
-            code = request.POST.get("code")
-            email = None
-
-            # Find the email associated with the reset code
-            for key, value in reset_codes.items():
-                if value == code:
-                    email = key
-                    break
-
-            if email:
-                user = CustomUser.objects.filter(email=email).first()
-                if user:
-                    user.set_password(new_password)
-                    user.save()
-                    reset_codes.pop(email)
-                    return redirect(reverse("login"))
-                else:
-                    form.add_error(None, "User not found")
-            else:
-                form.add_error(None, "Invalid reset code")
-    else:
-        form = SetPasswordForm()
-    
-    return render(request, "password_reset_confirm.html", {"form": form})
 
 
 
@@ -2794,8 +2787,12 @@ def dailytask_list(request):
     if not allow:
          context ={"unauthorized":msg}
          return render(request,"login.html",context)    
-      
+     
     querysets = Dailytask.objects.filter(company=request.user.company).order_by("-id")
+    project = request.GET.get('project')
+    project_id =get_int_or_zero(project)
+    if project_id:
+        querysets =querysets.filter(project__id = project_id)
     ser = dailyTaskSerializer(querysets,many=True)
     return Response (ser.data)
 
@@ -2854,7 +2851,7 @@ def add_dailytask (request):  # CHANGE name
     request_data=request.POST.copy().dict()
     # attachments = request.FILES.get("attachment",None) 
 
-    if user.admin:
+    if user.admin or user.employee:
         request_data['company'] = user.company.id
 
     # if attachments: 
@@ -2914,10 +2911,6 @@ def site_allocation(request):
     employee =Employee.objects.filter(company = user.company).order_by("-id")
 
     project=Project.objects.filter(company=request.user.company).order_by("-id")
-    # projectsubcontractor = CompanyLabours.objects.filter(company=request.user.company).order_by("-id")
-    # querysets = ProjectLabourAttendence.objects.filter(company=request.user.company).order_by("-id")   #change query
-    # queryset,pages,search =customPagination(request,ProjectLabourAttendence,querysets)    #change, model
-    # context= {'queryset': queryset,"location":"employee-labour-attendance","pages" :pages,"search":search,'projectsubcontractor':projectsubcontractor,"project":project}   #change location name 
     context ={"employee":employee, "project":project}
     return render(request, 'site_allocation/emp_site_allocation.html',context)
 
@@ -3007,10 +3000,6 @@ def lab_site_allocation(request):
     employee =CompanyLabours.objects.filter(company = user.company).order_by("-id")
 
     project=Project.objects.filter(company=request.user.company).order_by("-id")
-    # projectsubcontractor = CompanyLabours.objects.filter(company=request.user.company).order_by("-id")
-    # querysets = ProjectLabourAttendence.objects.filter(company=request.user.company).order_by("-id")   #change query
-    # queryset,pages,search =customPagination(request,ProjectLabourAttendence,querysets)    #change, model
-    # context= {'queryset': queryset,"location":"employee-labour-attendance","pages" :pages,"search":search,'projectsubcontractor':projectsubcontractor,"project":project}   #change location name 
     context ={"employee":employee, "project":project}
     return render(request, 'site_allocation/lab_site_allocation.html',context)
 
@@ -3036,6 +3025,8 @@ def add_lab_site_allocation(request):
     else:
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
+
+
 
 
 @api_view(['GET'])
@@ -3277,8 +3268,7 @@ def quatationtableupdate(request, id):
 
 
 @api_view(['GET'])
-@permission_classes([AllowAny])
-# @login_required(login_url='login')    
+@login_required(login_url='login')    
 def item_price_track(request,pk,site_or_inventory):
     if site_or_inventory ==0:
         item =get_object_or_404(InventoryStock,id=pk)

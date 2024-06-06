@@ -92,7 +92,7 @@
                                             <th data-ordering="false">Pending Amount</th>
                                             <th data-ordering="false">Status</th>
                                             <th data-ordering="false">Action</th>
-                                            <th data-ordering="false">All Details</th>
+                                           
 
                                         </tr>
                                     </thead>
@@ -321,8 +321,6 @@
          
             newRow.appendChild(td8);
 
-
-
             // actioncell
             const actionCell = createViewActionCell('invoiceHistoryModal');
             newRow.appendChild(actionCell);
@@ -419,45 +417,45 @@ function createTableRow(serialNumber, data) {
         //---------------
 
 
-         function createTableRow(serialNumber, data) {
-            const newRow = document.createElement('tr');
-            newRow.setAttribute('data-item-id', data.id);
+        //  function createTableRow(serialNumber, data) {
+        //     const newRow = document.createElement('tr');
+        //     newRow.setAttribute('data-item-id', data.id);
         
-            const idCell = createSerialCell(serialNumber);
-            newRow.appendChild(idCell);
+        //     const idCell = createSerialCell(serialNumber);
+        //     newRow.appendChild(idCell);
         
-            const td2 = createTableCell(get_value(data.created_at));
-            newRow.appendChild(td2);
+        //     const td2 = createTableCell(get_value(data.created_at));
+        //     newRow.appendChild(td2);
         
-            const td3 = createTableCell(get_value(data.invoice_id));
-            newRow.appendChild(td3);
+        //     const td3 = createTableCell(get_value(data.invoice_id));
+        //     newRow.appendChild(td3);
         
-            const td4 = createTableCell(get_value(data.vendor_name));
-            newRow.appendChild(td4);
+        //     const td4 = createTableCell(get_value(data.vendor_name));
+        //     newRow.appendChild(td4);
         
-            const td5 = createAmountCell(get_value(data.total_amount));
-            newRow.appendChild(td5);
+        //     const td5 = createAmountCell(get_value(data.total_amount));
+        //     newRow.appendChild(td5);
         
-            const td6 = createTableCell(get_value(data.paid));
-            newRow.appendChild(td6);
+        //     const td6 = createTableCell(get_value(data.paid));
+        //     newRow.appendChild(td6);
         
-            const td7 = createTableCell(get_value(data.pending));
-            newRow.appendChild(td7);
+        //     const td7 = createTableCell(get_value(data.pending));
+        //     newRow.appendChild(td7);
         
-            // View Action Cell
-            const actionCell = createViewActionCell('invoiceHistoryModal');
-            newRow.appendChild(actionCell);
+        //     // View Action Cell
+        //     const actionCell = createViewActionCell('invoiceHistoryModal');
+        //     newRow.appendChild(actionCell);
         
-            // All Details Button
-            const detailsCell = document.createElement('td');
-            const detailsButton = document.createElement('button');
-            detailsButton.className = 'btn btn-secondary';
-            detailsButton.textContent = 'All Details';
-            detailsButton.addEventListener('click', () => {
-                showAllDetails(data.id);
-            });
-            detailsCell.appendChild(detailsButton);
-            newRow.appendChild(detailsCell);
+        //     // All Details Button
+        //     // const detailsCell = document.createElement('td');
+        //     // const detailsButton = document.createElement('button');
+        //     // detailsButton.className = 'btn btn-secondary';
+        //     // detailsButton.textContent = 'All Details';
+        //     // detailsButton.addEventListener('click', () => {
+        //     //     showAllDetails(data.id);
+        //     // });
+        //     // detailsCell.appendChild(detailsButton);
+        //     // newRow.appendChild(detailsCell);
         
             // Click event for View Action Cell
             actionCell.addEventListener('click', () => {
@@ -478,8 +476,8 @@ function createTableRow(serialNumber, data) {
             });
             actionCell.appendChild(editButton);
         
-            return newRow;
-        }
+        //     return newRow;
+        // }
         
         function showAllDetails(purchaseId) {
             // Fetch details using the purchaseId

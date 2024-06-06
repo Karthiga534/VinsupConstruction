@@ -4,7 +4,7 @@ from django.http import JsonResponse
 from rest_framework.response import Response
 from django.contrib.auth import authenticate
 from rest_framework.decorators import api_view
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404 ,render, redirect
 from rest_framework.permissions import AllowAny
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, permission_classes
@@ -14,6 +14,25 @@ from .utils import *
 import string
 import random
 from app.auth_ser import *
+
+from .forms import *
+from django.urls import reverse
+from django.core.mail import send_mail
+from django.utils.crypto import get_random_string
+# from .forms import PasswordResetRequestForm, SetPasswordForm
+# from .forms import *
+# from .models import *
+# from .serializer import *
+# from rest_framework import status
+# from django.http import JsonResponse
+# from rest_framework.response import Response
+# from rest_framework.authtoken.models import Token
+# from django.contrib.auth import login,authenticate,logout
+# from rest_framework.permissions import IsAuthenticated ,AllowAny
+# from django.shortcuts import render, redirect, get_object_or_404
+# from rest_framework.decorators import api_view, permission_classes
+
+from django.conf import settings
 
 message_server_error = "message sending error"
 message_server_error_status = 303
@@ -303,3 +322,108 @@ def get_me(request):
 
     else:
         return JsonResponse({'error': 'Method Not Allowed'}, status=405)
+    
+
+
+# web
+
+
+
+reset_codes = {}
+
+# DEFAULT_FROM_EMAIL = settings.DEFAULT_FROM_EMAIL
+
+
+def password_reset_request_view(request):
+    error={}
+    if request.method == "POST":
+        
+        form = PasswordResetRequestForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data["email"]
+            if not email:
+                error['email'] = 'Please Enter Valid Email'
+            user = CustomUser.objects.filter(email=email).first()
+            if user:
+                reset_code = get_random_string(length=6)
+                # reset_codes[email] = reset_code
+                send_password_reset_email(request,email,reset_code)
+                # send_mail(
+                #     "Password Reset",
+                #     f"Your reset code is: {reset_code}",
+                #     settings.DEFAULT_FROM_EMAIL,
+                #     [email],
+                #     fail_silently=False,
+                # )
+                OTP.objects.create(user=user,otp=reset_code)
+                return redirect(reverse("password_reset_confirm"))
+            error['email'] = 'Email id with user not found'
+    else:
+        form = PasswordResetRequestForm()
+    return render(request, "password_reset_request.html", {"form": form,'error':error})
+
+
+
+def password_reset_confirm_view(request):
+    error = {"otp":"","user":""}
+    print(request.method)
+    if request.method == "POST":
+            form = SetPasswordForm(request.POST)
+        # if form.is_valid():
+            print(1)
+            new_password = form.cleaned_data["new_password"]
+            confirm_password = form.cleaned_data["confirm_password"]
+            if new_password != confirm_password : 
+                error['confirm_password'] = "Password does not match"
+                print(2)
+                return render(request, "password_reset_confirm.html", {"form": form,"error":error})
+            code = request.POST.get("code")
+            email = None
+            user = CustomUser.objects.filter(email=email).first()
+            print(3)
+            if user:
+                print(4)
+                otp = OTP.objects.filter(user=user,otp=code)
+                if otp:
+                    user.set_password(new_password)
+                    user.save()
+                    otp.delete()
+                    return redirect(reverse("login"))
+                else:
+                    error['otp'] = "Invalid Code"
+                   
+            else:
+                error['user'] = "User not found"
+        # else:
+        #     print(form.errors)
+                
+    else:
+        print('******************************dddddddddddddddddddddd')
+        form = SetPasswordForm()
+
+    return render(request, "password_reset_confirm.html", {"form": form,'error':error})
+
+
+
+
+import logging
+from django.core.mail import send_mail
+from django.conf import settings
+from django.http import HttpResponse
+
+logger = logging.getLogger("app")
+
+def send_password_reset_email(request, email, reset_code):
+    print('poooooooo')
+    try:
+        send_mail(
+            "Password Reset",
+            f"Your reset code is: {reset_code}",
+            settings.DEFAULT_FROM_EMAIL,
+            [email],
+            fail_silently=False,
+        )
+        return HttpResponse('Password reset email sent successfully')
+    except Exception as e:
+        logger.error(f'Error sending password reset email to {email}: {e}')
+        return HttpResponse(f'Error sending password reset email: {e}')

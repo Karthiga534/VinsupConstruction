@@ -351,6 +351,9 @@
 				actionCell.innerHTML = ` <button class="btn btn-soft-secondary btn-sm dropdown" type="button" onclick="opencustomModal('stockHistoryModal')" >
 							<i class="ri-eye-fill align-middle"></i>
 			 				</button>`
+				const subcontractorCell = document.createElement('td');
+				subcontractorCell.textContent =get_value (data.subcontractor_name);
+				newRow.appendChild(subcontractorCell);
 
 
 				newRow.appendChild(actionCell);

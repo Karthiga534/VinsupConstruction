@@ -856,7 +856,7 @@
             var requiredKeys = [
                
                 //change
-                "start_date",
+                // "start_date",
                 "name",
                 "contact_no",
                 "address",
@@ -877,10 +877,10 @@
                 getValueOrDefault($('#createForm input[name="name"]').val())
             );     
 
-            formData.append(
-            "start_date",
-            getValueOrDefault($('#createForm input[name="start_date"]').val())
-          );
+        //     formData.append(
+        //     "start_date",
+        //     getValueOrDefault($('#createForm input[name="start_date"]').val())
+        //   );
 
             formData.append(
                 "contact_no",
@@ -1000,6 +1000,11 @@
         }
 
         finally{
+            $("#createForm input, #createForm button").prop(
+                    //change form id
+                    "disabled",
+                    false
+                );
             enableButton(button);
         }
     }

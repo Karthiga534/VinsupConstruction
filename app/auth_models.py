@@ -142,6 +142,15 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
             if self.ownerinfo_set.all().last():
                 return self.ownerinfo_set.all().last()
         return 
+    
+
+
+    @property
+    def role_name(self):
+        if self.is_owner:
+            if self.ownerinfo_set.all().last():
+                return self.ownerinfo_set.all().last()
+        return 
 
 
     
@@ -398,6 +407,14 @@ class Company(models.Model):
         if self.unit_set.all():
             return self.unit_set.all().filter(active_sale=True).last()
         return None
+    
+
+    @property
+    def get_inventory(self):
+        # if self.inventorystock.set_all():
+        #     return self.inventorystock.set_all()
+        # return None
+        return self.inventory_stocks.all() if self.inventory_stocks.exists() else None  
 
 
 

@@ -1,19 +1,19 @@
 [
   {
     "id": 1,
-    "company_id": 1,
+    "company_id": null,
     "name": "10",
     "code": null
   },
   {
     "id": 2,
-    "company_id": 1,
+    "company_id": null,
     "name": "20",
     "code": null
   },
   {
     "id": 3,
-    "company_id": 1,
+    "company_id": null,
     "name": "30",
     "code": null
   }

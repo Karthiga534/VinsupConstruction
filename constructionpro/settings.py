@@ -12,6 +12,10 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 
+from dotenv import load_dotenv
+load_dotenv(".env2")
+import os
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -20,12 +24,19 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-@9jvl81f)p6j^e_wf09v^w9!s+t9e4wfv6%8g-bv5=^ucce^4e'
+SECRET_KEY = os.getenv("django_secret_key", "fwevbsuio")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = (True if os.getenv( "Debug" ) == 'True' else False)
+# DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
+
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split()
+CORS_ORIGIN_ALLOW_ALL= False
+CORS_ALLOWED_ORIGINS = os.getenv("CORS_ALLOWED_ORIGINS", "").split()
+CORS_ORIGIN_WHITELIST = os.getenv("CORS_ORIGIN_WHITELIST", "").split()
+CORS_ALLOW_CREDENTIALS = (True if os.getenv( "CORS_ALLOW_CREDENTIALS" ) == 'True' else False)
 
 
 # Application definition
@@ -58,7 +69,12 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+      #  'GMS.middleware.RedirectUnauthorizedMiddleware',
+     'constructionpro.middleware.APIKeyMiddleware' , # api middleware
 ]
+
+EXTERNAL_API_KEY =os.getenv('EXTERNAL_API_KEY')
 
 ROOT_URLCONF = 'constructionpro.urls'
 
@@ -75,6 +91,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+
+                'app.context_processors.my_env_var',
             ],
         },
 
@@ -85,19 +103,33 @@ TEMPLATES = [
     },
 ]
 
+JS_ENV = os.getenv('JS_ENV')
+
 WSGI_APPLICATION = 'constructionpro.wsgi.application'
 
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     },
+# }
+
+
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': os.getenv("psql_database"),
+        'USER': os.getenv('psql_user'),
+        'PASSWORD': os.getenv('psql_password'),
+        'HOST': os.getenv('psql_host'),
+        'PORT': os.getenv('psql_port'),
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -218,3 +250,50 @@ CORS_ALLOW_HEADERS = (
 CORS_ALLOW_ALL_ORIGINS = True 
 CORS_ALLOW_CREDENTIALS = True
 
+
+
+
+
+
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+EMAIL_HOST = 'smtp.gmail.com' 
+EMAIL_PORT = 587  
+EMAIL_USE_TLS = True  
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')  
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')  
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL') 
+
+
+
+
+
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'handlers': {
+#         'file': {
+#             'level': 'INFO',  
+#             'class': 'logging.FileHandler',
+#             'filename': 'myapp.log',  
+#         },
+#         'console': {
+#             'level': 'INFO',  
+#             'class': 'logging.StreamHandler',
+#         },
+#     },
+#     'loggers': {
+#         'django': {
+#             'handlers': ['console'],
+#             'level': 'WARNING',
+#             'propagate': True,
+#         },
+#         'app': {  
+#             'handlers': ['file', 'console'],
+#             'level': 'DEBUG',  
+#             'propagate': False,
+#         },
+#     },
+# }
