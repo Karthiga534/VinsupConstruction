@@ -136,13 +136,16 @@
                                         <td>
                                             <div class="btn-group" role="group">
                                                 <button class="btn btn-soft-secondary btn-sm me-2" type="button" data-id="{{i.id}}" onclick="openModal('viewModal', '{{ i.id }}')">
-                                                    <i class="ri-eye-fill align-bottom me-2 text-muted"></i> View
+                                                    <!-- <i class="ri-eye-fill align-bottom me-2 text-muted"></i> -->
+                                                    View
                                                 </button>
-                                                <button class="btn btn-primary btn-sm me-2" type="button" data-bs-toggle="modal" onclick="openModal('editModal','{{ i.id }}')">
-                                                    <i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit
+                                                <button class="btn btn-soft-primary btn-sm me-2" type="button" onclick="openModal('editModal','{{ i.id }}')">
+                                                    <!-- <i class="ri-pencil-fill align-bottom me-2 text-muted"></i>  -->
+                                                    Edit
                                                 </button>
-                                                <button class="btn btn-danger btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#deleteModal{{ i.id }}">
-                                                    <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete
+                                                <button class="btn btn-soft-danger btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#deleteModal{{ i.id }}">
+                                                    <!-- <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i>  -->
+                                                    Delete
                                                 </button>
                                             </div>
 
@@ -167,7 +170,7 @@
                                                           <div class="row">
                                                               
                                             
-                                                            <div class="col-md-6">
+                                                            <div class="row mb-2">
                                                                 <label for="{{i.id}}_name" class="form-label">Uom Name:</label>
                                                                 <input type="text" class="form-control" id="{{i.id}}_name" name="name" value="{{i.name}}" readonly>
                                                             </div>
@@ -210,8 +213,8 @@
 
                                                             <form id="editForm{{ i.id }}" enctype="multipart/form-data">
                                                                 {% csrf_token %}
-                                                            <div class="row mb-2"> 
-                                                                <div class="col-md-6">
+                                                             
+                                                                <div class="row mb-2">
                                                                     <label for="editCategoryName">Uom Name:</label>
                                                                     <input type="text" class="form-control" name="name"
                                                                         id="{{i.id}}_name" value="{{ i.name }}">
@@ -220,7 +223,7 @@
                                                                         class="error-message"></span>
                                                                 </div>
                                                                
-                                                            </div>
+                                                            
                                                             <div class="text-center">
                                                                 <button type="button" class="btn btn-secondary"
                                                                     data-bs-dismiss="modal"
