@@ -2263,7 +2263,7 @@ def sitestockusage(request):
     context = {
         "location": "transfer",
         "projects": projects,
-        "subcontractors": subcontractors,
+        "subcontractors": subcontracts,
  
     }
     return render(request, "sitestock/dailysitestockusagelist.html", context)
