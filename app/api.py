@@ -2154,14 +2154,28 @@ def contractoratt_list(request):
     contractors = [{'id': contractor['id'], 'name': contractor['name']} for contractor in contractor]
     return Response(contractors)
 
-@api_view(['GET'])
-def sub_contract_list(request,pk):
-    user_company = request.user.company  
-    sub_contract = ProjectSubContract.objects.filter(company=user_company,project=pk)
-    ser =ProjectSubContractDdropSerializer(sub_contract,many=True)
-   
-    return Response(ser.data)
+# @api_view(['GET'])
+# def sub_contract_list(request):
+#     sub_contract = ProjectSubContract.objects.values('id', )
+#     sub_contracts = [{'id': sub_contract['id'], 'name': sub_contract['name']} for sub_contract in sub_contract]
+#     return Response(sub_contracts)
 
+# @api_view(['GET'])
+# def sub_contract_list(request):
+#     sub_contracts = ProjectSubContract.objects.values('id', 'name')  # Include 'name' field in values()
+#     return Response(sub_contracts)
+
+@api_view(['GET'])
+
+
+@api_view(['GET'])
+def get_sub_contract_lists(request, project_id):
+    try:
+        sub_contracts = ProjectSubContract.objects.filter(project_id=project_id)
+        serializer = ProjectSubContractSerializer(sub_contracts, many=True)
+        return Response(serializer.data)
+    except ProjectSubContract.DoesNotExist:
+        return Response({'error': 'Project Sub Contract not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
 #------------------------------------------------Daily Site Stock Usage----------------------------------------

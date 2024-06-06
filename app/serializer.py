@@ -78,15 +78,12 @@ class PurchaseInvoiceSerializer(ModelSerializer):
 
 
 
-
-
-
 from decimal import Decimal
 from django.db.models import F
 
 class   PurchaseItemsSerializer(serializers.ModelSerializer):
     name = serializers.CharField(write_only=True, allow_blank=True, required=False)
-    company  = serializers.PrimaryKeyRelatedField(queryset=Company.objects.all(),required=False,write_only=True)
+    # company  = serializers.PrimaryKeyRelatedField(queryset=Company.objects.all(),required=False,write_only=True)
 
     class Meta:
         model = PurchaseItems
@@ -108,44 +105,39 @@ class   PurchaseItemsSerializer(serializers.ModelSerializer):
             name = validated_data.get("name", None)
             print(item)
             price = validated_data.get('price', None)
-            company = validated_data.get('company', None)
+            # company = validated_data.get('company', None)
             unit = validated_data.get('unit', None)
-            item =MaterialLibrary.objects.filter(item__iexact =name,company=company,unit=unit).last()
+            item =MaterialLibrary.objects.filter(item__iexact =name,unit=unit).last()
             if not item:
-                item =MaterialLibrary.objects.create(item=name,company=company,unit=unit,price = price, )
+                item =MaterialLibrary.objects.create(item=name,unit=unit,price = price, )
   
         unit = validated_data.pop('unit', None)
-        company=validated_data.pop('company')
         qty_to_add = Decimal(validated_data.get('qty', 0))
         sub_total = Decimal(validated_data.get('sub_total', 0))
         
 
-        
-            # Check if the item exists in InventoryStock
-        inventory_item, inventory_created = InventoryStock.objects.get_or_create(item = item,unit=unit,company=company)
+        inventory_item, inventory_created = InventoryStock.objects.get_or_create(item = item,unit=unit)
 
+<<<<<<< HEAD
+        inventory_item.qty = ( 0 if site else Decimal(inventory_item.qty)) + qty_to_add
+=======
         # if site  is there set item purchased for particular site so no need to manipulate inventory stock
         inventory_item.qty = ( 0 if site else Decimal(qty_to_add )) + Decimal(inventory_item.qty)
+>>>>>>> origin/cms
         if not inventory_item.price:
             inventory_item.price =  Decimal(validated_data.get('price', 0))
         inventory_item.total_amount = inventory_item.qty * inventory_item.price
         inventory_item.save()
         
-        # else:
-        #     inventory_created.qty = Decimal(inventory_created.qty) + qty_to_add
-        #     inventory_created.price = Decimal(validated_data.get('price', 0))
-        #     inventory_created.total_amount = sub_total
-        #     inventory_created.save()
 
         if site:
              validated_data['for_site']  = True
-        # validated_data['name'] = item_name  # Add 'name' field to validated_data
         validated_data['unit'] = unit  # Add 'unit' field to validated_data
         validated_data['item'] = item
         validated_data ['name'] = item.item if item and  item.item else None
        
         validated_data['inventory'] = inventory_item
-        purchase_item = super().create(validated_data)  # Create PurchaseItems instance
+        purchase_item = super().create(validated_data)  
         
         return purchase_item
     
@@ -163,6 +155,83 @@ class PurchaseInvoiceInfoSerializer(ModelSerializer):
     class Meta:
         model = PurchaseInvoice
         fields =['id',"created_at",]
+
+# from decimal import Decimal
+# from django.db.models import F
+
+# class   PurchaseItemsSerializer(serializers.ModelSerializer):
+#     name = serializers.CharField(write_only=True, allow_blank=True, required=False)
+#     company  = serializers.PrimaryKeyRelatedField(queryset=Company.objects.all(),required=False,write_only=True)
+
+#     class Meta:
+#         model = PurchaseItems
+#         fields = '__all__'
+
+#     def create(self, validated_data):
+#         site = self.context.get('site')
+
+#         item = validated_data.get('item' ,None)
+#         # Extract unit and price from validated data
+#         # price = validated_data.pop('price', 0) 
+#         if not item:
+#             mlib={}
+#             # mlib['item'] =validated_data.get("name",None)
+#             # mlib['price'] = validated_data.get('price',None)
+#             # mlib ['company'] =validated_data.get('company',None)
+#             # mlib ['unit']=validated_data.get('unit',None)
+#             # item = MaterialLibrary.objects.create(**mlib)
+#             name = validated_data.get("name", None)
+#             print(item)
+#             price = validated_data.get('price', None)
+#             # company = validated_data.get('company', None)
+#             unit = validated_data.get('unit', None)
+#             item =MaterialLibrary.objects.filter(item__iexact =name,company=company,unit=unit).last()
+#             if not item:
+#                 item =MaterialLibrary.objects.create(item=name,company=company,unit=unit,price = price, )
+  
+#         unit = validated_data.pop('unit', None)
+#         company=validated_data.pop('company')
+#         qty_to_add = Decimal(validated_data.get('qty', 0))
+#         sub_total = Decimal(validated_data.get('sub_total', 0))
+        
+
+        
+#             # Check if the item exists in InventoryStock
+#         inventory_item, inventory_created = InventoryStock.objects.get_or_create(item = item,unit=unit,company=company)
+
+#         # if site  is there set item purchased for particular site so no need to manipulate inventory stock
+#         inventory_item.qty = ( 0 if site else Decimal(inventory_item.qty)) + qty_to_add
+#         if not inventory_item.price:
+#             inventory_item.price =  Decimal(validated_data.get('price', 0))
+#         inventory_item.total_amount = inventory_item.qty * inventory_item.price
+#         inventory_item.save()
+        
+#         # else:
+#         #     inventory_created.qty = Decimal(inventory_created.qty) + qty_to_add
+#         #     inventory_created.price = Decimal(validated_data.get('price', 0))
+#         #     inventory_created.total_amount = sub_total
+#         #     inventory_created.save()
+
+#         if site:
+#              validated_data['for_site']  = True
+#         # validated_data['name'] = item_name  # Add 'name' field to validated_data
+#         validated_data['unit'] = unit  # Add 'unit' field to validated_data
+#         validated_data['item'] = item
+       
+#         validated_data['inventory'] = inventory_item
+#         purchase_item = super().create(validated_data)  # Create PurchaseItems instance
+        
+#         return purchase_item
+    
+
+
+#     def to_representation(self, instance):
+#         data = super().to_representation(instance)
+#         data ["item_name"] = instance.item.item if instance.item else None
+#         data ['unit_name'] = instance.unit.name if instance.unit else None
+#         return data
+
+
 
 
     def to_representation(self, instance):

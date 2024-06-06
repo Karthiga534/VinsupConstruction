@@ -1,0 +1,377 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block header2 %}    
+    <!-- Begin page -->
+    <div id="layout-wrapper">
+
+        <div class="main-content">
+
+            <div class="page-content">
+                <div class="container-fluid">
+
+                    <!-- start page title -->
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                                <h4 class="mb-sm-0">Quotation</h4>
+
+                                <div class="page-title-right">
+                                    <ol class="breadcrumb m-0">
+                                        <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
+                                        <li class="breadcrumb-item active">Add Quotation</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- <div class="row " >
+						<div class="col-xl-5 col-lg-5 col-md-6 col-xs-6 col-12">
+							
+						</div>
+						<div class="col-xl-5 col-lg-4 col-md-3 col-xs-6 col-12"></div>
+						<div class="col-xl-2 col-lg-3 col-md-3 col-xs-6 col-12">
+							<a href="{% url 'quatationlist' %}" type="button" class="btn btn-info mb-2" style="float:right;" >Quatation List</a>
+														
+						</div>
+					</div> -->
+                    <div class="row">
+						
+                        <div class="col-lg-12">
+                            <div class="card">
+                                <div class="card-body">
+
+									<div class="row " >
+										<div class="col-xl-5 col-lg-5 col-md-6 col-xs-6 col-12">
+											<h4>Site details </h4>
+										</div>
+										<div class="col-xl-5 col-lg-4 col-md-3 col-xs-6 col-12"></div>
+										<div class="col-xl-2 col-lg-3 col-md-3 col-xs-6 col-12">
+											<a href="{% url 'quatationlist' %}" type="button" class="btn btn-info mb-2" style="float:right;" >Quatation List</a>
+																		
+										</div>
+									</div>
+
+									<hr>
+                                    <form id="editForm{{ quatation.id }}" enctype="multipart/form-data" >
+                                        {% csrf_token %}
+
+									<div class="row">
+										<div class="col-md-4">
+                                            <label for="quatation_id">Quatation id:</label>
+                                            <input type="text" class="form-control" id="quatation_id" name="quatation_id" value="{{ quatation.quatation_id  }}">
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label for="project">Project:</label>
+                                            <select class="form-select" id="site" name="site">
+                                                <option value="{{ quatation.site.id }}" selected>{{ quatation.site }}</option>
+                                                {% for project in projects %}
+                                                    <option value="{{ project.id }}">{{ project.site_location }}</option>
+                                                {% endfor %}
+                                            </select>
+                                            <span id="siteError" class="error-message" ></span>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label for="start_date">Created At:</label>
+                                            <input type="date" class="form-control" id="start_date" name="start_date" value="{{ quatation.start_date|date:'Y-m-d'  }}">
+                                        </div>
+
+                                        <p class="text-center mt-2">
+                                         
+    
+                                                <button type="button" class="btn btn-primary" id="saveuom" onclick="updateFunction(this,'{{quatation.id}}')" > Save </button>
+                                        </p>
+                                        </div>								
+                                   
+    
+                                    </form>
+										
+									
+																				
+									</div>
+									<hr>
+									<h4>Items Required </h4>
+									
+									<div class="card-body">
+                                        <table id="tabl" class="table table-bordered dt-responsive nowrap table-striped align-middle" style="width:100%">
+                                            <thead>
+                                                <tr>
+                                                    <th>SR No.</th>
+                                                    <th>Item</th>
+                                                    <th>Unit</th>
+                                                    <th>Quantity</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for item in quatation.get_quotation_items %}
+                                                <tr>
+                                                    <td>{{ forloop.counter }}</td>
+                                                    <td>
+                                                        <form method="POST" action="{% url 'quatationtableupdate' item.id %}">
+                                                            {% csrf_token %}
+                                                            <select class="form-select" name="inventory">
+                                                                <option value="">Item</option>
+                                                                {% for i in inventory %}
+                                                                    <option value="{{ i.id }}" {% if i.id == item.inventory.id %} selected {% endif %}>{{ i.item }}</option>
+                                                                {% endfor %}
+                                                            </select>
+                                                    </td>
+                                                    <td>
+                                                        <select class="form-select" name="unit">
+                                                            <option value="">Select Unit</option>
+                                                            {% for unit in uom %}
+                                                                <option value="{{ unit.id }}" {% if unit.id == item.unit.id %} selected {% endif %}>{{ unit.name }}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" class="form-control" name="qty" value="{{ item.qty }}">
+                                                    </td>
+                                                    <td>
+                                                        <button type="submit" class="btn btn-primary">Update</button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    
+									
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+<!-- container-fluid -->
+            </div>
+            <!-- End Page-content -->
+
+            
+        </div>
+        <!-- end main content-->
+
+    </div>
+    <!-- END layout-wrapper -->
+
+
+
+    <!--start back-to-top-->
+    <button onclick="topFunction()" class="btn btn-danger btn-icon" id="back-to-top">
+        <i class="ri-arrow-up-line"></i>
+    </button>
+    <!--end back-to-top-->
+
+    <!--preloader-->
+    <div id="preloader">
+        <div id="status">
+            <div class="spinner-border text-primary avatar-sm" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    </div>
+
+  
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" ></script>
+
+    <!--invoice,project,purchase,quatation,transfer,vendor,vendorquates-->
+       <script type="text/javascript">
+               $(document).ready(function() {
+                   var i = 1;
+   
+                   $(".add-row").click(function(event) {
+                       event.preventDefault();
+                       ++i;
+
+                       var newRow = `<tr>
+				       <td>${i}</td>
+						
+						
+
+
+						<td>
+							<div  class="d-flex gap-2 ">
+								<select  style="width:85%;" class="form-select" aria-label="Default select example" id="inventory" name="inventory" >
+									<option value="">------------------</option>
+									{% for i in materiallibrary %}
+										<option value="{{ i.id }}">{{ i.item }}</option>
+									{% endfor %}
+									</select>
+								<button class="btn btn-soft-secondary align-middle btn-sm text-center" type="button" data-bs-toggle="collapse" data-bs-target="#other_${i}">
+									<i class="ri-add-fill align-middle"></i>
+								</button> 
+							
+							</div>
+							<div class="collapse mt-2" id="other_${i}">
+								<input type="text" class="form-control"  name="name" >
+							</div>
+
+							<span  name="nameError" class="error-message"></span>
+						</td>
+
+
+						<td><select class="form-select mb-3 form-control"  aria-label="Default select example" name="unit" id="unit">
+							<option value=""> ------------------</option>
+
+							{% for i in uom %}
+							<option value="{{i.id}}">{{i.name}} </option>
+							{% endfor %}
+						  </select>
+						  <span id="unitError" class="error-message"></span></td>
+
+						<td><input type="text" name="qty" value="" class="form-control">
+							<span  name="qtyError" class="error-message"></span></td>
+							</td>
+						
+						<td><button type="button" class="btn btn-danger btn-icon waves-effect waves-light remove-table-row">
+							<i class="ri-delete-bin-5-line"></i></button></td>
+						</tr>`;
+   
+					   $("#tabl").append(newRow);
+				   });
+   
+				   $(document).on('click', '.remove-table-row', function() {
+					   $(this).parents('tr').remove();
+				   });
+			   });
+   
+                       
+     </script>  
+
+  
+
+    <script>
+      
+			
+        function updateFunction(button, saveId) {
+
+            var formId = `editForm${saveId}`;   //change  editForm
+            var formElement = document.getElementById(formId);
+
+            var isValid = true;
+            var errors = {};
+
+            try {
+                disableButton(button);
+                clearErrors();
+
+                const formData = new FormData();
+
+                var requiredKeys = ['site'];   //change
+
+				// Construct form data
+          
+                formData.append('site', getValueOrDefault(formElement.querySelector('select[name="site"]').value));
+                formData.append('quatation_id', getValueOrDefault(formElement.querySelector('input[name="quatation_id"]').value));
+                formData.append('start_date', getValueOrDefault(formElement.querySelector('input[name="start_date"]').value));
+
+                // Construct table data
+                const tableData = [];
+                $('#tabl tbody tr').each(function() {
+                    const rowData = {};
+                    rowData['inventory'] = $(this).find('select[name^="inventory"]').val();
+                    rowData['unit'] = $(this).find('select[name^="unit"]').val();
+                    rowData['qty'] = $(this).find('input[name^="qty"]').val();
+                    tableData.push(rowData);
+                });
+                formData.append("table", JSON.stringify(tableData));
+
+    
+
+                // requiredKeys.forEach(function (key) {
+                //     var value = formData.get(key);
+                //     if (!value.trim()) {
+                //         isValid = false;
+                //         errors[key] = ['This field may not be blank.'];
+                //     }
+                // });
+
+            requiredKeys.forEach(function (key) {
+            var value = formData.get(key);
+            if (value === null || value === undefined || value === '') {
+                isValid = false;
+                errors[key] = ['This field may not be blank.'];
+            } else if (!value.trim()) {
+                isValid = false;
+                errors[key] = ['This field may not be blank.'];
+            }
+             })
+
+
+
+                if (!isValid) {
+                    enableButton(button);
+                    console.log(errors);
+                    handleUpdateErrors(saveId, transformErrors(errors));
+                    return;
+                } else {
+                    $(`#${formId} input, #${formId} button`).prop('disabled', true);
+
+                }
+                
+
+                console.log(csrftoken);
+                $.ajax({
+                    url: '/quatation_update/' + saveId + '/',   //change
+                    //url: '/update_subcontractor/' +  {{ pk }} + '/',
+                    //url: `/quatation_update/${saveId}/`,
+                    type: 'PUT',
+                    headers: {
+                        'X-CSRFToken': csrftoken,
+                    },
+
+
+                    
+
+                    processData: false,
+                    contentType: false,
+                    data: formData,
+                    success: function (response, status, xhr) {
+                        if (xhr.status === 200) {
+                            showToast(updateMessage?.message, '', updateMessage?.bgColor, );
+                            restoreForm(formId, button)
+                        } else {
+                            showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+                            restoreForm(formId, button)
+
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.log(xhr, status, error);
+                        if (xhr.status === 400) {
+                            if (xhr?.responseJSON || xhr?.responseJSON?.errors) {
+                                handleUpdateErrors(saveId, transformErrors(xhr.responseJSON));
+                                restoreForm(formId, button)
+                            } else {
+
+                                showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+                                restoreForm(formId, button)
+
+                            }
+                        }
+                        else if (xhr.status === 401 || 404) {
+                            showToast(xhr?.responseJSON?.details, '', errorAlertMessage?.bgColor);
+                            restoreForm(formId, button)
+
+                        }
+                        else {
+
+                            showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+                            restoreForm(formId, button)
+
+                        }
+                    }
+                });
+            } catch (error) {
+                showToast(errorOccured?.message, '', errorOccured?.bgColor);
+                restoreForm(formId, button)
+                console.error(error);
+            }
+        }
+
+    </script>
+
+{% endblock header2 %}  
