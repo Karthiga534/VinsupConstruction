@@ -1739,7 +1739,7 @@ def uom(request):  #change name
     querysets = Uom.objects.filter(company=request.user.company).order_by("-id")   #change query
     queryset,pages,search =customPagination(request,Uom,querysets)    #change, model
     context= {'queryset': queryset,"location":"uom","pages" :pages,"search":search}   #change location name 
-    return render(request,"Library/uom.html",context)    #change template name
+    return render(request,"library/uom.html",context)    #change template name
 
 @api_view(['POST'])
 @login_required(login_url='login')
