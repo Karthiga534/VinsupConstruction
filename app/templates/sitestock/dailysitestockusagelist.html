@@ -144,7 +144,7 @@
 								<div class="row">
 									<div class="col-4">
 										<label for="item_name" class="form-label">Item Name</label>
-										<input type="text" id="item_name" class="form-control" name="item_name"
+										<input type="text" id="eitem" class="form-control" name="item"
 											value="">
 									</div>
 									<div class="col-4 ">
@@ -152,15 +152,15 @@
 										<input type="text" class="form-control" name="qty" value="">
 									</div>
 									<div class="col-4">
-										<label for="unit_name" class="form-label">Unit</label>
-										<input type="text" id="unit_name" class="form-control" name="unit_name"
+										<label for="unit" class="form-label">Unit</label>
+										<input type="text" id="eunit" class="form-control" name="unit"
 											value="">
 									</div>
-									<div class="col-4">
+									<div class="col-4 mt-2">
 										<label for="project" class="form-label">Project:</label>
-										<select class="form-select" id="project" name="project">
+										<select class="form-select" id="eproject" name="project">
 
-											<option value="0" selected>--------</option>
+											<!-- <option value="0" >--------</option> -->
 
 											{% for project in projects %}
 											<!--  -->
@@ -171,16 +171,16 @@
 										<span id="projectError" class="error-message"></span>
 									</div>
 
-									<div class="col-4">
+									<div class="col-4 mt-2">
 										<label for="subcontract" class="form-label">Subcontract:</label>
-										<select class="form-select" id="subcontract" name="subcontract">
+										<select class="form-select" id="esubcontract" name="subcontract">
 
-											<option value="0" selected>--------</option>
+											<!-- <option value="0" >--------</option> -->
 
 											{% for subcontract in subcontracts %}
 
-											<option value="{{ subcontract.id }}">{{
-												subcontract.display_contractor_dropdown }}</option>
+											<option value="{{ subcontract.id }}">
+												{{ subcontract.display_contractor_dropdown }}</option>
 
 											{% endfor %}
 										</select>
@@ -195,7 +195,7 @@
 					<div class="modal-footer">
 						<button class="btn btn-link link-success fw-medium shadow-none" data-bs-dismiss="modal"><i
 								class="ri-close-line me-1 align-middle"></i> Close</button>
-						<button type="button" id="stockModal" class="btn btn-primary" 
+						<button type="button" id="stockModal" class="btn btn-primary"
 							onclick="makePresent(this)">Save</button>
 					</div>
 				</div>
@@ -421,7 +421,7 @@
 			function makePresent(button) {
 
 				var modalSelector = button.getAttribute('data-target');
-				const formId = "stockHistoryModal"
+				const formId = "editForm"
 
 				const saveId = button.getAttribute('data-id')
 				var formElement = document.getElementById(formId);
@@ -434,38 +434,38 @@
 					var formData = new FormData();
 
 					var requiredKeys = [];   //changes
+					console.log(formElement)
 
-
-					const subcontract_name = getValueOrDefault(formElement.querySelector('select[name="subcontract_name]').value);
-					const project_name = getValueOrDefault(formElement.querySelector('select[name="project_name"]').value);
+					const subcontract_name = getValueOrDefault(formElement.querySelector('select[name="subcontract"]').value);
+					const project_name = getValueOrDefault(formElement.querySelector('select[name="project"]').value);
 					const qty = getValueOrDefault(formElement.querySelector('input[name="qty"]').value);
-					const unit_name = getValueOrDefault(formElement.querySelector('input[name="unit_name"]').value);
-					const item_name= getValueOrDefault(formElement.querySelector('input[name="item_name"]').value);
+					const unit_name = getValueOrDefault(formElement.querySelector('input[name="unit"]').value);
+					const item_name = getValueOrDefault(formElement.querySelector('input[name="item"]').value);
 
-					
 
-					if (subcontract_name) {
-						formData.append('subcontract_name', subcontract_name);
-					}
+
+					// if (subcontract_name) {
+					// 	formData.append('subcontract', subcontract_name);
+					// }
 
 					if (project_name) {
-						formData.append('project_name', project_name);
+						formData.append('project', project_name);
 					}
 
-					if (unit_name) {
-						formData.append('unit_name', unit_name);
+					// if (unit_name) {
+					// 	formData.append('unit', unit_name);
 
-					}
+					// }
 					if (qty) {
 						formData.append('qty', qty);
 
 					}
 					if (item_name) {
-						formData.append('item_name', item_name);
+						formData.append('item', item_name);
 
 					}
 
-					
+
 
 
 					requiredKeys.forEach(function (key) {
@@ -487,8 +487,8 @@
 					}
 
 					$.ajax({
-						url: `/save_data/${saveId}/`,                //change
-						type: 'POST',
+						url: `/update_sitestockusage/${saveId}/`,                //change
+						type: 'PUT',
 						headers: {
 							'X-CSRFToken': csrftoken,
 						},
@@ -560,17 +560,29 @@
 				const I1 = formElement.querySelector('input[name="qty"]')
 				I1.value = data.qty;
 
-				const I2 = formElement.querySelector('input[name="item_name"]')
+				const I2 = formElement.querySelector('input[name="item"]')
 				I2.value = data.item_name;
 
-				const I3 = formElement.querySelector('select[name="project_name"]')
-				I3.value = data.project_name;
+				const I3 = formElement.querySelector('select[name="project"]')
+				I3.value = data.project
+				const projectOption = I3.querySelector(`option[value="${data.project}"]`);
+				if (projectOption) {
+					projectOption.selected = true;
+				}
+				
 
-				const I4 = formElement.querySelector('input[name="unit_name"]')
+				const I4 = formElement.querySelector('input[name="unit"]')
 				I4.value = data.unit_name;
 
-				const I5 = formElement.querySelector('select[name="subcontract_name"]')
-				I.value = data.subcontract_name;
+				// const I5 = formElement.querySelector('select[name="subcontract_name"]')
+				// I5.selected = data.subcontract;
+
+				const I5 = formElement.querySelector('select[name="subcontract"]');
+				I5.value = data.subcontract
+				const selectedOption = I5.querySelector(`option[value="${data.subcontract}"]`);
+				if (selectedOption) {
+					selectedOption.selected = true;
+				}
 
 				const saveButton = document.querySelector('#stockModal');   //id change
 				saveButton.setAttribute("data-id", data.id)
