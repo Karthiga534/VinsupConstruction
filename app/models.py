@@ -969,9 +969,9 @@ class VendorQuatation(models.Model):
 
 class Contractor(models.Model):
     company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
-    name = models.CharField(max_length=100)
-    contact_no = models.CharField(max_length=15)
-    address = models.CharField(max_length=255)
+    name = models.CharField(max_length=100,null=True,blank=True)
+    contact_no = models.CharField(max_length=15,null=True,blank=True)
+    address = models.CharField(max_length=255,null=True,blank=True)
     area = models.CharField(max_length=100,null=True,blank=True)
     rate = models.DecimalField(max_digits=10, decimal_places=2)
     unit=models.ForeignKey(Uom, on_delete=models.CASCADE,null=True,blank=True)
@@ -982,7 +982,7 @@ class Contractor(models.Model):
     male_unskilled = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     female_skilled = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     female_unskilled = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    category = models.ForeignKey(Contractcategory, on_delete=models.CASCADE)
+    category = models.ForeignKey(Contractcategory, on_delete=models.CASCADE,null=True,blank=True)
     start_date=models.DateField(null=True,blank=True)
 
     def __str__(self):

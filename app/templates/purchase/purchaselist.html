@@ -288,8 +288,56 @@
 
 
         // MANIPULATE TABLE DATA
-        {% comment %} function createTableRow(serialNumber, data) {
+        //  function createTableRow(serialNumber, data) {
           
+        //     const newRow = document.createElement('tr');
+        //     newRow.setAttribute('data-item-id', data.id);
+
+        //     const idCell = createSerialCell(serialNumber);
+        //     newRow.appendChild(idCell);
+
+        //     const td2 = createTableCell(get_value(data.created_at));
+        //     newRow.appendChild(td2);
+
+        //     const td3 = createTableCell(get_value(data.invoice_id));
+        //     newRow.appendChild(td3);
+
+        //     const td4 = createTableCell(get_value(data.vendor_name));
+        //     newRow.appendChild(td4);
+
+        //     const td5 = createAmountCell(get_value(data.total_amount));
+        //     newRow.appendChild(td5);
+
+        //     const td6 = createTableCell(get_value(data.paid));
+        //     newRow.appendChild(td6);
+
+        //     const td7 = createTableCell(get_value(data.pending));
+        //     newRow.appendChild(td7);
+
+            
+
+
+        //     const td8 = createStatusCell(get_value(data.status_name),data.status_class);
+         
+        //     newRow.appendChild(td8);
+
+        //     // actioncell
+        //     const actionCell = createViewActionCell('invoiceHistoryModal');
+        //     newRow.appendChild(actionCell);
+
+        //     // click event
+        //     actionCell.addEventListener('click', () => {
+        //         populateModalTable(data.get_purchase_items, modalTableBody);
+        //     });
+
+            
+
+        //     return newRow;
+        // } 
+
+
+        // MANIPULATE TABLE DATA
+        function createTableRow(serialNumber, data) {
             const newRow = document.createElement('tr');
             newRow.setAttribute('data-item-id', data.id);
 
@@ -314,83 +362,35 @@
             const td7 = createTableCell(get_value(data.pending));
             newRow.appendChild(td7);
 
-            
-
 
             const td8 = createStatusCell(get_value(data.status_name),data.status_class);
-         
+                
             newRow.appendChild(td8);
 
             // actioncell
             const actionCell = createViewActionCell('invoiceHistoryModal');
             newRow.appendChild(actionCell);
 
-            // click event
             actionCell.addEventListener('click', () => {
-                populateModalTable(data.get_purchase_items, modalTableBody);
-            });
+               populateModalTable(data.get_purchase_items, modalTableBody);
+             });
 
-            
+
+
+            // Create Edit button
+            const editButton = document.createElement('button');
+            editButton.innerHTML = '<i class="fas fa-edit"></i>';
+            editButton.className = 'btn btn-primary edit-btn';
+            editButton.title = 'Edit';
+            editButton.addEventListener('click', () => {
+                const rowDataId = data.id;
+                // Redirect to a new page with the ID
+                window.location.href = `/purchase_update/${rowDataId}/`;
+            });
+            actionCell.appendChild(editButton); 
 
             return newRow;
-        } {% endcomment %}
-
-
-        // MANIPULATE TABLE DATA
-function createTableRow(serialNumber, data) {
-    const newRow = document.createElement('tr');
-    newRow.setAttribute('data-item-id', data.id);
-
-    const idCell = createSerialCell(serialNumber);
-    newRow.appendChild(idCell);
-
-    const td2 = createTableCell(get_value(data.created_at));
-    newRow.appendChild(td2);
-
-    const td3 = createTableCell(get_value(data.invoice_id));
-    newRow.appendChild(td3);
-
-    const td4 = createTableCell(get_value(data.vendor_name));
-    newRow.appendChild(td4);
-
-    const td5 = createAmountCell(get_value(data.total_amount));
-    newRow.appendChild(td5);
-
-    const td6 = createTableCell(get_value(data.paid));
-    newRow.appendChild(td6);
-
-    const td7 = createTableCell(get_value(data.pending));
-    newRow.appendChild(td7);
-
-    // actioncell
-    const actionCell = createViewActionCell('invoiceHistoryModal');
-    newRow.appendChild(actionCell);
-
-    // Click event for viewing details
-    const viewDetailsButton = document.createElement('button');
-    viewDetailsButton.innerHTML = '<i class="fas fa-eye"></i>';
-    viewDetailsButton.className = 'btn btn-info';
-    viewDetailsButton.title = 'View Details';
-    viewDetailsButton.addEventListener('click', () => {
-        populateModalTable(data.get_purchase_items, modalTableBody);
-    });
-    actionCell.appendChild(viewDetailsButton);
-
-    // Create Edit button
-    const editButton = document.createElement('button');
-    editButton.innerHTML = '<i class="fas fa-edit"></i>';
-    editButton.className = 'btn btn-primary edit-btn';
-    editButton.title = 'Edit';
-    editButton.addEventListener('click', () => {
-        // Extract the ID of the row's data
-        const rowDataId = data.id;
-        // Redirect to a new page with the ID
-        window.location.href = `/purchase_update/${rowDataId}/`;
-    });
-    actionCell.appendChild(editButton); 
-
-    return newRow;
-}
+        }
 
 
 
@@ -457,135 +457,157 @@ function createTableRow(serialNumber, data) {
         //     // detailsCell.appendChild(detailsButton);
         //     // newRow.appendChild(detailsCell);
         
-            // Click event for View Action Cell
-            actionCell.addEventListener('click', () => {
-                populateModalTable(data.get_purchase_items, modalTableBody);
-            });
-
-
-            // Create Edit button
-            const editButton = document.createElement('button');
-            editButton.innerHTML = '<i class="fas fa-edit"></i>';
-            editButton.className = 'btn btn-info';
-            editButton.title = 'Edit';
-            editButton.addEventListener('click', () => {
-                // Extract the ID of the row's data
-                const rowDataId = data.id;
-                // Redirect to a new page with the ID
-                window.location.href = `/purchase_update/${rowDataId}/`;
-            });
-            actionCell.appendChild(editButton);
+        //     // Click event for View Action Cell
+        //     actionCell.addEventListener('click', () => {
+        //         populateModalTable(data.get_purchase_items, modalTableBody);
+        //     });
         
         //     return newRow;
         // }
         
-        function showAllDetails(purchaseId) {
-            // Fetch details using the purchaseId
-            fetch(`/purchase-details/${purchaseId}/`)
-                .then(response => {
-                    if (response.ok) {
-                        return response.json();
-                    } else {
-                        throw new Error('Failed to fetch details');
-                    }
-                })
-                .then(data => {
-                    // Populate the modal with the fetched details
-                    const detailsContent = document.getElementById('allDetailsContent');
-                    detailsContent.innerHTML = generateDetailsHTML(data);
-                    // Show the modal
-                    const allDetailsModal = new bootstrap.Modal(document.getElementById('allDetailsModal'));
-                    allDetailsModal.show();
-                })
-                .catch(error => {
-                    console.error('Error fetching details:', error);
-                    alert('Error fetching details');
-                });
-        } 
+        // function showAllDetails(purchaseId) {
+        //     // Fetch details using the purchaseId
+        //     fetch(`/purchase-details/${purchaseId}/`)
+        //         .then(response => {
+        //             if (response.ok) {
+        //                 return response.json();
+        //             } else {
+        //                 throw new Error('Failed to fetch details');
+        //             }
+        //         })
+        //         .then(data => {
+        //             // Populate the modal with the fetched details
+        //             const detailsContent = document.getElementById('allDetailsContent');
+        //             detailsContent.innerHTML = generateDetailsHTML(data);
+        //             // Show the modal
+        //             const allDetailsModal = new bootstrap.Modal(document.getElementById('allDetailsModal'));
+        //             allDetailsModal.show();
+        //         })
+        //         .catch(error => {
+        //             console.error('Error fetching details:', error);
+        //             alert('Error fetching details');
+        //         });
+        // } 
+        
 
 
         
+        // function updatePurchaseDetails(purchaseId) {
+        //     const form = document.getElementById('updateDetailsForm');
+        //     const formData = new FormData(form);
+        //     const updatedData = {};
+            
+        //     // Convert FormData to JSON object
+        //     formData.forEach((value, key) => {
+        //         updatedData[key] = value;
+        //     });
         
-        function generateDetailsHTML(data) {
-            let itemsHTML = data.items.map((item, index) => `
-                <tr>
-                    <td>${index + 1}</td>
-                    <td><input type="text" class="form-control" value="${item.item_name}" readonly></td>
-                    <td><input type="text" class="form-control" value="${item.quantity}" readonly></td>
-                    <td><input type="text" class="form-control" value="${item.unit}" readonly></td>
-                    <td><input type="text" class="form-control" value="${item.amount}" readonly></td>
-                </tr>
-            `).join('');
+        //     // Log the updated data for debugging (optional)
+        //     console.log('Updated data:', updatedData);
+            
+        //     fetch(`/purchase-details/${purchaseId}/`, {
+        //         method: 'POST',
+        //         headers: {
+        //             'Content-Type': 'application/json',
+        //             // Include CSRF token if needed
+        //             'X-CSRFToken': getCSRFToken(), // Define getCSRFToken() function as needed
+        //         },
+        //         body: JSON.stringify(updatedData),
+        //     })
+        //     .then(response => {
+        //         if (response.ok) {
+        //             return response.json();
+        //         } else {
+        //             throw new Error('Failed to update details');
+        //         }
+        //     })
+        //     .then(data => {
+        //         console.log('Purchase details updated successfully:', data);
+        //         // Optionally update UI or perform other actions
+        //     })
+        //     .catch(error => {
+        //         console.error('Error updating details:', error);
+        //         alert('Error updating details');
+        //     });
+        // }
         
-            return `
-                <form>
-                    <div class="mb-3">
-                        <label for="site" class="form-label"><strong>Site Name:</strong></label>
-                        <input type="text" class="form-control" id="site" value="${data.site_name}" readonly>
-                    </div>
-                    <div class="mb-3">
-                        <label for="invoiceId" class="form-label"><strong>Invoice ID:</strong></label>
-                        <input type="text" class="form-control" id="invoiceId" value="${data.invoice_id}" readonly>
-                    </div>
-                    <div class="mb-3">
-                        <label for="vendorName" class="form-label"><strong>Vendor Name:</strong></label>
-                        <input type="text" class="form-control" id="vendorName" value="${data.vendor_name}" readonly>
-                    </div>
-                    <div class="mb-3">
-                        <label for="totalAmount" class="form-label"><strong>Purchase Amount:</strong></label>
-                        <input type="text" class="form-control" id="totalAmount" value="${data.total_amount}" readonly>
-                    </div>
-                    <div class="mb-3">
-                        <label for="paidAmount" class="form-label"><strong>Paid Amount:</strong></label>
-                        <input type="text" class="form-control" id="paidAmount" value="${data.paid}" readonly>
-                    </div>
-                    <div class="mb-3">
-                        <label for="pendingAmount" class="form-label"><strong>Pending Amount:</strong></label>
-                        <input type="text" class="form-control" id="pendingAmount" value="${data.pending}" readonly>
-                    </div>
-                    <div class="mb-3">
-                        <label for="balance" class="form-label"><strong>Balance:</strong></label>
-                        <input type="text" class="form-control" id="balance" value="${data.balance}" readonly>
-                    </div>
-                    <div class="mb-3">
-                        <label for="companyName" class="form-label"><strong>Company Name:</strong></label>
-                        <input type="text" class="form-control" id="companyName" value="${data.company_name}" readonly>
-                    </div>
-                    <div class="mb-3">
-                        <label for="gst" class="form-label"><strong>GST:</strong></label>
-                        <input type="text" class="form-control" id="gst" value="${data.gst}" readonly>
-                    </div>
-                    <div class="mb-3">
-                        <label for="tax" class="form-label"><strong>Tax:</strong></label>
-                        <input type="text" class="form-control" id="tax" value="${data.tax}" readonly>
-                    </div>
-                    <div class="mb-3">
-                        <label for="contactNo" class="form-label"><strong>Contact Number:</strong></label>
-                        <input type="text" class="form-control" id="contactNo" value="${data.contact_no}" readonly>
-                    </div>
-                    <div class="mb-3">
-                        <label for="createdAt" class="form-label"><strong>Date:</strong></label>
-                        <input type="text" class="form-control" id="createdAt" value="${data.created_at}" readonly>
-                    </div>
-                    <hr>
-                    <h5>Items</h5>
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>S.no</th>
-                                <th>Item Name</th>
-                                <th>Quantity</th>
-                                <th>Unit</th>
-                                <th>Amount</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${itemsHTML}
-                        </tbody>
-                    </table>
-                </form>
-            `;
-        }
+
+        //   function generateDetailsHTML(data) {
+        //     let itemsHTML = data.items.map((item, index) => `
+        //         <tr>
+        //             <td>${index + 1}</td>
+        //             <td><input type="text" class="form-control" value="${item.item_name}" data-index="${index}" data-key="item_name"></td>
+        //             <td><input type="text" class="form-control" value="${item.quantity}" data-index="${index}" data-key="quantity"></td>
+        //             <td><input type="text" class="form-control" value="${item.unit}" data-index="${index}" data-key="unit"></td>
+        //             <td><input type="text" class="form-control" value="${item.amount}" data-index="${index}" data-key="amount"></td>
+        //         </tr>
+        //     `).join('');
+        
+        //     return `
+        //         <form id="updateDetailsForm">
+        //             <div class="mb-3">
+        //                 <label for="site" class="form-label"><strong>Site Name:</strong></label>
+        //                 <input type="text" class="form-control" id="site" value="${data.site_name}" data-key="site_name">
+        //             </div>
+        //             <div class="mb-3">
+        //                 <label for="invoiceId" class="form-label"><strong>Invoice ID:</strong></label>
+        //                 <input type="text" class="form-control" id="invoiceId" value="${data.invoice_id}" data-key="invoice_id">
+        //             </div>
+        //             <div class="mb-3">
+        //                 <label for="companyName" class="form-label"><strong>Company Name:</strong></label>
+        //                 <input type="text" class="form-control" id="companyName" value="${data.company_name}" data-key="company_name">
+        //             </div>
+        //             <div class="mb-3">
+        //                 <label for="gst" class="form-label"><strong>GST:</strong></label>
+        //                 <input type="text" class="form-control" id="gst" value="${data.gst}" data-key="gst">
+        //             </div>
+        //             <div class="mb-3">
+        //                 <label for="tax" class="form-label"><strong>Tax:</strong></label>
+        //                 <input type="text" class="form-control" id="tax" value="${data.tax}" data-key="tax">
+        //             </div>
+        //             <div class="mb-3">
+        //                 <label for="contactNo" class="form-label"><strong>Contact Number:</strong></label>
+        //                 <input type="text" class="form-control" id="contactNo" value="${data.contact_no}" data-key="contact_no">
+        //             </div>
+        //             <div class="mb-3">
+        //                 <label for="pendingAmount" class="form-label"><strong>Pending Amount:</strong></label>
+        //                 <input type="text" class="form-control" id="pendingAmount" value="${data.pending}" data-key="pending">
+        //             </div>
+        //             <div class="mb-3">
+        //                 <label for="paidAmount" class="form-label"><strong>Paid Amount:</strong></label>
+        //                 <input type="text" class="form-control" id="paidAmount" value="${data.paid}" data-key="paid">
+        //             </div>
+        //             <div class="mb-3">
+        //                 <label for="balance" class="form-label"><strong>Balance:</strong></label>
+        //                 <input type="text" class="form-control" id="balance" value="${data.balance}" data-key="balance">
+        //             </div>
+        //             <div class="mb-3">
+        //                 <label for="createdAt" class="form-label"><strong>Date:</strong></label>
+        //                 <input type="text" class="form-control" id="createdAt" value="${data.created_at}" data-key="created_at">
+        //             </div>
+        //             <!-- Additional fields can be added here -->
+        //             <hr>
+        //             <h5>Items</h5>
+        //             <table class="table table-bordered">
+        //                 <thead>
+        //                     <tr>
+        //                         <th>S.no</th>
+        //                         <th>Item Name</th>
+        //                         <th>Quantity</th>
+        //                         <th>Unit</th>
+        //                         <th>Amount</th>
+        //                     </tr>
+        //                 </thead>
+        //                 <tbody id="itemsTableBody">
+        //                     ${itemsHTML}
+        //                 </tbody>
+        //             </table>
+        //             <button type="button" class="btn btn-primary" onclick="updatePurchaseDetails({{ purchase_id }})">Update</button>
+
+        //         </form>
+        //     `;
+        // }
+
         
     </script>
 
