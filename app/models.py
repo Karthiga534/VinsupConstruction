@@ -1423,10 +1423,13 @@ class QuatationItems(models.Model):
     
     @property
     def display_name(self):
-        # if self.name:
-        #     return  self.name
+      
+        if self.item:
+            return  self.item.item
         if self.inventory:
             return self.inventory.display
+        if self.name:
+            return  self.name
         return None
 
 
