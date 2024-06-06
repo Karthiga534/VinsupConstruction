@@ -1413,6 +1413,7 @@ class Quatation(models.Model):
 class QuatationItems(models.Model):
     invoice=models.ForeignKey(Quatation, on_delete=models.CASCADE,null=True,blank=True)
     inventory=models.ForeignKey(InventoryStock, on_delete=models.CASCADE,null=True,blank=True)   #change
+    item =models.ForeignKey(MaterialLibrary,on_delete=models.CASCADE,null=True,blank=True)
     name= models.CharField(max_length=255,null=True,blank=True)
     qty=models.DecimalField(max_digits=10, decimal_places=2, default=0.0)   #change
     unit=models.ForeignKey(Uom, on_delete=models.CASCADE,null=True,blank=True)    #change
@@ -2160,7 +2161,8 @@ class PettyCash(models.Model):
 
 
 class PaymentHistory(models.Model):
-    date = models.DateField()
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, null=True, blank=True)
+    date = models.DateField(null=True,blank=True)
     receipt_number = models.CharField(max_length=100)
     payment_method = models.ForeignKey(PaymentMethod, on_delete=models.CASCADE, null=True, blank=True)
     payment_amount = models.DecimalField(max_digits=10, decimal_places=2)
@@ -2174,9 +2176,6 @@ class DailySiteStockUsage(models.Model):
     date = models.DateField(auto_now_add=True)
     qty = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
     unit = models.ForeignKey(Uom,on_delete=models.CASCADE,null=True,blank=True)
-
-
-
 
 # @property
 #   def get_dailysitestockusage_items(self):

@@ -355,7 +355,7 @@ def employee(request):
     queryset,pages,search =customPagination(request,Employee,querysets) 
     roles = EmpRoles.objects.filter(company = request.user.company )
   
-    context= {'queryset': queryset,"location":"contractcategory","pages" :pages,"search":search,"roles" :roles,'form':form}   #change location name 
+    context= {'queryset': queryset,"location":"employee","pages" :pages,"search":search,"roles" :roles,'form':form}   #change location name 
 
     return render(request,"employee/employee.html",context)    #change template name
 
