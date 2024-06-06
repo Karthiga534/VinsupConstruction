@@ -321,7 +321,7 @@ urlpatterns = [
     path('payment-process/<int:project_id>/', views.payment_process, name='payment-process'),
 
 
-
+ 
     #     # employee attendence
     # path('attendance/employee',views.employee_attendance,name= 'employee-labour-attendance'), #render only
     # path('add_employeeattendance', views.add_employeeattendance, name='add_employeelabourattendance'),
@@ -335,7 +335,9 @@ urlpatterns = [
     path('site_allocation/',views.site_allocation,name= 'site_allocation'), 
     path('add_site_allocation/', views.add_site_allocation, name='add_site_allocation'),
     path('site-allocation-list/<str:pk>/',views.site_allocation_list,name='site-allocation-list'), #list data
-    path('site_allocationemployee/<int:employee_id>/', views.site_allocationemployee, name='site_allocationemployee'),
+    path('site_allocationemployee/<int:pk>/', views.site_allocationemployee, name='site_allocationemployee'),
+
+    path('site_allocationlabour/<int:pk>/', views.site_allocationlabour, name='site_allocationlabour'),
 
 
 
@@ -350,6 +352,7 @@ urlpatterns = [
     path('purchase-details/<int:purchase_id>/', views.purchase_details, name='purchase-details'),
     #path('update-purchase/<int:purchase_id>/',  views.purchase_details, name='update_purchase_details'),
     path('purchase_update/<int:pk>/', views.update_purchase, name='update_purchase'),
+    path('purchase_details/<int:pk>/', views.get_purchase, name='purchase_details'),
 
     path('purchasetableupdate/<str:id>/', views.purchasetableupdate, name='purchasetableupdate'),
 
@@ -357,6 +360,7 @@ urlpatterns = [
 
     path('quatation_update/<int:pk>/', views.update_quatation, name='update_quatation'),
     path('quatationtableupdate/<str:id>/', views.quatationtableupdate, name='quatationtableupdate'),
+    path('quatation_details/<int:pk>/', views.get_quatation, name='quatation_details'),
 
 
 
@@ -365,7 +369,7 @@ urlpatterns = [
 
 # revision
 
-# path('purchase-track/<int:pk>/<int:site_or_inventory>/' , views.item_price_track,name="item_price_track"),
+path('purchase-track/<int:pk>/<int:site_or_inventory>/' , views.item_price_track,name="item_price_track"),
 
 
 
@@ -482,7 +486,7 @@ urlpatterns = [
 
     path('user-list/', api.user_list, name='user-list'),
     path('contractor-list/', api.contractoratt_list, name='contractor-list'),
-    path('sub-contract-list/<int:pk>/', api.sub_contract_list, name='sub-contract-list'),
+    # path('sub-contract-list/<int:pk>/', api.sub_contract_list, name='sub-contract-list'),
 
    
     path('employee-profile/<int:pk>/', api.get_employee_profile, name='get-employee-profile'),

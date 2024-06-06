@@ -1015,6 +1015,8 @@ class Project(models.Model):
     aggeaments =models.FileField(upload_to="doc")
     proj_category = models.ForeignKey(ProjectCategory, on_delete=models.CASCADE,null=True,blank=True)
     status = models.ForeignKey(WorkStatus, on_delete=models.CASCADE,null=True,blank=True)
+    description = models.TextField(null=True,blank=True) 
+    terms_conditions = models.TextField(null=True,blank=True)
 
     def __str__(self):
         return f"{self.proj_name} - {self.site_location}"

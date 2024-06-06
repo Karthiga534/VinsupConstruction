@@ -2887,7 +2887,7 @@ def delete_dailytask(request,pk):
     except Dailytask.DoesNotExist:  # CHANGE model
         return JsonResponse({'details': ['Item does not exist']}, status=404)
     
-
+#-------------------------------------------------> Employee Site Allocation <---------------------------------------
 
 @login_required(login_url='login')
 def site_allocation(request):
@@ -2899,12 +2899,28 @@ def site_allocation(request):
     employee =Employee.objects.filter(company = user.company).order_by("-id")
 
     project=Project.objects.filter(company=request.user.company).order_by("-id")
-    # projectsubcontractor = CompanyLabours.objects.filter(company=request.user.company).order_by("-id")
-    # querysets = ProjectLabourAttendence.objects.filter(company=request.user.company).order_by("-id")   #change query
-    # queryset,pages,search =customPagination(request,ProjectLabourAttendence,querysets)    #change, model
-    # context= {'queryset': queryset,"location":"employee-labour-attendance","pages" :pages,"search":search,'projectsubcontractor':projectsubcontractor,"project":project}   #change location name 
+   
     context ={"employee":employee, "project":project}
     return render(request, 'site_allocation/emp_site_allocation.html',context)
+
+@api_view(['GET'])
+@login_required(login_url='login')
+def site_allocation_list(request, pk):  # change name 
+    user = request.user
+    allow, msg = check_user(request, SiteAllocation, instance=False)  # CHANGE model
+    if not allow:
+        context = {"unauthorized": msg}
+        return render(request, "login.html", context)    
+    
+    company, _ = get_user_company(user)
+    pk = int(pk)
+
+    if pk != 0:
+        querysets = SiteAllocation.objects.filter(employee__id=pk, company__in=company).exclude(employee__isnull=True)
+        return PaginationAndFilter(querysets, request, SiteAllocationEmployeeSerializer, date_field="date")
+    
+    querysets = SiteAllocation.objects.filter(company__in=company).exclude(employee__isnull=True).order_by('-id')
+    return PaginationAndFilter(querysets, request, SiteAllocationEmployeeSerializer, date_field="date")
 
 @api_view(['POST'])
 @login_required(login_url='login')
@@ -2928,59 +2944,36 @@ def add_site_allocation(request):
     else:
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(['GET'])
-@login_required(login_url='login')
-def site_allocation_list(request, pk):  # change name 
-    user = request.user
-    allow, msg = check_user(request, SiteAllocation, instance=False)  # CHANGE model
-    if not allow:
-        context = {"unauthorized": msg}
-        return render(request, "login.html", context)    
-    
-    company, _ = get_user_company(user)
-    pk = int(pk)
-
-    if pk != 0:
-        querysets = SiteAllocation.objects.filter(employee__id=pk, company__in=company)
-        return PaginationAndFilter(querysets, request, SiteAllocationEmployeeSerializer, date_field="date")
-    
-    querysets = SiteAllocation.objects.filter(company__in=company).order_by('-id')
-    return PaginationAndFilter(querysets, request, SiteAllocationEmployeeSerializer, date_field="date")
-
-@api_view(['DELETE'])
-@login_required(login_url='login')
-def delete_site_allocation_list(request, pk):
-    user = request.user
-    try:
-        instance = SiteAllocation.objects.get(id=pk)  # CHANGE model
-        allow, msg = check_user(request, SiteAllocation, instance=instance)  # CHANGE model
-        if not allow:
-            return JsonResponse({'details': [msg]}, status=status.HTTP_401_UNAUTHORIZED)
-        instance.delete()
-        return JsonResponse({'details': ['success']}, status=204)
-    except SiteAllocation.DoesNotExist:  # CHANGE model
-        return JsonResponse({'details': ['Item does not exist']}, status=404)
-
-
 @api_view(['GET', 'PUT'])
-def site_allocationemployee(request, employee_id):
-    if request.method == 'GET':
-        site_allocations = SiteAllocation.objects.filter(employee_id=employee_id)
-        serializer = SiteAllocationEmployeeSerializer(site_allocations, many=True)
-        return Response(serializer.data)
-
-    elif request.method == 'PUT':
+@login_required(login_url='login')
+def site_allocationemployee(request, pk):  
+    if request.method == 'PUT':
         try:
-            site_allocation = SiteAllocation.objects.get(employee_id=employee_id)
+            site_allocation = SiteAllocation.objects.get(pk=pk)
         except SiteAllocation.DoesNotExist:
-            return Response({'detail': 'Site allocation not found'}, status=status.HTTP_404_NOT_FOUND)
-
-        serializer = SiteAllocationEmployeeSerializer(site_allocation, data=request.data, partial=True)
+            return Response({'detail': 'Site allocation not found.'}, status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = SiteAllocationEmployeeSerializer(site_allocation, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['DELETE'])
+@login_required(login_url='login')
+def delete_site_allocation_list(request, pk):
+    try:
+        site = SiteAllocation.objects.get(id=pk)
+        allow, msg = check_user(request, SiteAllocation, instance=site)
+        if not allow:
+            return JsonResponse({'details': [msg]}, status=status.HTTP_401_UNAUTHORIZED)
+        site.delete()
+        return JsonResponse({'details': 'Site allocation deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
+    except SiteAllocation.DoesNotExist:
+        return JsonResponse({'details': 'Site allocation does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
+
+#-------------------------------------------------> Labour Site Allocation <---------------------------------------
 
 @login_required(login_url='login')
 def lab_site_allocation(request):
@@ -2992,13 +2985,28 @@ def lab_site_allocation(request):
     employee =CompanyLabours.objects.filter(company = user.company).order_by("-id")
 
     project=Project.objects.filter(company=request.user.company).order_by("-id")
-    # projectsubcontractor = CompanyLabours.objects.filter(company=request.user.company).order_by("-id")
-    # querysets = ProjectLabourAttendence.objects.filter(company=request.user.company).order_by("-id")   #change query
-    # queryset,pages,search =customPagination(request,ProjectLabourAttendence,querysets)    #change, model
-    # context= {'queryset': queryset,"location":"employee-labour-attendance","pages" :pages,"search":search,'projectsubcontractor':projectsubcontractor,"project":project}   #change location name 
     context ={"employee":employee, "project":project}
     return render(request, 'site_allocation/lab_site_allocation.html',context)
 
+@api_view(['GET'])
+@login_required(login_url='login')
+def lab_site_allocation_list(request, pk):  # change name 
+    user = request.user
+    allow, msg = check_user(request, SiteAllocation, instance=False)  # CHANGE model
+    if not allow:
+        context = {"unauthorized": msg}
+        return render(request, "login.html", context)    
+    
+    company, _ = get_user_company(user)
+    pk = int(pk)
+
+    if pk != 0:
+        querysets = SiteAllocation.objects.filter(labour__id=pk, company__in=company).exclude(labour__isnull=True)
+        return PaginationAndFilter(querysets, request, SiteAllocationLabourSerializer, date_field="date")
+    
+    querysets = SiteAllocation.objects.filter(company__in=company).exclude(labour__isnull=True).order_by('-id')
+    return PaginationAndFilter(querysets, request, SiteAllocationLabourSerializer, date_field="date")
+    
 @api_view(['POST'])
 @login_required(login_url='login')
 def add_lab_site_allocation(request):
@@ -3021,26 +3029,21 @@ def add_lab_site_allocation(request):
     else:
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-
-
-@api_view(['GET'])
+@api_view(['GET', 'PUT'])
 @login_required(login_url='login')
-def lab_site_allocation_list(request, pk):  # change name 
-    user = request.user
-    allow, msg = check_user(request, SiteAllocation, instance=False)  # CHANGE model
-    if not allow:
-        context = {"unauthorized": msg}
-        return render(request, "login.html", context)    
-    
-    company, _ = get_user_company(user)
-    pk = int(pk)
+def site_allocationlabour(request, pk):  
+    if request.method == 'PUT':
+        try:
+            site_allocation = SiteAllocation.objects.get(pk=pk)
+        except SiteAllocation.DoesNotExist:
+            return Response({'detail': 'Site allocation not found.'}, status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = SiteAllocationLabourSerializer(site_allocation, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    if pk != 0:
-        querysets = SiteAllocation.objects.filter(labour__id=pk, company__in=company)
-        return PaginationAndFilter(querysets, request, SiteAllocationLabourSerializer, date_field="date")
-    
-    querysets = SiteAllocation.objects.filter(company__in=company).order_by('-id')
-    return PaginationAndFilter(querysets, request, SiteAllocationLabourSerializer, date_field="date")
 
 
 def purchase_details(request, purchase_id):
@@ -3074,6 +3077,33 @@ def purchase_details(request, purchase_id):
         ],
     }
     return JsonResponse(data)
+
+@api_view(['GET'])
+@login_required(login_url='login')
+def get_purchase(request, pk):
+    try:
+        purchase = PurchaseInvoice.objects.get(pk=pk)
+    except PurchaseInvoice.DoesNotExist:
+        return HttpResponseNotFound('<h1>purchase not found</h1>')
+
+    if request.method == 'GET':
+        projects = Project.objects.filter(company=request.user.company).order_by("-id") 
+        vendors = VendorRegistration.objects.filter(company=request.user.company).order_by("-id") 
+        items = MaterialLibrary.objects.filter(company=request.user.company).order_by("-id")
+        uom = Uom.objects.filter(company=request.user.company).order_by("-id")
+        inventory = InventoryStock.objects.filter(company=request.user.company).order_by("-id")
+  
+        context = {
+            'purchase': purchase,
+            'pk': pk,
+            'uom': uom,
+            'projects': projects,
+            'vendors': vendors,
+            'items': items,
+            'inventory': inventory,
+        }
+        return render(request, 'purchase/purchasedetails.html', context)
+    
 @api_view(['PUT', 'GET'])
 @login_required(login_url='login')
 def update_purchase(request, pk):
@@ -3106,36 +3136,36 @@ def update_purchase(request, pk):
             return Response(purchase_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         purchase_serializer.save()
 
-        # table_data = request.data.get('table_data')
-        # if table_data:
-        #     try:
-        #         table_data = json.loads(table_data)
-        #         for data in table_data:
-        #             if 'id' in data:
-        #                 # Update existing PurchaseItems
-        #                 purchase_item = PurchaseItems.objects.get(id=data['id'])
-        #                 items_serializer = PurchaseItemsSerializer(purchase_item, data=data, partial=True)
-        #             else:
-        #                 # Create new PurchaseItems instance
-        #                 data['invoice'] = purchase.id
-        #                 items_serializer = PurchaseItemsSerializer(data=data)
-                    
-        #             if items_serializer.is_valid():
-        #                 items_serializer.save()
-        #             else:
-        #                 # Return detailed errors if serialization fails
-        #                 return Response(items_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        #     except json.JSONDecodeError:
-        #         return JsonResponse({'error': 'Invalid JSON format'}, status=status.HTTP_400_BAD_REQUEST)
-        #     except PurchaseItems.DoesNotExist:
-        #         return JsonResponse({'error': 'PurchaseItem does not exist'}, status=status.HTTP_404_NOT_FOUND)
-
-        # Serialize and return the updated purchase data
         purchase_serializer = PurchaseInvoiceSerializer(purchase)
         return Response(purchase_serializer.data)
     else:
         return JsonResponse({'error': 'Invalid request method'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
+@api_view(['GET'])
+@login_required(login_url='login')
+def get_quatation(request, pk):
+    try:
+        quatation = Quatation.objects.get(pk=pk)
+    except Quatation.DoesNotExist:
+        return HttpResponseNotFound('<h1>Quatation not found</h1>')
+
+    if request.method == 'GET':
+        projects = Project.objects.filter(company=request.user.company).order_by("-id") 
+        employees = Employee.objects.filter(company=request.user.company).order_by("-id") 
+        # status =WorkStatus.objects.filter().order_by("-id")
+        uom = Uom.objects.filter(company=request.user.company).order_by("-id")
+        inventory=InventoryStock.objects.filter(company=request.user.company).order_by("-id")
+  
+        context = {
+            'quatation': quatation,
+            'pk':pk,
+            'uom': uom,
+            'projects': projects,
+            'employees': employees ,
+            # 'status': status,
+            'inventory': inventory,
+        }
+        return render(request, 'quatation/quatationdetails.html', context)
 
 @api_view(['PUT', 'GET'])
 @login_required(login_url='login')

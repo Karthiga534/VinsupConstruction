@@ -847,7 +847,7 @@
 
 																		</div>
 
-																		<div class="col-md-6 mb-3">
+																		 <div class="col-md-6 mb-3">
 																			<label for="editaggeaments">Aggeaments
 																				:</label>
 																			<input type="file" class="form-control mb-2"
@@ -860,18 +860,10 @@
 																					href="{{ i.modeldesign.url}}">
 																					{{i.modeldesign |filename }}
 																					</a></span>
-																			<!-- <div class="p-1"
-																				style="width:92%;border:1px solid gray;font-size:12px">
-																				<a
-																					href="{{ i.aggeaments.url }}">{{i.aggeaments}}</a>
-																				<span id="{{i.id}}_aggeamentsError"
-																					class="error-message mt-2"></span>
-
-																			</div> -->
-																			<!-- <button class="btn btn-primary btn-sm"
-																				style="margin-left:92%;margin-top:-49px"><i
-																					class="mdi mdi-arrow-down"></i></button> -->
+																		
 																		</div>
+																		
+																		
 
 
 																		<div class="col-md-6 mb-3">
@@ -1215,7 +1207,8 @@
 
 
 					const formData = new FormData();
-
+					formData.append('description', getValueOrDefault(formElement.querySelector('textarea[name="description"]').value));
+                    formData.append('terms_conditions', getValueOrDefault(formElement.querySelector('textarea[name="terms_conditions"]').value));
 					formData.append('proj_name', getValueOrDefault(formElement.querySelector('input[name="proj_name"]').value));              //change
 					formData.append('client', getValueOrDefault(formElement.querySelector('input[name="client"]').value));
 					formData.append('contact_no', getValueOrDefault(formElement.querySelector('input[name="contact_no"]').value));

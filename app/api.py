@@ -2165,8 +2165,6 @@ def contractoratt_list(request):
 #     sub_contracts = ProjectSubContract.objects.values('id', 'name')  # Include 'name' field in values()
 #     return Response(sub_contracts)
 
-@api_view(['GET'])
-
 
 @api_view(['GET'])
 def get_sub_contract_lists(request, project_id):
