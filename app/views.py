@@ -95,7 +95,7 @@ class CustomLogoutView(LogoutView):
 def index(request):
 
     company,_ =get_company(request.user)
-    
+
     current_month_start, next_month_start = get_current_month()
     current_month_end = next_month_start - timedelta(days=1)
    
@@ -2027,11 +2027,10 @@ def employee_clock_in(request):  # CHANGE name
     if not allow:
         return JsonResponse({'details':[msg]}, status=status.HTTP_401_UNAUTHORIZED)
     request_data=request.POST.copy().dict()
-    if user.admin:
+    if user.admin or user.employee:
         request_data['company'] = user.company.id
 
     employee_id = user.employee.id if user.employee else None
-    print(employee_id,"kkkkkkkkkkkkkkkkk")
         
     if not employee_id:
         return JsonResponse({'employee':['This field is required']}, status=400)

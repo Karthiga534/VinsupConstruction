@@ -129,17 +129,17 @@ prod_db =  {
         'PORT': os.getenv('psql_port'),
     }
 
-Production = (os.getenv('PROD_DB'))
+# Production = (os.getenv('PROD_DB'))
 
 # Production = os.getenv('PRODUCTION', 'False').lower() in ('true', '1', 't')
 
-print(type(Production),Production ==0,Production)
+# print(type(Production),Production ==0,Production)
 
 DATABASES = {
     'default': prod_db 
 }
 
-print(DATABASES)
+print(os.getenv("psql_database"))
 
 
 # DATABASES = {
