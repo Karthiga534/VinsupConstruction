@@ -969,9 +969,9 @@ class VendorQuatation(models.Model):
 
 class Contractor(models.Model):
     company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
-    name = models.CharField(max_length=100)
-    contact_no = models.CharField(max_length=15)
-    address = models.CharField(max_length=255)
+    name = models.CharField(max_length=100,null=True,blank=True)
+    contact_no = models.CharField(max_length=15,null=True,blank=True)
+    address = models.CharField(max_length=255,null=True,blank=True)
     area = models.CharField(max_length=100,null=True,blank=True)
     rate = models.DecimalField(max_digits=10, decimal_places=2)
     unit=models.ForeignKey(Uom, on_delete=models.CASCADE,null=True,blank=True)
@@ -982,7 +982,7 @@ class Contractor(models.Model):
     male_unskilled = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     female_skilled = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     female_unskilled = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    category = models.ForeignKey(Contractcategory, on_delete=models.CASCADE)
+    category = models.ForeignKey(Contractcategory, on_delete=models.CASCADE,null=True,blank=True)
     start_date=models.DateField(null=True,blank=True)
 
     def __str__(self):
@@ -1015,6 +1015,8 @@ class Project(models.Model):
     aggeaments =models.FileField(upload_to="doc")
     proj_category = models.ForeignKey(ProjectCategory, on_delete=models.CASCADE,null=True,blank=True)
     status = models.ForeignKey(WorkStatus, on_delete=models.CASCADE,null=True,blank=True)
+    description = models.TextField(null=True,blank=True) 
+    terms_conditions = models.TextField(null=True,blank=True)
 
     def __str__(self):
         return f"{self.proj_name} - {self.site_location}"
@@ -1249,13 +1251,6 @@ class SiteStock(models.Model):
         # Define unique_together to enforce uniqueness across multiple fields
         unique_together = ('item', 'company', 'unit','project')
 
-    
-    @property
-    def display(self):
-        if self.item:
-            return self.item.item
-        return self.name
-
     def save(self, *args, **kwargs):
         if not self.total_supplied_qty:
            self.total_supplied_qty =self.qty
@@ -1280,6 +1275,14 @@ class SiteStock(models.Model):
         if self.item:  
             if self.item.purchase_history:
                 return self.item.purchase_history
+        return None
+    
+
+    @property
+    def display(self):
+        if self.item:  
+       
+            return self.item.item
         return None
 
 
@@ -1423,13 +1426,14 @@ class QuatationItems(models.Model):
     
     @property
     def display_name(self):
-      
+        
         if self.item:
-            return  self.item.item
+            return self.item.item
         if self.inventory:
             return self.inventory.display
+        
         if self.name:
-            return  self.name
+            return  self.name 
         return None
 
 
@@ -1602,6 +1606,7 @@ class SalaryPaymentHistory(models.Model):
 class ProjectSubContract(models.Model):
     company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
     project = models.ForeignKey(Project, on_delete=models.CASCADE,null=True,blank=True)
+    name= models.CharField(max_length=255,null=True,blank=True)
     type = models.ForeignKey(ContractType, on_delete=models.CASCADE,null=True,blank=True)
     contractor = models.ForeignKey(Contractor, on_delete=models.CASCADE,null=True,blank=True)
     start_date = models.DateField()
@@ -2166,6 +2171,7 @@ class PettyCash(models.Model):
 class PaymentHistory(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE, null=True, blank=True)
     date = models.DateField(null=True,blank=True)
+    img =models.FileField(upload_to="doc",null=True,blank=True)
     receipt_number = models.CharField(max_length=100)
     payment_method = models.ForeignKey(PaymentMethod, on_delete=models.CASCADE, null=True, blank=True)
     payment_amount = models.DecimalField(max_digits=10, decimal_places=2)

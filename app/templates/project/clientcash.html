@@ -122,11 +122,8 @@
                                                     <button type="button" class="btn btn-primary btn-sm custom-button"
                                                         data-bs-toggle="modal" data-bs-target=".bs-example-modal-lg">+
                                                         Add
-                                                        expense</button>
+                                                        Receipt</button>
 
-                                                    <!-- <a href="{% url 'payment-process' project_id=project.id %}"
-                                                        class="btn btn-primary btn-sm custom-button"
-                                                        id="create-receipt-btn"> + Create Receipt</a> -->
 
                                                 </div>
 
@@ -152,76 +149,52 @@
 
                                                                         <div class="row">
 
-                                                                            <form  id="createForm">
+                                                                            <form id="createForm">
                                                                                 {% csrf_token %}
                                                                                 <div class="row">
                                                                                     <div class="col-md-6">
-                                                                                        <label for="date"
-                                                                                            class="form-label">Date:</label>
-                                                                                        <input type="date"
-                                                                                            class="form-control"
-                                                                                            id="date" name="date">
-                                                                                        <span id="dateError"
-                                                                                            class="error-message"></span>
+                                                                                        <label for="date" class="form-label">Date:</label>
+                                                                                        <input type="date" class="form-control" id="date" name="date">
+                                                                                        <span id="dateError" class="error-message"></span>
                                                                                     </div>
                                                                                     <div class="col-md-6">
-                                                                                        <label for="receipt_number"
-                                                                                            class="form-label">Receipt
-                                                                                            No:</label>
-                                                                                        <input type="text"
-                                                                                            class="form-control"
-                                                                                            name="receipt_number"
-                                                                                            id="receipt_number">
-                                                                                        <span id="receipt_numberError"
-                                                                                            class="error-message"></span>
+                                                                                        <label for="receipt_number" class="form-label">Receipt No:</label>
+                                                                                        <input type="text" class="form-control" name="receipt_number" id="receipt_number">
+                                                                                        <span id="receipt_numberError" class="error-message"></span>
                                                                                     </div>
                                                                                 </div>
                                                                                 <div class="row mt-3">
                                                                                     <div class="col-md-6">
-                                                                                        <label for="payment_method"
-                                                                                            class="form-label">Payment
-                                                                                            Method:</label>
-                                                                                        <select class="form-select mb-3"
-                                                                                            aria-label="Default select example"
-                                                                                            name="payment_method"
-                                                                                            id="payment_method">
-                                                                                            <option value="">
-                                                                                                ----------------
-                                                                                            </option>
-                                                                                            {% for method in  payment_methods %}
-                                                                                           
-
-                                                                                            <option
-                                                                                                value="{{ method.id }}">
-                                                                                                {{ method.name }}
-                                                                                            </option>
+                                                                                        <label for="payment_method" class="form-label">Payment Method:</label>
+                                                                                        <select class="form-select mb-3" aria-label="Default select example" name="payment_method" id="payment_method">
+                                                                                            <option value="">----------------</option>
+                                                                                            {% for method in payment_methods %}
+                                                                                            <option value="{{ method.id }}">{{ method.name }}</option>
                                                                                             {% endfor %}
                                                                                         </select>
-                                                                                        <span id="payment_methodError"
-                                                                                            class="error-message"></span>
+                                                                                        <span id="payment_methodError" class="error-message"></span>
                                                                                     </div>
                                                                                     <div class="col-md-6">
-                                                                                        <label for="payment_amount"
-                                                                                            class="form-label">Payment
-                                                                                            Amount:</label>
-                                                                                        <input type="number"
-                                                                                            class="form-control"
-                                                                                            name="payment_amount"
-                                                                                            id="payment_amount"
-                                                                                            min="0.01" step="0.01">
-                                                                                        <span id="payment_amountError"
+                                                                                        <label for="payment_amount" class="form-label">Payment Amount:</label>
+                                                                                        <input type="number" class="form-control" name="payment_amount" id="payment_amount" min="0.01" step="0.01">
+                                                                                        <span id="payment_amountError" class="error-message"></span>
+                                                                                    </div>
+                                                                                    <div class="col-md-6">
+                                                                                        <label for="" class="form-label">Upload Receipt
+                                                                                            :</label>
+                                                                                        <input type="file" class="form-control" id="img"
+                                                                                            name="img">
+                                                                                        <span id="imgError"
                                                                                             class="error-message"></span>
                                                                                     </div>
                                                                                 </div>
-                                                                                <div
-                                                                                    class="row mt-3 justify-content-center">
+                                                                                <div class="row mt-3 justify-content-center">
                                                                                     <div class="col-md-6">
-                                                                                        <button type="button" onclick="createFunction(this)"
-                                                                                            class="btn btn-primary d-block mx-auto">Submit
-                                                                                            Payment</button>
+                                                                                        <button type="button" onclick="createFunction(this, {{ project.id }})" class="btn btn-primary d-block mx-auto">Submit</button>
                                                                                     </div>
                                                                                 </div>
                                                                             </form>
+                                                                            
                                                                         </div>
 
                                                                     </div>
@@ -244,6 +217,7 @@
                                                         <th>Receipt Number</th>
                                                         <th>Payment Method</th>
                                                         <th>Payment Amount</th>
+                                                        <th>Receipt</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -253,6 +227,16 @@
                                                         <td>{{ payment.receipt_number }}</td>
                                                         <td>{{ payment.payment_method }}</td>
                                                         <td>{{ payment.payment_amount }}</td>
+                                                        <td>
+                                                            {% if payment.img %}
+                                                                <a href="{{ payment.img.url }}" target="_blank">{{ payment.img.name|filename }}</a>
+                                                            {% else %}
+                                                                No Image
+                                                            {% endif %}
+                                                        </td>
+                                                        
+                                                            
+
                                                     </tr>
                                                     {% endfor %}
                                                 </tbody>
@@ -282,102 +266,78 @@
         <script>
 
 
-            const posturl = "clientcash"
+            const posturl = "clientcashpay";
 
+function createFunction(button, pk) {
+    var formId = `createForm`;
+    var formElement = document.getElementById(formId);
+    try {
+        disableButton(button);
+        var isValid = true;
+        var errors = {};
+        var formData = new FormData(formElement);
 
-            function createFunction(button, pk) {
-                var formId = `createForm`;   //change
-                var formElement = document.getElementById(formId);
-                try {
-                    disableButton(button);
-                    var isValid = true;
-                    var errors = {};
-                    var formData = new FormData();
+        var requiredKeys = ['date', 'receipt_number', 'payment_amount', 'payment_method'];
 
-                    var requiredKeys = ['date', 'receipt_number', 'payment_amount', 'payment_method'];   //change
-
-
-                    formData.append('date', getValueOrDefault(formElement.querySelector('input[name="date"]').value));              //change
-                    formData.append('receipt_number', getValueOrDefault(formElement.querySelector('input[name="receipt_number"]').value));
-                    formData.append('payment_amount', getValueOrDefault(formElement.querySelector('input[name="payment_amount"]').value));
-                    formData.append('payment_method', getValueOrDefault(formElement.querySelector('select[name="payment_method"]').value));
-                    // formData.append('employee', getValueOrDefault(formElement.querySelector('select[name="employee"]').value));
-                   
-                  
-
-
-                    requiredKeys.forEach(function (key) {
-                        var value = formData.get(key);
-                        if (!value.trim()) {
-                            isValid = false;
-                            errors[key] = ['This field may not be blank.'];
-                        }
-                    });
-
-                    if (!isValid) {
-                        enableButton(button);
-                        console.log(errors);
-                        handleCreateErrors(errors);
-                        return;
-                    } else {
-                        $(`#${formId} input, #${formId} button`).prop('disabled', true);
-
-                    }
-
-                    $.ajax({
-                        url: `/${posturl}/1/`,                //change
-                        type: 'POST',
-                        headers: {
-                            'X-CSRFToken': csrftoken,
-                        },
-                        data: formData,
-                        processData: false,
-                        contentType: false,
-                        success: function (response, status, xhr) {
-                            console.error(status);
-                            if (xhr.status === 201) {
-                                showToast(successMesssage?.message, '', successMesssage?.bgColor, true);
-                            } else {
-                                console.error(error);
-                                // restoreForm(formId, button)
-
-                            }
-                        },
-                        error: function (xhr, status, error) {
-                            console.log(xhr, status, error);
-                            if (xhr.status === 400) {
-                                if (xhr?.responseJSON || xhr?.responseJSON?.errors) {
-                                    handleCreateErrors(transformErrors(xhr.responseJSON));
-                                    // restoreForm(formId, button)
-
-                                } else {
-                                    showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
-                                    // restoreForm(formId, button)
-
-                                }
-                            }
-                            else if (xhr.status === 401 || 404) {
-                                showToast(xhr?.responseJSON?.details, '', errorAlertMessage?.bgColor);
-                                // restoreForm(formId, button)
-
-                            }
-                            else {
-                                showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
-                                // restoreForm(formId, button)
-
-                            }
-                        }
-                    });
-                } catch (error) {
-                    showToast(errorOccured?.message, '', errorOccured?.bgColor);
-                    // restoreForm(formId, button)
-                    console.error(error);
-                }
-
-                finally {
-                    restoreForm(formId, button)
-                }
+        requiredKeys.forEach(function (key) {
+            var value = formData.get(key);
+            if (!value.trim()) {
+                isValid = false;
+                errors[key] = ['This field may not be blank.'];
             }
+        });
+
+        if (!isValid) {
+            enableButton(button);
+            console.log(errors);
+            handleCreateErrors(errors);
+            return;
+        } else {
+            $(`#${formId} input, #${formId} button`).prop('disabled', true);
+        }
+
+        $.ajax({
+            url: `/${posturl}/${pk}/`,
+            type: 'POST',
+            headers: {
+                'X-CSRFToken': csrftoken,
+            },
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response, status, xhr) {
+                if (xhr.status === 201) {
+                    showToast(successMesssage?.message, '', successMesssage?.bgColor, true);
+                } else {
+                    console.error(response);
+                    restoreForm(formId, button);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.log(xhr, status, error);
+                if (xhr.status === 400) {
+                    if (xhr?.responseJSON || xhr?.responseJSON?.errors) {
+                        handleCreateErrors(transformErrors(xhr.responseJSON));
+                    } else {
+                        showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+                    }
+                } else if (xhr.status === 401 || 404) {
+                    showToast(xhr?.responseJSON?.details, '', errorAlertMessage?.bgColor);
+                } else {
+                    showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+                }
+                restoreForm(formId, button);
+            }
+        });
+        } catch (error) {
+            showToast(errorOccured?.message, '', errorOccured?.bgColor);
+            console.error(error);
+            restoreForm(formId, button);
+        } finally {
+            restoreForm(formId, button);
+        }
+    }
+
 
         </script>
 

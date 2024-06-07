@@ -43,8 +43,8 @@
                 <div class="col-xl-4 col-lg-4 col-md-4 col-12"></div>
                 <div class="col-xl-2 col-lg-2 col-md-2 col-12">
                   <button type="button" class="btn btn-info" style="float:right;" data-bs-toggle="modal"
-                    data-bs-target=".bs-example-modal-lg">Add
-                    Material</button>
+                    data-bs-target=".bs-example-modal-lg">+ Add
+                    </button>
                   <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog"
                     aria-labelledby="myLargeModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-lg">
@@ -152,13 +152,16 @@
                     <td>
                       <div class="btn-group" role="group">
                         <button class="btn btn-soft-secondary btn-sm me-2" type="button" data-id="{{i.id}}" onclick="openModal('viewModal', '{{ i.id }}')">
-                            <i class="ri-eye-fill align-bottom me-2 text-muted"></i> View
+                            <!-- <i class="ri-eye-fill align-bottom me-2 text-muted"></i> -->
+                            View
                         </button>
-                        <button class="btn btn-primary btn-sm me-2" type="button" data-bs-toggle="modal" onclick="openModal('editModal','{{ i.id }}')">
-                            <i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit
+                        <button class="btn btn-soft-primary btn-sm me-2" type="button" onclick="openModal('editModal','{{ i.id }}')">
+                            <!-- <i class="ri-pencil-fill align-bottom me-2 text-muted"></i>  -->
+                            Edit
                         </button>
-                        <button class="btn btn-danger btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#deleteModal{{ i.id }}">
-                            <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete
+                        <button class="btn btn-soft-danger btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#deleteModal{{ i.id }}">
+                            <!-- <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i>  -->
+                            Delete
                         </button>
                     </div>
 
@@ -253,7 +256,7 @@
                           <div class="modal-content">
                             <div class="modal-header">
                               <h5 class="modal-title" id="deleteModalLabel-{{ forloop.counter }}"> Delete
-                                Role </h5>
+                               Material</h5>
                               <button type="button" class="btn-close" data-bs-dismiss="modal"
                                 aria-label="Close"></button>
                             </div>

@@ -17,12 +17,13 @@ function goBack() {
 let envVariable;
 
 document.addEventListener("DOMContentLoaded", function() {
-  console.log('Environment Variable:', window.myEnvVar.PAGINATION_SIZE);
+  // console.log('Environment Variable:', window.myEnvVar.PAGINATION_SIZE);
   envVariable =window.myEnvVar
   // pageLength = envVariable?.PAGINATION_SIZE || pageLength
 
   
 });
+
 
 
 
@@ -147,13 +148,13 @@ function transformErrors(errorObj) {
 }
 
 function handleUpdateErrors(modelId, errorObj) {
-  console.log(modelId, errorObj);
+  // console.log(modelId, errorObj);
   for (const key in errorObj) {
     const inputId = modelId + "_" + key;
     const errorMessage = errorObj[key][0]; // Assuming only one error message per field
     const errorSpan = document.getElementById(inputId + "Error");
 
-    console.log(errorMessage, errorSpan, inputId);
+    // console.log(errorMessage, errorSpan, inputId);
     $("#" + inputId).addClass("is-invalid");
 
     // Display error message in the adjacent invalid-feedback element
@@ -202,7 +203,7 @@ function CloseModel(modelName, modelId) {
   formControls.forEach(function (control) {
     control.classList.remove("is-invalid");
   });
-  console.log(`${model_Name}_${model_Id}`);
+  // console.log(`${model_Name}_${model_Id}`);
   model_Id = "";
   model_Name = "";
   resetFormValues(modelName, modelId);
@@ -459,6 +460,7 @@ function getSearchQuery() {
 
 // // render table or message
 function renderDataOrMessage(tableBody, data, page) {
+ 
   // Check if data is available and not empty
   if (data && Array.isArray(data.results) && data.results.length > 0) {
     // Render the data in the table
@@ -496,7 +498,7 @@ function openCustomDataModal(modalId) {
 function setModalInputValue(form, fieldName, value) {
   const inputElement = form.querySelector(`[name="${fieldName}"]`);
   if (!inputElement) {
-    console.error(`Input element with name "${fieldName}" not found in the form.`);
+    // console.error(`Input element with name "${fieldName}" not found in the form.`);
     return;
   }
 
@@ -507,7 +509,7 @@ function setModalInputValue(form, fieldName, value) {
     if (option) {
       option.selected = true;
     } else {
-      console.error(`Option with value "${value}" not found in the select element.`);
+      // console.error(`Option with value "${value}" not found in the select element.`);
     }
   } else {
     inputElement.value = value;
@@ -608,7 +610,7 @@ const createStatusCell = (status, className) => {
   statusComponent.textContent = status;
   if (className) {
     let classList = className.split(' ')
-    console.log(classList)
+    // console.log(classList)
     statusComponent.classList.add(...classList)
     cell.appendChild(statusComponent);
     return cell;
@@ -764,10 +766,10 @@ function closeHistoryModal(modalId) {
   return
 
 
-  console.log(modalId)
+  // console.log(modalId)
   var modalElement = document.getElementById(modalId);
 
-  console.log(modalElement)
+  // console.log(modalElement)
 
   // If the modal element is found, close it using Bootstrap's modal method
   if (modalElement) {
@@ -780,7 +782,7 @@ function closeHistoryModal(modalId) {
       modalInstance.hide();
     }
   } else {
-    console.error('Modal element not found for selector: ' + modalId);
+    // console.error('Modal element not found for selector: ' + modalId);
   }
 
   var myModal = new bootstrap.Modal(document.getElementById(modalId));
@@ -878,3 +880,7 @@ function downloadCSV(csv, filename) {
 
 
 // --------- ----------------------
+function console_log(...args) {
+  const formattedArgs = args.map(arg => `${arg}`).join(', ');
+  console.log(formattedArgs);
+}

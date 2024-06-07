@@ -33,7 +33,7 @@
 										<h4> Site Stock Usage </h4>
 									</div>
 									<div class="col-lg-2 col-md-2">
-										<a href="{% url 'dailysitestockusage' %}" class="btn btn-info" style="float:right;">SiteStock List</a>
+										<a href="{% url 'dailysitestockusagelist' %}" class="btn btn-info" style="float:right;">Back</a>
 									</div>
 								</div>
 								<hr>
@@ -46,7 +46,7 @@
 											<label for="project" class="form-label">Project:</label>
 											<select class="form-select" id="project" name="project">
 											
-												<option value="0">All</option>
+												<option value="0" selected>--------</option>
 											
 												{% for project in projects %}
 												<!--  -->
@@ -58,18 +58,18 @@
 										</div>
 										
 										<div class="col-md-4 mb-3 mt-4">
-											<label for="subcontractor" class="form-label">Subcontractor:</label>
-											<select class="form-select" id="subcontractor" name="subcontractor">
+											<label for="subcontract" class="form-label">Subcontract:</label>
+											<select class="form-select" id="subcontract" name="subcontract">
 												
 												<option value="0" selected>--------</option>
 										
-												{% for subcontract in subcontractors %}
+												{% for subcontract in subcontracts %}
 										
 												<option value="{{ subcontract.id }}">{{ subcontract.display_contractor_dropdown }}</option>
 											
 												{% endfor %}
 											</select>
-											<span id="subcontractorError" class="error-message"></span>
+											<span id="subcontractError" class="error-message"></span>
 										</div>
 									
 										<div class="col-md-4 mb-3 mt-4">
@@ -100,6 +100,7 @@
 													<th>Unit</th>
 
 													<th>Qty</th>
+													
 
 													<th>Supply Qty</th>
 													
@@ -122,7 +123,7 @@
 
 													<td>{{i.qty}}</td>
                                                     <td><input type="text" class="form-control supply-qty" name="qty"
-                                                        min="0" max="{{i.qty}} data-item="{{ i.item.item }}">
+                                                        min="0" max="{{i.qty}}" data-item="{{ i.item.item }}">
                                                        
                                                     <div class="text-danger supplyQtyError"></div>
                                                 </td>
@@ -197,12 +198,13 @@
 		document.addEventListener('DOMContentLoaded', function () {
 
 			const dropdown = document.getElementById('project');
+			// const dropdown = document.getElementById('subcontract');
 			const tableBody = document.querySelector('#tab1 tbody');
 
 
 			// fetch table data API
 			dropdown.addEventListener('change', function () {
-				console.log(dropdown, tableBody)
+				console_log(dropdown, tableBody)
 
 				const selectedValue = dropdown.value;
 				try {
@@ -388,7 +390,7 @@
 				
 				var tableData = [];
 				project=getValueOrDefault(formElement.querySelector('select[name="project"]').value)
-				subcontract=getValueOrDefault(formElement.querySelector('select[name="subcontractor"]').value)
+				subcontract=getValueOrDefault(formElement.querySelector('select[name="subcontract"]').value)
 				date=getValueOrDefault(formElement.querySelector('input[name="date"]').value)
 
 				table_Data.forEach((item)=> {
@@ -444,7 +446,7 @@
 						console.error(status);
 						if (xhr.status === 201) {
 							showToast(successMesssage?.message, '', successMesssage?.bgColor);
-							window.location.href = '/stockusagelist/';
+							goBack()
 						} else {
 							console.error(error);
 							restoreForm(formId, button)

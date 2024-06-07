@@ -1,0 +1,481 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block header2 %}
+    <!-- Begin page -->
+    <div id="layout-wrapper">       
+        
+        <div class="main-content">
+
+            <div class="page-content">
+                <div class="container-fluid">
+                    <!-- start page title -->
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                                <h4 class="mb-sm-0">Purchase</h4>
+                                <div class="page-title-right">
+                                    <ol class="breadcrumb m-0">
+                                        <li class="breadcrumb-item"><a href="javascript: void(0);">Purchase</a></li>
+                                        <li class="breadcrumb-item active">Create</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                  
+                   <!-- Modal Body -->
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <form id="editForm{{ purchase.id }}" enctype="multipart/form-data">
+                                            <!-- Header Row -->
+                                            <div class="row align-items-center mb-3">
+                                                <div class="col-xl-6 col-lg-6 col-md-6 col-12">
+                                                    <h4>{{ purchase.display }} Details</h4>
+                                                </div>
+                                                <div class="col-xl-4 col-lg-4 col-md-4 col-12"></div>
+                                                <div class="col-xl-2 col-lg-2 col-md-2 col-12">
+                                                    <a href="{% url 'purchaselist' %}" class="btn btn-info mb-2 float-end">Back</a>
+                                                </div>
+                                            </div>
+                                            
+                                            <hr>
+
+                                            <!-- Form Fields -->
+                                            <div class="row">
+                                                <div class="col-md-4 mt-2">
+                                                    <label for="project">Project:</label>
+                                                    <select class="form-select" id="site" name="site">
+                                                        <option value="{{ purchase.site.id }}" selected>{{ purchase.site }}</option>
+                                                        {% for project in projects %}
+                                                            <option value="{{ project.id }}">{{ project.site_location }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+
+                                                <div class="col-md-4 mt-2">
+                                                    <label for="vendor">Vendor:</label>
+                                                    <select class="form-select" id="vendor" name="vendor">
+                                                        <option value="{{ purchase.vendor.id }}" selected>{{ purchase.vendor }}</option>
+                                                        {% for vendor in vendors %}
+                                                            <option value="{{ vendor.id }}">{{ vendor.vendorname }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+
+                                                <div class="col-md-4 mt-2">
+                                                    <label for="vendor_company">Vendor Company:</label>
+                                                    <input type="text" class="form-control" id="vendor_company" name="vendor_company" value="{{ purchase.vendor_company }}">
+                                                </div>
+
+                                                <div class="col-md-4 mt-2">
+                                                    <label for="gst">GST:</label>
+                                                    <input type="text" class="form-control" id="gst" name="gst" value="{{ purchase.gst }}">
+                                                </div>
+
+                                                <div class="col-md-4 mt-2">
+                                                    <label for="tax">Tax:</label>
+                                                    <input type="text" class="form-control" id="tax" name="tax" value="{{ purchase.tax }}">
+                                                </div>
+
+                                                <div class="col-md-4 mt-2">
+                                                    <label for="contact_no">Contact Number:</label>
+                                                    <input type="text" class="form-control" id="contact_no" name="contact_no" value="{{ purchase.contact_no }}">
+                                                </div>
+
+                                                <div class="col-md-4 mt-2">
+                                                    <label for="invoice_id">Invoice ID:</label>
+                                                    <input type="text" class="form-control" id="invoice_id" name="invoice_id" value="{{ purchase.invoice_id }}">
+                                                </div>
+
+                                                <div class="col-md-4 mt-2">
+                                                    <label for="created_at">Created At:</label>
+                                                    <input type="date" class="form-control" id="created_at" name="created_at" value="{{ purchase.created_at|date:'Y-m-d' }}">
+                                                </div>
+
+                                                <div class="col-md-4 mt-2">
+                                                    <label for="total_amount">Total Amount:</label>
+                                                    <input type="text" class="form-control" id="total_amount" name="total_amount" value="{{ purchase.total_amount }}">
+                                                </div>
+
+                                                <div class="col-md-4 mt-2">
+                                                    <label for="paid">Paid:</label>
+                                                    <input type="text" class="form-control" id="paid" name="paid" value="{{ purchase.paid }}">
+                                                </div>
+
+                                                <div class="col-md-4 mt-2">
+                                                    <label for="pending">Pending:</label>
+                                                    <input type="text" class="form-control" id="pending" name="pending" value="{{ purchase.pending }}">
+                                                </div>
+                                            </div>
+
+                                            <div class="text-end mt-3">
+                                                <button type="button" class="btn btn-info" id="saveuom" onclick="updateFunction(this, '{{purchase.id}}')">Update</button>
+                                            </div>
+                                        </form>
+
+                                        <hr>
+
+                                        <!-- Service Rates Table -->
+                                        <h4>Service Rates</h4>
+                                        <hr>
+                                        <div class="card-body">
+                                            <table id="tabl" class="table table-bordered dt-responsive nowrap table-striped align-middle" style="width:100%">
+                                                <thead>
+                                                    <tr>
+                                                        <th>S.No</th>
+                                                        <th>Item</th>
+                                                        <th>Unit</th>
+                                                        <th>Rate</th>
+                                                        <th>Qty</th>
+                                                        <th>Amount</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for item in purchase.get_purchase_items %}
+                                                    <tr>
+                                                        <td>{{ forloop.counter }}</td>
+                                                        <!-- Work (Item) -->
+                                                        <td>
+                                                            <form method="POST" action="{% url 'purchasetableupdate' item.id %}">
+                                                                {% csrf_token %}
+                                                                <select class="form-select" name="item">
+                                                                    <option value="">Select Item</option>
+                                                                    {% for i in items %}
+                                                                        <option value="{{ i.id }}" {% if i.id == item.item.id %} selected {% endif %}>{{ i.item }}</option>
+                                                                    {% endfor %}
+                                                                </select>
+                                                        </td>
+                                                        <!-- Unit -->
+                                                        <td>
+                                                            <select class="form-select" name="unit">
+                                                                <option value="">Select Unit</option>
+                                                                {% for unit in uom %}
+                                                                    <option value="{{ unit.id }}" {% if unit.id == item.unit.id %} selected {% endif %}>{{ unit.name }}</option>
+                                                                {% endfor %}
+                                                            </select>
+                                                        </td>
+                                                        <!-- Rate -->
+                                                        <td>
+                                                            <input type="text" class="form-control" name="price" value="{{ item.price }}">
+                                                        </td>
+                                                        <!-- Qty -->
+                                                        <td>
+                                                            <input type="text" class="form-control" name="qty" value="{{ item.qty }}">
+                                                        </td>
+                                                        <!-- Amount (Sub Total) -->
+                                                        <td>
+                                                            <input type="text" class="form-control" name="sub_total" value="{{ item.sub_total }}">
+                                                        </td>
+                                                        <td>
+                                                            <button type="submit" class="btn btn-info" >Update</button>
+                                                        </td>
+                                                            </form>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+                                <footer class="footer">
+                                    <div class="container-fluid">
+                                        <div class="row">
+                                            <div class="col-sm-6">
+                                                <script>
+                                                    document.write(new Date().getFullYear())
+                                                </script>
+                                                © vinsup.
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <div class="text-sm-end d-none d-sm-block">
+                                                    Design & Develop by vinsup
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </footer>
+                            </div>
+                            <!-- end main content-->
+
+                        </div>
+                        <!-- END layout-wrapper -->
+
+
+
+    <!--start back-to-top-->
+    <button onclick="topFunction()" class="btn btn-danger btn-icon" id="back-to-top">
+        <i class="ri-arrow-up-line"></i>
+    </button>
+    <!--end back-to-top-->
+
+    <!--preloader-->
+    <div id="preloader">
+        <div id="status">
+            <div class="spinner-border text-primary avatar-sm" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    </div>
+
+   
+    <!-- JAVASCRIPT -->
+    <!-- <script src="assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/libs/simplebar/simplebar.min.js"></script>
+    <script src="assets/libs/node-waves/waves.min.js"></script>
+    <script src="assets/libs/feather-icons/feather.min.js"></script>
+    <script src="assets/js/pages/plugins/lord-icon-2.1.0.js"></script>
+    <script src="assets/js/plugins.js"></script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script> -->
+
+    <!--datatable js-->
+    <!-- <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.print.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+
+    <script src="assets/js/pages/datatables.init.js"></script> -->
+    <!-- App js -->
+    <!-- <script src="assets/js/app.js"></script>
+	
+	
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!--invoice,project,purchase,quatation,transfer,vendor,vendorquates-->
+<script type="text/javascript">
+	$(document).ready(function () {
+		var i = 1;
+
+		$(".add-row").click(function (event) {
+			event.preventDefault();
+			++i;
+
+
+			var newRow = `<tr>
+						<th scope="row"><div class="form-check"><input class="form-check-input fs-15" type="checkbox" name="checkAll" value="option1"></div></th>
+						<td>${i}</td>
+
+						<td>
+							<div  class="d-flex gap-2 ">
+								<select  style="width:85%;" class="form-select" aria-label="Default select example" id="item" name="item" >
+									<option value="">------------------</option>
+									{% for i in materiallibrary %}
+										<option value="{{ i.id }}">{{ i.item }}</option>
+									{% endfor %}
+									</select>
+								<button class="btn btn-soft-secondary align-middle btn-sm text-center" type="button" data-bs-toggle="collapse" data-bs-target="#other_${i}">
+									<i class="ri-add-fill align-middle"></i>
+								</button> 
+							
+							</div>
+							<div class="collapse mt-2" id="other_${i}">
+								<input type="text" class="form-control"  name="name" >
+							</div>
+
+							<span  name="nameError" class="error-message"></span>
+						</td>
+			
+						<td><select class="form-select  form-control"  aria-label="Default select example" name="unit" >
+							<option value=""> ------------------</option>
+							{% for i in uom %}
+							<option value="{{i.id}}">{{i.name}} </option>
+							{% endfor %}
+						  </select>
+						  <span  name="unitError" class="error-message"></span></td>
+
+						  <td><input type="number" name="qty" class="form-control qty" onchange="calculateTotalAmount(this)" >
+							<span  name="qtyError" class="error-message"></span></td>
+
+							</td>
+
+
+						  <td><input type="number" name="price" class="form-control price" onchange="calculateTotalAmount(this)">
+							<span  name="priceError" class="error-message"></span></td>
+
+							</td>
+
+						<td><input type="number" name="sub_total" class="form-control sub_total">
+							<span  name="sub_totalError" class="error-message"></span></td>
+							</td>
+
+						<td><button type="button" class="btn btn-danger btn-icon waves-effect waves-light remove-table-row">
+							<i class="ri-delete-bin-5-line"></i></button></td>
+						</tr>`;
+
+			$("#tabl").append(newRow);
+		});
+
+		$(document).on('click', '.remove-table-row', function () {
+			// --i;
+			$(this).parents('tr').remove();
+		});
+	});
+
+</script>
+
+		<script>
+			
+            function updateFunction(button, saveId) {
+
+                var formId = `editForm${saveId}`;   //change  editForm
+                var formElement = document.getElementById(formId);
+
+                var isValid = true;
+                var errors = {};
+
+                try {
+                    disableButton(button);
+                    clearErrors();
+
+                    var requiredKeys = ['gst'];   //change
+                
+
+                    const formData = new FormData();
+
+
+                    formData.append('gst', getValueOrDefault(formElement.querySelector('input[name="gst"]').value));
+                    formData.append('tax', getValueOrDefault(formElement.querySelector('input[name="tax"]').value));
+                    formData.append('contact_no', getValueOrDefault(formElement.querySelector('input[name="contact_no"]').value));
+                    formData.append('site', getValueOrDefault(formElement.querySelector('select[name="site"]').value));
+                    formData.append('vendor', getValueOrDefault(formElement.querySelector('select[name="vendor"]').value));
+                    formData.append('invoice_id', getValueOrDefault(formElement.querySelector('input[name="invoice_id"]').value)); // Changed from select to input
+                    formData.append('created_at', getValueOrDefault(formElement.querySelector('input[name="created_at"]').value)); // Changed from select to input
+                    formData.append('vendor_company', getValueOrDefault(formElement.querySelector('input[name="vendor_company"]').value)); 
+                    formData.append('total_amount', getValueOrDefault(formElement.querySelector('input[name="total_amount"]').value));
+                    formData.append('paid', getValueOrDefault(formElement.querySelector('input[name="paid"]').value));
+                    formData.append('pending', getValueOrDefault(formElement.querySelector('input[name="pending"]').value));
+
+					
+                  
+                    var tableData = [];
+                        $('#tabl tbody tr').each(function () {
+                            var rowData = {};
+                            rowData['id'] = $(this).find('input[name^="id"]').val(); // Assuming this field is present in your HTML
+                            rowData['item'] = $(this).find('select[name^="item"]').val();
+                            rowData['unit'] = $(this).find('select[name^="unit"]').val();
+                            rowData['price'] = $(this).find('input[name^="price"]').val();
+                            rowData['qty'] = $(this).find('input[name^="qty"]').val();
+                            rowData['amount'] = $(this).find('input[name^="sub_total"]').val(); // Changed from 'amount' to 'sub_total'
+                            tableData.push(rowData);
+                        });
+
+
+                    console.log(tableData);
+
+                    formData.append("table", JSON.stringify(tableData))
+		
+
+                    // requiredKeys.forEach(function (key) {
+                    //     var value = formData.get(key);
+                    //     if (!value.trim()) {
+                    //         isValid = false;
+                    //         errors[key] = ['This field may not be blank.'];
+                    //     }
+                    // });
+
+                    requiredKeys.forEach(function (key) {
+                var value = formData.get(key);
+                if (value === null || value === undefined || value === '') {
+                    isValid = false;
+                    errors[key] = ['This field may not be blank.'];
+                } else if (!value.trim()) {
+                    isValid = false;
+                    errors[key] = ['This field may not be blank.'];
+                }
+            })
+
+
+
+                    if (!isValid) {
+                        enableButton(button);
+                        console.log(errors);
+                        handleUpdateErrors(saveId, transformErrors(errors));
+                        return;
+                    } else {
+                        $(`#${formId} input, #${formId} button`).prop('disabled', true);
+
+                    }
+                    
+
+                    console.log(csrftoken);
+                    $.ajax({
+                        url: '/purchase_update/' + saveId + '/',   //change
+                        //url: '/update_subcontractor/' +  {{ pk }} + '/',
+                        type: 'PUT',
+                        headers: {
+                            'X-CSRFToken': csrftoken,
+                        },
+
+
+                        
+
+                        processData: false,
+                        contentType: false,
+                        data: formData,
+                        success: function (response, status, xhr) {
+                            if (xhr.status === 200) {
+                                showToast(updateMessage?.message, '', updateMessage?.bgColor, );
+                                restoreForm(formId, button)
+                            } else {
+                                showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+                                restoreForm(formId, button)
+
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            console.log(xhr, status, error);
+                            if (xhr.status === 400) {
+                                if (xhr?.responseJSON || xhr?.responseJSON?.errors) {
+                                    handleUpdateErrors(saveId, transformErrors(xhr.responseJSON));
+                                    restoreForm(formId, button)
+                                } else {
+
+                                    showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+                                    restoreForm(formId, button)
+
+                                }
+                            }
+                            else if (xhr.status === 401 || 404) {
+                                showToast(xhr?.responseJSON?.details, '', errorAlertMessage?.bgColor);
+                                restoreForm(formId, button)
+
+                            }
+                            else {
+
+                                showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+                                restoreForm(formId, button)
+
+                            }
+                        }
+                    });
+                } catch (error) {
+                    showToast(errorOccured?.message, '', errorOccured?.bgColor);
+                    restoreForm(formId, button)
+                    console.error(error);
+                }
+            }
+
+	
+		</script>
+
+
+        {% endblock header2 %}

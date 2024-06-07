@@ -72,23 +72,7 @@
 																		class="error-message"></span>
 																</div>
 
-																{% comment %} <div class="col-md-4">
-																	<label for="" class="form-label">Select category
-																		:</label>
-																	<select class="form-select mb-3"
-																		aria-label="Default select example"
-																		name="category" id="category">
-
-																		<option value="">----------------</option>
-																		{% for i in category %}
-																		<option value="{{i.id}}">{{i.name}} </option>
-																		{% endfor %}
-
-																	</select>
-																	<span id="categoryError"
-																		class="error-message"></span>
-																</div> {% endcomment %}
-
+																
 																<div class="col-md-4">
 																	<label for="" class="form-label">Select Category
 																		:</label>
@@ -106,13 +90,6 @@
 																		class="error-message"></span>
 																</div>
 
-																{% comment %} <div class="col-md-4 mt-2">
-																	<label for="" class="form-label">project Id
-																		: </label>
-																	<input type="text" class="form-control" id="">
-																	<span id="contact_noError"
-																		class="error-message"></span>
-																</div> {% endcomment %}
 
 																<div class="col-md-4 mt-2">
 																	<label for="" class="form-label">Project Name
@@ -173,21 +150,6 @@
 																</div>
 
 
-																<!-- <div class="col-md-4 mt-2">
-																	<label for="" class="form-label">Duration :</label>
-																	<select class="form-select mb-3"
-																		aria-label="Default select example"
-																		name="duration">
-
-																		<option value="">----------------</option>
-																		{% for i in duration %}
-																		<option value="{{i.id}}">{{i.name}} </option>
-																		{% endfor %}
-
-																	</select>
-																	<span id="durationError"
-																		class="error-message"></span>
-																</div> -->
 
 
 																<div class="col-md-4 mt-2">
@@ -384,12 +346,12 @@
 														<i class="ri-more-fill align-middle"></i>
 													</button>
 													<ul class="dropdown-menu dropdown-menu-end">
-														<li><a class="dropdown-item" data-id="{{i.id}}"
+														<li><a class="dropdown-item" href="#!"  data-id="{{i.id}}"
 																onclick="openModal('viewModal', '{{ i.id }}')"><i
-																	class="ri-eye-fill align-bottom me-2 text-muted"></i>
+																 class="ri-eye-fill align-bottom me-2 text-muted"></i>
 																View</a></li>
 														<li><a class="dropdown-item edit-item-btn"
-																data-bs-toggle="modal" href="#!"
+																 href="#!"
 																onclick="openModal('editModal','{{ i.id }}')"><i
 																	class="ri-pencil-fill align-bottom me-2 text-muted"></i>
 																Edit</a></li>
@@ -847,7 +809,7 @@
 
 																		</div>
 
-																		<div class="col-md-6 mb-3">
+																		 <div class="col-md-6 mb-3">
 																			<label for="editaggeaments">Aggeaments
 																				:</label>
 																			<input type="file" class="form-control mb-2"
@@ -857,21 +819,13 @@
 
 																			<span class="file-span">
 																				<a target="_blank"
-																					href="{{ i.modeldesign.url}}">
-																					{{i.modeldesign |filename }}
+																					href="{{ i.aggeaments.url}}">
+																					{{i.aggeaments |filename }}
 																					</a></span>
-																			<!-- <div class="p-1"
-																				style="width:92%;border:1px solid gray;font-size:12px">
-																				<a
-																					href="{{ i.aggeaments.url }}">{{i.aggeaments}}</a>
-																				<span id="{{i.id}}_aggeamentsError"
-																					class="error-message mt-2"></span>
-
-																			</div> -->
-																			<!-- <button class="btn btn-primary btn-sm"
-																				style="margin-left:92%;margin-top:-49px"><i
-																					class="mdi mdi-arrow-down"></i></button> -->
+																		
 																		</div>
+																		
+																		
 
 
 																		<div class="col-md-6 mb-3">
@@ -1019,9 +973,9 @@
 				// Set the value of the date input using querySelector for input type="date"
 				const dateInputs = document.querySelectorAll('input[type="date"]')
 				dateInputs.forEach(dateInput => {
-					console.log('Original Value:', dateInput.value);
+					console_log('Original Value:', dateInput.value);
 					dateInput.value = formatDateToISO(dateInput.value);
-					console.log('Formatted Value:', dateInput.value);
+					console_log('Formatted Value:', dateInput.value);
 				});
 
 
@@ -1113,14 +1067,25 @@
 					formData.append('proj_category', getValueOrDefault(formElement.querySelector('select[name="proj_category"]').value));
 					formData.append('estimation', getValueOrDefault(formElement.querySelector('input[name="estimation"]').value));
 
-					var aggeaments = document.querySelector('#createForm input[type="file"]').files[0];
-					if (aggeaments) {
-						formData.append("aggeaments", aggeaments);
+					// var aggeaments = document.querySelector('#createForm input[type="file"]').files[0];
+					// if (aggeaments) {
+					// 	formData.append("aggeaments", aggeaments);
+					// }
+
+					// var modeldesign = document.querySelector('#createForm input[type="file"]').files[0];
+					// if (modeldesign) {
+					// 	formData.append("modeldesign", modeldesign);
+					// }
+
+
+					var agreementsFile = formElement.querySelector('input[name="aggeaments"]').files[0];
+					if (agreementsFile) {
+						formData.append("aggeaments", agreementsFile);
 					}
 
-					var modeldesign = document.querySelector('#createForm input[type="file"]').files[0];
-					if (modeldesign) {
-						formData.append("modeldesign", modeldesign);
+					var modeldesignFile = formElement.querySelector('input[name="modeldesign"]').files[0];
+					if (modeldesignFile) {
+						formData.append("modeldesign", modeldesignFile);
 					}
 
 
@@ -1134,7 +1099,7 @@
 
 					if (!isValid) {
 						enableButton(button);
-						console.log(errors);
+						console_log(errors);
 						handleCreateErrors(errors);
 						return;
 					} else {
@@ -1162,7 +1127,7 @@
 							}
 						},
 						error: function (xhr, status, error) {
-							console.log(xhr, status, error);
+							console_log(xhr, status, error);
 							if (xhr.status === 400) {
 								if (xhr?.responseJSON || xhr?.responseJSON?.errors) {
 									handleCreateErrors(transformErrors(xhr.responseJSON));
@@ -1215,7 +1180,8 @@
 
 
 					const formData = new FormData();
-
+					formData.append('description', getValueOrDefault(formElement.querySelector('textarea[name="description"]').value));
+                    formData.append('terms_conditions', getValueOrDefault(formElement.querySelector('textarea[name="terms_conditions"]').value));
 					formData.append('proj_name', getValueOrDefault(formElement.querySelector('input[name="proj_name"]').value));              //change
 					formData.append('client', getValueOrDefault(formElement.querySelector('input[name="client"]').value));
 					formData.append('contact_no', getValueOrDefault(formElement.querySelector('input[name="contact_no"]').value));
@@ -1232,17 +1198,19 @@
 
 					formData.append('estimation', getValueOrDefault(formElement.querySelector('input[name="estimation"]').value));
 
-					var aggeaments = getValueOrDefault(formElement.querySelector('input[type="file"]').files[0]);
-					if (aggeaments) {
-						formData.append("aggeaments", aggeaments);
+			
+
+					// Update the file input names in your form to ensure they are unique
+					var agreementsFile = formElement.querySelector('input[name="aggeaments"]').files[0];
+					if (agreementsFile) {
+						formData.append("aggeaments", agreementsFile);
 					}
 
-
-
-					var modeldesign = getValueOrDefault(formElement.querySelector('input[type="file"]').files[0]);
-					if (modeldesign) {
-						formData.append("modeldesign", modeldesign);
+					var modeldesignFile = formElement.querySelector('input[name="modeldesign"]').files[0];
+					if (modeldesignFile) {
+						formData.append("modeldesign", modeldesignFile);
 					}
+
 
 					requiredKeys.forEach(function (key) {
 						var value = formData.get(key);
@@ -1254,7 +1222,7 @@
 
 					if (!isValid) {
 						enableButton(button);
-						console.log(errors);
+						console_log(errors);
 						handleUpdateErrors(saveId, transformErrors(errors));
 						return;
 					} else {
@@ -1263,7 +1231,7 @@
 					}
 
 
-					console.log(csrftoken);
+					console_log(csrftoken);
 					$.ajax({
 						url: '/update_project/' + saveId + '/',   //change
 						type: 'PUT',
@@ -1275,7 +1243,7 @@
 						data: formData,
 						success: function (response, status, xhr) {
 							if (xhr.status === 200) {
-								showToast(updateMessage?.message, '', updateMessage?.bgColor, true);
+								showToast(updateMessage?.message, '', updateMessage?.bgColor,true);
 								restoreForm(formId, button)
 							} else {
 								showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
@@ -1284,7 +1252,7 @@
 							}
 						},
 						error: function (xhr, status, error) {
-							console.log(xhr, status, error);
+							console_log(xhr, status, error);
 							if (xhr.status === 400) {
 								if (xhr?.responseJSON || xhr?.responseJSON?.errors) {
 									handleUpdateErrors(saveId, transformErrors(xhr.responseJSON));
@@ -1349,7 +1317,7 @@
 							}
 						},
 						error: function (xhr, status, error) {
-							console.log(xhr, status, error);
+							console_log(xhr, status, error);
 							if (xhr.status === 400) {
 								if (xhr?.responseJSON || xhr?.responseJSON?.errors) {
 									showToast(xhr?.responseJSON?.details, '', errorAlertMessage?.bgColor);
@@ -1404,8 +1372,8 @@
 
 						success: function (response, status, xhr) {
 							if (xhr.status === 200) {
-								console.log(xhr?.responseJSON)
-								// console.log($('#status-badge-' + project_id))
+								console_log(xhr?.responseJSON)
+								// console_log($('#status-badge-' + project_id))
 								changeStatus(element, status_text, new_status_code)
 
 								// element.text(status_text)
@@ -1421,7 +1389,7 @@
 							}
 						},
 						error: function (xhr, status, error) {
-							console.log(xhr, status, error);
+							console_log(xhr, status, error);
 							if (xhr.status === 400) {
 								if (xhr?.responseJSON || xhr?.responseJSON?.errors) {
 									showToast(xhr?.responseJSON?.details, '', errorAlertMessage?.bgColor);

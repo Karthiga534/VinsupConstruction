@@ -170,7 +170,7 @@
                                             
                                                         <div class="modal-header">
                                             
-                                                            <h5 class="modal-title" id="viewModalLabel">View Category '{{ i.name }}'</h5>
+                                                            <h5 class="modal-title" id="viewModalLabel">{{ i.name }}</h5>
                                             
                                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="CloseModel('viewModal', '{{i.id}}')"></button>
                                             
@@ -180,7 +180,7 @@
                                                           <div class="row">
                                                               
                                             
-                                                            <div class="">
+                                                            <div class="row mb-2">
                                                                 <label for="{{i.id}}_name" class="form-label">Project Category Name:</label>
                                                                 <input type="text" class="form-control" id="{{i.id}}_name" name="name" value="{{i.name}}" readonly>
                                                             </div>
@@ -216,7 +216,7 @@
                                                 <div class="modal-dialog modal-lg">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
-                                                            <h5 class="modal-title" id="myLargeModalLabel">Edit Category '{{ i.name }}'
+                                                            <h5 class="modal-title" id="myLargeModalLabel">{{ i.name }}
                                                                </h5>
                                                             <button type="button" class="btn-close"
                                                                 data-bs-dismiss="modal" aria-label="Close"
@@ -285,8 +285,8 @@
                                                     <div class="modal-content">
                                                         <div class="modal-header">
                                                             <h5 class="modal-title"
-                                                                id="deleteModalLabel-{{ forloop.counter }}"> Delete  Category
-                                                               '{{i.name}}'</h5>
+                                                                id="deleteModalLabel-{{ forloop.counter }}">
+                                                               {{i.name}}</h5>
                                                             <button type="button" class="btn-close"
                                                                 data-bs-dismiss="modal" aria-label="Close"></button>
                                                         </div>
@@ -409,7 +409,7 @@
             var errors = {};
             var formData = new FormData();
 
-            var requiredKeys = ['name','description'];   //change
+            var requiredKeys = ['name'];   //change
 
 
             formData.append('name', getValueOrDefault(formElement.querySelector('input[name="name"]').value));              //change
