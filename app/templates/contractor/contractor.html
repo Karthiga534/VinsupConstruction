@@ -126,16 +126,15 @@
                                                                             class="error-message"></span>
                                                                     </div>
                                                                
-                                                                <!-- <div class="col-md-6">
-                                                                    <label for="{{ i.id }}_area"
-                                                                        class="form-label">Area:</label>
-                                                                    <input type="text"
-                                                                        class="form-control"
-                                                                        id="{{ i.id }}_area" name="area"
-                                                                        value="{{ i.area }}" />
-                                                                    <span id="{{ i.id }}_areaError"
-                                                                        class="error-message"></span>
-                                                                </div> -->
+                                                                    <div class="col-md-6 mt-2">
+                                                                        <label for="" class="form-label">Starting Date
+                                                                            :</label>
+                                                                        <input type="date" class="form-control" id=""
+                                                                            name="start_date">
+                                                                        <span id="start_dateError"
+                                                                            class="error-message"></span>
+    
+                                                                    </div>
 
 
                                                             </div>
@@ -335,7 +334,7 @@
                                                                         <li><a class="dropdown-item edit-item-btn"
                                                                             data-bs-toggle="modal" href="#!"
                                                                             onclick="openModal('viewModal','{{ i.id }}')"><i
-                                                                                class="ri-pencil-fill align-bottom me-2 text-muted"></i>
+                                                                                class="ri-eye-fill align-bottom me-2 text-muted"></i>
                                                                             View</a></li>
                                                                 <li><a class="dropdown-item edit-item-btn"
                                                                         data-bs-toggle="modal" href="#!"
@@ -432,6 +431,21 @@
                                                                                         </select>
                                                                                         <span id="{{ i.id }}_categoryError"
                                                                                             class="error-message"></span>
+                                                                                    </div>
+
+                                                                                    <div class="col-md-6 mb-3">
+
+                                                                                        <label for="edit_start_date"
+                                                                                            class="form-label">Start Date:</label>
+            
+                                                                                        <input type="date" class="form-control"
+                                                                                            id="{{i.id}}_start_date"
+                                                                                            name="start_date"
+                                                                                            value="{{ i.start_date|date:'Y-m-d'}}" />
+            
+                                                                                        <span id="{{i.id}}_start_dateError"
+                                                                                            class="error-message"></span>
+            
                                                                                     </div>
                                                                                
                                                                                 <!-- <div class="col-md-6">
@@ -863,12 +877,7 @@
                 "unit",
                 "rate",
          
-                "maistry",
-                // "maison_cooli",
-                "male_skilled",
-                "male_unskilled",
-                "female_skilled",
-                "female_unskilled",
+              
                 "category"
             ];
 
@@ -877,10 +886,10 @@
                 getValueOrDefault($('#createForm input[name="name"]').val())
             );     
 
-        //     formData.append(
-        //     "start_date",
-        //     getValueOrDefault($('#createForm input[name="start_date"]').val())
-        //   );
+            formData.append(
+           "start_date",
+           getValueOrDefault($('#createForm input[name="start_date"]').val())
+          );
 
             formData.append(
                 "contact_no",
@@ -1041,9 +1050,9 @@
                 "rate",
                 getValueOrDefault($(`#editForm${saveId} input[name="rate"]`).val()));
 
-            // formData.append(
-            //     "amount",
-            //     getValueOrDefault($(`#editForm${saveId} input[name="amount"]`).val()));
+             formData.append(
+                 "start_date",
+                 getValueOrDefault($(`#editForm${saveId} input[name="start_date"]`).val()));
 
             formData.append(
                 "maistry",

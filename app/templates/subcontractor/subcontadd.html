@@ -433,8 +433,7 @@
 				var errors = {};
 				var formData = new FormData();
 
-				var requiredKeys = ['name', 'male_unskilled', 'female_unskilled', 'female_skilled', 'male_skilled',
-				 'maison_cooli', 'maistry', 'project', 'type', 'contractor', 'payment_schedule', 'start_date', 'end_date', 'contract_amount']
+				var requiredKeys = ['name', 'project', 'type', 'contractor', 'payment_schedule', 'start_date', 'end_date', 'contract_amount']
 
 				formData.append('start_date', getValueOrDefault(formElement.querySelector('input[name="start_date"]').value));
 				formData.append('name', getValueOrDefault(formElement.querySelector('input[name="name"]').value));
