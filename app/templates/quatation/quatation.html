@@ -300,7 +300,7 @@
 				var errors = {};
 				var formData = new FormData();
 	
-				var requiredKeys = ['site','quatation_id','start_date'];   //change
+				var requiredKeys = ['site','start_date'];   //change
 
 				//var requiredKeys = ['vendor_company']
 
@@ -313,7 +313,7 @@
 					console.log(this)
 				
 					var rowData = {};
-					rowData['inventory'] = $(this).find('select[name^="inventory"]').val();
+					rowData['item'] = $(this).find('select[name^="inventory"]').val();
 					rowData['name'] = $(this).find('input[name^="name"]').val();
 					rowData['unit'] = $(this).find('select[name^="unit"]').val();
 					rowData['qty'] = $(this).find('input[name^="qty"]').val();
@@ -326,7 +326,7 @@
 
 
 				tableData.forEach(function (item) {
-				var itemValue = item['inventory'];
+				var itemValue = item['item'];
 				var nameValue = item['name'];
 				var unitValue = item['unit'];
 
@@ -334,7 +334,7 @@
 				if ((itemValue === null || itemValue === undefined || itemValue.trim() === '') &&
 					(nameValue === null || nameValue === undefined || nameValue.trim() === '')) {
 					isValid = false;
-					errors['inventory'] = requiredMessage;
+					errors['item'] = requiredMessage;
 					errors['name'] = requiredMessage;
 				}
 

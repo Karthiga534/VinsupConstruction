@@ -80,10 +80,12 @@ ROOT_URLCONF = 'constructionpro.urls'
 
 # STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
+TEMP_BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['templates'],  
+        'DIRS': [os.path.join(TEMP_BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -111,15 +113,33 @@ WSGI_APPLICATION = 'constructionpro.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
+
+local_db =   {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
-    },
+    }
+
+
+prod_db =  {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': os.getenv("psql_database"),
+        'USER': os.getenv('psql_user'),
+        'PASSWORD': os.getenv('psql_password'),
+        'HOST': os.getenv('psql_host'),
+        'PORT': os.getenv('psql_port'),
+    }
+
+Production = (os.getenv('PROD_DB'))
+
+# Production = os.getenv('PRODUCTION', 'False').lower() in ('true', '1', 't')
+
+print(type(Production),Production ==0,Production)
+
+DATABASES = {
+    'default': prod_db if Production == str(0) else local_db
 }
 
-
-
+print(DATABASES)
 
 
 # DATABASES = {

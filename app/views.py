@@ -2165,9 +2165,15 @@ def employee_attendence_list(request,pk):  #change name
     
     company,_=get_user_company(user)
     pk= int(pk)
+    start_date = request.GET.get('start_date')
+    end_date = request.GET.get('end_date')
     if pk !=0:   
         # print(Attendance.objects.filter(employee__id = pk,company__in=company))
         querysets =Attendance.objects.filter(employee__id = pk,company__in=company)
+        return PaginationAndFilter(querysets, request,AttendenceSerialiser,date_field ="date")
+    
+    if end_date or start_date:
+        querysets =Attendance.objects.filter(company__in=company)
         return PaginationAndFilter(querysets, request,AttendenceSerialiser,date_field ="date")
         
     querysets =Employee.objects.filter(company__in=company).order_by('-id')

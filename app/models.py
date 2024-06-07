@@ -1277,6 +1277,14 @@ class SiteStock(models.Model):
             if self.item.purchase_history:
                 return self.item.purchase_history
         return None
+    
+
+    @property
+    def display(self):
+        if self.item:  
+       
+            return self.item.item
+        return None
 
 
 
@@ -1419,10 +1427,14 @@ class QuatationItems(models.Model):
     
     @property
     def display_name(self):
-        # if self.name:
-        #     return  self.name
+        
+        if self.item:
+            return self.item.item
         if self.inventory:
             return self.inventory.display
+        
+        if self.name:
+            return  self.name 
         return None
 
 

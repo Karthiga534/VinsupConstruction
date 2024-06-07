@@ -240,12 +240,12 @@
         // fetch data
         function fetchData(selectedValue, tableBody) {
             try {
-                fetch(`/transfer/${selectedValue}/`,
+                fetch(`/transfer/${selectedValue}/`, {
                     headers: {
-                    'X-CSRFToken': csrftoken,
-                },
+                        'X-CSRFToken': csrftoken,
+                    },
 
-                )
+                })
                     .then(response => {
                         if (response.status === 200) {
                             console.log('Data fetched');

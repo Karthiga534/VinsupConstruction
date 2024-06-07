@@ -239,7 +239,7 @@
                 fetchData(selectedValue,tableBody);
             });
 
-        });
+        });                             
 
 
         function routePage(url,id)
@@ -357,8 +357,11 @@
 
 
         function fetchModalData(itemid) {
+            const dropdown = document.getElementById('fromsite');
+
+            const inventry_or_site =dropdown.value; 
             try {
-                fetch(`/purchase-track/${itemid}/1/`)
+                fetch(`/purchase-track/${itemid}/${inventry_or_site}/`)
                     .then(response => {
                         if (response.status === 200) {
                             console.log('Data fetched');

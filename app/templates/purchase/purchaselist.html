@@ -290,52 +290,52 @@
 
 
         // MANIPULATE TABLE DATA
-        {% comment %} function createTableRow(serialNumber, data) {
+        // function createTableRow(serialNumber, data) {
           
-            const newRow = document.createElement('tr');
-            newRow.setAttribute('data-item-id', data.id);
+        //     const newRow = document.createElement('tr');
+        //     newRow.setAttribute('data-item-id', data.id);
 
-            const idCell = createSerialCell(serialNumber);
-            newRow.appendChild(idCell);
+        //     const idCell = createSerialCell(serialNumber);
+        //     newRow.appendChild(idCell);
 
-            const td2 = createTableCell(get_value(data.created_at));
-            newRow.appendChild(td2);
+        //     const td2 = createTableCell(get_value(data.created_at));
+        //     newRow.appendChild(td2);
 
-            const td3 = createTableCell(get_value(data.invoice_id));
-            newRow.appendChild(td3);
+        //     const td3 = createTableCell(get_value(data.invoice_id));
+        //     newRow.appendChild(td3);
 
-            const td4 = createTableCell(get_value(data.vendor_name));
-            newRow.appendChild(td4);
+        //     const td4 = createTableCell(get_value(data.vendor_name));
+        //     newRow.appendChild(td4);
 
-            const td5 = createAmountCell(get_value(data.total_amount));
-            newRow.appendChild(td5);
+        //     const td5 = createAmountCell(get_value(data.total_amount));
+        //     newRow.appendChild(td5);
 
-            const td6 = createTableCell(get_value(data.paid));
-            newRow.appendChild(td6);
+        //     const td6 = createTableCell(get_value(data.paid));
+        //     newRow.appendChild(td6);
 
-            const td7 = createTableCell(get_value(data.pending));
-            newRow.appendChild(td7);
+        //     const td7 = createTableCell(get_value(data.pending));
+        //     newRow.appendChild(td7);
 
             
 
 
-            const td8 = createStatusCell(get_value(data.status_name),data.status_class);
+        //     const td8 = createStatusCell(get_value(data.status_name),data.status_class);
          
-            newRow.appendChild(td8);
+        //     newRow.appendChild(td8);
 
-            // actioncell
-            const actionCell = createViewActionCell('invoiceHistoryModal');
-            newRow.appendChild(actionCell);
+        //     // actioncell
+        //     const actionCell = createViewActionCell('invoiceHistoryModal');
+        //     newRow.appendChild(actionCell);
 
-            // click event
-            actionCell.addEventListener('click', () => {
-                populateModalTable(data.get_purchase_items, modalTableBody);
-            });
+        //     // click event
+        //     actionCell.addEventListener('click', () => {
+        //         populateModalTable(data.get_purchase_items, modalTableBody);
+        //     });
 
             
 
-            return newRow;
-        } {% endcomment %}
+        //     return newRow;
+        // } 
 
 
         // MANIPULATE TABLE DATA
@@ -364,7 +364,7 @@
         const td7 = createTableCell(get_value(data.pending));
         newRow.appendChild(td7);
 
-        const td8 = createTableCell(get_value(data.status));
+        const td8 = createStatusCell(data.status_name,data.status_class);
         newRow.appendChild(td8);
 
         // Dropdown button cell

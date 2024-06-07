@@ -686,7 +686,7 @@ class DailySiteStockUsageSerializer(ModelSerializer):
         data ['item_name'] =instance.stock.display if instance.stock else None
         data ['project_name'] = instance.project.display if instance.project else None
         data ['unit_name'] = instance.unit.name if instance.unit else None
-        data ["subcontract_name"] =instance.subcontract.display if instance.subcontract else None
+        data ["subcontract_name"] =instance.subcontract.display_contractor if instance.subcontract else None
         return data
     
 class ProjectSubContractSerializer(ModelSerializer):

@@ -33,7 +33,7 @@
 										<h4> Site Stock Usage </h4>
 									</div>
 									<div class="col-lg-2 col-md-2">
-										<a href="{% url 'dailysitestockusage' %}" class="btn btn-info" style="float:right;">SiteStock List</a>
+										<a href="{% url 'dailysitestockusagelist' %}" class="btn btn-info" style="float:right;">Back</a>
 									</div>
 								</div>
 								<hr>
@@ -123,7 +123,7 @@
 
 													<td>{{i.qty}}</td>
                                                     <td><input type="text" class="form-control supply-qty" name="qty"
-                                                        min="0" max="{{i.qty}} data-item="{{ i.item.item }}">
+                                                        min="0" max="{{i.qty}}" data-item="{{ i.item.item }}">
                                                        
                                                     <div class="text-danger supplyQtyError"></div>
                                                 </td>
@@ -204,7 +204,7 @@
 
 			// fetch table data API
 			dropdown.addEventListener('change', function () {
-				console.log(dropdown, tableBody)
+				console_log(dropdown, tableBody)
 
 				const selectedValue = dropdown.value;
 				try {
@@ -334,7 +334,7 @@
 						</div>
 					</th>
 					<td>${serialNumber}</td>
-					<td>${data.item}</td>
+					<td>${data.item.item}</td>
 					<td>${data.unit}</td>
 					<input type="text" class="form-control supply-unit" name="unit" value="${data.item.unit}" hidden>
 					<td>${data.qty}</td>
@@ -446,7 +446,7 @@
 						console.error(status);
 						if (xhr.status === 201) {
 							showToast(successMesssage?.message, '', successMesssage?.bgColor);
-							window.location.href = '/dailysitestockusagelist';
+							goBack()
 						} else {
 							console.error(error);
 							restoreForm(formId, button)
