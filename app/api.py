@@ -1148,6 +1148,7 @@ def add_project (request):  # CHANGE name
 @login_required(login_url='login')
 def update_project(request, pk):  # CHANGE name
     user=request.user
+    print(request.data)
     request_data=request.POST.copy().dict()
     modeldesign = request.FILES.get("modeldesign",None)
     aggeaments = request.FILES.get("aggeaments",None) 
@@ -2362,6 +2363,8 @@ def sitestockusage(request):
     }
     return render(request, "sitestock/dailysitestockusagelist.html", context)
 
+
+@api_view(['GET'])
 @login_required(login_url='login')
 def dailysitestockusagelist(request, pk):
     user = request.user
@@ -2370,31 +2373,31 @@ def dailysitestockusagelist(request, pk):
         context = {"unauthorized": msg}
         return render(request, "login.html", context)
 
-    projects = Project.objects.filter(company=request.user.company).order_by("-id")
-    subcontractors = ProjectSubContract.objects.filter(company=request.user.company).order_by("-id")
+    # projects = Project.objects.filter(company=request.user.company).order_by("-id")
+    # subcontractors = ProjectSubContract.objects.filter(company=request.user.company).order_by("-id")
     querysets = DailySiteStockUsage.objects.filter(company=request.user.company).order_by("-id")
     
 
-    queryset, pages, search = customPagination(request, DailySiteStockUsage, querysets)
-    context = {
-        'queryset': queryset,
-        'location': "dailysitestockusagelist",
-        'pages': pages,
-        'search': search,
-        'projects': projects,
-        'subcontractors': subcontractors,
+    # queryset, pages, search = customPagination(request, DailySiteStockUsage, querysets)
+    # context = {
+    #     'queryset': queryset,
+    #     'location': "dailysitestockusagelist",
+    #     'pages': pages,
+    #     'search': search,
+    #     'projects': projects,
+    #     'subcontractors': subcontractors,
        
-    }
-    return render(request, "sitestock/dailysitestockusagelist.html", context)
-    # projectid= get_int_or_zero(pk)
-    # if projectid !=0:
-    #     querysets =querysets.filter(project__id=projectid)
-    # subcontractid =request.GET.get('subcontract')
-    # subcontid= get_int_or_zero(subcontractid)
-    # if subcontid:
-    #     querysets =querysets.filter(subcontract__id=subcontid)
-    # # ser = DailySiteStockUsageSerializer(querysets,many=True)
-    # return PaginationAndFilter(querysets, request, DailySiteStockUsageSerializer,date_field='created_at')
+    # }
+    # return render(request, "sitestock/dailysitestockusagelist.html", context)
+    projectid= get_int_or_zero(pk)
+    if projectid !=0:
+        querysets =querysets.filter(project__id=projectid)
+    subcontractid =request.GET.get('subcontract')
+    subcontid= get_int_or_zero(subcontractid)
+    if subcontid:
+        querysets =querysets.filter(subcontract__id=subcontid)
+    # ser = DailySiteStockUsageSerializer(querysets,many=True)
+    return PaginationAndFilter(querysets, request, DailySiteStockUsageSerializer,date_field='created_at')
 
 
 

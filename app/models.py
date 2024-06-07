@@ -1276,6 +1276,14 @@ class SiteStock(models.Model):
             if self.item.purchase_history:
                 return self.item.purchase_history
         return None
+    
+
+    @property
+    def display(self):
+        if self.item:  
+       
+            return self.item.item
+        return None
 
 
 

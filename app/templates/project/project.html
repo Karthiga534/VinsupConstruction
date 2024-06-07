@@ -351,7 +351,7 @@
 																 class="ri-eye-fill align-bottom me-2 text-muted"></i>
 																View</a></li>
 														<li><a class="dropdown-item edit-item-btn"
-																data-bs-toggle="modal" href="#!"
+																 href="#!"
 																onclick="openModal('editModal','{{ i.id }}')"><i
 																	class="ri-pencil-fill align-bottom me-2 text-muted"></i>
 																Edit</a></li>
@@ -819,8 +819,8 @@
 
 																			<span class="file-span">
 																				<a target="_blank"
-																					href="{{ i.modeldesign.url}}">
-																					{{i.modeldesign |filename }}
+																					href="{{ i.aggeaments.url}}">
+																					{{i.aggeaments |filename }}
 																					</a></span>
 																		
 																		</div>
@@ -973,9 +973,9 @@
 				// Set the value of the date input using querySelector for input type="date"
 				const dateInputs = document.querySelectorAll('input[type="date"]')
 				dateInputs.forEach(dateInput => {
-					console.log('Original Value:', dateInput.value);
+					console_log('Original Value:', dateInput.value);
 					dateInput.value = formatDateToISO(dateInput.value);
-					console.log('Formatted Value:', dateInput.value);
+					console_log('Formatted Value:', dateInput.value);
 				});
 
 
@@ -1067,14 +1067,25 @@
 					formData.append('proj_category', getValueOrDefault(formElement.querySelector('select[name="proj_category"]').value));
 					formData.append('estimation', getValueOrDefault(formElement.querySelector('input[name="estimation"]').value));
 
-					var aggeaments = document.querySelector('#createForm input[type="file"]').files[0];
-					if (aggeaments) {
-						formData.append("aggeaments", aggeaments);
+					// var aggeaments = document.querySelector('#createForm input[type="file"]').files[0];
+					// if (aggeaments) {
+					// 	formData.append("aggeaments", aggeaments);
+					// }
+
+					// var modeldesign = document.querySelector('#createForm input[type="file"]').files[0];
+					// if (modeldesign) {
+					// 	formData.append("modeldesign", modeldesign);
+					// }
+
+
+					var agreementsFile = formElement.querySelector('input[name="aggeaments"]').files[0];
+					if (agreementsFile) {
+						formData.append("aggeaments", agreementsFile);
 					}
 
-					var modeldesign = document.querySelector('#createForm input[type="file"]').files[0];
-					if (modeldesign) {
-						formData.append("modeldesign", modeldesign);
+					var modeldesignFile = formElement.querySelector('input[name="modeldesign"]').files[0];
+					if (modeldesignFile) {
+						formData.append("modeldesign", modeldesignFile);
 					}
 
 
@@ -1088,7 +1099,7 @@
 
 					if (!isValid) {
 						enableButton(button);
-						console.log(errors);
+						console_log(errors);
 						handleCreateErrors(errors);
 						return;
 					} else {
@@ -1116,7 +1127,7 @@
 							}
 						},
 						error: function (xhr, status, error) {
-							console.log(xhr, status, error);
+							console_log(xhr, status, error);
 							if (xhr.status === 400) {
 								if (xhr?.responseJSON || xhr?.responseJSON?.errors) {
 									handleCreateErrors(transformErrors(xhr.responseJSON));
@@ -1187,17 +1198,19 @@
 
 					formData.append('estimation', getValueOrDefault(formElement.querySelector('input[name="estimation"]').value));
 
-					var aggeaments = getValueOrDefault(formElement.querySelector('input[type="file"]').files[0]);
-					if (aggeaments) {
-						formData.append("aggeaments", aggeaments);
+			
+
+					// Update the file input names in your form to ensure they are unique
+					var agreementsFile = formElement.querySelector('input[name="aggeaments"]').files[0];
+					if (agreementsFile) {
+						formData.append("aggeaments", agreementsFile);
 					}
 
-
-
-					var modeldesign = getValueOrDefault(formElement.querySelector('input[type="file"]').files[0]);
-					if (modeldesign) {
-						formData.append("modeldesign", modeldesign);
+					var modeldesignFile = formElement.querySelector('input[name="modeldesign"]').files[0];
+					if (modeldesignFile) {
+						formData.append("modeldesign", modeldesignFile);
 					}
+
 
 					requiredKeys.forEach(function (key) {
 						var value = formData.get(key);
@@ -1209,7 +1222,7 @@
 
 					if (!isValid) {
 						enableButton(button);
-						console.log(errors);
+						console_log(errors);
 						handleUpdateErrors(saveId, transformErrors(errors));
 						return;
 					} else {
@@ -1218,7 +1231,7 @@
 					}
 
 
-					console.log(csrftoken);
+					console_log(csrftoken);
 					$.ajax({
 						url: '/update_project/' + saveId + '/',   //change
 						type: 'PUT',
@@ -1230,7 +1243,7 @@
 						data: formData,
 						success: function (response, status, xhr) {
 							if (xhr.status === 200) {
-								showToast(updateMessage?.message, '', updateMessage?.bgColor, true);
+								showToast(updateMessage?.message, '', updateMessage?.bgColor);
 								restoreForm(formId, button)
 							} else {
 								showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
@@ -1239,7 +1252,7 @@
 							}
 						},
 						error: function (xhr, status, error) {
-							console.log(xhr, status, error);
+							console_log(xhr, status, error);
 							if (xhr.status === 400) {
 								if (xhr?.responseJSON || xhr?.responseJSON?.errors) {
 									handleUpdateErrors(saveId, transformErrors(xhr.responseJSON));
@@ -1304,7 +1317,7 @@
 							}
 						},
 						error: function (xhr, status, error) {
-							console.log(xhr, status, error);
+							console_log(xhr, status, error);
 							if (xhr.status === 400) {
 								if (xhr?.responseJSON || xhr?.responseJSON?.errors) {
 									showToast(xhr?.responseJSON?.details, '', errorAlertMessage?.bgColor);
@@ -1359,8 +1372,8 @@
 
 						success: function (response, status, xhr) {
 							if (xhr.status === 200) {
-								console.log(xhr?.responseJSON)
-								// console.log($('#status-badge-' + project_id))
+								console_log(xhr?.responseJSON)
+								// console_log($('#status-badge-' + project_id))
 								changeStatus(element, status_text, new_status_code)
 
 								// element.text(status_text)
@@ -1376,7 +1389,7 @@
 							}
 						},
 						error: function (xhr, status, error) {
-							console.log(xhr, status, error);
+							console_log(xhr, status, error);
 							if (xhr.status === 400) {
 								if (xhr?.responseJSON || xhr?.responseJSON?.errors) {
 									showToast(xhr?.responseJSON?.details, '', errorAlertMessage?.bgColor);

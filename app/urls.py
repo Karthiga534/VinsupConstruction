@@ -10,6 +10,27 @@ from django.conf.urls.static import static
 from django.contrib.auth.views import LogoutView
 from django.contrib.auth import views as auth_view
 
+from django.conf.urls import handler404
+from django.shortcuts import render
+
+# def custom_404(request, exception):
+#     return render(request, 'errors/404.html', status=404)
+
+
+# # views.py
+# from django.http import HttpResponse
+
+# def trigger_error(request):
+#     division_by_zero = 1 / 0  
+#     return HttpResponse("This won't be reached")
+
+
+# def custom_500(request):
+#     return render(request, 'errors/500.html', status=500)
+
+# handler404 = custom_404
+# handler500 = custom_500
+
 
 
 urlpatterns = [
