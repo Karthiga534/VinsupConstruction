@@ -2323,6 +2323,7 @@ def add_dailysitestockusage(request):
         return JsonResponse({'details': [msg]}, status=status.HTTP_401_UNAUTHORIZED)
     
     table = request.POST.get('table', None)
+    site =request.POST.get('site',None)
     if table:
         try:
             tdata = json.loads(table)
