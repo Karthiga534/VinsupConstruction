@@ -348,6 +348,10 @@ def employee(request):
     if request.method == 'POST':
         request_data=request.POST.copy().dict()
         request_data ["company"] = request.user.company.id
+        img = request.FILES.get("img",None)
+
+        if img:
+         request_data['img'] = img  
     
         form = EmployeeSerializer(data=request_data)  
         if form.is_valid():
@@ -435,6 +439,7 @@ def delete_employee(request, id):
     except Employee.DoesNotExist:
         return JsonResponse({'error': 'Data not found'}, status=404)
     
+
 
 @api_view(['DELETE'])
 @login_required(login_url='login')
@@ -615,7 +620,8 @@ def contractor(request):  #change name
     category=Contractcategory.objects.filter(company=request.user.company)
     contractor_count = querysets.count()
     uom =Uom.objects.filter(company=user.company)
-    context= {'queryset': queryset,"location":"contractor","pages" :pages ,"categories":category,"search":search, "contractor_count": contractor_count,'uom':uom}   #change location name 
+    context= {'queryset': queryset,"location":"contractor","pages" :pages ,"categories":category,"search":search, 
+              "contractor_count": contractor_count,'uom':uom}   #change location name 
     return render(request,"contractor/contractor.html",context)    #change template name
  
 @api_view(['POST'])
@@ -819,6 +825,7 @@ def delete_labour_roles_and_salary(request, pk):
         return JsonResponse({'details': ['Item does not exist']}, status=status.HTTP_404_NOT_FOUND)
 
 #-----------------------------------Labours--------------------------------------------------
+
 @login_required(login_url='login')
 def labours(request):   #change name 
     user = request.user
@@ -998,7 +1005,7 @@ def expense_list(request):
          return render(request, "login.html", context)
     querysets = Expense.objects.filter(company=request.user.company).order_by("-id")  #change query
     project=  Project.objects.filter(company=request.user.company).order_by("-id")
-    employee =Employee.objects.filter(company=request.user.company).order_by("-id") 
+    employee =Employee.objects.filter(company=request.user.company,user__disable = False).order_by("-id") 
     queryset, pages, search = customPagination(request, Expense, querysets)   #change, model
     context = {
         'queryset': queryset,
@@ -1055,8 +1062,8 @@ def labour_salary(request):
          context ={"unauthorized":msg}
          return render(request,"login.html",context)    
       
-    querysets = CompanyLabours.objects.filter(company=request.user.company).order_by("-id") 
-    employees = CompanyLabours.objects.filter(company=request.user.company).order_by("-id") 
+    querysets = CompanyLabours.objects.filter(company=request.user.company, disable=False).order_by("-id") 
+    employees = CompanyLabours.objects.filter(company=request.user.company, disable=False).order_by("-id") 
     paymode=PaymentMethod.objects.all()
     # site_location =Project.objects.filter(company=request.user.company).order_by("-id")   #change query
     queryset,pages,search =customPagination(request,CompanyLabours,querysets)    #change, model
@@ -1125,8 +1132,8 @@ def employee_salary(request):
          context ={"unauthorized":msg}
          return render(request,"login.html",context)    
       
-    querysets = Employee.objects.filter(company=request.user.company).order_by("-id") 
-    employee = Employee.objects.filter(company=request.user.company).order_by("-id") 
+    querysets = Employee.objects.filter(company=request.user.company,user__disable = False).order_by("-id") 
+    employee = Employee.objects.filter(company=request.user.company,user__disable = False).order_by("-id") 
     paymode=PaymentMethod.objects.all()
     # site_location =Project.objects.filter(company=request.user.company).order_by("-id")   #change query
     queryset,pages,search =customPagination(request,Employee,querysets)    #change, model
@@ -1858,7 +1865,7 @@ def companylabour_attendance(request):
          context ={"unauthorized":msg}
          return render(request,"login.html",context)    
     project=Project.objects.filter(company=request.user.company).order_by("-id")
-    projectsubcontractor = CompanyLabours.objects.filter(company=request.user.company).order_by("-id")
+    projectsubcontractor = CompanyLabours.objects.filter(company=request.user.company, disable=False).order_by("-id")
     querysets = ProjectLabourAttendence.objects.filter(company=request.user.company).order_by("-id")   #change query
     queryset,pages,search =customPagination(request,ProjectLabourAttendence,querysets)    #change, model
     context= {'queryset': queryset,"location":"company-labour-attendance","pages" :pages,"search":search,'projectsubcontractor':projectsubcontractor,"project":project}   #change location name 
@@ -1968,7 +1975,7 @@ def employee_attendance(request):
     if not allow:
          context ={"unauthorized":msg}
          return render(request,"login.html",context)    
-    employee =Employee.objects.filter(company = user.company).order_by("-id")
+    employee =Employee.objects.filter(company=request.user.company,user__disable = False).order_by("-id")
 
     project=Project.objects.filter(company=request.user.company).order_by("-id")
     # projectsubcontractor = CompanyLabours.objects.filter(company=request.user.company).order_by("-id")
@@ -2643,7 +2650,7 @@ def pettycash(request):  #change name
          return render(request,"login.html",context)    
       
     querysets = PettyCash.objects.filter(company=request.user.company).order_by("-id") 
-    employee = Employee.objects.filter(company=request.user.company).order_by("-id") 
+    employee = Employee.objects.filter(company=request.user.company,user__disable = False).order_by("-id") 
     site_location =Project.objects.filter(company=request.user.company).order_by("-id")   #change query
     payment_method = PaymentMethod.objects.all().order_by("-id")
     queryset,pages,search =customPagination(request,PettyCash,querysets)    #change, model
@@ -2949,7 +2956,7 @@ def site_allocation(request):
     if not allow:
          context ={"unauthorized":msg}
          return render(request,"login.html",context)    
-    employee =Employee.objects.filter(company = user.company).order_by("-id")
+    employee =Employee.objects.filter(company=request.user.company,user__disable = False    ).order_by("-id")
 
     project=Project.objects.filter(company=request.user.company).order_by("-id")
     context ={"employee":employee, "project":project}
@@ -3034,7 +3041,9 @@ def lab_site_allocation(request):
     if not allow:
          context ={"unauthorized":msg}
          return render(request,"login.html",context)    
-    employee =CompanyLabours.objects.filter(company = user.company).order_by("-id")
+    employee =CompanyLabours.objects.filter(company = request.user.company, disable=False).order_by("-id")
+
+    #company=request.user.company,user__disable = False
 
     project=Project.objects.filter(company=request.user.company).order_by("-id")
     context ={"employee":employee, "project":project}

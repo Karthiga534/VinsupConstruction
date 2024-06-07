@@ -332,13 +332,14 @@ def quatation(request):  #change name
     if not allow:
          context ={"unauthorized":msg}
          return render(request,"login.html",context)    
+    status =ProcessStatus.objects.all()
     materiallibrary = MaterialLibrary.objects.filter(company=request.user.company).order_by("-id")  
     uom =Uom.objects.filter(company=request.user.company).order_by("-id")
     site = Project.objects.filter(company=request.user.company).order_by("-id")
     inventory = InventoryStock.objects.filter(company=request.user.company).order_by("-id") 
     querysets = Quatation.objects.filter(company=request.user.company).order_by("-id")   #change query
     queryset,pages,search =customPagination(request,Quatation,querysets)    #change, model
-    context= {"materiallibrary":materiallibrary,'queryset': queryset,"location":"quatation","pages" :pages,"search":search,"uom":uom,"inventory":inventory,'site':site}   #change location name 
+    context= {"materiallibrary":materiallibrary,'queryset': queryset,"location":"quatation","status":status,"pages" :pages,"search":search,"uom":uom,"inventory":inventory,'site':site}   #change location name 
     return render(request,"quatation/quatation.html",context)    #change template name
 
 # @api_view(['POST'])
@@ -1104,7 +1105,7 @@ def project(request):  #change name
          return render(request,"login.html",context)      
     querysets = Project.objects.filter(company=request.user.company).order_by("-id")   #change query
     category =ProjectCategory.objects.filter(company=request.user.company).order_by("-id")
-    engineer =Employee.objects.filter(company=request.user.company,user__disable = False).order_by("-id")
+    engineer =Employee.objects.filter(company=request.user.company, user__disable = False).order_by("-id")
     duration =Duration.objects.all()
     priority =Priority.objects.all()
     print(category)

@@ -441,6 +441,7 @@ class EmpRoles(models.Model):
 class Employee(models.Model):
     company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
     user=models.ForeignKey(CustomUser, on_delete=models.CASCADE,null=True,blank=True)
+    img =models.FileField(upload_to="doc",null=True,blank=True)
     name=models.CharField(max_length=50,null=True,blank=True)
     role=models.ForeignKey(EmpRoles, on_delete=models.CASCADE,null=True,blank=True) 
     mobile=models.CharField(max_length=10,null=True,blank=True)
