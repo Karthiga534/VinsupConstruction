@@ -10,6 +10,27 @@ from django.conf.urls.static import static
 from django.contrib.auth.views import LogoutView
 from django.contrib.auth import views as auth_view
 
+from django.conf.urls import handler404
+from django.shortcuts import render
+
+# def custom_404(request, exception):
+#     return render(request, 'errors/404.html', status=404)
+
+
+# # views.py
+# from django.http import HttpResponse
+
+# def trigger_error(request):
+#     division_by_zero = 1 / 0  
+#     return HttpResponse("This won't be reached")
+
+
+# def custom_500(request):
+#     return render(request, 'errors/500.html', status=500)
+
+# handler404 = custom_404
+# handler500 = custom_500
+
 
 
 urlpatterns = [
@@ -322,10 +343,11 @@ urlpatterns = [
     path('delete_pettycash/<int:pk>/', views.delete_pettycash, name='delete_pettycash'),
 
     path('clientcash/<int:pk>/',views.clientcash,name='clientcash'),
-    path('payment-process/<int:project_id>/', views.payment_process, name='payment-process'),
+    path('clientcashpay/<int:pk>/', views.clientcashpay, name='clientcashpay'),
+    # path('payment-process/<int:project_id>/', views.payment_process, name='payment-process'),
 
 
-
+ 
     #     # employee attendence
     # path('attendance/employee',views.employee_attendance,name= 'employee-labour-attendance'), #render only
     # path('add_employeeattendance', views.add_employeeattendance, name='add_employeelabourattendance'),
@@ -339,6 +361,14 @@ urlpatterns = [
     path('site_allocation/',views.site_allocation,name= 'site_allocation'), 
     path('add_site_allocation/', views.add_site_allocation, name='add_site_allocation'),
     path('site-allocation-list/<str:pk>/',views.site_allocation_list,name='site-allocation-list'), #list data
+    path('site_allocationemployee/<int:pk>/', views.site_allocationemployee, name='site_allocationemployee'),
+
+    path('site_allocationlabour/<int:pk>/', views.site_allocationlabour, name='site_allocationlabour'),
+
+
+
+    path('delete_site_allocation_list/<int:pk>/', views.delete_site_allocation_list, name='delete_site_allocation_list'),
+
 
     path('lab_site_allocation/',views.lab_site_allocation,name= 'lab_site_allocation'), 
     path('add_lab_site_allocation/', views.add_lab_site_allocation, name='add_lab_site_allocation'),
@@ -346,7 +376,19 @@ urlpatterns = [
 
 
     path('purchase-details/<int:purchase_id>/', views.purchase_details, name='purchase-details'),
-    # path('update-purchase/<int:purchase_id>/',  views.purchase_details, name='update_purchase_details'),
+    #path('update-purchase/<int:purchase_id>/',  views.purchase_details, name='update_purchase_details'),
+    path('purchase_update/<int:pk>/', views.update_purchase, name='update_purchase'),
+    path('purchase_details/<int:pk>/', views.get_purchase, name='purchase_details'),
+
+    path('purchasetableupdate/<str:id>/', views.purchasetableupdate, name='purchasetableupdate'),
+
+    # path('purchaseitems/<int:pk>/', views.update_purchase_item, name='update_purchase_item'),
+
+    path('quatation_update/<int:pk>/', views.update_quatation, name='update_quatation'),
+    path('quatationtableupdate/<str:id>/', views.quatationtableupdate, name='quatationtableupdate'),
+    path('quatation_details/<int:pk>/', views.get_quatation, name='quatation_details'),
+
+
 
     
 
@@ -403,9 +445,10 @@ path('purchase-track/<int:pk>/<int:site_or_inventory>/' , views.item_price_track
     path('dailytask/', views.dailytask, name='dailytask'),  
     path('add_dailytask/', views.add_dailytask, name='add_dailytask'),  
     path('update_dailytask/<int:pk>/', views.update_dailytask, name='update_dailytask'), 
+    # path('delete_dailytask/<int:pk>/', views.delete_dailytask, name='delete_dailytask'),  
+    # path('dailytask-list/', views.dailytask_list, name='dailytask-list'),
+    path('dailytask-list/<int:pk>/',  views.dailytask_list, name='dailytask-detail'),
     path('delete_dailytask/<int:pk>/', views.delete_dailytask, name='delete_dailytask'), 
-
-    path('dailytask-list/', views.dailytask_list, name='dailytask-list'),  
 
 
 # ------------------ sitestockusage  --------------
@@ -415,7 +458,9 @@ path('purchase-track/<int:pk>/<int:site_or_inventory>/' , views.item_price_track
     path('stockusagelist/', api.sitestockusage, name="dailysitestockusagelist"),
     path('dailysitestockusagelist/<int:pk>/', api.dailysitestockusagelist, name='dailysitestock-usagelist'), 
 
-    path('dailysitestockusage/', api.dailysitestockusage, name='dailysitestockusage'),
+   path('dailysitestockusage/', api.dailysitestockusage, name='dailysitestockusage'),
+
+     path('save_data/<int:pk>/', api.save_data, name='save_data'),
 
     path('update_sitestockusage/<int:pk>/', api.update_sitestockusage, name='update_sitestockusage'), 
     path('delete_sitestockusage/<int:pk>/', api.delete_sitestockusage, name='delete_sitestockusage'),
@@ -473,10 +518,17 @@ path('purchase-track/<int:pk>/<int:site_or_inventory>/' , views.item_price_track
 
     path('user-list/', api.user_list, name='user-list'),
     path('contractor-list/', api.contractoratt_list, name='contractor-list'),
-    path('sub-contract-list/<int:pk>/', api.sub_contract_list, name='sub-contract-list'),
+    # path('sub-contract-list/', api.sub_contract_list, name='sub-contract-list'),
+    path('sub-contract-list/<int:project_id>/', api.get_sub_contract_lists , name='get_sub_contract_lists'),
+    # path('sub-contract-list/<int:pk>/', api.sub_contract_list, name='sub-contract-list'),
 
    
     path('employee-profile/<int:pk>/', api.get_employee_profile, name='get-employee-profile'),
+
+
+
+    path('dailysitestockusage/', api.dailysitestockusage, name='dailysitestockusage'),
+
 
 
 
