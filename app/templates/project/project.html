@@ -1243,7 +1243,7 @@
 						data: formData,
 						success: function (response, status, xhr) {
 							if (xhr.status === 200) {
-								showToast(updateMessage?.message, '', updateMessage?.bgColor);
+								showToast(updateMessage?.message, '', updateMessage?.bgColor,true);
 								restoreForm(formId, button)
 							} else {
 								showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
