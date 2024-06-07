@@ -133,7 +133,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         if self.owner:
             if self.owner_company.all().last():
                 return self.owner_company.all()
-        return
+        return []
     
 
     @property

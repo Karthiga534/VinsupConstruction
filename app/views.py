@@ -95,7 +95,7 @@ class CustomLogoutView(LogoutView):
 def index(request):
 
     company,_ =get_company(request.user)
-
+    
     current_month_start, next_month_start = get_current_month()
     current_month_end = next_month_start - timedelta(days=1)
    

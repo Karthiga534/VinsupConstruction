@@ -136,7 +136,7 @@ Production = (os.getenv('PROD_DB'))
 print(type(Production),Production ==0,Production)
 
 DATABASES = {
-    'default': prod_db if Production == str(0) else local_db
+    'default': prod_db 
 }
 
 print(DATABASES)
