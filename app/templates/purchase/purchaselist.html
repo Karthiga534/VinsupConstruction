@@ -362,7 +362,7 @@
         const td7 = createTableCell(get_value(data.pending));
         newRow.appendChild(td7);
 
-        const td8 = createTableCell(get_value(data.status));
+        const td8 = createStatusCell(data.status_name,data.status_class);
         newRow.appendChild(td8);
 
         // Dropdown button cell
