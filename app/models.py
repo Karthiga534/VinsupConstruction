@@ -441,6 +441,7 @@ class EmpRoles(models.Model):
 class Employee(models.Model):
     company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
     user=models.ForeignKey(CustomUser, on_delete=models.CASCADE,null=True,blank=True)
+    img =models.FileField(upload_to="doc",null=True,blank=True)
     name=models.CharField(max_length=50,null=True,blank=True)
     role=models.ForeignKey(EmpRoles, on_delete=models.CASCADE,null=True,blank=True) 
     mobile=models.CharField(max_length=10,null=True,blank=True)
@@ -1393,9 +1394,16 @@ class Quatation(models.Model):
     site=models.ForeignKey(Project, on_delete=models.CASCADE,null=True,blank=True)
     start_date=models.DateField(auto_now_add=True)
     created_by = models.ForeignKey(Employee, on_delete=models.CASCADE,null=True,blank=True)
-    status = models.ForeignKey(WorkStatus, on_delete=models.CASCADE,null=True,blank=True)
+    status = models.ForeignKey(ProcessStatus, on_delete=models.CASCADE,null=True,blank=True)
+    is_delivered = models.BooleanField(default=False)
 
     #created by Employee , Status
+
+    # def __str__(self):
+    #     return self.quatation_id
+
+    def __str__(self):
+        return f"{self.quatation_id} - {self.site}"
 
 
     def save(self, *args, **kwargs):
@@ -1404,14 +1412,30 @@ class Quatation(models.Model):
             self.quatation_id = f'{generate_unique_identifier(self.company)}{self.id}'
         super().save(*args, **kwargs)
 
-    def __str__(self):
-        return self.quatation_id
+    
 
     def get_quotation_items(self):
         if self.quatationitems_set.all():
             return self.quatationitems_set.all()
         else :
             return []
+        
+    def save(self, *args, **kwargs):
+        self.full_clean()  #
+        if not self.status:
+            self.status,_ =ProcessStatus.objects.get_or_create(code=2)
+        if not self.quatation_id:
+            # Generate or set the invoice_id if not already provided
+            # You can generate it based on your specific requirements
+            # For example, combining company_id with a unique identifier
+            self.quatation_id = f'{self.company_id}-{self.generate_unique_identifier()}'
+        super().save(*args, **kwargs)
+
+
+    def generate_unique_identifier(self):
+        import random
+        import string
+        return ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
 
 class QuatationItems(models.Model):
     invoice=models.ForeignKey(Quatation, on_delete=models.CASCADE,null=True,blank=True)

@@ -332,47 +332,36 @@ def quatation(request):  #change name
     if not allow:
          context ={"unauthorized":msg}
          return render(request,"login.html",context)    
+    status =ProcessStatus.objects.all()
     materiallibrary = MaterialLibrary.objects.filter(company=request.user.company).order_by("-id")  
     uom =Uom.objects.filter(company=request.user.company).order_by("-id")
     site = Project.objects.filter(company=request.user.company).order_by("-id")
     inventory = InventoryStock.objects.filter(company=request.user.company).order_by("-id") 
     querysets = Quatation.objects.filter(company=request.user.company).order_by("-id")   #change query
     queryset,pages,search =customPagination(request,Quatation,querysets)    #change, model
-    context= {"materiallibrary":materiallibrary,'queryset': queryset,"location":"quatation","pages" :pages,"search":search,"uom":uom,"inventory":inventory,'site':site}   #change location name 
+    context= {"materiallibrary":materiallibrary,'queryset': queryset,"location":"quatation", "status":status,"pages" :pages,"search":search,"uom":uom,"inventory":inventory,'site':site}   #change location name 
     return render(request,"quatation/quatation.html",context)    #change template name
 
-# @api_view(['POST'])
-# @login_required(login_url='login')
-# def add_quatation(request):
-#     user = request.user
-#     allow, msg = check_user(request, Quatation, instance=False)
-#     if not allow:
-#         return JsonResponse({'details': [msg]}, status=status.HTTP_401_UNAUTHORIZED)
-#     invoice_data = request.POST.copy().dict()
-#     if user.admin:
-#         invoice_data['company'] = user.company.id
-#     if user.employee:
-#         invoice_data['created_by'] = user.employee.id
-#     print(request.data)
-#     table=request.POST.get('table')
-#     invoice_serializer = QuatationSerializer(data=invoice_data)
-#     if invoice_serializer.is_valid():
-#         invoice = invoice_serializer.save()
-#         if table:
-#             tdata =json.loads(table)
-#             for data in tdata:
-#                 data['invoice'] = invoice.id
-#                 items_serializer = QuatationItemsSerializer(data=data)
-#                 if items_serializer.is_valid():
-#                     items_serializer.save()
-#             return JsonResponse(invoice_serializer.data, status=status.HTTP_201_CREATED)
-#         else:
-#             invoice.delete()
-#             return JsonResponse( status=status.HTTP_400_BAD_REQUEST)
-#     else:
-#         return JsonResponse(invoice_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-#Quatation List
+@api_view(['POST'])
+@login_required(login_url='login')
+def quatation_status_change(request,pk):
+    user =request.user
+    try:
+        instance = Quatation.objects.get(id=pk)  # CHANGE model
+    except Quatation.DoesNotExist:              # CHANGE model
+        return JsonResponse({'details': 'Category object does not exist'}, status=404)
+    allow,msg= check_user(request,Quatation,instance=instance)  # CHANGE model
+    if not allow:
+        return JsonResponse({'details':[msg]}, status=status.HTTP_401_UNAUTHORIZED)
+    print('pppppppppppppppppppppppppp')
+    serializer = QuatationStatusSerializer(instance, data=request.data,partial=True)   # CHANGE Serializer
+    if serializer.is_valid():  
+        serializer.save()
+        stat = instance.status
+        ser = ProcessStatusSerializer(stat,many=False)
+        return JsonResponse( ser.data, status=200)
+    else:
+        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @login_required(login_url='login')
 def quatationlist(request):
@@ -381,11 +370,12 @@ def quatationlist(request):
     if not allow:
         context = {"unauthorized": msg}
         return render(request, "login.html", context)
+    status =ProcessStatus.objects.all()
     site = Project.objects.filter(company=request.user.company).order_by("-id")
     # quatationitems = QuatationItems.objects.filter(company__name=request.user.company)
     querysets = Quatation.objects.filter(company=request.user.company).order_by("-id")
     queryset, pages, search = customPagination(request, Quatation, querysets)
-    context = {'queryset': queryset, "location": "quatationlist", "pages": pages, "search": search, 'site': site}
+    context = {'queryset': queryset, "location": "quatationlist", "pages": pages, "status": status , "search": search, 'site': site}
     return render(request, "quatation/quatationlist.html", context)
 
 
@@ -1104,7 +1094,7 @@ def project(request):  #change name
          return render(request,"login.html",context)      
     querysets = Project.objects.filter(company=request.user.company).order_by("-id")   #change query
     category =ProjectCategory.objects.filter(company=request.user.company).order_by("-id")
-    engineer =Employee.objects.filter(company=request.user.company,user__disable = False).order_by("-id")
+    engineer =Employee.objects.filter(company=request.user.company, user__disable = False).order_by("-id")
     duration =Duration.objects.all()
     priority =Priority.objects.all()
     print(category)
