@@ -10,8 +10,8 @@ from django.conf.urls.static import static
 from django.contrib.auth.views import LogoutView
 from django.contrib.auth import views as auth_view
 
-from django.conf.urls import handler404
 from django.shortcuts import render
+from django.conf.urls import handler404
 
 # def custom_404(request, exception):
 #     return render(request, 'errors/404.html', status=404)
@@ -135,6 +135,7 @@ urlpatterns = [
     path('quatation-list/<str:pk>/',views.quatation_list, name="quatation-ist"),  
     path('add_quatation/',api.add_quatation, name='add_quatation'),   
     path('quotation/', api.quatationlist, name="quatationlist"),
+    path("quatation-status-change/<int:pk>/",api.quatation_status_change, name = 'quatation-status-change') ,
   
 #----------------------- Site Stocks ----------------------
 

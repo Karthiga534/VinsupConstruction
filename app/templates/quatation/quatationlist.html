@@ -101,7 +101,7 @@
                                     <th data-ordering="false">Date</th>
                                     <th data-ordering="false">Site Name</th>
                                     <th data-ordering="false">Quatation No</th>
-                                    {% comment %} <th data-ordering="false">Status</th> {% endcomment %}
+                                    <th data-ordering="false">Status</th>
                                     <th data-ordering="false" colspan="2">Action</th>
 
                                 </tr>
@@ -181,43 +181,42 @@
 </div>
 
 
+
 <div class="modal fade bs-example-modal-md" tabindex="-1" role="dialog" id="statusmodel"
-    aria-labelledby="myLargeModalLabel-1" aria-hidden="true">
-    <div class="modal-dialog modal-md">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="myLargeModalLabel-1"></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                </button>
-            </div>
-            <hr>
-            <form id="clocKInForm">
-                <div class="modal-body">
+aria-labelledby="myLargeModalLabel-1" aria-hidden="true">
+<div class="modal-dialog modal-md">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="myLargeModalLabel-1"></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+            </button>
+        </div>
+        <hr>
+        <form id="clocKInForm">
+            <div class="modal-body">
 
 
-                    <div class="row">
-                        <select class="form-select mb-3" aria-label="Default select example"
-                        id="filterdropdown1" name="status">
-                       
+                <div class="row">
+                    <select class="form-select mb-3" aria-label="Default select example" id="filterdropdown1" name="status">
                         {% for i in status %}
-                        <option value="{{ i.id }}">{{ i.name |title }}</option>
+                            <option value="{{ i.id }}">{{ i.name | title }}</option>
                         {% endfor %}
                     </select>
-                    </div>
-
                 </div>
 
-            </form>
-
-            <hr>
-            <div class="modal-footer">
-                <button class="btn btn-link link-success fw-medium shadow-none" data-bs-dismiss="modal"><i
-                        class="ri-close-line me-1 align-middle"></i> Close</button>
-                <button type="button"  class="btn btn-primary" id="update-button"
-                    data-target='clockInModal' onclick="updateStatus(this)">Save </button>
             </div>
+
+        </form>
+
+        <hr>
+        <div class="modal-footer">
+            <button class="btn btn-link link-success fw-medium shadow-none" data-bs-dismiss="modal"><i
+                    class="ri-close-line me-1 align-middle"></i> Close</button>
+            <button type="button"  class="btn btn-primary" id="update-button"
+                data-target='clockInModal' onclick="updateStatus(this)">Save </button>
         </div>
     </div>
+</div>
 </div>
 
 
@@ -340,6 +339,12 @@
         const td4 = createTableCell(get_value(data.quatation_id));
         newRow.appendChild(td4);
 
+       // const td5 = createTableCell(get_value(data.status));
+      //  newRow.appendChild(td5);
+
+      const td5 = createStatusCell(get_value(data.status_name), data.status_class);
+            td5.classList.add('status')
+            newRow.appendChild(td5);
     
        
 
@@ -371,6 +376,9 @@
         // click event
         actionCell.addEventListener('click', () => {
             populateModalTable(data.get_quotation_items, modalTableBody) ;
+            payModalData(data)
+
+            openHistoryModal('statusmodel');
         });
 
 
@@ -427,6 +435,171 @@
         });
 
     }
+
+    function payModalData(data) {
+        const formId = 'clocKInForm'
+
+        var formElement = document.getElementById(formId);
+
+        const i1 = formElement.querySelector('select[name="status"]');
+        i1.value = data.status;
+        
+
+        const saveButton = document.querySelector('#update-button');   //id change
+        saveButton.setAttribute("data-id", data.id)
+
+    }
+
+
+    //---------------
+
+
+
+
+
+
+    function updateStatus(button) {
+
+        var modalSelector = button.getAttribute('data-target');
+        const formId = "clocKInForm"
+
+        const saveId = button.getAttribute('data-id')
+        var formElement = document.getElementById(formId);
+
+        var formData = new FormData();
+        try {
+            disableButton(button);
+            var isValid = true;
+            var errors = {};
+            var formData = new FormData();
+
+            var requiredKeys = ['status',];   //change
+
+        //     const selectedOption = formElement.querySelector('input[name="status"]:checked');
+        // if (selectedOption) {
+        //     console.log('Selected status:', selectedOption.value);
+        //     // Perform the update logic here
+        //     alert(`Selected status: ${selectedOption.value}`);
+        // } else {
+        //     alert('Please select a status.');
+        // }
+            const selectedOption = getValueOrDefault(formElement.querySelector('select[name="status"]'));
+      
+            formData.append('status', selectedOption.value);
+
+            requiredKeys.forEach(function (key) {
+                var value = formData.get(key);
+                if (!value.trim()) {
+                    isValid = false;
+                    errors[key] = ['This field is required.'];
+                }
+            });
+
+            if (!isValid) {
+                enableButton(button);
+                // console.log(errors);
+                handleCreateErrors(errors);
+                return;
+            } else {
+                $(`#${formId} input, #${formId} button`).prop('disabled', true);
+
+            }
+
+            $.ajax({
+                url: `/quatation-status-change/${saveId}/`,                //change
+                type: 'POST',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                },
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response, status, xhr) {
+                    console.error(status);
+                    if (xhr.status === 200) {
+
+                        showToast(statusMesssage?.message, '', statusMesssage?.bgColor);
+                        // fetchData(currentPage, reload = true)
+                        closeHistoryModal(modalSelector)
+                        updateRowStatus(saveId,xhr?.responseJSON)
+                        restoreForm(formId, button)
+
+                    } else {
+
+                        restoreForm(formId, button)
+                        showToast(
+                            errorAlertMessage?.message,
+                            "",
+                            errorAlertMessage?.bgColor
+                        );
+
+                    }
+                },
+                error: function (xhr, status, error) {
+                    // console.log(xhr, status, error);
+                    if (xhr.status === 400) {
+                        if (xhr?.responseJSON || xhr?.responseJSON?.errors) {
+                            handleCreateErrors(transformErrors(xhr.responseJSON));
+                            // restoreForm(formId, button)
+
+
+                        } else {
+                            showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+                            // restoreForm(formId, button)
+
+                        }
+                    }
+                    else if (xhr.status === 401 || xhr.status === 404) {
+
+                        showToast(xhr?.responseJSON?.details || errorOccured.message, '', errorAlertMessage?.bgColor);
+                        // restoreForm(formId, button)
+
+
+                    }
+                    else {
+                        showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+                        // restoreForm(formId, button)
+
+                    }
+                }
+            });
+        } catch (error) {
+            showToast(errorOccured?.message, '', errorOccured?.bgColor);
+            // restoreForm(formId, button)
+            console.error(error);
+        }
+
+        finally{
+            restoreForm(formId, button)
+        }
+        
+
+
+
+
+    }
+
+
+
+    function updateRowStatus(itemId, newStatus) {
+    // Find the row by the data-item-id attribute
+    const row = document.querySelector(`tr[data-item-id='${itemId}']`);
+    if (row) {
+        // Find the specific td with class 'status' within that row
+        const statusTd = row.querySelector('td.status');
+        statusTd.innerHTML =''
+        if (statusTd) {
+            const newStatusCell = createStatusCell(newStatus.name, newStatus.classname);
+            statusTd.appendChild(newStatusCell);
+        
+        } else {
+            console.error(`No <td> with class 'status' found in row with data-item-id='${itemId}'`);
+        }
+    } else {
+        console.error(`No row found with data-item-id='${itemId}'`);
+    }
+}
+
 
     //---------------
 

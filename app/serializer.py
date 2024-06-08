@@ -1532,3 +1532,63 @@ class SiteAllocationLabourSerializer(serializers.ModelSerializer):
         data["created_by_name"] = instance.created_by.name if instance.created_by else None
         return data
     
+class QuatationStatusSerializer(ModelSerializer):
+    class Meta:
+        model = Quatation
+        fields = "__all__"
+
+    def update(self, instance, validated_data):
+        status = validated_data.get('status')
+        company = validated_data.get('company')
+        site =instance.site
+        deliver = ProcessStatus.objects.filter(code=0).last()
+        if status == deliver and instance.status !=deliver and not instance.is_delivered :
+            print(status)
+
+            # Determine target queryset
+            target_queryset = instance.site.stock if instance.site else instance.company.get_inventory
+            quatation_items = instance.get_quotation_items
+
+            # Dictionary to store item quantities
+            quatation_item_quantities = {}
+
+            # Extract item IDs and quantities from purchase_items
+            for item in quatation_items:
+                if hasattr(item, 'item'):
+                    item_id = item.item.id if hasattr(item.item, 'id') else item.item
+                    quatation_item_quantities[item_id] = {
+                        'qty': item.qty,
+                        'unit': item.unit,
+                        
+                    }
+
+            print(quatation_item_quantities.items())
+
+            with transaction.atomic():
+                # Update quantities in target_queryset based on purchase_item_quantities
+                for item_id, details in quatation_item_quantities.items():
+                    qty = details['qty']
+                    # unit = Uom.objects.filter(id=details['unit']).last()
+                    unit = details['unit']
+                   
+                    
+                    # Ensure both item and unit are valid before proceeding
+                    item = MaterialLibrary.objects.filter(id=item_id).last()
+                    if not item:
+                        continue
+
+                    target_item = target_queryset.filter(item=item, unit=unit).first()
+                    if target_item:
+                        target_item.qty += qty
+                        target_item.save()
+                    else:
+                        print('pppppppppppp')
+                        # Determine the model dynamically based on the target_queryset
+                        model_class = target_queryset.model
+                        print(model_class)
+                        # Create a new instance of the model dynamically
+                        new_item = model_class(item=item, qty=qty, unit=unit,company=company,project=site)
+                        new_item.save()
+                validated_data['is_delivered'] =True
+
+        return super().update(instance, validated_data)

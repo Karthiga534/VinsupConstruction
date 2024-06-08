@@ -16,7 +16,7 @@
         <div class="row">
           <div class="col-12">
             <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-              <h4 class="mb-sm-0">Employee</h4>
+              <h4 class="mb-sm-0">Employee Management </h4>
 
               <div class="page-title-right">
                 <ol class="breadcrumb m-0">
@@ -36,18 +36,18 @@
 
                 <div class="row">
                   <div class="col-xl-6 col-lg-6 col-md-6 col-12">
-                    <h4>Employee Management </h4>
+                    <h4>Employee List </h4>
                   </div>
                   <div class="col-xl-4 col-lg-4 col-md-4 col-12"></div>
                   <div class="col-xl-2 col-lg-2 col-md-2 col-12">
                     <button type="button" class="btn btn-info" style="float:right;" data-bs-toggle="modal"
-                      data-bs-target=".bs-example-modal-lg">Add Employee</button>
+                      data-bs-target=".bs-example-modal-lg">+ Add </button>
                     <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog"
                       aria-labelledby="myLargeModalLabel" aria-hidden="true">
                       <div class="modal-dialog modal-lg">
                         <div class="modal-content">
                           <div class="modal-header">
-                            <h5 class="modal-title" id="myLargeModalLabel">Add Employee</h5>
+                            <h5 class="modal-title" id="myLargeModalLabel">Employee</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
                               onclick="clearErrors()"></button>
                           </div>
@@ -58,18 +58,16 @@
                             {% csrf_token %}
                             <div class="modal-body">
                               <div class="row">
-                                <div class="col-md-6">
-                                  <label for="" class="form-label"> Date
-                                    :</label>
+                                <div class="col-md-6 mt-2">
+                                  <label for="" class="form-label"> Date   :</label>
                                   <input type="date" class="form-control" id="start_date"
                                     name="start_date">
                                   <span id="start_dateError"
-                                    class="error-message"></span>
-
+                                    class="error-message"></span> 
                                 </div>
 
 
-                                <div class="col-md-6">
+                                <div class="col-md-6 mt-2">
                                   <label for="" class="form-label">Employee Image
                                       :</label>
                                   <input type="file" class="form-control" id="img"
@@ -78,12 +76,12 @@
                                       class="error-message"></span>
                               </div>
 
-                                <div class="col-md-6">
+                                <div class="col-md-6 mt-2">
                                   <label for="id_name" class="form-label">Employee Name :</label>
                                   <input type="text" name="name" class="form-control" id="name" required>
                                   <span id="nameError" class="error-message"></span>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-6 mt-2">
                                   <label for="" class="form-label">Employee Role :</label>
                                   <select class="form-select mb-3" aria-label="Default select example" id="role"
                                     name="role">
