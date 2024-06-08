@@ -1011,7 +1011,9 @@ def delete_project_category(request,pk):
         allow,msg= check_user(request,ProjectCategory,instance=instance)  # CHANGE model
         if not allow:
             return JsonResponse({'details':[msg]}, status=status.HTTP_401_UNAUTHORIZED)
-        instance.delete()
+        # instance.disable=True 
+        # instance.save()
+        # instance.delete()
         return JsonResponse( {'details': ['success']},status=204)
     except ProjectCategory.DoesNotExist:  # CHANGE model
         return JsonResponse({'details': ['Item does not exist']}, status=404)
