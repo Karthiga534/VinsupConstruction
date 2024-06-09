@@ -157,6 +157,10 @@ class   PurchaseItemsSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         site = self.context.get('site')
+        request = self.context.get('request')
+        user = request.user
+        # company = get_company_id(user)
+        # company = get_user_company(user)
 
         item = validated_data.get('item' ,None)
         # Extract unit and price from validated data
@@ -173,16 +177,16 @@ class   PurchaseItemsSerializer(serializers.ModelSerializer):
             price = validated_data.get('price', None)
             # company = validated_data.get('company', None)
             unit = validated_data.get('unit', None)
-            item =MaterialLibrary.objects.filter(item__iexact =name,unit=unit).last()
+            item =MaterialLibrary.objects.filter(item__iexact =name,unit=unit,company=user.company ).last()
             if not item:
-                item =MaterialLibrary.objects.create(item=name,unit=unit,price = price, )
+                item =MaterialLibrary.objects.create(item=name,unit=unit,price = price,company=user.company )
   
         unit = validated_data.pop('unit', None)
         qty_to_add = Decimal(validated_data.get('qty', 0))
         sub_total = Decimal(validated_data.get('sub_total', 0))
         
 
-        inventory_item, inventory_created = InventoryStock.objects.get_or_create(item = item,unit=unit)
+        inventory_item, inventory_created = InventoryStock.objects.get_or_create(item = item,unit=unit,company=user.company)
 
         inventory_item.qty = ( 0 if site else Decimal(inventory_item.qty)) + qty_to_add
         # if site  is there set item purchased for particular site so no need to manipulate inventory stock

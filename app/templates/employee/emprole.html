@@ -7,7 +7,7 @@
 <div class="main-content">
 
     <div class="page-content">
-        <div class="container-fluid">
+        <div class="container-fluid"> 
 
             <!-- start page title -->
             <div class="row">
@@ -401,7 +401,7 @@
 
 
             formData.append('name', getValueOrDefault(formElement.querySelector('input[name="name"]').value));              //change
-            formData.append('description', getValueOrDefault(formElement.querySelector('input[name="description"]').value));
+            formData.append('description', getValueOrDefault(formElement.querySelector('textarea[name="description"]').value));
 
 
             requiredKeys.forEach(function (key) {
@@ -492,7 +492,7 @@
             const formData = new FormData();
  
             formData.append('name', getValueOrDefault(formElement.querySelector('input[name="name"]').value));    //change
-            formData.append('description', getValueOrDefault(formElement.querySelector('input[name="description"]').value));
+            formData.append('description', getValueOrDefault(formElement.querySelector('textarea[name="description"]').value));
 
 
             var requiredKeys = ['name'];     //change

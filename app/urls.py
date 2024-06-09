@@ -64,7 +64,7 @@ urlpatterns = [
     path('update_emproles/<int:id>/',views.update_emproles, name="update-emproles"), 
     path('get_emproles/<int:id>/', views.get_emproles, name='get_emproles'),
     path('delete_emproles/<int:id>/', views.delete_emproles, name='delete_emproles'),
-    path('save_emproles/<int:id>/', views.save_emproles, name='save_emproles'),
+    # path('save_emproles/<int:id>/', views.save_emproles, name='save_emproles'),
 
 #---- Employee ----
 
