@@ -2,6 +2,12 @@ from . import views
 from django.urls import path
 
 urlpatterns = [
+
+    path('property_types/',views.get_property_types,name='property_types'), # GET
+    path('plot_types/',views.get_plot_types,name='plot_type'), # GET
+    path('soil_types/',views.get_soil_types,name='soil_types'), # GET
+    path('status_types/',views.get_status_types,name='status_types'), # GET
+
     path('sitepostings/', views.site_postings, name='site_postings_list'), # GET & POST
     path('sitepostings/<int:pk>/', views.site_postings, name='site_postings_detail'), # GET --> PK
     path('siteposting/<int:pk>/', views.site_posting_detail, name='site_posting_detail'), # GET --> PK ( PUT, DELETE )

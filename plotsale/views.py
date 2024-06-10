@@ -6,6 +6,34 @@ from rest_framework.decorators import api_view
 from rest_framework.permissions import AllowAny
 from rest_framework.decorators import api_view, permission_classes
 
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def get_property_types(request):
+    property_types = PropertyType.objects.all()
+    serializer = PropertyTypeSerializer(property_types, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def get_plot_types(request):
+    plot_types = PlotType.objects.all()
+    serializer = PlotTypeSerializer(plot_types, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def get_soil_types(request):
+    soil_types = SoilType.objects.all()
+    serializer = SoilTypeSerializer(soil_types, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def get_status_types(request):
+    status = Status.objects.all()
+    serializer = StatusSerializer(status, many=True)
+    return Response(serializer.data)
+
 #------------------------------------------------ Site Posting -----------------------------------------------
 
 @api_view(['GET', 'POST'])

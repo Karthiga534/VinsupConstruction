@@ -1734,7 +1734,26 @@ def delete_files(request, pk):
         files.delete()
         return Response({'message': 'File deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
 
-@login_required(login_url='login')  
+# @login_required(login_url='login')  
+# def profile(request):
+#     user = request.user
+#     company = user.company if user.admin else None
+#     company_profile = company.profile.first() if company and company.profile.exists() else None
+
+#     user_data = CustomUserSerializer(user).data
+#     company_data = CompanySerializer(company).data if company else None
+#     company_profile_data = CompanyProfileSerializer(company_profile).data if company_profile else None
+
+#     return render(request, 'profile.html', {
+#         'user': user_data,
+#         'company': company_data,
+#         'company_profile': company_profile_data,
+#     }) 
+
+@login_required(login_url='login')
+@check_valid_user
+@check_user_company
+@check_admin
 def profile(request):
     user = request.user
     company = user.company if user.admin else None

@@ -1468,6 +1468,39 @@ class PettyCashSerializer(serializers.ModelSerializer):
         model = PettyCash
         fields = ['id', 'amount', 'attachment', 'company', 'date', 'employee', 'particular', 'site_location','payment_method'] 
 
+    def to_representation(self, instance):
+     data = super().to_representation(instance)
+    
+     employee = instance.employee
+     site_location = instance.site_location 
+     payment_method= instance.payment_method
+
+     project_representation = None
+     site_location_representation = None
+     payment_method_representation = None
+
+     if employee:
+       data ["employee"] = {
+            'id': employee.id,
+            'name': employee.name,
+        },
+
+     if site_location:
+       data ["site_location"] = {
+            'id': site_location.id,
+            'name': site_location.site_location,
+        },
+     
+     if payment_method:
+        data ["payment_method"] = {
+            'id': payment_method.id,
+            'name': payment_method.name,
+        },
+
+     return data
+
+    
+
 # class PaymentHistorySerializer(serializers.ModelSerializer):
 #     class Meta:
 #         model = PaymentHistory
@@ -1596,3 +1629,8 @@ class QuatationStatusSerializer(ModelSerializer):
                 validated_data['is_delivered'] =True
 
         return super().update(instance, validated_data)
+    
+class PaymentMethodSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PaymentMethod
+        fields = '__all__'

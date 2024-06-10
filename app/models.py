@@ -930,6 +930,7 @@ class CompanyLabours(models.Model):
 #----------------------------------------------------------------------- VENDOR MANAGEMENT -------------------------------------------------------
 
 #---------------> Vendor Registration 
+
 class VendorRegistration(models.Model):
     company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
     date = models.DateField(auto_now_add=True, null=True, blank=True)

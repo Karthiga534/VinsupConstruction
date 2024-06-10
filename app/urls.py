@@ -180,7 +180,7 @@ urlpatterns = [
     path('update-contractor/<int:pk>/', views.update_contractor, name='update-contractor'),
     path('delete-contractor/<int:pk>/', views.delete_contractor, name='delete-contractor'),
 
-    # project category 
+    # project category  
     # render
     path('project-category/', api.project_category, name='project-category'), 
   
@@ -216,6 +216,7 @@ urlpatterns = [
     path('projectlist/',views.projectlist,name='projectlist'),  
 
     # --------------------------------------------------------  *****  SALARY  ******** ---------------------------------------------
+
     path('labour-salary-list/<str:pk>/',views.labour_salary_list,name="labour-salary-list"),
     path('labour-salary/',views.labour_salary,name='labour-salary'),
     path('make-labour-salary/<int:pk>/',views.make_labour_salary,name='make-labour-salary'),
@@ -339,6 +340,8 @@ urlpatterns = [
 
     path('profit-loss/<str:pk>/',views.profit_and_loss,name="profit-and-loss"),
     path('pettycash/', views.pettycash, name='pettycash'),
+    path('pettycash_list/', views.pettycash_list, name='pettycash_list'),
+    path('pettycash_list/<int:pk>/', views.pettycash_list, name='pettycash_detail'),
     path('add_pettycash/', views.add_pettycash, name='add_pettycash'),
     path('update_pettycash/<int:pk>/', views.update_pettycash, name='update_pettycash'),
     path('delete_pettycash/<int:pk>/', views.delete_pettycash, name='delete_pettycash'),
@@ -396,7 +399,7 @@ urlpatterns = [
 
 # revision
 
-path('purchase-track/<int:pk>/<int:site_or_inventory>/' , views.item_price_track,name="item_price_track"),
+    path('purchase-track/<int:pk>/<int:site_or_inventory>/' , views.item_price_track,name="item_price_track"),
 
 
 
@@ -420,7 +423,6 @@ path('purchase-track/<int:pk>/<int:site_or_inventory>/' , views.item_price_track
 
     path('delete-quatationitem/<int:pk>/', api.deletequatationitem, name='delete-quatation'),
     path('update_quatationitem/<int:pk>/', api.update_quatationitem, name='update_quatation'),
-
     
     path('contractattendance-list/', api.contractattendance_list, name='contractattendance-list'),
     path('contractattendance-list/<int:pk>/',  api.contractattendance_list, name='contractattendance-detail'),
@@ -440,9 +442,8 @@ path('purchase-track/<int:pk>/<int:site_or_inventory>/' , views.item_price_track
     path('update_files/<int:pk>/', api.update_files, name='update_files'),
     path('delete_files/<int:pk>/', api.delete_files, name='delete_files'),
 
-
-
 # -------------------- dailytask --------------------------------------
+
     path('dailytask/', views.dailytask, name='dailytask'),  
     path('add_dailytask/', views.add_dailytask, name='add_dailytask'),  
     path('update_dailytask/<int:pk>/', views.update_dailytask, name='update_dailytask'), 
@@ -451,7 +452,6 @@ path('purchase-track/<int:pk>/<int:site_or_inventory>/' , views.item_price_track
     path('dailytask-list/<int:pk>/',  views.dailytask_list, name='dailytask-detail'),
     path('delete_dailytask/<int:pk>/', views.delete_dailytask, name='delete_dailytask'), 
 
-
 # ------------------ sitestockusage  --------------
 
     path('dailysitestockusage/', api.dailysitestockusage, name='dailysitestockusage'), 
@@ -459,9 +459,9 @@ path('purchase-track/<int:pk>/<int:site_or_inventory>/' , views.item_price_track
     path('stockusagelist/', api.sitestockusage, name="dailysitestockusagelist"),
     path('dailysitestockusagelist/<int:pk>/', api.dailysitestockusagelist, name='dailysitestock-usagelist'), 
 
-   path('dailysitestockusage/', api.dailysitestockusage, name='dailysitestockusage'),
+    path('dailysitestockusage/', api.dailysitestockusage, name='dailysitestockusage'),
 
-     path('save_data/<int:pk>/', api.save_data, name='save_data'),
+    path('save_data/<int:pk>/', api.save_data, name='save_data'),
 
     path('update_sitestockusage/<int:pk>/', api.update_sitestockusage, name='update_sitestockusage'), 
     path('delete_sitestockusage/<int:pk>/', api.delete_sitestockusage, name='delete_sitestockusage'),
@@ -529,6 +529,9 @@ path('purchase-track/<int:pk>/<int:site_or_inventory>/' , views.item_price_track
 
 
     path('dailysitestockusage/', api.dailysitestockusage, name='dailysitestockusage'),
+
+    path('payment-methods/', views.get_payment_methods, name='get_payment_methods'),
+    path('employees/', views.get_employees, name='get_employees'),
 
 
 

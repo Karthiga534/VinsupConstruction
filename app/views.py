@@ -391,9 +391,11 @@ def delete_emproles(request, id):
 
 #--------------------> Employee <-----------------------
 
+@check_valid_user
+@check_user_company
+@check_admin
 @login_required(login_url='login')
 def employee(request):
-
     user=request.user
     allow,msg= check_user(request,Employee,instance=False)  # CHANGE model
     if not allow:
@@ -401,7 +403,8 @@ def employee(request):
          return render(request,"login.html",context)  
     if request.method == 'POST':
         request_data=request.POST.copy().dict()
-        request_data ["company"] = request.user.company.id
+        if user.admin:
+            request_data ["company"] = user.company.id
         img = request.FILES.get("img",None)
 
         if img:
@@ -461,6 +464,9 @@ def get_employee(request, id):
    
 @api_view(['PUT'])
 @login_required(login_url='login')
+@check_valid_user
+@check_user_company
+@check_admin
 def save_employee(request, id):
     try:
         instance = Employee.objects.get(id=id)
@@ -468,14 +474,29 @@ def save_employee(request, id):
         return Response({'error': 'Employee object does not exist'}, status=404)
 
     if request.method == 'PUT':
+        user = request.user
+        allow, msg = check_user(request, Employee, instance=False)  # CHANGE model
+        
+        if not allow:
+            return JsonResponse({"error": msg}, status=401)
+
         serializer = EmployeeSerializer(instance, data=request.data)
+        
         if serializer.is_valid():
-            serializer.save()
-            return JsonResponse( serializer.data, status=200)
+            if user.admin:
+                request_data = serializer.validated_data
+                request_data['company'] = user.company.id
+                
+                # Update serializer data with modified request data
+                serializer.update(instance, request_data)
+            else:
+                serializer.save()
+                
+            return JsonResponse(serializer.data, status=200)
         else:
             return JsonResponse(serializer.errors, status=400)
     else:
-        return JsonResponse({'error': 'Invalid request method'}, status=405)    
+        return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 @api_view(['DELETE'])
 @login_required(login_url='login')
@@ -607,6 +628,9 @@ def contract_category(request):  #change name
     return render(request,"contractor/contractcategory.html",context)    #change template name
 
 @api_view(['POST'])
+@check_valid_user
+@check_user_company
+@check_admin
 @login_required(login_url='login')
 def add_contract_category (request):  # CHANGE name
     user=request.user
@@ -627,22 +651,34 @@ def add_contract_category (request):  # CHANGE name
 
 @api_view(['PUT'])
 @login_required(login_url='login')
+@check_valid_user
+@check_user_company
+@check_admin
 def update_contract_category(request, pk):  # CHANGE name
-    user=request.user
+    user = request.user
+    
     try:
         instance = Contractcategory.objects.get(id=pk)  # CHANGE model
     except Contractcategory.DoesNotExist:              # CHANGE model
         return JsonResponse({'details': 'Contractcategory object does not exist'}, status=404)
-    allow,msg= check_user(request,Contractcategory,instance=instance)  # CHANGE model
+    
+    allow, msg = check_user(request, Contractcategory, instance=instance)  # CHANGE model
     if not allow:
-        return JsonResponse({'details':[msg]}, status=status.HTTP_401_UNAUTHORIZED)
+        return JsonResponse({'details': [msg]}, status=401)
+    
+    # Create a mutable copy of request.data
+    request_data = request.data.copy()
+    
+    if user.admin:
+        request_data['company'] = user.company.id
 
-    serializer = ContractcategorySerializer(instance, data=request.data,partial=True)   # CHANGE Serializer
+    serializer = ContractcategorySerializer(instance, data=request_data, partial=True)   # CHANGE Serializer
     if serializer.is_valid():  
         serializer.save()
-        return JsonResponse( serializer.data, status=200)
+        return JsonResponse(serializer.data, status=200)
     else:
-        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return JsonResponse(serializer.errors, status=400)
+
     
 
 @api_view(['DELETE'])
@@ -770,6 +806,8 @@ def machinary_charges(request):   #change name
     return render(request, "library/machinarycharges.html", context)    #change template name
 
 @api_view(['POST'])
+@check_valid_user
+@check_user_company
 @login_required(login_url='login')
 def add_machinary_charges (request):  # CHANGE name
     user=request.user
@@ -789,6 +827,8 @@ def add_machinary_charges (request):  # CHANGE name
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
 @api_view(['PUT'])
+@check_valid_user
+@check_user_company
 @login_required(login_url='login')
 def update_machinary_charges(request, pk):  # CHANGE name
     user=request.user
@@ -797,6 +837,9 @@ def update_machinary_charges(request, pk):  # CHANGE name
         instance = CompanyMachinaryCharges.objects.get(id=pk)  # CHANGE model
     except CompanyMachinaryCharges.DoesNotExist:              # CHANGE model
         return JsonResponse({'details': 'Category object does not exist'}, status=404)
+    
+    if user.company != instance.company:
+        return JsonResponse({'details': 'Unauthorized to update this object'}, status=401)
     
     allow,msg= check_user(request,CompanyMachinaryCharges,instance=instance)  # CHANGE model
     if not allow:
@@ -939,6 +982,9 @@ def labours(request):   #change name
 
 
 @api_view(['POST'])
+@check_valid_user
+@check_user_company
+@check_admin
 @login_required(login_url='login')
 def add_labours (request):  # CHANGE name
     user=request.user
@@ -965,26 +1011,30 @@ def add_labours (request):  # CHANGE name
 
 @api_view(['PUT'])
 @login_required(login_url='login')
+@check_valid_user
+@check_user_company
+@check_admin
 def update_labours(request, pk):  # CHANGE name
-    user=request.user
+    user = request.user
 
     try:
         instance = CompanyLabours.objects.get(id=pk)  # CHANGE model
     except CompanyLabours.DoesNotExist:              # CHANGE model
         return JsonResponse({'details': 'Category object does not exist'}, status=404)
     
-
-    allow,msg= check_user(request,CompanyLabours,instance=instance)  # CHANGE model
+    allow, msg = check_user(request, CompanyLabours, instance=instance)  # CHANGE model
     if not allow:
-        return JsonResponse({'details':[msg]}, status=status.HTTP_401_UNAUTHORIZED)
+        return JsonResponse({'details': [msg]}, status=401)
     
-    print(request.data)
-    serializer =CompanyLaboursSerializer(instance, data=request.data,partial=True , context={'request':request})   # CHANGE Serializer
+    if user.admin:
+        request.data['company'] = user.company.id
+
+    serializer = CompanyLaboursSerializer(instance, data=request.data, partial=True, context={'request': request})   # CHANGE Serializer
     if serializer.is_valid():  
         serializer.save()
-        return JsonResponse( serializer.data, status=200)
+        return JsonResponse(serializer.data, status=200)
     else:
-        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return JsonResponse(serializer.errors, status=400)
 
 
 
@@ -1028,6 +1078,9 @@ def expense(request):  #change name
     return render(request,"expense/expense.html",context)    #change template name
 
 @api_view(['POST'])
+@check_valid_user
+@check_user_company
+@check_admin
 @login_required(login_url='login')
 def add_expense (request):  # CHANGE name
     user=request.user
@@ -1052,6 +1105,8 @@ def add_expense (request):  # CHANGE name
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['PUT'])
+@check_valid_user
+@check_user_company
 @login_required(login_url='login')
 def update_expense(request, pk):  # CHANGE name
     user=request.user
@@ -2732,6 +2787,8 @@ def labour_attendence_list(request,pk):  #change name
 
 
 @api_view(['POST'])
+@check_valid_user
+@check_user_company
 @login_required(login_url='login')
 def make_labour_present(request,pk):
     user=request.user
@@ -2829,8 +2886,31 @@ def pettycash(request):  #change name
     return render(request,"expense/pettycash.html",context)    #change template name
 
 
+@api_view(['GET'])
+@login_required(login_url='apilogin')
+def pettycash_list(request, pk=None):
+    user_company = request.user.company
 
+    if pk:
+        try:
+            files = PettyCash.objects.get(pk=pk, company=user_company)
+        except PettyCash.DoesNotExist:
+            return Response({'error': 'This id not Valid'}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = PettyCashSerializer(files)
+        return Response(serializer.data)
+    else:
+        files = PettyCash.objects.filter(company=user_company)
+        if not files.exists():
+            return Response({'error': 'No Petty Cash found for the specified company'}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = PettyCashSerializer(files, many=True)
+        return Response(serializer.data)
+    
 @api_view(['POST'])
+@check_valid_user
+@check_user_company
+@check_admin
 @login_required(login_url='login')
 def add_pettycash (request):  # CHANGE name
     user=request.user
@@ -2855,26 +2935,30 @@ def add_pettycash (request):  # CHANGE name
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['PUT'])
+@check_valid_user
+@check_user_company
+@check_admin
 @login_required(login_url='login')
-def update_pettycash(request, pk):  # CHANGE name
-    user=request.user
+def update_pettycash(request, pk):
+    user = request.user
 
     try:
-        instance = PettyCash.objects.get(id=pk)  # CHANGE model
-    except PettyCash.DoesNotExist:              # CHANGE model
-        return JsonResponse({'details': ['Item does not exist']}, status=404)
+        instance = PettyCash.objects.get(id=pk)
+    except PettyCash.DoesNotExist:
+        return JsonResponse({'detail': 'Item does not exist.'}, status=status.HTTP_404_NOT_FOUND)
 
-    allow,msg= check_user(request,PettyCash,instance=instance)  # CHANGE model
+    # Assuming check_user verifies that the user can update this specific PettyCash entry
+    allow, msg = check_user(request, PettyCash, instance=instance)
     if not allow:
-        return JsonResponse({'details':[msg]}, status=status.HTTP_401_UNAUTHORIZED)
+        return JsonResponse({'detail': msg}, status=status.HTTP_401_UNAUTHORIZED)
 
-    serializer = PettyCashSerializer(instance, data=request.data,partial=True)   # CHANGE Serializer
-    if serializer.is_valid():  
+    serializer = PettyCashSerializer(instance, data=request.data, partial=True)
+    if serializer.is_valid():
         serializer.save()
-        return JsonResponse( serializer.data, status=200)
+        return JsonResponse(serializer.data, status=status.HTTP_200_OK)
     else:
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+    
 @api_view(['DELETE'])
 @login_required(login_url='login')
 def delete_pettycash(request,pk):
@@ -3053,6 +3137,8 @@ def dailytask_list(request, pk=None):
         return Response(serializer.data)
     
 @api_view(['POST'])
+@check_valid_user
+@check_user_company
 @login_required(login_url='login')
 def add_dailytask (request):  # CHANGE name
     user=request.user
@@ -3061,13 +3147,10 @@ def add_dailytask (request):  # CHANGE name
         return JsonResponse({'details':[msg]}, status=status.HTTP_401_UNAUTHORIZED)
     
     request_data=request.POST.copy().dict()
-    # attachments = request.FILES.get("attachment",None) 
 
     if user.admin or user.employee:
         request_data['company'] = user.company.id
 
-    # if attachments: 
-    #      request_data['attachment'] = attachments
 
     serializer = dailyTaskSerializer(data=request_data)   # CHANGE serializer
     if serializer.is_valid():  
@@ -3077,6 +3160,8 @@ def add_dailytask (request):  # CHANGE name
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['PUT'])
+@check_valid_user
+@check_user_company
 @login_required(login_url='login')
 def update_dailytask(request, pk):  # CHANGE name
     user=request.user
@@ -3146,6 +3231,9 @@ def site_allocation_list(request, pk):  # change name
     return PaginationAndFilter(querysets, request, SiteAllocationEmployeeSerializer, date_field="date")
 
 @api_view(['POST'])
+@check_valid_user
+@check_user_company
+@check_admin
 @login_required(login_url='login')
 def add_site_allocation(request):
     user = request.user
@@ -3167,20 +3255,68 @@ def add_site_allocation(request):
     else:
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+# @api_view(['GET', 'PUT'])
+# @check_valid_user
+# @check_user_company
+# @check_admin
+# @login_required(login_url='login')
+# def site_allocationemployee(request, pk):  
+#     if request.method == 'PUT':
+#         try:
+#             site_allocation = SiteAllocation.objects.get(pk=pk)
+#         except SiteAllocation.DoesNotExist:
+#             return Response({'detail': 'Site allocation not found.'}, status=status.HTTP_404_NOT_FOUND)
+        
+#         serializer = SiteAllocationEmployeeSerializer(site_allocation, data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 @api_view(['GET', 'PUT'])
+@check_valid_user
+@check_user_company
+@check_admin
 @login_required(login_url='login')
 def site_allocationemployee(request, pk):  
+    # Check user permissions
+    user = request.user
+    allow, msg = check_user(request, SiteAllocation, instance=False)
+    if not allow:
+        return Response({'detail': msg}, status=status.HTTP_401_UNAUTHORIZED)
+    
     if request.method == 'PUT':
         try:
             site_allocation = SiteAllocation.objects.get(pk=pk)
         except SiteAllocation.DoesNotExist:
             return Response({'detail': 'Site allocation not found.'}, status=status.HTTP_404_NOT_FOUND)
         
+        # Check user permissions for the specific object
+        allow, msg = check_user(request, site_allocation)
+        if not allow:
+            return Response({'detail': msg}, status=status.HTTP_401_UNAUTHORIZED)
+        
         serializer = SiteAllocationEmployeeSerializer(site_allocation, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # For the GET method
+    try:
+        site_allocation = SiteAllocation.objects.get(pk=pk)
+    except SiteAllocation.DoesNotExist:
+        return Response({'detail': 'Site allocation not found.'}, status=status.HTTP_404_NOT_FOUND)
+    
+    # Check user permissions for the specific object
+    allow, msg = check_user(request, site_allocation)
+    if not allow:
+        return Response({'detail': msg}, status=status.HTTP_401_UNAUTHORIZED)
+    
+    serializer = SiteAllocationEmployeeSerializer(site_allocation)
+    return Response(serializer.data)
+
     
 @api_view(['DELETE'])
 @login_required(login_url='login')
@@ -3233,6 +3369,9 @@ def lab_site_allocation_list(request, pk):  # change name
     return PaginationAndFilter(querysets, request, SiteAllocationLabourSerializer, date_field="date")
     
 @api_view(['POST'])
+@check_valid_user
+@check_user_company
+@check_admin
 @login_required(login_url='login')
 def add_lab_site_allocation(request):
     user = request.user
@@ -3254,20 +3393,64 @@ def add_lab_site_allocation(request):
     else:
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
+# @api_view(['GET', 'PUT'])
+# @login_required(login_url='login')
+# def site_allocationlabour(request, pk):  
+#     if request.method == 'PUT':
+#         try:
+#             site_allocation = SiteAllocation.objects.get(pk=pk)
+#         except SiteAllocation.DoesNotExist:
+#             return Response({'detail': 'Site allocation not found.'}, status=status.HTTP_404_NOT_FOUND)
+        
+#         serializer = SiteAllocationLabourSerializer(site_allocation, data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 @api_view(['GET', 'PUT'])
+@check_valid_user
+@check_user_company
+@check_admin
 @login_required(login_url='login')
-def site_allocationlabour(request, pk):  
+def site_allocationlabour(request, pk):
+    # Check user permissions
+    user = request.user
+    allow, msg = check_user(request, SiteAllocation, instance=False)
+    if not allow:
+        return Response({'detail': msg}, status=status.HTTP_401_UNAUTHORIZED)
+    
     if request.method == 'PUT':
         try:
             site_allocation = SiteAllocation.objects.get(pk=pk)
         except SiteAllocation.DoesNotExist:
             return Response({'detail': 'Site allocation not found.'}, status=status.HTTP_404_NOT_FOUND)
         
+        # Check user permissions for the specific object
+        allow, msg = check_user(request, site_allocation)
+        if not allow:
+            return Response({'detail': msg}, status=status.HTTP_401_UNAUTHORIZED)
+        
         serializer = SiteAllocationLabourSerializer(site_allocation, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    # For the GET method
+    try:
+        site_allocation = SiteAllocation.objects.get(pk=pk)
+    except SiteAllocation.DoesNotExist:
+        return Response({'detail': 'Site allocation not found.'}, status=status.HTTP_404_NOT_FOUND)
+    
+    # Check user permissions for the specific object
+    allow, msg = check_user(request, site_allocation)
+    if not allow:
+        return Response({'detail': msg}, status=status.HTTP_401_UNAUTHORIZED)
+    
+    serializer = SiteAllocationLabourSerializer(site_allocation)
+    return Response(serializer.data)
+
 
 
 
@@ -3548,3 +3731,15 @@ def item_price_track(request,pk,site_or_inventory):
     }
 
     return Response(results)
+
+@api_view(['GET'])
+def get_payment_methods(request):
+    payment_methods = PaymentMethod.objects.all()
+    serializer = PaymentMethodSerializer(payment_methods, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def get_employees(request):
+    employees = Employee.objects.values('id', 'name')
+    employees_list = list(employees)
+    return Response(employees_list)
