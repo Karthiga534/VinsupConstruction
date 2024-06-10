@@ -63,17 +63,14 @@
 
                                                         {% csrf_token %}
                                                         <div class="row">
-                                                            <div class="col-md-6">
+                                                            <div class="">
                                                                 <label for="id_name" class="form-label">Category
                                                                     Name:</label>
                                                                 <input type="text" name="name" class="form-control"
                                                                     id="name" value="">
                                                                 <span id="nameError" class="error-message"></span>
 
-
                                                             </div>
-                                                       
-
                                                             <div class="mt-2 mb-3">
                                                                 <label for="id_description" class="form-label">Description:</label>
                                                                 <textarea name="description" class="form-control" id="description" value="" rows ="5"></textarea>
@@ -158,10 +155,6 @@
 
                                             <!-- view modal -->
 
-
-                                       
-
-
                                             <div class="modal fade" id="viewModal_{{i.id}}" tabindex="-1" role="dialog" aria-labelledby="viewModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
 
                                                 <div class="modal-dialog modal-lg">
@@ -180,7 +173,7 @@
                                                           <div class="row">
                                                               
                                             
-                                                            <div class="row mb-2">
+                                                            <div class="">
                                                                 <label for="{{i.id}}_name" class="form-label">Project Category Name:</label>
                                                                 <input type="text" class="form-control" id="{{i.id}}_name" name="name" value="{{i.name}}" readonly>
                                                             </div>
