@@ -3076,33 +3076,6 @@ def clientcashpay(request, pk):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     return Response("This endpoint only supports POST requests.", status=status.HTTP_405_METHOD_NOT_ALLOWED)
-
-
-# @login_required(login_url='login')
-# def payment_process(request, project_id):
-#     project = get_object_or_404(Project, pk=project_id)
-#     payment_methods = PaymentMethod.objects.all()  # Get all payment methods
-
-#     if request.method == 'POST':
-#         date = request.POST.get('date')
-#         receipt_number = request.POST.get('receipt_number')
-#         payment_method_id = request.POST.get('payment_method')  # Retrieve selected payment method ID
-#         payment_amount = request.POST.get('payment_amount')
-#         # is_paid = request.POST.get('is_paid') == 'yes'
-
-#         payment_method = PaymentMethod.objects.get(pk=payment_method_id)  # Get the selected payment method object
-
-#         PaymentHistory.objects.create(
-#             project=project,
-#             date=date,
-#             receipt_number=receipt_number,
-#             payment_method=payment_method,
-#             payment_amount=payment_amount,
-#             # is_paid=is_paid
-#         )
-#         return redirect('clientcash', pk=project.id)  # Provide the pk argument
-#     else:
-#         return render(request, 'project/payment_process.html', {'project': project, 'payment_methods': payment_methods})
     
 
 

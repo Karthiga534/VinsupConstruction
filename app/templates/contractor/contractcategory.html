@@ -62,7 +62,7 @@
                               <div class="row">
                                 <div class="">
                                   <label for="id_name" class="form-label">Category Name
-                                    :</label>
+                                    <span style="color: red;">*</span></label>
                                   <input type="text" name="name" class="form-control" id="name">
                                   <span id="nameError" class="error-message"></span>
                                 </div>
@@ -242,7 +242,7 @@
                                     
                   
                                     <div class="">
-                                        <label for="{{i.id}}_name" class="form-label">Contractor Category Name:</label>
+                                        <label for="{{i.id}}_name" class="form-label">Contractor Category Name </label>
                                         <input type="text" class="form-control" id="{{i.id}}_name" name="name" value="{{i.name}}" readonly>
                                     </div>
 

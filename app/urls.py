@@ -348,8 +348,6 @@ urlpatterns = [
 
     path('clientcash/<int:pk>/',views.clientcash,name='clientcash'),
     path('clientcashpay/<int:pk>/', views.clientcashpay, name='clientcashpay'),
-    # path('payment-process/<int:project_id>/', views.payment_process, name='payment-process'),
-
 
  
     #     # employee attendence
