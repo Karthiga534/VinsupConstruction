@@ -88,10 +88,12 @@ class PurchaseInvoiceStatusSerializer(ModelSerializer):
 
     def update(self, instance, validated_data):
         status = validated_data.get('status')
-        company = validated_data.get('company')
+        company = instance.company
         site =instance.site
         deliver = ProcessStatus.objects.filter(code=0).last()
+        print(status)
         if status == deliver and instance.status !=deliver and not instance.is_delivered :
+        # if status :
             print(status)
 
             # Determine target queryset
@@ -112,7 +114,7 @@ class PurchaseInvoiceStatusSerializer(ModelSerializer):
                     }
 
             print(purchase_item_quantities.items())
-
+       
             with transaction.atomic():
                 # Update quantities in target_queryset based on purchase_item_quantities
                 for item_id, details in purchase_item_quantities.items():
@@ -124,20 +126,36 @@ class PurchaseInvoiceStatusSerializer(ModelSerializer):
                     # Ensure both item and unit are valid before proceeding
                     item = MaterialLibrary.objects.filter(id=item_id).last()
                     if not item:
+                        print(3)
                         continue
-
-                    target_item = target_queryset.filter(item=item, unit=unit).first()
-                    if target_item:
-                        target_item.qty += qty
-                        target_item.save()
+                    if target_queryset :
+                        print(1)
+                        target_item = target_queryset.filter(item=item, unit=unit).first()
+                        if target_item:
+                            target_item.qty += qty
+                            target_item.save()
+                        else:
+                            print(2)
+                            if instance.site:
+                                new_item = SiteStock(item=item, qty=qty, unit=unit,company=company,project=site,price=price)
+                            else:
+                                new_item = InventoryStock(item=item, qty=qty, unit=unit,company=company,price=price)
+                            # Determine the model dynamically based on the target_queryset
+                            # model_class = target_queryset.model
+                            # print(model_class)
+                            # # Create a new instance of the model dynamically
+                            # new_item = model_class(item=item, qty=qty, unit=unit,company=company,project=site,price=price)
+                            new_item.save()
                     else:
-                        print('pppppppppppp')
-                        # Determine the model dynamically based on the target_queryset
-                        model_class = target_queryset.model
-                        print(model_class)
-                        # Create a new instance of the model dynamically
-                        new_item = model_class(item=item, qty=qty, unit=unit,company=company,project=site,price=price)
+                        print(3)
+                        if instance.site:
+                            print(4)
+                            new_item = SiteStock(item=item, qty=qty, unit=unit,company=company,project=site,price=price)
+                        else:
+                            print(5)
+                            new_item = InventoryStock(item=item, qty=qty, unit=unit,company=company,price=price)
                         new_item.save()
+
                 validated_data['is_delivered'] =True
 
         return super().update(instance, validated_data)
@@ -427,12 +445,12 @@ class EmployeeSerializer(ModelSerializer):
         fields = "__all__"
 
 
-    # def validate_mobile(self, attrs):
-    #     if Employee.objects.filter(mobile=attrs).exists():
-    #         raise ValidationError ('already exists')
-    #     if CustomUser.objects.filter(phone_number=attrs).exists():
-    #         raise ValidationError ('Already exists')
-    #     return super().validate(attrs)
+    def validate_mobile(self, attrs):
+        if Employee.objects.filter(mobile=attrs).exists():
+            raise ValidationError ('already exists')
+        if CustomUser.objects.filter(phone_number=attrs).exists():
+            raise ValidationError ('Already exists')
+        return super().validate(attrs)
 
     def create(self, validated_data):
         user_data={}
@@ -684,6 +702,10 @@ class DailySiteStockUsageSerializer(ModelSerializer):
     class Meta:
         model = DailySiteStockUsage
         fields = "__all__"
+
+    def create(self, validated_data):
+        print('enter')
+        return super().create(validated_data)
 
     def to_representation(self, instance):
         data = super().to_representation(instance)

@@ -60,6 +60,8 @@ def login_view(request):
         print(user)
         if not user.admin:
             return JsonResponse({"detail" :"you are not allowed to login" },status=403)
+        if user.disable ==True:
+            return JsonResponse({"detail" :"you are not allowed to login" },status=403)
         user = authenticate(request, phone_number=phone_number, password=password)
 
         print(user)
