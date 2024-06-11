@@ -70,7 +70,7 @@
                               <div class="row">
                                 <div class="col-md-6">
                                   <label for="id_date" class="form-label"
-                                    >Date:
+                                    >Date <span style="color: red;">*</span>
                                   </label>
                                   <input
                                     type="date"
@@ -87,7 +87,7 @@
 
                                 <div class="col-md-6">
                                   <label for="" class="form-label"
-                                    >Select Employee :</label
+                                    >Select Employee <span style="color: red;">*</span></label
                                   >
                                   <select
                                     class="form-select mb-3"
@@ -108,7 +108,7 @@
 
                                 <div class="col-md-6">
                                   <label for="" class="form-label"
-                                    >Select Project :</label
+                                    >Select Project <span style="color: red;">*</span></label
                                   >
                                   <select
                                     class="form-select mb-3"
@@ -383,7 +383,7 @@
       var errors = {};
       var formData = new FormData();
 
-      var requiredKeys = ["date"];
+      var requiredKeys = ["date","project","employee"];
 
       formData.append(
         "date",

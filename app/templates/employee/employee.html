@@ -59,7 +59,7 @@
                             <div class="modal-body">
                               <div class="row">
                                 <div class="col-md-6 mt-2">
-                                  <label for="" class="form-label"> Date   :</label>
+                                  <label for="" class="form-label"> Date <span style="color: red;">*</span>  </label>
                                   <input type="date" class="form-control" id="start_date"
                                     name="start_date">
                                   <span id="start_dateError"
@@ -69,7 +69,7 @@
 
                                 <div class="col-md-6 mt-2">
                                   <label for="" class="form-label">Employee Image
-                                      :</label>
+                                    <span style="color: red;">*</span> </label>
                                   <input type="file" class="form-control" id="img"
                                       name="img">
                                   <span id="imgError"
@@ -77,12 +77,12 @@
                               </div>
 
                                 <div class="col-md-6 mt-2">
-                                  <label for="id_name" class="form-label">Employee Name :</label>
-                                  <input type="text" name="name" class="form-control" id="name" required>
+                                  <label for="id_name" class="form-label">Employee Name <span style="color: red;">*</span>  </label>
+                                  <input type="text" name="name" class="form-control" id="name" >
                                   <span id="nameError" class="error-message"></span>
                                 </div>
                                 <div class="col-md-6 mt-2">
-                                  <label for="" class="form-label">Employee Role :</label>
+                                  <label for="" class="form-label">Employee Role <span style="color: red;">*</span>  </label>
                                   <select class="form-select mb-3" aria-label="Default select example" id="role"
                                     name="role">
                                     {% for role in roles %}
@@ -92,24 +92,24 @@
                                   <span id="roleError" class="error-message"></span>
                                 </div>
                                 <div class="col-md-6 mt-2">
-                                  <label for="" class="form-label">Phone No :</label>
+                                  <label for="" class="form-label">Phone No  <span style="color: red;">*</span> </label>
                                   <input type="text" name="mobile" class="form-control" id="mobile">
                                   <span id="mobileError" class="error-message"></span>
                                 </div>
                                 <div class="col-md-6 mt-2">
-                                  <label for="" class="form-label">Address</label>
+                                  <label for="" class="form-label">Address  <span style="color: red;">*</span> </label>
                                   <textarea class="form-control" name="address" rows="3" id="address"></textarea>
                                   <span id="addressError" class="error-message"></span>
                                 </div>
                                 <div class="col-md-6 mt-2">
-                                  <label for="" class="form-label">Month Salary :</label>
+                                  <label for="" class="form-label">Month Salary  <span style="color: red;">*</span> </label>
                                   <input type="text" name="monthly_salary" class="form-control" id="monthly_salary">
                                   <span id="monthly_salaryError" class="error-message"></span>
                                 </div>
                               </div>
 
                               {% comment %} <div class="col-md-6 mt-2">
-                                <label for="" class="form-label">Starting Date :</label>
+                                <label for="" class="form-label">Starting Date  <span style="color: red;">*</span> </label>
                                 <input type="date" class="form-control" id="start_date" name="start_date">
                                 <span id="start_dateError" class="error-message"></span>
 
@@ -205,7 +205,8 @@
                     </td>
                     
                         <td>{{ i.name }}</td>
-                        <td>{{ i.role.name}}</td>
+                        
+                        <td>{{ i.role}}</td>
                         <td>{{ i.mobile }}</td>
                         <td>{{ i.address  | truncate  }}</td>
 
@@ -699,8 +700,11 @@
 
         var requiredKeys = [
           //change
-          "name",
+          "start_date",
           "role",
+          "name",
+          "img",
+          
           "mobile",
           "address",
           "monthly_salary"
@@ -709,6 +713,11 @@
           // "bankname",
           // "branch",
         ];
+        
+        formData.append(
+          "img",
+          getValueOrDefault($('#createForm input[name="img"]').val())
+        );
 
         formData.append(
           "name",

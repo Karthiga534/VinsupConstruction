@@ -55,7 +55,7 @@
                                             {% csrf_token %}
                                             <div class="row">
                                                 <div class="col-md-6">
-                                                    <label for="id_date" class="form-label">Date: </label>
+                                                    <label for="id_date" class="form-label">Date <span style="color: red;">*</span> </label>
                                                     <input type="date" name="date" class="form-control"
                                                         id="date" value="">
                                                     <span id="dateError" class="error-message"></span>
@@ -63,7 +63,7 @@
 
                                                 <div class="col-md-6">
                                                     <label for="" class="form-label">Select Labour
-                                                        :</label>
+                                                      <span style="color: red;">*</span></label>
                                                     <select class="form-select mb-3"
                                                         aria-label="Default select example"
                                                         name="labour" id="labour">
@@ -80,7 +80,7 @@
 
                                                 <div class="col-md-6">
                                                     <label for="" class="form-label">Select Project
-                                                        :</label>
+                                                      <span style="color: red;">*</span></label>
                                                     <select class="form-select mb-3"
                                                         aria-label="Default select example"
                                                         name="project" id="project">
@@ -374,7 +374,7 @@
       var errors = {};
       var formData = new FormData();
 
-      var requiredKeys = ["date"];
+      var requiredKeys = ["date","project","labour"];
 
       formData.append(
         "date",
@@ -502,7 +502,7 @@
       var errors = {};
       var formData = new FormData();
 
-      var requiredKeys = ['date',];   //change
+      var requiredKeys = ['date'];   //change
 
 
       const date = getValueOrDefault(formElement.querySelector('input[name="date"]').value);

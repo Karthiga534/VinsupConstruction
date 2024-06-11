@@ -45,7 +45,7 @@
 									<fieldset>
 										<div class="row">
 											<div class="col-md-3">
-												<label for="site" class="form-label">Project :</label>
+												<label for="site" class="form-label">Project <span style="color: red;">*</span></label>
 												<select class="form-select mb-3" aria-label="Default select example"
 													id="site" name="site">
 													<option value="">---------------------</option>
@@ -59,7 +59,7 @@
 										
 									
 											<div class="col-md-3">
-												<label for="" class="form-label">Invoice No :</label>
+												<label for="" class="form-label">Invoice No <span style="color: red;">*</span></label>
 												<input type="text" class="form-control" id="invoice_id"
 													name="invoice_id">
 												<span id="invoice_idError" class="error-message"></span>
@@ -67,7 +67,7 @@
 
 											
 											<div class="col-md-3">
-												<label for="vendor" class="form-label">Vendor Name:</label>
+												<label for="vendor" class="form-label">Vendor Name <span style="color: red;">*</span></label>
 												<select class="form-select mb-3" aria-label="Default select example"
 													id="vendor" name="vendor">
 													<option value="">---------------------</option>
@@ -79,27 +79,27 @@
 											</div>
 
 											<div class="col-md-3">
-												<label for="" class="form-label">Company Name :</label>
+												<label for="" class="form-label">Company Name <span style="color: red;">*</span></label>
 												<input type="text" class="form-control" id="vendor_company"
 													name="vendor_company">
 												<span id="vendor_companyError" class="error-message"></span>
 											</div>
 											
 											<div class="col-md-3 ">
-												<label for="" class="form-label">Date :</label>
+												<label for="" class="form-label">Date <span style="color: red;">*</span></label>
 												<input type="date" class="form-control" id="created_at"
 													name="created_at">
 												<span class="error-message" id="created_atError"></span>
 											</div>
 
 											<div class="col-md-3">
-												<label for="" class="form-label">Gst No :</label>
+												<label for="" class="form-label">Gst No <span style="color: red;">*</span></label>
 												<input type="text" class="form-control" id="gst" name="gst">
 												<span id="gstError" class="error-message"></span>
 											</div>
 											
 											<div class="col-md-3 ">
-												<label for="" class="form-label">Contact No :</label>
+												<label for="" class="form-label">Contact No <span style="color: red;">*</span></label>
 												<input type="text" class="form-control" id="contact_no"
 													name="contact_no">
 												<span id="contact_noError" class="error-message"></span>
@@ -471,9 +471,10 @@
 			// var requiredKeys = ['vendor_company', 'vendor', 'gst', 'contact_no', 'invoice_id', 'created_at'
 			// 	, 'total_amount', 'paid', 'pending'];   //change
 
-			var requiredKeys = ['vendor_company']
+			var requiredKeys = ['vendor_company','invoice_id','vendor','gst','contact_no','site','created_at']
 
-			formData.append('vendor', getValueOrDefault(formElement.querySelector('select[name="vendor"]').value));            //change
+			formData.append('vendor', getValueOrDefault(formElement.querySelector('select[name="vendor"]').value));  
+			formData.append('site', getValueOrDefault(formElement.querySelector('select[name="site"]').value));           //change
 			formData.append('tax', getValueOrDefault(formElement.querySelector('input[name="tax"]').value));
 			formData.append('gst', getValueOrDefault(formElement.querySelector('input[name="gst"]').value));
 			formData.append('contact_no', getValueOrDefault(formElement.querySelector('input[name="contact_no"]').value));

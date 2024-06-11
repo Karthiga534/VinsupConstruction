@@ -76,7 +76,7 @@
                                                                     </div>
                                                                     <div class="col-md-6 mt-2">
                                                                         <label for="id_payment_schedule" class="form-label">Payment schedule:</label>
-                                                                        <select class="form-select" id="{{ i.id }}_payment_schedule" name="payment_schedule">
+                                                                        <select class="form-select" id="payment_schedule" name="payment_schedule">
                                                                             <option value=""> ------- </option>
                                                                             {% for i in payment_schedules %}
                                                                                 <option value="{{ i.id }}">{{ i.days }}</option>
@@ -154,10 +154,10 @@
                                                             <!-- <i class="ri-pencil-fill align-bottom me-2 text-muted"></i>  -->
                                                             Edit
                                                         </button>
-                                                        <button class="btn btn-soft-danger btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#deleteModal{{ i.id }}">
-                                                            <!-- <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i>  -->
+                                                        <!-- <button class="btn btn-soft-danger btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#deleteModal{{ i.id }}">
+                                                           
                                                             Delete
-                                                        </button>
+                                                        </button> -->
                                                     </div>
         
                                                     <!-- view modal -->
@@ -641,3 +641,12 @@
 </script>
 
 {% endblock header2 %}
+
+
+
+
+
+do{
+    hard_work();
+    } while (!empty(Energy));
+}

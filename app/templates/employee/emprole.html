@@ -152,10 +152,10 @@
                                                     <!-- <i class="ri-pencil-fill align-bottom me-2 text-muted"></i>  -->
                                                     Edit
                                                 </button>
-                                                <button class="btn btn-soft-danger btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#deleteModal{{ i.id }}">
-                                                    <!-- <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i>  -->
+                                                <!-- <button class="btn btn-soft-danger btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#deleteModal{{ i.id }}">
+                                                    
                                                     Delete
-                                                </button>
+                                                </button> -->
                                             </div>
 
                                             <!-- view modal -->
@@ -396,11 +396,11 @@
             var errors = {};
             var formData = new FormData();
 
-            var requiredKeys = ['name','description'];   //change
+            var requiredKeys = ['name'];   //change
 
 
             formData.append('name', getValueOrDefault(formElement.querySelector('input[name="name"]').value));              //change
-            formData.append('description', getValueOrDefault(formElement.querySelector('input[name="description"]').value));
+            formData.append('description', getValueOrDefault(formElement.querySelector('textarea[name="description"]').value));
 
 
             requiredKeys.forEach(function (key) {
@@ -491,7 +491,7 @@
             const formData = new FormData();
  
             formData.append('name', getValueOrDefault(formElement.querySelector('input[name="name"]').value));    //change
-            formData.append('description', getValueOrDefault(formElement.querySelector('input[name="description"]').value));
+            formData.append('description', getValueOrDefault(formElement.querySelector('textarea[name="description"]').value));
 
 
             var requiredKeys = ['name'];     //change

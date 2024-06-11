@@ -57,16 +57,16 @@
 															<div class="row">
 																<div class="col-md-4 ">
 																	<label for="" class="form-label">Client Name
-																		:</label>
-																	<input type="text" class="form-control" id=""
+																		<span style="color: red;">*</span></label>
+																	<input type="text" class="form-control" id="client"
 																		name="client">
 																	<span id="clientError" class="error-message"></span>
 																</div>
 
 																<div class="col-md-4">
 																	<label for="" class="form-label">Contact No
-																		:</label>
-																	<input type="number" class="form-control" id=""
+																		<span style="color: red;">*</span> </label>
+																	<input type="number" class="form-control" id="contact_no"
 																		name='contact_no'>
 																	<span id="contact_noError"
 																		class="error-message"></span>
@@ -75,7 +75,7 @@
 																
 																<div class="col-md-4">
 																	<label for="" class="form-label">Select Category
-																		:</label>
+																		<span style="color: red;">*</span> </label>
 																	<select class="form-select mb-3"
 																		aria-label="Default select example"
 																		name="proj_category" id="proj_category">
@@ -93,8 +93,8 @@
 
 																<div class="col-md-4 mt-2">
 																	<label for="" class="form-label">Project Name
-																		:</label>
-																	<input type="text" class="form-control" id=""
+																		<span style="color: red;">*</span> </label>
+																	<input type="text" class="form-control" id="proj_name"
 																		name="proj_name">
 																	<span id="proj_nameError"
 																		class="error-message"></span>
@@ -102,7 +102,7 @@
 
 																<div class="col-md-4 mt-2">
 																	<label for="" class="form-label">Project Area
-																		:</label>
+																		<span style="color: red;">*</span> </label>
 																	<input type="text" class="form-control"
 																		id="site_location" name="site_location">
 																	<span id="site_locationError"
@@ -112,7 +112,7 @@
 
 																<div class="col-md-4 mt-2">
 																	<label for="" class="form-label">Select Incharge
-																		:</label>
+																		<span style="color: red;">*</span> </label>
 																	<select class="form-select mb-3"
 																		aria-label="Default select example"
 																		name="incharge" id="incharge">
@@ -131,8 +131,8 @@
 
 																<div class="col-md-4 mt-2">
 																	<label for="" class="form-label">Starting Date
-																		:</label>
-																	<input type="date" class="form-control" id=""
+																		<span style="color: red;">*</span> </label>
+																	<input type="date" class="form-control" id="start_date"
 																		name="start_date">
 																	<span id="start_dateError"
 																		class="error-message"></span>
@@ -141,8 +141,8 @@
 
 																<div class="col-md-4 mt-2">
 																	<label for="" class="form-label">End Date
-																		:</label>
-																	<input type="date" class="form-control" id=""
+																		<span style="color: red;">*</span> </label>
+																	<input type="date" class="form-control" id="end_date"
 																		name="end_date">
 																	<span id="end_dateError"
 																		class="error-message"></span>
@@ -153,10 +153,10 @@
 
 
 																<div class="col-md-4 mt-2">
-																	<label for="" class="form-label">Priority :</label>
+																	<label for="" class="form-label">Priority <span style="color: red;">*</span> </label>
 																	<select class="form-select mb-3"
 																		aria-label="Default select example"
-																		name='priority'>
+																		name='priority' id="priority">
 
 																		<option value="">----------------</option>
 																		{% for i in priority %}
@@ -171,8 +171,8 @@
 
 																<div class="col-md-4 mt-2">
 																	<label for="" class="form-label">Estimation
-																		:</label>
-																	<input type="number" class="form-control" id=""
+																		<span style="color: red;">*</span> </label>
+																	<input type="number" class="form-control" id="estimation"
 																		name="estimation">
 																	<span id="estimationError"
 																		class="error-message"></span>
@@ -209,7 +209,7 @@
 
 																<div class="col-md-6 mt-2">
 																	<label for="" class="form-label">Terms & Condition
-																		:</label>
+																		<span style="color: red;">*</span> </label>
 																	<textarea rows="3" class="form-control"
 																		id="terms_conditions"
 																		name="terms_conditions"></textarea>
@@ -355,14 +355,14 @@
 																onclick="openModal('editModal','{{ i.id }}')"><i
 																	class="ri-pencil-fill align-bottom me-2 text-muted"></i>
 																Edit</a></li>
-														<li>
+														<!-- <li>
 															<a class="dropdown-item remove-item-btn del-btn" href="#!"
 																data-target="#deleteModal{{ i.id}}">
 																<i
 																	class="ri-delete-bin-fill align-bottom me-2 text-muted"></i>
 																Delete
 															</a>
-														</li>
+														</li> -->
 													</ul>
 
 													<a 
@@ -1048,7 +1048,7 @@
 					var errors = {};
 					var formData = new FormData();
 
-					var requiredKeys = ['proj_category','start_date','end_date','priority','incharge','terms_conditions','description','proj_name', 'client', 'contact_no', 'site_location', 'estimation'];   //change
+					var requiredKeys = ['proj_category','start_date','end_date','priority','terms_conditions','incharge','proj_name', 'client', 'contact_no', 'site_location', 'estimation'];   //change
 
 
 					formData.append('description', getValueOrDefault(formElement.querySelector('textarea[name="description"]').value));              //change
