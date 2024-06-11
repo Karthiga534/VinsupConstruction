@@ -58,12 +58,12 @@
 										{% csrf_token %}
 									<div class="row">
 										<div class="col-md-4">
-											<label for="" class="form-label">Quatation No :</label>
+											<label for="" class="form-label">Quatation No <span style="color: red;">*</span></label>
 											<input type="text" class="form-control" id="quatation_id" name="quatation_id">
                                             <span id="quatation_idError" class="error-message" ></span>
 										</div>
 										<div class="col-md-4">
-											<label for="" class="form-label">Site Name :</label>
+											<label for="" class="form-label">Site Name <span style="color: red;">*</span></label>
 											<select class="form-select mb-3" aria-label="Default select example" id="site" name="site">
 												<option value="">---------------------</option>
 												{% for i in site %}
@@ -74,7 +74,7 @@
 										</div>
 										
 										<div class="col-md-4">
-											<label for="" class="form-label">Date :</label>
+											<label for="" class="form-label">Date <span style="color: red;">*</span></label>
 											<input type="date" class="form-control" id="start_date" name="start_date">
                                             <span id="start_dateError" class="error-message" ></span>
 										</div>
@@ -300,7 +300,7 @@
 				var errors = {};
 				var formData = new FormData();
 	
-				var requiredKeys = ['site','start_date'];   //change
+				var requiredKeys = ['site','start_date','quatation_id'];   //change
 
 				//var requiredKeys = ['vendor_company']
 

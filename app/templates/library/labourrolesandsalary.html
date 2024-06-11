@@ -59,7 +59,7 @@
                                                                 <div class="row">
                                                                     <div class="col-md-6">
                                                                         <label for="id_labour_name" class="form-label">Labour
-                                                                            Name:</label>
+                                                                            Name <span style="color: red;">*</span></label>
                                                                         <input type="text" name="name" class="form-control"
                                                                             id="name" >
                                                                         <span id="nameError" class="error-message"></span>
@@ -68,14 +68,14 @@
                                                                     </div>
                                                                     <div class="col-md-6">
                                                                         <label for="id_rate"
-                                                                            class="form-label">Rate:</label>
+                                                                            class="form-label">Rate <span style="color: red;">*</span></label>
                                                                         <input type="text" name="rate"
                                                                             class="form-control" id="rate" >
                                                                         <span id="rateError" class="error-message"></span>
                                                                            
                                                                     </div>
                                                                     <div class="col-md-6 mt-2">
-                                                                        <label for="id_payment_schedule" class="form-label">Payment schedule:</label>
+                                                                        <label for="id_payment_schedule" class="form-label">Payment schedule <span style="color: red;">*</span></label>
                                                                         <select class="form-select" id="payment_schedule" name="payment_schedule">
                                                                             <option value=""> ------- </option>
                                                                             {% for i in payment_schedules %}
