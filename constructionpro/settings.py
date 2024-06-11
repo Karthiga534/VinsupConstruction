@@ -32,7 +32,7 @@ DEBUG = (True if os.getenv( "Debug" ) == 'True' else False)
 
 ALLOWED_HOSTS = ["*"]
 
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split()
+# ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split()
 CORS_ORIGIN_ALLOW_ALL= False
 CORS_ALLOWED_ORIGINS = os.getenv("CORS_ALLOWED_ORIGINS", "").split()
 CORS_ORIGIN_WHITELIST = os.getenv("CORS_ORIGIN_WHITELIST", "").split()
@@ -48,12 +48,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
-     'whitenoise.runserver_nostatic',
-
+    'whitenoise.runserver_nostatic',
     'app',
     'rest_framework',
-
+    'plotsale',
     'rest_framework.authtoken',
      "corsheaders",
 ]

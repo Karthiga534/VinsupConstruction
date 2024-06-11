@@ -930,6 +930,7 @@ class CompanyLabours(models.Model):
 #----------------------------------------------------------------------- VENDOR MANAGEMENT -------------------------------------------------------
 
 #---------------> Vendor Registration 
+
 class VendorRegistration(models.Model):
     company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
     date = models.DateField(auto_now_add=True, null=True, blank=True)
@@ -1395,8 +1396,8 @@ class Quatation(models.Model):
     site=models.ForeignKey(Project, on_delete=models.CASCADE,null=True,blank=True)
     start_date=models.DateField(auto_now_add=True)
     created_by = models.ForeignKey(Employee, on_delete=models.CASCADE,null=True,blank=True)
-    status = models.ForeignKey(ProcessStatus, on_delete=models.CASCADE,null=True,blank=True)
-    is_delivered = models.BooleanField(default=False)
+    status = models.ForeignKey(WorkStatus, on_delete=models.CASCADE,null=True,blank=True)
+ 
 
     #created by Employee , Status
 
@@ -1426,9 +1427,6 @@ class Quatation(models.Model):
         if not self.status:
             self.status,_ =ProcessStatus.objects.get_or_create(code=2)
         if not self.quatation_id:
-            # Generate or set the invoice_id if not already provided
-            # You can generate it based on your specific requirements
-            # For example, combining company_id with a unique identifier
             self.quatation_id = f'{self.company_id}-{self.generate_unique_identifier()}'
         super().save(*args, **kwargs)
 

@@ -1,19 +1,19 @@
 
+import string
+import random
+from .utils import *
+from .models import *
+from .serializer import *
+from app.auth_ser import *
 from rest_framework import status
 from django.http import JsonResponse
 from rest_framework.response import Response
 from django.contrib.auth import authenticate
 from rest_framework.decorators import api_view
-from django.shortcuts import get_object_or_404 ,render, redirect
 from rest_framework.permissions import AllowAny
 from rest_framework.authtoken.models import Token
+from django.shortcuts import get_object_or_404 ,render, redirect
 from rest_framework.decorators import api_view, permission_classes
-from .models import *
-from .serializer import *
-from .utils import *
-import string
-import random
-from app.auth_ser import *
 
 from .forms import *
 from django.urls import reverse
@@ -407,9 +407,9 @@ def password_reset_confirm_view(request):
 
 
 import logging
-from django.core.mail import send_mail
 from django.conf import settings
 from django.http import HttpResponse
+from django.core.mail import send_mail
 
 logger = logging.getLogger("app")
 

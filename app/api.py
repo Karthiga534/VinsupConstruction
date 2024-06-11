@@ -1,5 +1,6 @@
 import json
 import logging
+
 from .models import *
 from .serializer import *
 from datetime import datetime
@@ -15,6 +16,7 @@ from rest_framework.pagination import PageNumberPagination
 from django.db.models import Case, When, Value, IntegerField
 from django.shortcuts import render, redirect, get_object_or_404
 from app.utils import PaginationAndFilter, customPagination,check_user
+from app.decorators import check_admin, check_user_company, check_valid_user
 
 paginator = PageNumberPagination()
 
@@ -197,6 +199,8 @@ def purchase(request):  #change name
 
 
 @api_view(['POST'])
+@check_valid_user
+@check_user_company
 @login_required(login_url='login')
 def add_purchase(request):
     user = request.user
@@ -220,7 +224,7 @@ def add_purchase(request):
                     for data in tdata:
                         data['invoice'] = invoice.id
                         data['company'] = user.company.id
-                        items_serializer = PurchaseItemsSerializer(data=data,context={'site':site})
+                        items_serializer = PurchaseItemsSerializer(data=data,context={'site':site,"request":request})
                         if items_serializer.is_valid():
                             items_serializer.save()
                         else:
@@ -965,6 +969,9 @@ def project_category(request):  #change name
     return render(request,"project/procategory.html",context)    #change template name
 
 @api_view(['POST'])
+@check_valid_user
+@check_user_company
+@check_admin
 @login_required(login_url='login')
 def add_project_category (request):  # CHANGE name
     user=request.user
@@ -983,24 +990,41 @@ def add_project_category (request):  # CHANGE name
     else:
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
+   
 @api_view(['PUT'])
+@check_valid_user
+@check_user_company
+@check_admin
 @login_required(login_url='login')
-def update_project_category(request, pk):  # CHANGE name
-    user=request.user
+def update_project_category(request, pk): 
+    user = request.user
+    
     try:
-        instance = ProjectCategory.objects.get(id=pk)  # CHANGE model
-    except ProjectCategory.DoesNotExist:              # CHANGE model
-        return JsonResponse({'details': 'Category object does not exist'}, status=404)
-    allow,msg= check_user(request,ProjectCategory,instance=instance)  # CHANGE model
+        company = request.company
+        if hasattr(company, '__iter__') and not isinstance(company, str):
+            company = company[0] if company else None
+        
+        if not company:
+            return JsonResponse({'details': 'Invalid or missing company reference'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        instance = ProjectCategory.objects.get(id=pk, company=company)  
+    except ProjectCategory.DoesNotExist:              
+        return JsonResponse({'details': 'Project Category object does not exist'}, status=404)
+    except ValueError as ve:
+        print(f"ValueError occurred: {ve}")
+        return JsonResponse({'details': 'Invalid company reference'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    allow, msg = check_user(request, ProjectCategory, instance=instance)
     if not allow:
-        return JsonResponse({'details':[msg]}, status=status.HTTP_401_UNAUTHORIZED)
+        return JsonResponse({'details': [msg]}, status=status.HTTP_401_UNAUTHORIZED)
 
-    serializer = ProjectCategorySerializer(instance, data=request.data,partial=True)   # CHANGE Serializer
+    serializer = ProjectCategorySerializer(instance, data=request.data, partial=True)
     if serializer.is_valid():  
         serializer.save()
-        return JsonResponse( serializer.data, status=200)
+        return JsonResponse(serializer.data, status=status.HTTP_200_OK)
     else:
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     
 @api_view(['DELETE'])
 @login_required(login_url='login')
@@ -1034,6 +1058,9 @@ def material_library(request):  #change name
     return render(request,"library/materiallibrary.html",context)    #change template name 
 
 @api_view(['POST'])
+@check_valid_user
+@check_user_company
+@check_admin
 @login_required(login_url='login')
 def add_material_library (request):  # CHANGE name
     user=request.user
@@ -1050,21 +1077,38 @@ def add_material_library (request):  # CHANGE name
     else:
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
+    
 @api_view(['PUT'])
+@check_valid_user
+@check_user_company
+@check_admin
 @login_required(login_url='login')
-def update_material_library(request, pk):  # CHANGE name
-    user=request.user
+def update_material_library(request, pk): 
+    user = request.user
+    
     try:
-        instance = MaterialLibrary.objects.get(id=pk)  # CHANGE model
-    except MaterialLibrary.DoesNotExist:              # CHANGE model
-        return JsonResponse({'details': 'Item does not exist'}, status=404)
-    allow,msg= check_user(request,MaterialLibrary,instance=instance)  # CHANGE model
+        company = request.company
+        if hasattr(company, '__iter__') and not isinstance(company, str):
+            company = company[0] if company else None
+        
+        if not company:
+            return JsonResponse({'details': 'Invalid or missing company reference'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        instance = MaterialLibrary.objects.get(id=pk, company=company)  
+    except MaterialLibrary.DoesNotExist:              
+        return JsonResponse({'details': 'Material Library object does not exist'}, status=404)
+    except ValueError as ve:
+        print(f"ValueError occurred: {ve}")
+        return JsonResponse({'details': 'Invalid company reference'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    allow, msg = check_user(request, MaterialLibrary, instance=instance)
     if not allow:
-        return JsonResponse({'details':[msg]}, status=status.HTTP_401_UNAUTHORIZED)
-    serializer = MaterialLibrarySerializer(instance, data=request.data,partial=True)   # CHANGE Serializer
+        return JsonResponse({'details': [msg]}, status=status.HTTP_401_UNAUTHORIZED)
+
+    serializer = MaterialLibrarySerializer(instance, data=request.data, partial=True)
     if serializer.is_valid():  
         serializer.save()
-        return JsonResponse( serializer.data, status=200)
+        return JsonResponse(serializer.data, status=status.HTTP_200_OK)
     else:
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -1692,7 +1736,26 @@ def delete_files(request, pk):
         files.delete()
         return Response({'message': 'File deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
 
-@login_required(login_url='login')  
+# @login_required(login_url='login')  
+# def profile(request):
+#     user = request.user
+#     company = user.company if user.admin else None
+#     company_profile = company.profile.first() if company and company.profile.exists() else None
+
+#     user_data = CustomUserSerializer(user).data
+#     company_data = CompanySerializer(company).data if company else None
+#     company_profile_data = CompanyProfileSerializer(company_profile).data if company_profile else None
+
+#     return render(request, 'profile.html', {
+#         'user': user_data,
+#         'company': company_data,
+#         'company_profile': company_profile_data,
+#     }) 
+
+@login_required(login_url='login')
+@check_valid_user
+@check_user_company
+@check_admin
 def profile(request):
     user = request.user
     company = user.company if user.admin else None
