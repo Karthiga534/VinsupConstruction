@@ -59,28 +59,30 @@
                             <div class="modal-body">
                               <div class="row">
                                 <div class="col-md-6 mt-2">
-                                  <label for="" class="form-label"> Date <span style="color: red;">*</span> </label>
-                                  <input type="date" class="form-control" id="start_date" name="start_date">
-                                  <span id="start_dateError" class="error-message"></span>
+                                  <label for="" class="form-label"> Date <span style="color: red;">*</span>  </label>
+                                  <input type="date" class="form-control" id="start_date"
+                                    name="start_date">
+                                  <span id="start_dateError"
+                                    class="error-message"></span> 
                                 </div>
 
 
                                 <div class="col-md-6 mt-2">
                                   <label for="" class="form-label">Employee Image
                                     <span style="color: red;">*</span> </label>
-                                  <input type="file" class="form-control" id="img" name="img">
-                                  <span id="imgError" class="error-message"></span>
-                                </div>
+                                  <input type="file" class="form-control" id="img"
+                                      name="img">
+                                  <span id="imgError"
+                                      class="error-message"></span>
+                              </div>
 
                                 <div class="col-md-6 mt-2">
-                                  <label for="id_name" class="form-label">Employee Name <span
-                                      style="color: red;">*</span> </label>
-                                  <input type="text" name="name" class="form-control" id="name">
+                                  <label for="id_name" class="form-label">Employee Name <span style="color: red;">*</span>  </label>
+                                  <input type="text" name="name" class="form-control" id="name" >
                                   <span id="nameError" class="error-message"></span>
                                 </div>
                                 <div class="col-md-6 mt-2">
-                                  <label for="" class="form-label">Employee Role <span style="color: red;">*</span>
-                                  </label>
+                                  <label for="" class="form-label">Employee Role <span style="color: red;">*</span>  </label>
                                   <select class="form-select mb-3" aria-label="Default select example" id="role"
                                     name="role">
                                     {% for role in roles %}
@@ -90,26 +92,24 @@
                                   <span id="roleError" class="error-message"></span>
                                 </div>
                                 <div class="col-md-6 mt-2">
-                                  <label for="" class="form-label">Phone No <span style="color: red;">*</span> </label>
+                                  <label for="" class="form-label">Phone No  <span style="color: red;">*</span> </label>
                                   <input type="text" name="mobile" class="form-control" id="mobile">
                                   <span id="mobileError" class="error-message"></span>
                                 </div>
                                 <div class="col-md-6 mt-2">
-                                  <label for="" class="form-label">Address <span style="color: red;">*</span> </label>
+                                  <label for="" class="form-label">Address  <span style="color: red;">*</span> </label>
                                   <textarea class="form-control" name="address" rows="3" id="address"></textarea>
                                   <span id="addressError" class="error-message"></span>
                                 </div>
                                 <div class="col-md-6 mt-2">
-                                  <label for="" class="form-label">Month Salary <span style="color: red;">*</span>
-                                  </label>
+                                  <label for="" class="form-label">Month Salary  <span style="color: red;">*</span> </label>
                                   <input type="text" name="monthly_salary" class="form-control" id="monthly_salary">
                                   <span id="monthly_salaryError" class="error-message"></span>
                                 </div>
                               </div>
 
                               {% comment %} <div class="col-md-6 mt-2">
-                                <label for="" class="form-label">Starting Date <span style="color: red;">*</span>
-                                </label>
+                                <label for="" class="form-label">Starting Date  <span style="color: red;">*</span> </label>
                                 <input type="date" class="form-control" id="start_date" name="start_date">
                                 <span id="start_dateError" class="error-message"></span>
 
@@ -169,14 +169,14 @@
                     <thead>
                       <tr>
                         <th data-ordering="false">SR No.</th>
-                        <th data-ordering="false">Date</th>
-                        <th data-ordering="false">Employee Image</th>
+                        <th data-ordering="false">Date</th> 
+                       <th data-ordering="false">Employee Image</th>
                         <th data-ordering="false">Employee Name</th>
                         <th data-ordering="false">Role</th>
                         <th data-ordering="false">Contact No</th>
                         <th data-ordering="false">Address</th>
                         <th data-ordering="false">Status</th>
-
+                        
                         <!-- <th data-ordering="false">IFSC</th>
                         <th data-ordering="false">Bank Name</th>
                         <th data-ordering="false">Branch</th> -->
@@ -188,40 +188,39 @@
 
                       <tr>
                         <td>{{ forloop.counter }}</td>
-                        <td>{{ i.start_date }}</td>
+                        <td>{{ i.start_date }}</td> 
                         {% comment %} <td>
                           {% if i.img %}
-                          <a href="{{ i.img.url }}" target="_blank">{{ i.img.name|filename }}</a>
+                              <a href="{{ i.img.url }}" target="_blank">{{ i.img.name|filename }}</a>
                           {% else %}
-                          No Image
+                              No Image
                           {% endif %}
-                        </td> {% endcomment %}
-                        <td>
-                          {% if i.img %}
-                          <img src="{{ i.img.url }}" alt="{{ i.img.name }}"
-                            style="max-width: 100px; max-height: 100px;" />
-                          {% else %}
-                          No Image
-                          {% endif %}
-                        </td>
-
+                      </td> {% endcomment %}
+                      <td>
+                        {% if i.img %}
+                            <img src="{{ i.img.url }}" alt="{{ i.img.name }}" style="max-width: 100px; max-height: 100px;" />
+                        {% else %}
+                            No Image
+                        {% endif %}
+                    </td>
+                    
                         <td>{{ i.name }}</td>
-
+                        
                         <td>{{ i.role}}</td>
                         <td>{{ i.mobile }}</td>
-                        <td>{{ i.address | truncate }}</td>
+                        <td>{{ i.address  | truncate  }}</td>
 
                         {% if i.disable == True %}
-
-                        <td class="text-danger">deactive </td>
-
+                        
+                        <td class="text-danger" >deactive  </td>
+                        
                         {% else %}
-
-                        <td class="text-success"> active </td>
+                      
+                        <td class="text-success"> active  </td>
 
                         {% endif %}
 
-
+                      
                         <!-- <td>{{ i.bankaccount | truncate }}</td>
                         <td>{{ i.ifsccode  | truncate  }}</td>
                         <td>{{ i.bankname   | truncate }}</td>
@@ -236,7 +235,7 @@
                               <li><a class="dropdown-item" data-id="{{i.id}}" href="#!"
                                   onclick="openModal('viewModal', '{{ i.id }}')"><i
                                     class="ri-eye-fill align-bottom me-2 text-muted"></i> View</a></li>
-                              <li><a class="dropdown-item edit-item-btn" data-id="{{i.id}}" href="#!"
+                              <li><a class="dropdown-item edit-item-btn" data-id="{{i.id}}"  href="#!"
                                   onclick="openModal('editModal','{{ i.id }}')"><i
                                     class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>
                               <li>
@@ -247,12 +246,12 @@
                                   <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i>
                                   Enable
                                   {% else %}
-
+                                  
                                   <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i>
                                   Disable
 
                                   {% endif %}
-
+                                  
                                 </a>
                               </li>
                             </ul>
@@ -280,8 +279,10 @@
 
                                   <div class="row">
                                     <div class="col-md-6 mt-3">
-                                      <label for="{{i.id}}_start_date" class="form-label">Start Date:</label>
-                                      <input type="text" class="form-control" id="{{i.id}}_start_date" name="start_date"
+                                      <label for="{{i.id}}_start_date"
+                                        class="form-label">Start Date:</label>
+                                      <input type="text" class="form-control"
+                                        id="{{i.id}}_start_date" name="start_date"
                                         value="{{i.start_date}}" readonly>
                                     </div>
 
@@ -289,15 +290,15 @@
                                       <label for="{{ i.id }}_img" class="form-label">Employee Image:</label>
                                       <br>
                                       {% if i.img %}
-                                      <span class="file-span">
-                                        <a target="_blank" href="{{ i.img.url }}">{{ i.img|filename }}</a>
-                                      </span>
+                                          <span class="file-span">
+                                              <a target="_blank" href="{{ i.img.url }}">{{ i.img|filename }}</a>
+                                          </span>
                                       {% else %}
-                                      <span class="file-span">No image available</span>
+                                          <span class="file-span">No image available</span>
                                       {% endif %}
-                                    </div>
-
-
+                                  </div>
+                                  
+  
 
                                     <div class="col-md-6 mt-3">
                                       <label for="{{i.id}}_name" class="form-label">Employee Name:</label>
@@ -325,8 +326,8 @@
 
                                     <div class="col-md-6 mt-3">
                                       <label for="{{i.id}}_monthly_salary" class="form-label">Month Salary:</label>
-                                      <input type="text" class="form-control" id="{{i.id}}_monthly_salary"
-                                        name="monthly_salary" value="{{ i.monthly_salary }}" readonly>
+                                      <input type="text" class="form-control" id="{{i.id}}_monthly_salary" name="monthly_salary"
+                                        value="{{ i.monthly_salary }}" readonly>
                                     </div>
 
                                     <div class="col-md-6 mt-3">
@@ -394,31 +395,34 @@
 
                                       <div class="col-md-6 mt-2">
 
-                                        <label for="edit_start_date" class="form-label">Start Date:</label>
-
-                                        <input type="date" class="form-control" id="{{i.id}}_start_date"
-                                          name="start_date" value="{{ i.start_date|date:'Y-m-d' }}" />
-
-                                        <span id="{{i.id}}_start_dateError" class="error-message"></span>
-
+                                        <label for="edit_start_date"
+                                          class="form-label">Start Date:</label>
+  
+                                        <input type="date" class="form-control"
+                                          id="{{i.id}}_start_date"
+                                          name="start_date"
+                                          value="{{ i.start_date|date:'Y-m-d' }}" />
+  
+                                        <span id="{{i.id}}_start_dateError"
+                                          class="error-message"></span>
+  
                                       </div>
 
-                                      <div class="col-md-6 mt-2">
+                                      {% comment %} <div class="col-md-6 mt-2">
                                         <label for="{{ i.id }}_img">Employee Image:</label>
                                         {% if i.img %}
-                                        <span class="file-span">
-                                          <a target="_blank" href="{{ i.img.url }}">{{ i.img|filename }}</a>
-                                        </span>
+                                            <span class="file-span">
+                                                <a target="_blank" href="{{ i.img.url }}">{{ i.img|filename }}</a>
+                                            </span>
                                         {% else %}
-                                        <span class="file-span">No image available</span>
+                                            <span class="file-span">No image available</span>
                                         {% endif %}
-
-                                        <input type="file" class="form-control" id="{{ i.id }}_img" name="img"
-                                          value="{{ i.img }}" readonly>
-                                      </div>
-
-
-
+                                       
+                                        <input type="file" class="form-control" id="{{ i.id }}_img" name="img" value="{{ i.img }}" readonly>
+                                      </div> {% endcomment %}
+                                    
+                                    
+      
 
                                       <div class="col-md-6 mt-2">
 
@@ -433,8 +437,8 @@
 
                                       <div class="col-md-6 mt-2">
                                         <label for="" class="form-label">Employee Role :</label>
-                                        <select class="form-select form-control" aria-label="Default select example"
-                                          name="role" id="{{i.id}}_role">
+                                        <select class="form-select form-control"
+                                          aria-label="Default select example" name="role" id="{{i.id}}_role">
                                           <option value="{{i.role.id}}" selected>{{i.role.name}} </option>
                                           <option>----------- </option>
                                           {% for j in roles %}
@@ -470,8 +474,8 @@
 
                                         <label for="edit_monthly_salary" class="form-label">Month Salary:</label>
 
-                                        <input type="text" class="form-control" id="{{i.id}}_monthly_salary"
-                                          name="monthly_salary" value="{{i.monthly_salary}}" />
+                                        <input type="text" class="form-control" id="{{i.id}}_monthly_salary" name="monthly_salary"
+                                          value="{{i.monthly_salary}}" />
 
                                         <span id="{{i.id}}_monthly_salaryError" class="error-message"></span>
 
@@ -558,7 +562,7 @@
                             <div class="modal-dialog">
                               <div class="modal-content">
                                 <div class="modal-header">
-                                  <h5 class="modal-title" id="deleteModalLabel-{{ forloop.counter }}">
+                                  <h5 class="modal-title" id="deleteModalLabel-{{ forloop.counter }}"> 
                                     {{i.name}}</h5>
                                   <button type="button" class="btn-close" data-bs-dismiss="modal"
                                     aria-label="Close"></button>
@@ -589,15 +593,18 @@
                                     class="btn btn-danger">Disable</button>
 
                                 </div>
+                                
+                              
+
+                                {% endif %}
+                               
                               </div>
                             </div>
                           </div>
+
                         </td>
-                        </tr>
-
+                      </tr>
                       {% endfor %}
-
-
 
                     </tbody>
                   </table>
@@ -697,7 +704,7 @@
           "role",
           "name",
           "img",
-
+          
           "mobile",
           "address",
           "monthly_salary"
@@ -706,7 +713,7 @@
           // "bankname",
           // "branch",
         ];
-
+        
         formData.append(
           "img",
           getValueOrDefault($('#createForm input[name="img"]').val())
@@ -719,8 +726,8 @@
 
         formData.append(
           "start_date",
-          getValueOrDefault($('#createForm input[name="start_date"]').val())
-        );
+            getValueOrDefault($('#createForm input[name="start_date"]').val())
+          );
 
         formData.append(
           "role",
@@ -765,9 +772,9 @@
 
 
         var img = document.querySelector('#createForm input[type="file"]').files[0];
-        if (img) {
-          formData.append("img", img);
-        }
+					if (img) {
+						formData.append("img", img);
+					}
 
 
         console.log("FormData:", formData);
@@ -911,26 +918,10 @@
           getValueOrDefault($(`#editForm${saveId} input[name="ifsccode"]`).val())
         );
 
-        formData.append(
-          "ifsccode",
-          getValueOrDefault($(`#editForm${saveId} input[name="ifsccode"]`).val())
-        );
 
-        formData.append(
-          "img",
-          getValueOrDefault($(`#editForm${saveId} input[name="img"]`).val())
-        );
+   
 
-
-
-        if (img) {
-          formData.append('img', img);
-        }
-
-        var img = getValueOrDefault(formElement.querySelector('input[type="file"]').files[0]);
-        if (img) {
-          formData.append("img", img);
-        }
+     
 
         console.log(csrftoken);
         $.ajax({
@@ -974,7 +965,7 @@
         console.error(error);
       }
 
-
+      
 
     }
 
@@ -983,7 +974,7 @@
     // 
     function deleteFunction(button, saveId) {
 
-      var stat_message = { "true": 'Disabled', "false": "Enabled" }
+      var stat_message = {"true" :'Disabled'  , "false" : "Enabled" }
       try {
         disableButton(button);
 
@@ -998,7 +989,7 @@
           success: function (response, status, xhr) {
             if (xhr.status === 200) {
               const status = xhr?.responseJSON?.details?.pop()
-
+                        
               showToast(stat_message[status] + ' successfully', '', deleteMessage?.bgColor, true);
               enableButton(button);
 
@@ -1034,7 +1025,7 @@
         showToast(errorOccured?.message, '', errorOccured?.bgColor);
         console.error(error);
       }
-      finally {
+      finally{
         enableButton(button);
       }
     }
