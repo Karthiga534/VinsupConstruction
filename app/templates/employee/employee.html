@@ -16,7 +16,7 @@
         <div class="row">
           <div class="col-12">
             <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-              <h4 class="mb-sm-0">Employee</h4>
+              <h4 class="mb-sm-0">Employee Management </h4>
 
               <div class="page-title-right">
                 <ol class="breadcrumb m-0">
@@ -36,18 +36,18 @@
 
                 <div class="row">
                   <div class="col-xl-6 col-lg-6 col-md-6 col-12">
-                    <h4>Employee Management </h4>
+                    <h4>Employee List </h4>
                   </div>
                   <div class="col-xl-4 col-lg-4 col-md-4 col-12"></div>
                   <div class="col-xl-2 col-lg-2 col-md-2 col-12">
                     <button type="button" class="btn btn-info" style="float:right;" data-bs-toggle="modal"
-                      data-bs-target=".bs-example-modal-lg">Add Employee</button>
+                      data-bs-target=".bs-example-modal-lg">+ Add </button>
                     <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog"
                       aria-labelledby="myLargeModalLabel" aria-hidden="true">
                       <div class="modal-dialog modal-lg">
                         <div class="modal-content">
                           <div class="modal-header">
-                            <h5 class="modal-title" id="myLargeModalLabel">Add Employee</h5>
+                            <h5 class="modal-title" id="myLargeModalLabel">Employee</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
                               onclick="clearErrors()"></button>
                           </div>
@@ -58,13 +58,31 @@
                             {% csrf_token %}
                             <div class="modal-body">
                               <div class="row">
-                                <div class="col-md-6">
-                                  <label for="id_name" class="form-label">Employee Name :</label>
-                                  <input type="text" name="name" class="form-control" id="name" required>
+                                <div class="col-md-6 mt-2">
+                                  <label for="" class="form-label"> Date <span style="color: red;">*</span>  </label>
+                                  <input type="date" class="form-control" id="start_date"
+                                    name="start_date">
+                                  <span id="start_dateError"
+                                    class="error-message"></span> 
+                                </div>
+
+
+                                <div class="col-md-6 mt-2">
+                                  <label for="" class="form-label">Employee Image
+                                    <span style="color: red;">*</span> </label>
+                                  <input type="file" class="form-control" id="img"
+                                      name="img">
+                                  <span id="imgError"
+                                      class="error-message"></span>
+                              </div>
+
+                                <div class="col-md-6 mt-2">
+                                  <label for="id_name" class="form-label">Employee Name <span style="color: red;">*</span>  </label>
+                                  <input type="text" name="name" class="form-control" id="name" >
                                   <span id="nameError" class="error-message"></span>
                                 </div>
-                                <div class="col-md-6">
-                                  <label for="" class="form-label">Employee Role :</label>
+                                <div class="col-md-6 mt-2">
+                                  <label for="" class="form-label">Employee Role <span style="color: red;">*</span>  </label>
                                   <select class="form-select mb-3" aria-label="Default select example" id="role"
                                     name="role">
                                     {% for role in roles %}
@@ -74,24 +92,24 @@
                                   <span id="roleError" class="error-message"></span>
                                 </div>
                                 <div class="col-md-6 mt-2">
-                                  <label for="" class="form-label">Phone No :</label>
+                                  <label for="" class="form-label">Phone No  <span style="color: red;">*</span> </label>
                                   <input type="text" name="mobile" class="form-control" id="mobile">
                                   <span id="mobileError" class="error-message"></span>
                                 </div>
                                 <div class="col-md-6 mt-2">
-                                  <label for="" class="form-label">Address</label>
+                                  <label for="" class="form-label">Address  <span style="color: red;">*</span> </label>
                                   <textarea class="form-control" name="address" rows="3" id="address"></textarea>
                                   <span id="addressError" class="error-message"></span>
                                 </div>
                                 <div class="col-md-6 mt-2">
-                                  <label for="" class="form-label">Month Salary :</label>
+                                  <label for="" class="form-label">Month Salary  <span style="color: red;">*</span> </label>
                                   <input type="text" name="monthly_salary" class="form-control" id="monthly_salary">
                                   <span id="monthly_salaryError" class="error-message"></span>
                                 </div>
                               </div>
 
                               {% comment %} <div class="col-md-6 mt-2">
-                                <label for="" class="form-label">Starting Date :</label>
+                                <label for="" class="form-label">Starting Date  <span style="color: red;">*</span> </label>
                                 <input type="date" class="form-control" id="start_date" name="start_date">
                                 <span id="start_dateError" class="error-message"></span>
 
@@ -151,14 +169,15 @@
                     <thead>
                       <tr>
                         <th data-ordering="false">SR No.</th>
-                        {% comment %} <th data-ordering="false">Date</th> {% endcomment %}
+                        <th data-ordering="false">Date</th> 
+                       <th data-ordering="false">Employee Image</th>
                         <th data-ordering="false">Employee Name</th>
                         <th data-ordering="false">Role</th>
                         <th data-ordering="false">Contact No</th>
                         <th data-ordering="false">Address</th>
                         <th data-ordering="false">Status</th>
-                        <!-- <th data-ordering="false">Account No</th>
-                        <th data-ordering="false">IFSC</th>
+                        
+                        <!-- <th data-ordering="false">IFSC</th>
                         <th data-ordering="false">Bank Name</th>
                         <th data-ordering="false">Branch</th> -->
                         <th data-ordering="false">Action</th>
@@ -169,9 +188,25 @@
 
                       <tr>
                         <td>{{ forloop.counter }}</td>
-                        {% comment %} <td>{{ i.start_date }}</td> {% endcomment %}
+                        <td>{{ i.start_date }}</td> 
+                        {% comment %} <td>
+                          {% if i.img %}
+                              <a href="{{ i.img.url }}" target="_blank">{{ i.img.name|filename }}</a>
+                          {% else %}
+                              No Image
+                          {% endif %}
+                      </td> {% endcomment %}
+                      <td>
+                        {% if i.img %}
+                            <img src="{{ i.img.url }}" alt="{{ i.img.name }}" style="max-width: 100px; max-height: 100px;" />
+                        {% else %}
+                            No Image
+                        {% endif %}
+                    </td>
+                    
                         <td>{{ i.name }}</td>
-                        <td>{{ i.role.name}}</td>
+                        
+                        <td>{{ i.role}}</td>
                         <td>{{ i.mobile }}</td>
                         <td>{{ i.address  | truncate  }}</td>
 
@@ -197,10 +232,10 @@
                               <i class="ri-more-fill align-middle"></i>
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end">
-                              <li><a class="dropdown-item" data-id="{{i.id}}"
+                              <li><a class="dropdown-item" data-id="{{i.id}}" href="#!"
                                   onclick="openModal('viewModal', '{{ i.id }}')"><i
                                     class="ri-eye-fill align-bottom me-2 text-muted"></i> View</a></li>
-                              <li><a class="dropdown-item edit-item-btn" data-id="{{i.id}}"
+                              <li><a class="dropdown-item edit-item-btn" data-id="{{i.id}}"  href="#!"
                                   onclick="openModal('editModal','{{ i.id }}')"><i
                                     class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>
                               <li>
@@ -243,6 +278,27 @@
                                 <div class="modal-body">
 
                                   <div class="row">
+                                    <div class="col-md-6 mt-3">
+                                      <label for="{{i.id}}_start_date"
+                                        class="form-label">Start Date:</label>
+                                      <input type="text" class="form-control"
+                                        id="{{i.id}}_start_date" name="start_date"
+                                        value="{{i.start_date}}" readonly>
+                                    </div>
+
+                                    <div class="col-md-6 mt-3">
+                                      <label for="{{ i.id }}_img" class="form-label">Employee Image:</label>
+                                      <br>
+                                      {% if i.img %}
+                                          <span class="file-span">
+                                              <a target="_blank" href="{{ i.img.url }}">{{ i.img|filename }}</a>
+                                          </span>
+                                      {% else %}
+                                          <span class="file-span">No image available</span>
+                                      {% endif %}
+                                  </div>
+                                  
+  
 
                                     <div class="col-md-6 mt-3">
                                       <label for="{{i.id}}_name" class="form-label">Employee Name:</label>
@@ -336,6 +392,37 @@
                                   <div class="modal-body">
 
                                     <div class="row">
+
+                                      <div class="col-md-6 mt-2">
+
+                                        <label for="edit_start_date"
+                                          class="form-label">Start Date:</label>
+  
+                                        <input type="date" class="form-control"
+                                          id="{{i.id}}_start_date"
+                                          name="start_date"
+                                          value="{{ i.start_date|date:'Y-m-d' }}" />
+  
+                                        <span id="{{i.id}}_start_dateError"
+                                          class="error-message"></span>
+  
+                                      </div>
+
+                                      {% comment %} <div class="col-md-6 mt-2">
+                                        <label for="{{ i.id }}_img">Employee Image:</label>
+                                        {% if i.img %}
+                                            <span class="file-span">
+                                                <a target="_blank" href="{{ i.img.url }}">{{ i.img|filename }}</a>
+                                            </span>
+                                        {% else %}
+                                            <span class="file-span">No image available</span>
+                                        {% endif %}
+                                       
+                                        <input type="file" class="form-control" id="{{ i.id }}_img" name="img" value="{{ i.img }}" readonly>
+                                      </div> {% endcomment %}
+                                    
+                                    
+      
 
                                       <div class="col-md-6 mt-2">
 
@@ -613,8 +700,11 @@
 
         var requiredKeys = [
           //change
-          "name",
+          "start_date",
           "role",
+          "name",
+          "img",
+          
           "mobile",
           "address",
           "monthly_salary"
@@ -623,16 +713,21 @@
           // "bankname",
           // "branch",
         ];
+        
+        formData.append(
+          "img",
+          getValueOrDefault($('#createForm input[name="img"]').val())
+        );
 
         formData.append(
           "name",
           getValueOrDefault($('#createForm input[name="name"]').val())
         );
 
-        // formData.append(
-        //   "start_date",
-        //    getValueOrDefault($('#createForm input[name="start_date"]').val())
-        //  );
+        formData.append(
+          "start_date",
+            getValueOrDefault($('#createForm input[name="start_date"]').val())
+          );
 
         formData.append(
           "role",
@@ -674,6 +769,13 @@
           "branch",
           getValueOrDefault($('#createForm input[name="branch"]').val())
         );
+
+
+        var img = document.querySelector('#createForm input[type="file"]').files[0];
+					if (img) {
+						formData.append("img", img);
+					}
+
 
         console.log("FormData:", formData);
 
@@ -769,6 +871,11 @@
           getValueOrDefault($(`#editForm${saveId} input[name="name"]`).val())
         );
 
+        formData.append(
+          "start_date",
+          getValueOrDefault($(`#editForm${saveId} input[name="start_date"]`).val())
+        );
+
 
         formData.append(
           "role",
@@ -810,6 +917,11 @@
           "ifsccode",
           getValueOrDefault($(`#editForm${saveId} input[name="ifsccode"]`).val())
         );
+
+
+   
+
+     
 
         console.log(csrftoken);
         $.ajax({

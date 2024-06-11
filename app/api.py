@@ -1,5 +1,6 @@
 import json
 import logging
+
 from .models import *
 from .serializer import *
 from datetime import datetime
@@ -15,6 +16,7 @@ from rest_framework.pagination import PageNumberPagination
 from django.db.models import Case, When, Value, IntegerField
 from django.shortcuts import render, redirect, get_object_or_404
 from app.utils import PaginationAndFilter, customPagination,check_user
+from app.decorators import check_admin, check_user_company, check_valid_user
 
 paginator = PageNumberPagination()
 
@@ -53,7 +55,9 @@ def vendor_list(request):  #change name
 
 
 
-@api_view(['POST'])
+@api_view(['POST']) 
+@check_valid_user
+@check_user_company
 @login_required(login_url='login')
 def add_vendor (request):  # CHANGE name
     user=request.user
@@ -71,6 +75,8 @@ def add_vendor (request):  # CHANGE name
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)   
 
 @api_view(['PUT'])
+@check_valid_user
+@check_user_company
 @login_required(login_url='login')
 def update_vendor(request, pk):  # CHANGE name
     user=request.user
@@ -119,6 +125,8 @@ def vendorquatation(request):  #change name
     return render(request,"purchase/vendorquates.html",context)    #change template name
  
 @api_view(['POST'])
+@check_valid_user
+@check_user_company
 @login_required(login_url='login')
 def add_vendorquatation(request):  # CHANGE name
     user=request.user
@@ -141,6 +149,8 @@ def add_vendorquatation(request):  # CHANGE name
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
 @api_view(['PUT'])
+@check_valid_user
+@check_user_company
 @login_required(login_url='login')
 def update_vendorquatation(request, pk):  # CHANGE name
     user=request.user
@@ -197,6 +207,8 @@ def purchase(request):  #change name
 
 
 @api_view(['POST'])
+@check_valid_user
+@check_user_company
 @login_required(login_url='login')
 def add_purchase(request):
     user = request.user
@@ -220,7 +232,7 @@ def add_purchase(request):
                     for data in tdata:
                         data['invoice'] = invoice.id
                         data['company'] = user.company.id
-                        items_serializer = PurchaseItemsSerializer(data=data,context={'site':site})
+                        items_serializer = PurchaseItemsSerializer(data=data,context={'site':site,"request":request})
                         if items_serializer.is_valid():
                             items_serializer.save()
                         else:
@@ -283,6 +295,8 @@ def project_purchaselist(request,pk):
 
 
 @api_view(['POST'])
+@check_valid_user
+@check_user_company
 @login_required(login_url='login')
 def purchase_status_change(request,pk):
     user =request.user
@@ -332,47 +346,36 @@ def quatation(request):  #change name
     if not allow:
          context ={"unauthorized":msg}
          return render(request,"login.html",context)    
+    status =ProcessStatus.objects.all()
     materiallibrary = MaterialLibrary.objects.filter(company=request.user.company).order_by("-id")  
     uom =Uom.objects.filter(company=request.user.company).order_by("-id")
     site = Project.objects.filter(company=request.user.company).order_by("-id")
     inventory = InventoryStock.objects.filter(company=request.user.company).order_by("-id") 
     querysets = Quatation.objects.filter(company=request.user.company).order_by("-id")   #change query
     queryset,pages,search =customPagination(request,Quatation,querysets)    #change, model
-    context= {"materiallibrary":materiallibrary,'queryset': queryset,"location":"quatation","pages" :pages,"search":search,"uom":uom,"inventory":inventory,'site':site}   #change location name 
+    context= {"materiallibrary":materiallibrary,'queryset': queryset,"location":"quatation", "status":status,"pages" :pages,"search":search,"uom":uom,"inventory":inventory,'site':site}   #change location name 
     return render(request,"quatation/quatation.html",context)    #change template name
 
-# @api_view(['POST'])
-# @login_required(login_url='login')
-# def add_quatation(request):
-#     user = request.user
-#     allow, msg = check_user(request, Quatation, instance=False)
-#     if not allow:
-#         return JsonResponse({'details': [msg]}, status=status.HTTP_401_UNAUTHORIZED)
-#     invoice_data = request.POST.copy().dict()
-#     if user.admin:
-#         invoice_data['company'] = user.company.id
-#     if user.employee:
-#         invoice_data['created_by'] = user.employee.id
-#     print(request.data)
-#     table=request.POST.get('table')
-#     invoice_serializer = QuatationSerializer(data=invoice_data)
-#     if invoice_serializer.is_valid():
-#         invoice = invoice_serializer.save()
-#         if table:
-#             tdata =json.loads(table)
-#             for data in tdata:
-#                 data['invoice'] = invoice.id
-#                 items_serializer = QuatationItemsSerializer(data=data)
-#                 if items_serializer.is_valid():
-#                     items_serializer.save()
-#             return JsonResponse(invoice_serializer.data, status=status.HTTP_201_CREATED)
-#         else:
-#             invoice.delete()
-#             return JsonResponse( status=status.HTTP_400_BAD_REQUEST)
-#     else:
-#         return JsonResponse(invoice_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-#Quatation List
+@api_view(['POST'])
+@login_required(login_url='login')
+def quatation_status_change(request,pk):
+    user =request.user
+    try:
+        instance = Quatation.objects.get(id=pk)  # CHANGE model
+    except Quatation.DoesNotExist:              # CHANGE model
+        return JsonResponse({'details': 'Category object does not exist'}, status=404)
+    allow,msg= check_user(request,Quatation,instance=instance)  # CHANGE model
+    if not allow:
+        return JsonResponse({'details':[msg]}, status=status.HTTP_401_UNAUTHORIZED)
+    print('pppppppppppppppppppppppppp')
+    serializer = QuatationStatusSerializer(instance, data=request.data,partial=True)   # CHANGE Serializer
+    if serializer.is_valid():  
+        serializer.save()
+        stat = instance.status
+        ser = ProcessStatusSerializer(stat,many=False)
+        return JsonResponse( ser.data, status=200)
+    else:
+        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @login_required(login_url='login')
 def quatationlist(request):
@@ -381,11 +384,12 @@ def quatationlist(request):
     if not allow:
         context = {"unauthorized": msg}
         return render(request, "login.html", context)
+    status =ProcessStatus.objects.all()
     site = Project.objects.filter(company=request.user.company).order_by("-id")
     # quatationitems = QuatationItems.objects.filter(company__name=request.user.company)
     querysets = Quatation.objects.filter(company=request.user.company).order_by("-id")
     queryset, pages, search = customPagination(request, Quatation, querysets)
-    context = {'queryset': queryset, "location": "quatationlist", "pages": pages, "search": search, 'site': site}
+    context = {'queryset': queryset, "location": "quatationlist", "pages": pages, "status": status , "search": search, 'site': site}
     return render(request, "quatation/quatationlist.html", context)
 
 
@@ -480,6 +484,8 @@ def transfer_from(request,pk):  #change name
 
 
 @api_view(['POST'])
+@check_valid_user
+@check_user_company
 @login_required(login_url='login')
 def add_transfer(request):
     user = request.user
@@ -538,6 +544,8 @@ def add_transfer(request):
 
 
 @api_view(['POST'])
+@check_valid_user
+@check_user_company
 @login_required(login_url='login')
 def accept_transfer(request,pk):
     user = request.user
@@ -744,6 +752,9 @@ def subcontadd(request):  #change name
 #------> Add Project Sub Contractor 
 
 @api_view(['POST'])
+@check_valid_user
+@check_user_company
+@check_admin
 @login_required(login_url='login')
 def add_subcontadd(request):
     user = request.user
@@ -975,6 +986,9 @@ def project_category(request):  #change name
     return render(request,"project/procategory.html",context)    #change template name
 
 @api_view(['POST'])
+@check_valid_user
+@check_user_company
+@check_admin
 @login_required(login_url='login')
 def add_project_category (request):  # CHANGE name
     user=request.user
@@ -993,24 +1007,41 @@ def add_project_category (request):  # CHANGE name
     else:
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
+   
 @api_view(['PUT'])
+@check_valid_user
+@check_user_company
+@check_admin
 @login_required(login_url='login')
-def update_project_category(request, pk):  # CHANGE name
-    user=request.user
+def update_project_category(request, pk): 
+    user = request.user
+    
     try:
-        instance = ProjectCategory.objects.get(id=pk)  # CHANGE model
-    except ProjectCategory.DoesNotExist:              # CHANGE model
-        return JsonResponse({'details': 'Category object does not exist'}, status=404)
-    allow,msg= check_user(request,ProjectCategory,instance=instance)  # CHANGE model
+        company = request.company
+        if hasattr(company, '__iter__') and not isinstance(company, str):
+            company = company[0] if company else None
+        
+        if not company:
+            return JsonResponse({'details': 'Invalid or missing company reference'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        instance = ProjectCategory.objects.get(id=pk, company=company)  
+    except ProjectCategory.DoesNotExist:              
+        return JsonResponse({'details': 'Project Category object does not exist'}, status=404)
+    except ValueError as ve:
+        print(f"ValueError occurred: {ve}")
+        return JsonResponse({'details': 'Invalid company reference'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    allow, msg = check_user(request, ProjectCategory, instance=instance)
     if not allow:
-        return JsonResponse({'details':[msg]}, status=status.HTTP_401_UNAUTHORIZED)
+        return JsonResponse({'details': [msg]}, status=status.HTTP_401_UNAUTHORIZED)
 
-    serializer = ProjectCategorySerializer(instance, data=request.data,partial=True)   # CHANGE Serializer
+    serializer = ProjectCategorySerializer(instance, data=request.data, partial=True)
     if serializer.is_valid():  
         serializer.save()
-        return JsonResponse( serializer.data, status=200)
+        return JsonResponse(serializer.data, status=status.HTTP_200_OK)
     else:
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     
 @api_view(['DELETE'])
 @login_required(login_url='login')
@@ -1021,7 +1052,9 @@ def delete_project_category(request,pk):
         allow,msg= check_user(request,ProjectCategory,instance=instance)  # CHANGE model
         if not allow:
             return JsonResponse({'details':[msg]}, status=status.HTTP_401_UNAUTHORIZED)
-        instance.delete()
+        # instance.disable=True 
+        # instance.save()
+        # instance.delete()
         return JsonResponse( {'details': ['success']},status=204)
     except ProjectCategory.DoesNotExist:  # CHANGE model
         return JsonResponse({'details': ['Item does not exist']}, status=404)
@@ -1042,6 +1075,9 @@ def material_library(request):  #change name
     return render(request,"library/materiallibrary.html",context)    #change template name 
 
 @api_view(['POST'])
+@check_valid_user
+@check_user_company
+@check_admin
 @login_required(login_url='login')
 def add_material_library (request):  # CHANGE name
     user=request.user
@@ -1058,21 +1094,38 @@ def add_material_library (request):  # CHANGE name
     else:
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
+    
 @api_view(['PUT'])
+@check_valid_user
+@check_user_company
+@check_admin
 @login_required(login_url='login')
-def update_material_library(request, pk):  # CHANGE name
-    user=request.user
+def update_material_library(request, pk): 
+    user = request.user
+    
     try:
-        instance = MaterialLibrary.objects.get(id=pk)  # CHANGE model
-    except MaterialLibrary.DoesNotExist:              # CHANGE model
-        return JsonResponse({'details': 'Item does not exist'}, status=404)
-    allow,msg= check_user(request,MaterialLibrary,instance=instance)  # CHANGE model
+        company = request.company
+        if hasattr(company, '__iter__') and not isinstance(company, str):
+            company = company[0] if company else None
+        
+        if not company:
+            return JsonResponse({'details': 'Invalid or missing company reference'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        instance = MaterialLibrary.objects.get(id=pk, company=company)  
+    except MaterialLibrary.DoesNotExist:              
+        return JsonResponse({'details': 'Material Library object does not exist'}, status=404)
+    except ValueError as ve:
+        print(f"ValueError occurred: {ve}")
+        return JsonResponse({'details': 'Invalid company reference'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    allow, msg = check_user(request, MaterialLibrary, instance=instance)
     if not allow:
-        return JsonResponse({'details':[msg]}, status=status.HTTP_401_UNAUTHORIZED)
-    serializer = MaterialLibrarySerializer(instance, data=request.data,partial=True)   # CHANGE Serializer
+        return JsonResponse({'details': [msg]}, status=status.HTTP_401_UNAUTHORIZED)
+
+    serializer = MaterialLibrarySerializer(instance, data=request.data, partial=True)
     if serializer.is_valid():  
         serializer.save()
-        return JsonResponse( serializer.data, status=200)
+        return JsonResponse(serializer.data, status=status.HTTP_200_OK)
     else:
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -1104,7 +1157,7 @@ def project(request):  #change name
          return render(request,"login.html",context)      
     querysets = Project.objects.filter(company=request.user.company).order_by("-id")   #change query
     category =ProjectCategory.objects.filter(company=request.user.company).order_by("-id")
-    engineer =Employee.objects.filter(company=request.user.company,user__disable = False).order_by("-id")
+    engineer =Employee.objects.filter(company=request.user.company, user__disable = False).order_by("-id")
     duration =Duration.objects.all()
     priority =Priority.objects.all()
     print(category)
@@ -1120,6 +1173,9 @@ def project(request):  #change name
 
  
 @api_view(['POST'])
+@check_valid_user
+@check_user_company
+@check_admin
 @login_required(login_url='login')
 def add_project (request):  # CHANGE name
     user=request.user
@@ -1145,6 +1201,9 @@ def add_project (request):  # CHANGE name
 
 
 @api_view(['PUT'])
+@check_valid_user
+@check_user_company
+@check_admin
 @login_required(login_url='login')
 def update_project(request, pk):  # CHANGE name
     user=request.user
@@ -1700,7 +1759,26 @@ def delete_files(request, pk):
         files.delete()
         return Response({'message': 'File deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
 
-@login_required(login_url='login')  
+# @login_required(login_url='login')  
+# def profile(request):
+#     user = request.user
+#     company = user.company if user.admin else None
+#     company_profile = company.profile.first() if company and company.profile.exists() else None
+
+#     user_data = CustomUserSerializer(user).data
+#     company_data = CompanySerializer(company).data if company else None
+#     company_profile_data = CompanyProfileSerializer(company_profile).data if company_profile else None
+
+#     return render(request, 'profile.html', {
+#         'user': user_data,
+#         'company': company_data,
+#         'company_profile': company_profile_data,
+#     }) 
+
+@login_required(login_url='login')
+@check_valid_user
+@check_user_company
+@check_admin
 def profile(request):
     user = request.user
     company = user.company if user.admin else None
@@ -1739,6 +1817,7 @@ def update_profile(request):
             company.save()
 
         if company_profile:
+            company_profile.image = request.POST.get('image')
             company_profile.email = request.POST.get('email')
             company_profile.phone_number = request.POST.get('phone_number')
             company_profile.gst_number = request.POST.get('gst_number')

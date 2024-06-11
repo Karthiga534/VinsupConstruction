@@ -57,7 +57,7 @@
                             <div class="modal-body">
                               <div class="row">
                                 <div class="col-lg-4 col-md-4 col-xs-6 col-12">
-                                  <label for="" class="form-label mt-2">Project Name :</label>
+                                  <label for="" class="form-label mt-2">Project Name <span style="color: red;">*</span></label>
                                   <select class="form-select mb-3" aria-label="Default select example" id="project"
                                     name="project">
                                     <option value=""> --------------------- </option>
@@ -69,7 +69,7 @@
                                 </div>
 
                                 <div class="col-lg-4 col-md-4 col-xs-6 col-12">
-                                  <label for="" class="form-label mt-2">Employee :</label>
+                                  <label for="" class="form-label mt-2">Employee <span style="color: red;">*</span></label>
                                   <select class="form-select mb-3" aria-label="Default select example" id="employee"
                                     name="employee">
                                     <option value=""> --------------------- </option>
@@ -99,7 +99,7 @@
                                 </div>
 
                                 <div class="col-lg-4 col-md-4 col-xs-6 col-12">
-                                  <label for="" class="form-label mt-2">date</label>
+                                  <label for="" class="form-label mt-2">date <span style="color: red;">*</span></label>
                                   <input type="date" class="form-control" id="date" name="date" />
                                   <span id="dateError" class="error-message"></span>
                                 </div>
@@ -133,7 +133,7 @@
 
               <div class="card-body">
                 <div class="row">
-                  <div class="col-xl-3 col-lg-3 col-md-3 col-xs-6 col-12">
+                  <div class="col-xl-2 col-lg-2 col-md-2 col-xs-6 col-12">
                     <label for="" class="form-label">Employee Name :</label>
                     <select class="form-select mb-3" aria-label="Default select example" id="labourdropdown">
 
@@ -156,9 +156,10 @@
                   </div>
 
                   <div class="col-xl-3 col-lg-3 col-md-3 col-xs-6 col-12">
-                    <br /><button type="button" class="btn btn-primary waves-effect waves-light mt-2">
-                      Get Report
-                    </button>
+                    <br />
+                    <button type="submit" onclick="getReport(this,'example')"
+                    class="btn btn-primary waves-effect waves-light mt-2">Get Report
+                </button>
                   </div>
                 </div>
                 <hr />
@@ -341,7 +342,7 @@
       var errors = {};
       var formData = new FormData();
 
-      var requiredKeys = ["date"];
+      var requiredKeys = ["date","employee","project"];
 
       formData.append(
         "date",

@@ -8,13 +8,13 @@
         <div class="row">
           <div class="col-12">
             <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-              <h4 class="mb-sm-0">Site Allocation</h4>
+              <h4 class="mb-sm-0">Site Allocation Management</h4>
               <div class="page-title-right">
                 <ol class="breadcrumb m-0">
                   <li class="breadcrumb-item">
                     <a href="javascript: void(0);">Dashboard</a>
                   </li>
-                  <li class="breadcrumb-item active">Site Allocation</li>
+                  <li class="breadcrumb-item active">Labour</li>
                 </ol>
               </div>
             </div>
@@ -30,7 +30,7 @@
 
                 <div class="row">
                     <div class="col-xl-6 col-lg-6 col-md-6 col-12">
-                        <h4>Site Allocation Management</h4>
+                        <h4>Labour</h4>
                     </div>
                     <div class="col-xl-4 col-lg-4 col-md-4 col-12"></div>
                     <div class="col-xl-2 col-lg-2 col-md-2 col-12">
@@ -55,7 +55,7 @@
                                             {% csrf_token %}
                                             <div class="row">
                                                 <div class="col-md-6">
-                                                    <label for="id_date" class="form-label">Date: </label>
+                                                    <label for="id_date" class="form-label">Date <span style="color: red;">*</span> </label>
                                                     <input type="date" name="date" class="form-control"
                                                         id="date" value="">
                                                     <span id="dateError" class="error-message"></span>
@@ -63,7 +63,7 @@
 
                                                 <div class="col-md-6">
                                                     <label for="" class="form-label">Select Labour
-                                                        :</label>
+                                                      <span style="color: red;">*</span></label>
                                                     <select class="form-select mb-3"
                                                         aria-label="Default select example"
                                                         name="labour" id="labour">
@@ -80,7 +80,7 @@
 
                                                 <div class="col-md-6">
                                                     <label for="" class="form-label">Select Project
-                                                        :</label>
+                                                      <span style="color: red;">*</span></label>
                                                     <select class="form-select mb-3"
                                                         aria-label="Default select example"
                                                         name="project" id="project">
@@ -122,7 +122,7 @@
 
               <div class="card-body">
                 <div class="row">
-                  <div class="col-xl-3 col-lg-3 col-md-3 col-xs-6 col-12">
+                  <div class="col-xl-2 col-lg-2 col-md-2 col-xs-6 col-12">
                     <label for="" class="form-label">Labour Name :</label>
                     <select class="form-select mb-3" aria-label="Default select example" id="labourdropdown">
 
@@ -133,7 +133,7 @@
                       {% endfor %}
                     </select>
                   </div>
-                  <div class="col-xl-3 col-lg-3 col-md-3 col-xs-6 col-12">
+                  {% comment %} <div class="col-xl-2 col-lg-2 col-md-2 col-xs-6 col-12">
                     <label for="" class="form-label">Project Name :</label>
                     <select class="form-select mb-3" aria-label="Default select example"  id="dropdown">
                         <option value="0"> ------------ </option>
@@ -143,7 +143,7 @@
 
                     </select>
                     
-                </div>
+                </div> {% endcomment %}
 
                   <div class="col-xl-2 col-lg-2 col-md-2 col-xs-6 col-12">
                     <label for="exampleInputdate" class="form-label">From Date</label>
@@ -156,9 +156,10 @@
                   </div>
 
                   <div class="col-xl-3 col-lg-3 col-md-3 col-xs-6 col-12">
-                    <br /><button type="button" class="btn btn-primary waves-effect waves-light mt-2">
-                      Get Report
-                    </button>
+                    <br />
+                    <button type="submit" onclick="getReport(this,'example')"
+                    class="btn btn-primary waves-effect waves-light mt-2">Get Report
+                </button>
                   </div>
                 </div>
                 <hr />
@@ -373,7 +374,7 @@
       var errors = {};
       var formData = new FormData();
 
-      var requiredKeys = ["date"];
+      var requiredKeys = ["date","project","labour"];
 
       formData.append(
         "date",
@@ -501,7 +502,7 @@
       var errors = {};
       var formData = new FormData();
 
-      var requiredKeys = ['date',];   //change
+      var requiredKeys = ['date'];   //change
 
 
       const date = getValueOrDefault(formElement.querySelector('input[name="date"]').value);
@@ -822,6 +823,7 @@
     const deleteLink = document.createElement("a");
     deleteLink.className = "dropdown-item remove-item-btn del-btn";
     deleteLink.textContent = "Delete";
+    deleteLink.setAttribute("href", "#!");
     deleteLink.addEventListener('click', () => {
       openDeleteModal("deleteModal", data.id);
     });

@@ -157,6 +157,10 @@ class   PurchaseItemsSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         site = self.context.get('site')
+        request = self.context.get('request')
+        user = request.user
+        # company = get_company_id(user)
+        # company = get_user_company(user)
 
         item = validated_data.get('item' ,None)
         # Extract unit and price from validated data
@@ -173,16 +177,16 @@ class   PurchaseItemsSerializer(serializers.ModelSerializer):
             price = validated_data.get('price', None)
             # company = validated_data.get('company', None)
             unit = validated_data.get('unit', None)
-            item =MaterialLibrary.objects.filter(item__iexact =name,unit=unit).last()
+            item =MaterialLibrary.objects.filter(item__iexact =name,unit=unit,company=user.company ).last()
             if not item:
-                item =MaterialLibrary.objects.create(item=name,unit=unit,price = price, )
+                item =MaterialLibrary.objects.create(item=name,unit=unit,price = price,company=user.company )
   
         unit = validated_data.pop('unit', None)
         qty_to_add = Decimal(validated_data.get('qty', 0))
         sub_total = Decimal(validated_data.get('sub_total', 0))
         
 
-        inventory_item, inventory_created = InventoryStock.objects.get_or_create(item = item,unit=unit)
+        inventory_item, inventory_created = InventoryStock.objects.get_or_create(item = item,unit=unit,company=user.company)
 
         inventory_item.qty = ( 0 if site else Decimal(inventory_item.qty)) + qty_to_add
         # if site  is there set item purchased for particular site so no need to manipulate inventory stock
@@ -1464,6 +1468,39 @@ class PettyCashSerializer(serializers.ModelSerializer):
         model = PettyCash
         fields = ['id', 'amount', 'attachment', 'company', 'date', 'employee', 'particular', 'site_location','payment_method'] 
 
+    def to_representation(self, instance):
+     data = super().to_representation(instance)
+    
+     employee = instance.employee
+     site_location = instance.site_location 
+     payment_method= instance.payment_method
+
+     project_representation = None
+     site_location_representation = None
+     payment_method_representation = None
+
+     if employee:
+       data ["employee"] = {
+            'id': employee.id,
+            'name': employee.name,
+        },
+
+     if site_location:
+       data ["site_location"] = {
+            'id': site_location.id,
+            'name': site_location.site_location,
+        },
+     
+     if payment_method:
+        data ["payment_method"] = {
+            'id': payment_method.id,
+            'name': payment_method.name,
+        },
+
+     return data
+
+    
+
 # class PaymentHistorySerializer(serializers.ModelSerializer):
 #     class Meta:
 #         model = PaymentHistory
@@ -1532,3 +1569,68 @@ class SiteAllocationLabourSerializer(serializers.ModelSerializer):
         data["created_by_name"] = instance.created_by.name if instance.created_by else None
         return data
     
+class QuatationStatusSerializer(ModelSerializer):
+    class Meta:
+        model = Quatation
+        fields = "__all__"
+
+    def update(self, instance, validated_data):
+        status = validated_data.get('status')
+        company = validated_data.get('company')
+        site =instance.site
+        deliver = ProcessStatus.objects.filter(code=0).last()
+        if status == deliver and instance.status !=deliver and not instance.is_delivered :
+            print(status)
+
+            # Determine target queryset
+            target_queryset = instance.site.stock if instance.site else instance.company.get_inventory
+            quatation_items = instance.get_quotation_items
+
+            # Dictionary to store item quantities
+            quatation_item_quantities = {}
+
+            # Extract item IDs and quantities from purchase_items
+            for item in quatation_items:
+                if hasattr(item, 'item'):
+                    item_id = item.item.id if hasattr(item.item, 'id') else item.item
+                    quatation_item_quantities[item_id] = {
+                        'qty': item.qty,
+                        'unit': item.unit,
+                        
+                    }
+
+            print(quatation_item_quantities.items())
+
+            with transaction.atomic():
+                # Update quantities in target_queryset based on purchase_item_quantities
+                for item_id, details in quatation_item_quantities.items():
+                    qty = details['qty']
+                    # unit = Uom.objects.filter(id=details['unit']).last()
+                    unit = details['unit']
+                   
+                    
+                    # Ensure both item and unit are valid before proceeding
+                    item = MaterialLibrary.objects.filter(id=item_id).last()
+                    if not item:
+                        continue
+
+                    target_item = target_queryset.filter(item=item, unit=unit).first()
+                    if target_item:
+                        target_item.qty += qty
+                        target_item.save()
+                    else:
+                        print('pppppppppppp')
+                        # Determine the model dynamically based on the target_queryset
+                        model_class = target_queryset.model
+                        print(model_class)
+                        # Create a new instance of the model dynamically
+                        new_item = model_class(item=item, qty=qty, unit=unit,company=company,project=site)
+                        new_item.save()
+                validated_data['is_delivered'] =True
+
+        return super().update(instance, validated_data)
+    
+class PaymentMethodSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PaymentMethod
+        fields = '__all__'

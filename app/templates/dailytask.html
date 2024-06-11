@@ -62,7 +62,7 @@
                                                                 <div class="row">
                                                                     <div class="col-md-6 mt-2">
                                                                         <label for="id_date"
-                                                                            class="form-label">Date:</label>
+                                                                            class="form-label">Date <span style="color: red;">*</span></label>
                                                                         <input type="date" name="date"
                                                                             class="form-control" id="date">
                                                                         <span id="dateError"
@@ -71,7 +71,7 @@
 
                                                                     <div class="col-md-6 mt-2">
                                                                         <label for="id_qty"
-                                                                            class="form-label">Quantity:</label>
+                                                                            class="form-label">Quantity <span style="color: red;">*</span></label>
                                                                         <input type="text" name="qty"
                                                                             class="form-control" id="qty">
                                                                         <span id="qtyError"
@@ -79,7 +79,7 @@
                                                                     </div>
                                                                     <div class="col-md-6 mt-2">
                                                                         <label for="id_unit"
-                                                                            class="form-label">Unit:</label>
+                                                                            class="form-label">Unit <span style="color: red;">*</span></label>
                                                                         <select class="form-select" id="unit"
                                                                             name="unit">
                                                                             <option value=""> ------- </option>
@@ -94,7 +94,7 @@
                                                                     </div>
                                                                     <div class="col-md-6 mt-2">
                                                                         <label for="id_project"
-                                                                            class="form-label">Project:</label>
+                                                                            class="form-label">Project <span style="color: red;">*</span></label>
                                                                         <select class="form-select" id="project"
                                                                             name="project">
 
@@ -109,7 +109,7 @@
                                                                     </div>
                                                                     <div class="col-md-6 mt-2">
                                                                         <label for="id_subcontract"
-                                                                            class="form-label">Subcontract:</label>
+                                                                            class="form-label">Subcontract <span style="color: red;">*</span></label>
                                                                         <select class="form-select" id="subcontract"
                                                                             name="subcontract">
                                                                             <option value=""> ------- </option>
@@ -130,7 +130,7 @@
 
 
                                                                         <label for="work_done" class="form-label">Work
-                                                                            Done:</label>
+                                                                            Done <span style="color: red;">*</span></label>
                                                                         <textarea name="work_done" class="form-control"
                                                                             id="work_done" rows="4"></textarea>
                                                                         <span id="work_doneError"
@@ -612,7 +612,7 @@
                 var errors = {};
                 var formData = new FormData();
 
-                var requiredKeys = ['date'];   //change
+                var requiredKeys = ['date','subcontract','project','work_done','qty','unit'];   //change
 
 
 

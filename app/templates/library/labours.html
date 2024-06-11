@@ -56,20 +56,30 @@
                                                         <div class="row">
                                                             <div class="col-md-6">
                                                                 <label for="id_name" class="form-label">Labour
-                                                                    Name:</label>
+                                                                    Name <span style="color: red;">*</span></label>
                                                                 <input type="text" name="name" class="form-control"
                                                                     id="name" value="">
                                                                 <span id="nameError" class="error-message"></span>
                                                             </div>
                                                             <div class="col-md-6">
-                                                                <label for="id_image" class="form-label">Image:</label>
+                                                                <label for="id_image" class="form-label">Image <span style="color: red;">*</span></label>
                                                                 <input type="file" name="image" class="form-control"
                                                                     id="image">
-                                                                <span id="imageError" class="error-message"></span>
+                                                                <span id="imageError" class="error-message "></span>
                                                             </div>
+                                                            
+                                                            <!-- <div class="mb-3">
+                                                                <label for="image" class="form-label">Image:</label>
+                                                                <input type="file" name="image" class="form-control" id="image">
+                                                                <span id="imageError" class="error-message text-danger"></span>
+                                                            </div> -->
+
+
+
+
 
                                                             <div class="col-md-6 mb-4">
-                                                                <label for="id_role" class="form-label">Role:</label>
+                                                                <label for="id_role" class="form-label">Role <span style="color: red;">*</span> </label>
                                                                 <select class="form-select" id="role" name="role">
                                                                     <option value=""> ------- </option>
                                                                     {% for i in roles %}
@@ -97,7 +107,7 @@
 
 
                                                             <div class="col-md-6">
-                                                                <label for="id_rate" class="form-label">Rate:</label>
+                                                                <label for="id_rate" class="form-label">Rate <span style="color: red;">*</span></label>
                                                                 <input type="text" name="rate" class="form-control"
                                                                     id="rate" value="">
                                                                 <span id="rateError" class="error-message"></span>
@@ -105,7 +115,7 @@
 
                                                             <div class="col-md-6">
                                                                 <label for="id_ot_rate" class="form-label">OT
-                                                                    Rate:</label>
+                                                                    Rate <span style="color: red;">*</span></label>
                                                                 <input type="text" name="ot_rate" class="form-control"
                                                                     id="ot_rate">
                                                                 <span id="ot_rateError" class="error-message"></span>
@@ -113,7 +123,7 @@
 
                                                             <div class="col-md-6">
                                                                 <label for="id_payment_schedule"
-                                                                    class="form-label">Payment schedule:</label>
+                                                                    class="form-label">Payment schedule <span style="color: red;">*</span></label>
                                                                 <select class="form-select" id="payment_schedule"
                                                                     name="payment_schedule">
                                                                     <option value=""> ------- </option>
@@ -196,7 +206,13 @@
                                                 </th> -->
                                 <td>{{ forloop.counter }}</td>
                                 <td>{{ i.name }}</td>
-                                <td>{{ i.image | filename }}</td>
+                                <td>
+                                    {% if i.image %}
+                                        <img src="{{ i.image.url }}" alt="{{ i.image.name }}" style="max-width: 100px; max-height: 100px;" />
+                                    {% else %}
+                                        No Image
+                                    {% endif %}
+                                </td>
                                 <td>{{ i.role }}</td>
                                 <td>{{ i.get_rate}}</td>
                                 <td>{{ i.get_ot_rate }}  </td>

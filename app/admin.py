@@ -169,3 +169,7 @@ admin.site.register(SiteAllocation)
 # @admin.register(SiteAllocation)
 # class SiteAllocationAdmin(admin.ModelAdmin):
 #     list_display = ('id','date',)
+
+
+
+

@@ -55,7 +55,7 @@
                                                         <h5 class="modal-title" id="myLargeModalLabel">Uom
                                                         </h5>
                                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                            aria-label="Close" onclick="clearErrors()">
+                                                            aria-label="Close" onclick="clearErrors()" >
                                                         </button>
                                                     </div>
                                                     <hr>
@@ -65,7 +65,7 @@
                                                         <div class="row">
                                                             <div class="col-md-6">
                                                                 <label for="id_name" class="form-label">Uom
-                                                                    Name:</label>
+                                                                    Name <span style="color: red;">*</span></label>
                                                                 <input type="text" name="name" class="form-control"
                                                                     id="name" value="">
                                                                 <span id="nameError" class="error-message"></span>
@@ -143,10 +143,10 @@
                                                     <!-- <i class="ri-pencil-fill align-bottom me-2 text-muted"></i>  -->
                                                     Edit
                                                 </button>
-                                                <button class="btn btn-soft-danger btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#deleteModal{{ i.id }}">
-                                                    <!-- <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i>  -->
+                                                <!-- <button class="btn btn-soft-danger btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#deleteModal{{ i.id }}">
+                                                    
                                                     Delete
-                                                </button>
+                                                </button> -->
                                             </div>
 
                                            
@@ -255,7 +255,7 @@
                                                     <div class="modal-content">
                                                         <div class="modal-header">
                                                             <h5 class="modal-title"
-                                                                id="deleteModalLabel-{{ forloop.counter }}"> Delete
+                                                                id="deleteModalLabel-{{ forloop.counter }}">    
                                                                 Uom </h5>
                                                             <button type="button" class="btn-close"
                                                                 data-bs-dismiss="modal" aria-label="Close"></button>

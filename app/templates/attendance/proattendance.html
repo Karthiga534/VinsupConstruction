@@ -55,13 +55,13 @@
                               <div class="row">
                                 
                                 <div class="col-lg-4 col-md-4 col-xs-6 col-12">
-                                  <label for="" class="form-label mt-2">Select Date :</label>
+                                  <label for="" class="form-label mt-2">Select Date <span style="color: red;">*</span></label>
                                   <input type="date" class="form-control" id="date" name="date" />
                                   <span class="error-message" id="dateError"></span>
                                 </div>
 
                                 <div class="col-lg-4 col-md-4 col-xs-6 col-12">
-                                  <label for="" class="form-label mt-2">Project Sub Contract :</label>
+                                  <label for="" class="form-label mt-2">Project Sub Contract <span style="color: red;">*</span></label>
                                   <select class="form-select mb-3" aria-label="Default select example" id="contract"
                                     name="contract">
                                     <option value=""> --------------------- </option>
@@ -73,37 +73,37 @@
                                 </div>
 
                                 <div class="col-lg-4 col-md-4 col-xs-6 col-12">
-                                  <label for="" class="form-label mt-2">Maistry :</label>
+                                  <label for="" class="form-label mt-2">Maistry <span style="color: red;">*</span></label>
                                   <input type="text" class="form-control" id="maistry" name="maistry" />
                                   <span class="error-message" id="maistryError"></span>
                                 </div>
 
                                 <div class="col-lg-4 col-md-4 col-xs-6 col-12">
-                                  <label for="" class="form-label mt-2">Maison :</label>
+                                  <label for="" class="form-label mt-2">Maison <span style="color: red;">*</span></label>
                                   <input type="text" class="form-control" id="maison_cooli" name="maison_cooli" />
                                   <span id="maison_cooliError" class="error-message"></span>
                                 </div>
 
                                 <div class="col-lg-4 col-md-4 col-xs-6 col-12">
-                                  <label for="" class="form-label mt-2">Male Skilled :</label>
+                                  <label for="" class="form-label mt-2">Male Skilled <span style="color: red;">*</span></label>
                                   <input type="text" class="form-control" id="male_skilled" name="male_skilled" />
                                   <span id="male_skilledError" class="error-message"></span>
                                 </div>
 
                                 <div class="col-lg-4 col-md-4 col-xs-6 col-12">
-                                  <label for="" class="form-label mt-2">Male Unskilled</label>
+                                  <label for="" class="form-label mt-2">Male Unskilled <span style="color: red;">*</span></label>
                                   <input type="text" class="form-control" id="male_unskilled" name="male_unskilled" />
                                   <span id="male_unskilledError" class="error-message"></span>
                                 </div>
 
                                 <div class="col-lg-4 col-md-4 col-xs-6 col-12">
-                                  <label for="" class="form-label mt-2">Female Skilled :</label>
+                                  <label for="" class="form-label mt-2">Female Skilled <span style="color: red;">*</span></label>
                                   <input type="text" class="form-control" id="female_skilled" name="female_skilled" />
                                   <span id="female_skilledError" class="error-message"></span>
                                 </div>
 
                                 <div class="col-lg-4 col-md-4 col-xs-6 col-12">
-                                  <label for="" class="form-label mt-2">Female Unskilled :</label>
+                                  <label for="" class="form-label mt-2">Female Unskilled <span style="color: red;">*</span></label>
                                   <input type="text" class="form-control" id="female_unskilled"
                                     name="female_unskilled" />
                                   <span id="female_unskilledError" class="error-message"></span>
@@ -461,7 +461,7 @@
       var errors = {};
       var formData = new FormData();
 
-      var requiredKeys = ["date", "contract"];
+      var requiredKeys = ["date", "contract","maistry","maison_cooli","male_skilled","male_unskilled","female_skilled","female_unskilled"];
 
       formData.append(
         "date",

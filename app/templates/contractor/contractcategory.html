@@ -60,9 +60,9 @@
                             <form id="createForm" enctype="multipart/form-data">
                               {% csrf_token %}
                               <div class="row">
-                                <div class="row mb-2">
+                                <div class="">
                                   <label for="id_name" class="form-label">Category Name
-                                    :</label>
+                                    <span style="color: red;">*</span></label>
                                   <input type="text" name="name" class="form-control" id="name">
                                   <span id="nameError" class="error-message"></span>
                                 </div>
@@ -136,10 +136,10 @@
                               <!-- <i class="ri-pencil-fill align-bottom me-2 text-muted"></i>  -->
                               Edit
                           </button>
-                          <button class="btn btn-soft-danger btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#deleteModal{{ i.id }}">
-                              <!-- <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i>  -->
+                          <!-- <button class="btn btn-soft-danger btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#deleteModal{{ i.id }}">
+                              
                               Delete
-                          </button>
+                          </button> -->
                       </div>
 
                         <div class="modal fade" id="editModal_{{ i.id}}" tabindex="-1" aria-labelledby="editModalLabel"
@@ -156,7 +156,7 @@
                                 <form id="editForm{{ i.id }}" enctype="multipart/form-data">
                                   {% csrf_token %}
                                   <div class="row">
-                                  <div class="row mb-2">
+                                  <div class="">
 
                                     <label for="edit_name" class="form-label">District Name:</label>
                                     <input type="text" class="form-control" id="{{i.id}}_name" name="name"
@@ -200,8 +200,8 @@
                       <div class="modal-dialog">
                         <div class="modal-content">
                           <div class="modal-header">
-                            <h5 class="modal-title" id="deleteModalLabel-{{ forloop.counter }}"> Delete
-                              Category '{{i.name}}' </h5>
+                            <h5 class="modal-title" id="deleteModalLabel-{{ forloop.counter }}"> 
+                             {{i.name}}</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal"
                               aria-label="Close"></button>
                           </div>
@@ -241,10 +241,10 @@
                                 <div class="row">
                                     
                   
-                                  <div class="row mb-2">
-                                      <label for="{{i.id}}_name" class="form-label">Contractor Category Name:</label>
-                                      <input type="text" class="form-control" id="{{i.id}}_name" name="name" value="{{i.name}}" readonly>
-                                  </div>
+                                    <div class="">
+                                        <label for="{{i.id}}_name" class="form-label">Contractor Category Name </label>
+                                        <input type="text" class="form-control" id="{{i.id}}_name" name="name" value="{{i.name}}" readonly>
+                                    </div>
 
                                   <div class="mt-2 mb-3">
                                     <label for="{{i.id}}_description" class="form-label">Description:</label>

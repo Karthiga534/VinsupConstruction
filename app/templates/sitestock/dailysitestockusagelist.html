@@ -69,19 +69,16 @@
 													{% for subcontract in subcontracts %}
 
 
-													<option value="{{ subcontract.id }}">
-														{{ subcontract.display_contractor_dropdown }}</option>
-
-													{% endfor %}
-												</select>
-												<span id="subcontractError" class="error-message"></span>
-											</div>
-
-											<div class="col-xl-3">
-												<br><br><button type="button"
-													class="btn btn-primary waves-effect waves-light mt-2" onclick="getReport(this,'example')">Get
-													Report</button>
-											</div>
+												{% endfor %}
+											</select>
+											<span id="subcontractError" class="error-message"></span>
+										</div>
+										<div class="col-xl-3 col-lg-3 col-md-3 col-xs-6 col-12">
+											<br><br>
+												<button type="submit" onclick="getReport(this,'example')"
+												class="btn btn-primary waves-effect waves-light mt-2">Get Report
+											</button>
+											
 										</div>
 										<hr>
 										<table id="example"

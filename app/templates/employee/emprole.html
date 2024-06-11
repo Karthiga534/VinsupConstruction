@@ -7,7 +7,7 @@
 <div class="main-content">
 
     <div class="page-content">
-        <div class="container-fluid">
+        <div class="container-fluid"> 
 
             <!-- start page title -->
             <div class="row">
@@ -18,7 +18,7 @@
                         <div class="page-title-right">
                             <ol class="breadcrumb m-0">
                                 <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
-                                <li class="breadcrumb-item active">Employee Role Management</li>
+                                <li class="breadcrumb-item active">Employee Role </li>
                             </ol>
                         </div>
                     </div>
@@ -39,7 +39,7 @@
 
                             <div class="row">
                                 <div class="col-xl-6 col-lg-6 col-md-6 col-12">
-                                    <h2>Employee Role </h2>
+                                    <h2>Employee Role Management </h2>
                                 </div>
                                 <div class="col-xl-4 col-lg-4 col-md-4 col-12"></div>
                                 <div class="col-xl-2 col-lg-2 col-md-2 col-12">
@@ -63,9 +63,9 @@
 
                                                         {% csrf_token %}
                                                         <div class="row">
-                                                            <div class="row mb-2">
+                                                            <div class="">
                                                                 <label for="id_name" class="form-label">Role
-                                                                    Name:</label>
+                                                                    Name <span style="color: red;">*</span></label>
                                                                 <input type="text" name="name" class="form-control"
                                                                     id="name" value="">
                                                                 <span id="nameError" class="error-message"></span>
@@ -152,10 +152,10 @@
                                                     <!-- <i class="ri-pencil-fill align-bottom me-2 text-muted"></i>  -->
                                                     Edit
                                                 </button>
-                                                <button class="btn btn-soft-danger btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#deleteModal{{ i.id }}">
-                                                    <!-- <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i>  -->
+                                                <!-- <button class="btn btn-soft-danger btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#deleteModal{{ i.id }}">
+                                                    
                                                     Delete
-                                                </button>
+                                                </button> -->
                                             </div>
 
                                             <!-- view modal -->
@@ -182,7 +182,7 @@
                                                           <div class="row">
                                                               
                                             
-                                                            <div class="row mb-2">
+                                                            <div class="">
                                                                 <label for="{{i.id}}_name" class="form-label">Role Name:</label>
                                                                 <input type="text" class="form-control" id="{{i.id}}_name" name="name" value="{{i.name}}" readonly>
                                                             </div>
@@ -233,7 +233,7 @@
                                                             <form id="editForm{{ i.id }}" enctype="multipart/form-data">
                                                                 {% csrf_token %}
                                                             <div class="row mb-2"> 
-                                                                <div class="row mb-2">
+                                                                <div class="">
                                                                     <label for="editCategoryName">Role Name:</label>
                                                                     <input type="text" class="form-control" name="name"
                                                                         id="{{i.id}}_name" value="{{ i.name }}">
@@ -284,8 +284,7 @@
                                                     <div class="modal-content">
                                                         <div class="modal-header">
                                                             <h5 class="modal-title"
-                                                                id="deleteModalLabel-{{ forloop.counter }}"> Delete
-                                                                Employee Role '{{i.name}}'</h5>
+                                                                id="deleteModalLabel-{{ forloop.counter }}"> {{i.name}}</h5>
                                                             <button type="button" class="btn-close"
                                                                 data-bs-dismiss="modal" aria-label="Close"></button>
                                                         </div>
@@ -397,11 +396,11 @@
             var errors = {};
             var formData = new FormData();
 
-            var requiredKeys = ['name','description'];   //change
+            var requiredKeys = ['name'];   //change
 
 
             formData.append('name', getValueOrDefault(formElement.querySelector('input[name="name"]').value));              //change
-            formData.append('description', getValueOrDefault(formElement.querySelector('input[name="description"]').value));
+            formData.append('description', getValueOrDefault(formElement.querySelector('textarea[name="description"]').value));
 
 
             requiredKeys.forEach(function (key) {
@@ -492,7 +491,7 @@
             const formData = new FormData();
  
             formData.append('name', getValueOrDefault(formElement.querySelector('input[name="name"]').value));    //change
-            formData.append('description', getValueOrDefault(formElement.querySelector('input[name="description"]').value));
+            formData.append('description', getValueOrDefault(formElement.querySelector('textarea[name="description"]').value));
 
 
             var requiredKeys = ['name'];     //change

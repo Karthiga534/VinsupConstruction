@@ -65,14 +65,14 @@
                                                             <div class="row">
                                                                 <div class="col-md-4">
                                                                     <label for="id_date" class="form-label">Date
-                                                                        :</label>
+                                                                        <span style="color: red;">*</span></label>
                                                                     <input type="date" name="date" class="form-control"
                                                                         id="date">
                                                                     <span id="dateError" class="error-message"></span>
                                                                 </div>
                                                                 <div class="col-md-4 ">
                                                                     <label for="id_particular"
-                                                                        class="form-label">particular :</label>
+                                                                        class="form-label">particular <span style="color: red;">*</span></label>
                                                                     <input type="text" name="particular"
                                                                         class="form-control" id="particular">
                                                                     <span id="particularError"
@@ -80,16 +80,16 @@
                                                                 </div>
                                                                 <div class="col-md-4 ">
                                                                     <label for="id_amount" class="form-label">Amount
-                                                                        :</label>
+                                                                        <span style="color: red;">*</span></label>
                                                                     <input type="text" name="amount"
                                                                         class="form-control" id="amount">
                                                                     <span id="amountError" class="error-message"></span>
                                                                 </div>
                                                                 <div class="col-md-4 mt-2">
                                                                     <label for="id_site_location"
-                                                                        class="form-label">Site Location :</label>
+                                                                        class="form-label">Site Location <span style="color: red;">*</span></label>
                                                                     <select class="form-select"
-                                                                        id="{{ i.id }}_site_location"
+                                                                        id="site_location"
                                                                         name="site_location">
                                                                         <option value=""> ------- </option>
                                                                         {% for i in site_locations %}
@@ -103,8 +103,8 @@
 
                                                                 <div class="col-md-4 mt-2">
                                                                     <label for="id_employee" class="form-label">Employee
-                                                                        :</label>
-                                                                    <select class="form-select" id="{{ i.id }}_employee"
+                                                                        <span style="color: red;">*</span></label>
+                                                                    <select class="form-select" id="employee"
                                                                         name="employee">
                                                                         <option value=""> ------- </option>
                                                                         {% for employee in employee %}
@@ -151,7 +151,7 @@
                                 </div>
                                 <div class="card-body">
 									<div class="row">
-										<div class="col-xl-3 col-lg-3 col-md-3 col-xs-6 col-12">
+										<div class="col-xl-2 col-lg-2 col-md-2 col-xs-6 col-12">
                                             <label for="fromsite" class="form-label">Site Name:</label>
                                             <select class="form-select mb-3" id="fromsite" name="site_name" aria-label="Default select example">
                                                
@@ -161,17 +161,20 @@
                                                 {% endfor %}
                                             </select>
                                         </div>
-										<div class="col-xl-3 col-lg-3 col-md-3 col-xs-6 col-12">
+										<div class="col-xl-2 col-lg-2 col-md-2 col-xs-6 col-12">
 											<label for="exampleInputdate" class="form-label" id="">From Date</label>
                                             <input type="date" class="form-control" id="fromdate">
 										</div>
-										<div class="col-xl-3 col-lg-3 col-md-3 col-xs-6 col-12">
+										<div class="col-xl-2 col-lg-2 col-md-2 col-xs-6 col-12">
 											<label for="exampleInputdate" class="form-label">To Date</label>
                                             <input type="date" class="form-control" id="todate">
 										</div>
-										<div class="col-xl-3 col-lg-3 col-md-3 col-xs-6 col-12">
-											<br><button type="button" class="btn btn-primary waves-effect waves-light mt-2">Get Report</button>
-										</div>
+										<div class="col-xl-2 col-lg-2 col-md-2 col-xs-6 col-12">
+                                            <br />
+                                            <button type="submit" onclick="getReport(this,'example')"
+                                            class="btn btn-primary waves-effect waves-light mt-2">Get Report
+                                        </button>
+                                          </div>
 									</div>
 									<hr>
 									<div class="card">
@@ -435,7 +438,7 @@
                 var errors = {};
                 var formData = new FormData();
 
-                var requiredKeys = ['date', 'particular', 'amount'];   //change
+                var requiredKeys = ['date', 'particular', 'amount','site_location','employee'];   //change
 
 
                 formData.append('date', getValueOrDefault(formElement.querySelector('input[name="date"]').value));              //change
