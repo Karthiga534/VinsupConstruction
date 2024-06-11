@@ -61,13 +61,13 @@
                                                     <hr>
                                                     <div class="modal-body">
 
-                                                        {% csrf_token %}
+                                                        {% csrf_token %}    
                                                         <div class="row">
                                                             <div class="">
                                                                 <label for="id_name" class="form-label">Category
-                                                                    Name:</label>
+                                                                    Name <span style="color: red;">*</span> :</label >
                                                                 <input type="text" name="name" class="form-control"
-                                                                    id="name" value="">
+                                                                    id="name" value=""  required>
                                                                 <span id="nameError" class="error-message"></span>
 
                                                             </div>
@@ -147,10 +147,10 @@
                                                     <!-- <i class="ri-pencil-fill align-bottom me-2 text-muted"></i>  -->
                                                     Edit
                                                 </button>
-                                                <button class="btn btn-soft-danger btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#deleteModal{{ i.id }}">
-                                                    <!-- <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i>  -->
+                                                <!-- <button class="btn btn-soft-danger btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#deleteModal{{ i.id }}">
+                                                   
                                                     Delete
-                                                </button>
+                                                </button> -->
                                             </div>
 
                                             <!-- view modal -->

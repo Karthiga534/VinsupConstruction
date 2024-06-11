@@ -54,7 +54,7 @@
                             <div class="modal-body">
                               <div class="row">
                                 <div class="col-lg-4 col-md-4 col-xs-6 col-12">
-                                  <label for="" class="form-label mt-2">Project Name :</label>
+                                  <label for="" class="form-label mt-2">Project Name <span style="color: red;">*</span></label>
                                   <select class="form-select mb-3" aria-label="Default select example" id="project"
                                     name="project">
                                     <option value=""> --------------------- </option>
@@ -66,7 +66,7 @@
                                 </div>
 
                                 <div class="col-lg-4 col-md-4 col-xs-6 col-12">
-                                  <label for="" class="form-label mt-2">Labour :</label>
+                                  <label for="" class="form-label mt-2">Labour <span style="color: red;">*</span></label>
                                   <select class="form-select mb-3" aria-label="Default select example" id="labour"
                                     name="labour">
                                     <option value=""> --------------------- </option>
@@ -96,7 +96,7 @@
                                 </div>
 
                                 <div class="col-lg-4 col-md-4 col-xs-6 col-12">
-                                  <label for="" class="form-label mt-2">date</label>
+                                  <label for="" class="form-label mt-2">date <span style="color: red;">*</span></label>
                                   <input type="date" class="form-control" id="date" name="date" />
                                   <span id="dateError" class="error-message"></span>
                                 </div>
@@ -341,7 +341,7 @@
       var errors = {};
       var formData = new FormData();
 
-      var requiredKeys = ["date"];
+      var requiredKeys = ["date","project","labour"];
 
       formData.append(
         "date",

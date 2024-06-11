@@ -61,7 +61,7 @@
 
 
 										<div class="col-md-6 mb-2">
-											<label for="" class="form-label">From Site :</label>
+											<label for="" class="form-label">From Site <span style="color: red;">*</span></label>
 
 											<form id="transferForm" action="{% url 'add_transfer' %}" method="GET">
 												<select class="form-select mb-3" aria-label="Default select example"
@@ -93,7 +93,7 @@
 
 
 										<div class="col-md-6 mb-2">
-											<label for="" class="form-label">To Site :</label>
+											<label for="" class="form-label">To Site <span style="color: red;">*</span></label>
 											<select class="form-select mb-3" aria-label="Default select example"
 												id="tosite" name="tosite">
 												<option value="">---------------------</option>
@@ -110,11 +110,11 @@
 
 
 										<div class="col-md-6 mb-2">
-											<label for="" class="form-label">Date :</label>
+											<label for="" class="form-label">Date <span style="color: red;">*</span></label>
 											<input type="date" class="form-control" id="created_at" name="created_at">
 										</div>
 										<div class="col-md-6 mb-2">
-											<label for="" class="form-label">Invoice No :</label>
+											<label for="" class="form-label">Invoice No <span style="color: red;">*</span></label>
 											<input type="text" class="form-control" id="invoice_id" name="invoice_id">
 										</div>
 
@@ -637,6 +637,8 @@
 				//var requiredKeys = ['vendor_company']
 
 				formData.append('fromsite', getValueOrDefault(formElement.querySelector('select[name="fromsite"]').value));
+				
+				// formData.append('invoice_id', getValueOrDefault(formElement.querySelector('select[name="invoice_id"]').value));
 				formData.append('tosite', getValueOrDefault(formElement.querySelector('select[name="tosite"]').value));            //change
 
 				var tableData = [];
