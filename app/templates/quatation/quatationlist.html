@@ -5,6 +5,8 @@
 {% block header2 %}
 
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+
 <!-- Begin page -->
 <div id="layout-wrapper">
 
@@ -17,7 +19,7 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                            <h4 class="mb-sm-0">Quotation List </h4>
+                            <h4 class="mb-sm-0">Purchase Request List </h4>
 
                             <div class="page-title-right">
                                 <ol class="breadcrumb m-0">
@@ -38,14 +40,14 @@
 
                                 <div class="row">
                                     <div class="col-xl-6 col-lg-6 col-md-6 col-12">
-                                        <h4>Quotation </h4>
+                                        <h4>Purchase Request </h4>
                                     </div>
                                     <div class="col-xl-4 col-lg-4 col-md-4 col-12"></div>
                                     <div class="col-xl-2 col-lg-2 col-md-2 col-12">
 
                                         <a href="{% url 'quatation' %}" type="button" class="btn btn-info mb-2"
                                             style="float:right;">Add
-                                            Quotation </a>
+                                            Purchase Request</a>
 
                                     </div>
                                     
@@ -342,7 +344,7 @@ aria-labelledby="myLargeModalLabel-1" aria-hidden="true">
        // const td5 = createTableCell(get_value(data.status));
       //  newRow.appendChild(td5);
 
-      const td5 = createStatusCell(data.status_name, data.status_class);
+        const td5 = createStatusCell(data.status_name, data.status_class);
             td5.classList.add('status')
             newRow.appendChild(td5);
     
@@ -416,6 +418,8 @@ aria-labelledby="myLargeModalLabel-1" aria-hidden="true">
         return newRow;
     }
 
+    
+
 
 
     // nested table
@@ -458,7 +462,7 @@ aria-labelledby="myLargeModalLabel-1" aria-hidden="true">
 
 
 
-    function updateStatus(button) {
+    {% comment %} function updateStatus(button) {
 
         var modalSelector = button.getAttribute('data-target');
         const formId = "clocKInForm"
@@ -598,14 +602,107 @@ aria-labelledby="myLargeModalLabel-1" aria-hidden="true">
     } else {
         console.error(`No row found with data-item-id='${itemId}'`);
     }
-}
+} {% endcomment %}
 
 
     //---------------
 
 
 
-
+    function updateStatus(button) {
+        var modalSelector = button.getAttribute('data-target');
+        const formId = "clocKInForm";
+        const saveId = button.getAttribute('data-id');
+        var formElement = document.getElementById(formId);
+    
+        var formData = new FormData();
+    
+        try {
+            disableButton(button);
+    
+            var isValid = true;
+            var errors = {};
+            var formData = new FormData(formElement);
+    
+            var requiredKeys = ['status'];
+    
+            const selectedOption = formElement.querySelector('select[name="status"]');
+            if (selectedOption && selectedOption.value.trim()) {
+                formData.append('status', selectedOption.value);
+            } else {
+                isValid = false;
+                errors['status'] = ['Please select a status.'];
+            }
+    
+            if (!isValid) {
+                enableButton(button);
+                handleCreateErrors(errors);
+                return;
+            } else {
+                $(`#${formId} input, #${formId} button`).prop('disabled', true);
+            }
+    
+            $.ajax({
+                url: `/quatation-status-change/${saveId}/`,
+                type: 'POST',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                },
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response, status, xhr) {
+                    if (xhr.status === 200) {
+                        showToast(statusMesssage?.message, '', statusMesssage?.bgColor);
+                        closeHistoryModal(modalSelector);
+                        updateRowStatus(saveId, response);
+                        restoreForm(formId, button);
+                    } else {
+                        restoreForm(formId, button);
+                        showToast(errorAlertMessage?.message, "", errorAlertMessage?.bgColor);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    if (xhr.status === 400) {
+                        if (xhr?.responseJSON?.errors) {
+                            handleCreateErrors(transformErrors(xhr.responseJSON.errors));
+                        } else {
+                            showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+                        }
+                    } else if (xhr.status === 401 || xhr.status === 404) {
+                        showToast(xhr?.responseJSON?.details || errorOccured.message, '', errorAlertMessage?.bgColor);
+                    } else {
+                        showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+                    }
+                },
+                complete: function () {
+                    restoreForm(formId, button);
+                }
+            });
+        } catch (error) {
+            showToast(errorOccured?.message, '', errorOccured?.bgColor);
+            console.error(error);
+        } finally {
+            restoreForm(formId, button);
+        }
+    }
+    
+    function updateRowStatus(itemId, newStatus) {
+        const row = document.querySelector(`tr[data-item-id='${itemId}']`);
+        if (row) {
+            const statusTd = row.querySelector('td.status');
+            if (statusTd) {
+                statusTd.innerHTML = '';  // Clear the current content
+                const newStatusCell = createStatusCell(newStatus.name, newStatus.classname);
+                statusTd.appendChild(newStatusCell);
+            } else {
+                console.error(`No <td> with class 'status' found in row with data-item-id='${itemId}'`);
+            }
+        } else {
+            console.error(`No row found with data-item-id='${itemId}'`);
+        }
+    }
+    
 
 
 

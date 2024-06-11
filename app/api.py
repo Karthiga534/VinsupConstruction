@@ -55,7 +55,9 @@ def vendor_list(request):  #change name
 
 
 
-@api_view(['POST'])
+@api_view(['POST']) 
+@check_valid_user
+@check_user_company
 @login_required(login_url='login')
 def add_vendor (request):  # CHANGE name
     user=request.user
@@ -73,6 +75,8 @@ def add_vendor (request):  # CHANGE name
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)   
 
 @api_view(['PUT'])
+@check_valid_user
+@check_user_company
 @login_required(login_url='login')
 def update_vendor(request, pk):  # CHANGE name
     user=request.user
@@ -121,6 +125,8 @@ def vendorquatation(request):  #change name
     return render(request,"purchase/vendorquates.html",context)    #change template name
  
 @api_view(['POST'])
+@check_valid_user
+@check_user_company
 @login_required(login_url='login')
 def add_vendorquatation(request):  # CHANGE name
     user=request.user
@@ -143,6 +149,8 @@ def add_vendorquatation(request):  # CHANGE name
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
 @api_view(['PUT'])
+@check_valid_user
+@check_user_company
 @login_required(login_url='login')
 def update_vendorquatation(request, pk):  # CHANGE name
     user=request.user
@@ -287,6 +295,8 @@ def project_purchaselist(request,pk):
 
 
 @api_view(['POST'])
+@check_valid_user
+@check_user_company
 @login_required(login_url='login')
 def purchase_status_change(request,pk):
     user =request.user
@@ -474,6 +484,8 @@ def transfer_from(request,pk):  #change name
 
 
 @api_view(['POST'])
+@check_valid_user
+@check_user_company
 @login_required(login_url='login')
 def add_transfer(request):
     user = request.user
@@ -532,6 +544,8 @@ def add_transfer(request):
 
 
 @api_view(['POST'])
+@check_valid_user
+@check_user_company
 @login_required(login_url='login')
 def accept_transfer(request,pk):
     user = request.user
@@ -738,6 +752,9 @@ def subcontadd(request):  #change name
 #------> Add Project Sub Contractor 
 
 @api_view(['POST'])
+@check_valid_user
+@check_user_company
+@check_admin
 @login_required(login_url='login')
 def add_subcontadd(request):
     user = request.user
@@ -1156,6 +1173,9 @@ def project(request):  #change name
 
  
 @api_view(['POST'])
+@check_valid_user
+@check_user_company
+@check_admin
 @login_required(login_url='login')
 def add_project (request):  # CHANGE name
     user=request.user
@@ -1181,6 +1201,9 @@ def add_project (request):  # CHANGE name
 
 
 @api_view(['PUT'])
+@check_valid_user
+@check_user_company
+@check_admin
 @login_required(login_url='login')
 def update_project(request, pk):  # CHANGE name
     user=request.user
