@@ -2248,3 +2248,4 @@ class SiteAllocation(models.Model):
         if self.date:
             return self.date
         return "sdfsdf"
+

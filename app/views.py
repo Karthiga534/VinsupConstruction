@@ -462,11 +462,45 @@ def get_employee(request, id):
     except Employee.DoesNotExist:
         return JsonResponse({'error': 'Object not found'}, status=404)    
    
+# @api_view(['PUT'])
+# @login_required(login_url='login')
+# # @check_valid_user
+# # @check_user_company
+# # @check_admin
+# def save_employee(request, id):
+#     try:
+#         instance = Employee.objects.get(id=id)
+#     except Employee.DoesNotExist:
+#         return Response({'error': 'Employee object does not exist'}, status=404)
+
+#     if request.method == 'PUT':
+#         user = request.user
+#         allow, msg = check_user(request, Employee, instance=False)  # CHANGE model
+        
+#         if not allow:
+#             return JsonResponse({"error": msg}, status=401)
+
+#         serializer = EmployeeSerializer(instance, data=request.data)
+        
+#         if serializer.is_valid():
+#             if user.admin:
+#                 request_data = serializer.validated_data
+#                 request_data['company'] = user.company.id
+         
+                
+#                 # Update serializer data with modified request data
+#                 serializer.update(instance, request_data)
+#             else:
+#                 serializer.save()
+                
+#             return JsonResponse(serializer.data, status=200)
+#         else:
+#             return JsonResponse(serializer.errors, status=400)
+#     else:
+#         return JsonResponse({'error': 'Invalid request method'}, status=405)
+
 @api_view(['PUT'])
 @login_required(login_url='login')
-@check_valid_user
-@check_user_company
-@check_admin
 def save_employee(request, id):
     try:
         instance = Employee.objects.get(id=id)
@@ -475,7 +509,7 @@ def save_employee(request, id):
 
     if request.method == 'PUT':
         user = request.user
-        allow, msg = check_user(request, Employee, instance=False)  # CHANGE model
+        allow, msg = check_user(request, Employee, instance=False)
         
         if not allow:
             return JsonResponse({"error": msg}, status=401)
@@ -485,8 +519,11 @@ def save_employee(request, id):
         if serializer.is_valid():
             if user.admin:
                 request_data = serializer.validated_data
-                request_data['company'] = user.company.id
-                
+                # Get the company instance associated with the logged-in user
+                company_instance = user.company
+                # Assign the company instance to the employee instance
+                request_data['company'] = company_instance
+         
                 # Update serializer data with modified request data
                 serializer.update(instance, request_data)
             else:
@@ -497,6 +534,7 @@ def save_employee(request, id):
             return JsonResponse(serializer.errors, status=400)
     else:
         return JsonResponse({'error': 'Invalid request method'}, status=405)
+
 
 @api_view(['DELETE'])
 @login_required(login_url='login')
@@ -3743,3 +3781,5 @@ def get_employees(request):
     employees = Employee.objects.values('id', 'name')
     employees_list = list(employees)
     return Response(employees_list)
+
+

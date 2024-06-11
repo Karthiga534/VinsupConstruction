@@ -1817,6 +1817,7 @@ def update_profile(request):
             company.save()
 
         if company_profile:
+            company_profile.image = request.POST.get('image')
             company_profile.email = request.POST.get('email')
             company_profile.phone_number = request.POST.get('phone_number')
             company_profile.gst_number = request.POST.get('gst_number')

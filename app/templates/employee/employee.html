@@ -408,7 +408,7 @@
   
                                       </div>
 
-                                      <div class="col-md-6 mt-2">
+                                      {% comment %} <div class="col-md-6 mt-2">
                                         <label for="{{ i.id }}_img">Employee Image:</label>
                                         {% if i.img %}
                                             <span class="file-span">
@@ -419,7 +419,7 @@
                                         {% endif %}
                                        
                                         <input type="file" class="form-control" id="{{ i.id }}_img" name="img" value="{{ i.img }}" readonly>
-                                    </div>
+                                      </div> {% endcomment %}
                                     
                                     
       
@@ -918,26 +918,10 @@
           getValueOrDefault($(`#editForm${saveId} input[name="ifsccode"]`).val())
         );
 
-        formData.append(
-          "ifsccode",
-          getValueOrDefault($(`#editForm${saveId} input[name="ifsccode"]`).val())
-        );
 
-        formData.append(
-          "img",
-          getValueOrDefault($(`#editForm${saveId} input[name="img"]`).val())
-        );
-        
-        
+   
 
-        if (img) {
-          formData.append('img', img);
-      }
-
-        var img = getValueOrDefault(formElement.querySelector('input[type="file"]').files[0]);
-        if (img) {
-            formData.append("img", img);
-        }
+     
 
         console.log(csrftoken);
         $.ajax({

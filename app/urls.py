@@ -403,6 +403,25 @@ urlpatterns = [
 
 
 
+
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   #-------------------------------> Mobile Team API
 
     path('register/', views.registration_view, name='register'),
