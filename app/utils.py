@@ -133,7 +133,7 @@ def get_company(user):
     elif user.owner:
         company = user.getcompanies
     else :
-        company = None
+        company = []
     
     return company ,company_msg
 

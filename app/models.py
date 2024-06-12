@@ -2202,6 +2202,7 @@ class PaymentHistory(models.Model):
 class DailySiteStockUsage(models.Model):
     company = models.ForeignKey(Company, on_delete=models.CASCADE, null=True, blank=True)
     stock=models.ForeignKey(SiteStock,on_delete=models.CASCADE, null=True, blank=True)
+    istock=models.ForeignKey(InventoryStock,on_delete=models.CASCADE, null=True, blank=True)
     project = models.ForeignKey(Project, on_delete=models.CASCADE, null=True, blank=True)
     subcontract=models.ForeignKey(ProjectSubContract,on_delete=models.CASCADE, null=True, blank=True)
     # work_done=models.TextField()
