@@ -1,7 +1,7 @@
-from django.core.management.base import BaseCommand
-from django.apps import apps
-import json
 import os
+import json
+from django.apps import apps
+from django.core.management.base import BaseCommand
 
 class Command(BaseCommand):
     help = 'Export data from specified models to JSON files'
@@ -23,7 +23,18 @@ class Command(BaseCommand):
             {'model_name': 'Priority', 'app_name': 'app', 'file_name': 'Priority.json'},
 
             {'model_name': 'PaymentSchedule', 'app_name': 'app', 'file_name': 'PaymentSchedule.json'},
-             {'model_name': 'ProcessStatus', 'app_name': 'app', 'file_name': 'ProcessStatus.json'},
+            {'model_name': 'ProcessStatus', 'app_name': 'app', 'file_name': 'ProcessStatus.json'},
+
+            # Plot Sale
+            
+            {'model_name': 'Area', 'app_name': 'plotsale', 'file_name': 'Area.json'},
+            {'model_name': 'PropertyType', 'app_name': 'plotsale', 'file_name': 'PropertyType.json'},
+            {'model_name': 'PlotType', 'app_name': 'plotsale', 'file_name': 'PlotType.json'},
+            {'model_name': 'SoilType', 'app_name': 'plotsale', 'file_name': 'SoilType.json'},
+            {'model_name': 'Status', 'app_name': 'plotsale', 'file_name': 'Status.json'},
+
+
+             
           
         ]
 

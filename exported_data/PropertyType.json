@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "name": "Movable Property",
+    "code": "0"
+  },
+  {
+    "id": 2,
+    "name": "Immovable Property",
+    "code": "1"
+  },
+  {
+    "id": 3,
+    "name": "Tangible Property",
+    "code": "2"
+  },
+  {
+    "id": 4,
+    "name": "Intangible Property",
+    "code": "3"
+  },
+  {
+    "id": 5,
+    "name": "Public Property",
+    "code": "4"
+  },
+  {
+    "id": 6,
+    "name": "Private Property",
+    "code": "5"
+  },
+  {
+    "id": 7,
+    "name": "Personal Property",
+    "code": "6"
+  },
+  {
+    "id": 8,
+    "name": "Real Property",
+    "code": "7"
+  }
+]

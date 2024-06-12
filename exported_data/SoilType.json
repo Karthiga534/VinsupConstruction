@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "name": "Sand",
+    "code": "0"
+  },
+  {
+    "id": 2,
+    "name": "Clay",
+    "code": "1"
+  },
+  {
+    "id": 3,
+    "name": "Silt",
+    "code": "2"
+  },
+  {
+    "id": 4,
+    "name": "Peat",
+    "code": "3"
+  },
+  {
+    "id": 5,
+    "name": "Chalk",
+    "code": "4"
+  },
+  {
+    "id": 6,
+    "name": "Loamy",
+    "code": "5"
+  }
+]

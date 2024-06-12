@@ -1,0 +1,22 @@
+[
+  {
+    "id": 4,
+    "name": "Industrial Plots",
+    "code": "3"
+  },
+  {
+    "id": 2,
+    "name": "Commercial Plots",
+    "code": "1"
+  },
+  {
+    "id": 3,
+    "name": "Agricultural Plots",
+    "code": "2"
+  },
+  {
+    "id": 1,
+    "name": "Residential Plots",
+    "code": "0"
+  }
+]

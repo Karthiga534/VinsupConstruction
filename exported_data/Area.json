@@ -1,0 +1,192 @@
+[
+  {
+    "id": 1,
+    "name": "Ariyalur",
+    "code": "0"
+  },
+  {
+    "id": 2,
+    "name": "Chengalpattu",
+    "code": "1"
+  },
+  {
+    "id": 3,
+    "name": "Chennai",
+    "code": "2"
+  },
+  {
+    "id": 4,
+    "name": "Coimbatore",
+    "code": "3"
+  },
+  {
+    "id": 5,
+    "name": "Cuddalore",
+    "code": "4"
+  },
+  {
+    "id": 6,
+    "name": "Dharmapuri",
+    "code": "5"
+  },
+  {
+    "id": 7,
+    "name": "Dindigul",
+    "code": "6"
+  },
+  {
+    "id": 8,
+    "name": "Erode",
+    "code": "7"
+  },
+  {
+    "id": 9,
+    "name": "Kallakurichi",
+    "code": "8"
+  },
+  {
+    "id": 10,
+    "name": "Kancheepuram",
+    "code": "9"
+  },
+  {
+    "id": 11,
+    "name": "Karur",
+    "code": "10"
+  },
+  {
+    "id": 12,
+    "name": "Krishnagiri",
+    "code": "11"
+  },
+  {
+    "id": 13,
+    "name": "Madurai",
+    "code": "12"
+  },
+  {
+    "id": 14,
+    "name": "Mayiladuthurai",
+    "code": "13"
+  },
+  {
+    "id": 15,
+    "name": "Nagapattinam",
+    "code": "14"
+  },
+  {
+    "id": 16,
+    "name": "Kanniyakumari",
+    "code": "15"
+  },
+  {
+    "id": 17,
+    "name": "Namakkal",
+    "code": "16"
+  },
+  {
+    "id": 18,
+    "name": "Perambalur",
+    "code": "17"
+  },
+  {
+    "id": 19,
+    "name": "Pudukottai",
+    "code": "18"
+  },
+  {
+    "id": 20,
+    "name": "Ramanathapuram",
+    "code": "19"
+  },
+  {
+    "id": 21,
+    "name": "Ranipet",
+    "code": "20"
+  },
+  {
+    "id": 22,
+    "name": "Salem",
+    "code": "21"
+  },
+  {
+    "id": 23,
+    "name": "Sivagangai",
+    "code": "22"
+  },
+  {
+    "id": 24,
+    "name": "Tenkasi",
+    "code": "23"
+  },
+  {
+    "id": 25,
+    "name": "Thanjavur",
+    "code": "24"
+  },
+  {
+    "id": 26,
+    "name": "Theni",
+    "code": "25"
+  },
+  {
+    "id": 27,
+    "name": "Thiruvallur",
+    "code": "26"
+  },
+  {
+    "id": 28,
+    "name": "Thiruvarur",
+    "code": "27"
+  },
+  {
+    "id": 29,
+    "name": "Thoothukudi",
+    "code": "28"
+  },
+  {
+    "id": 30,
+    "name": "Trichirappalli",
+    "code": "29"
+  },
+  {
+    "id": 31,
+    "name": "Thirunelveli",
+    "code": "30"
+  },
+  {
+    "id": 32,
+    "name": "Tirupathur",
+    "code": "31"
+  },
+  {
+    "id": 33,
+    "name": "Tiruppur",
+    "code": "32"
+  },
+  {
+    "id": 34,
+    "name": "Tiruvannamalai",
+    "code": "33"
+  },
+  {
+    "id": 35,
+    "name": "The Nilgiris",
+    "code": "34"
+  },
+  {
+    "id": 36,
+    "name": "Vellore",
+    "code": "35"
+  },
+  {
+    "id": 37,
+    "name": "Viluppuram",
+    "code": "36"
+  },
+  {
+    "id": 38,
+    "name": "Virudhunagar",
+    "code": "37"
+  }
+]

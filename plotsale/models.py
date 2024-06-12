@@ -8,7 +8,7 @@ class Area(models.Model):
         return self.name
     
 class PropertyType(models.Model):
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50) 
     code = models.CharField(max_length=50, null=True, blank=True) 
 
     def __str__(self):
