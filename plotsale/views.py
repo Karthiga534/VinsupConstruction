@@ -100,7 +100,7 @@ def queries(request, pk=None):
             except Queries.DoesNotExist:
                 return Response({
                     'error': 'Query not found'
-                }, status=status.HTTP_404_NOT_FOUND)
+                }, status=status.HTTP_404_NOT_FOUND)       
         else:
             postings = Queries.objects.all()
             serializer = QueriesSerializer(postings, many=True)
@@ -208,3 +208,30 @@ def plotsales_detail(request, pk):
     elif request.method == 'DELETE':
         plotsale.delete()
         return Response({'message': 'Deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
+    
+
+
+#-------------------------------------------------------Area------------------------------------------------------
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def area(self, request, **kwargs):
+        try:
+            
+           area = Area.objects.get(**kwargs)
+           serializer = AreaSerializer(area)
+           return Response(serializer.data, status=status.HTTP_200_OK)
+        except Area.DoesNotExist:
+          return Response({'error': 'Area not found'}, status=status.HTTP_404_NOT_FOUND)
+        
+
+
+#--------------------------------------------------Property type----------------------------------------------------
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def property_type(self, request, **kwargs):
+    try:
+        property_type = PropertyType.objects.get(**kwargs)
+        serializer = PropertyTypeSerializer(property_type)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except PropertyType.DoesNotExist:
+        return Response({'error': 'Property type not found'}, status=status.HTTP_404_NOT_FOUND)

@@ -36,3 +36,30 @@ class PlotSalesSerializer(serializers.ModelSerializer):
         model = PlotSales
         fields = '__all__'
 
+class AreaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Area
+        fields = '__all__'
+
+class PropertyTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PropertyType
+        fields = '__all__'
+
+                 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                 

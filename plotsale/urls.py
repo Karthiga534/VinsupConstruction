@@ -19,4 +19,9 @@ urlpatterns = [
     path('plotsales/', views.plotsales, name='plotsales'), # GET & POST
     path('plotsales/<int:pk>/', views.plotsales, name='plotsales_detail'), # GET --> PK
     path('plotsaless/<int:pk>/', views.plotsales_detail, name='plotsales_detail'), # GET --> PK ( PUT, DELETE )
+
+
+     path('area/',views.area,name='area'),
+     path('property_type/',views.property_type,name='property_type'),
+
 ]
