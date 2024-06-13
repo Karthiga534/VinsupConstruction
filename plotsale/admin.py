@@ -5,6 +5,10 @@ from django.contrib import admin
 class AreaAdmin(admin.ModelAdmin):
     list_display = ('name',)
 
+@admin.register(Water)
+class WaterAdmin(admin.ModelAdmin):
+    list_display = ('name',) 
+
 @admin.register(PropertyType)
 class PropertyTypeAdmin(admin.ModelAdmin):
     list_display = ('name',)
@@ -44,4 +48,16 @@ class QueriesAdmin(admin.ModelAdmin):
 @admin.register(PlotSales)
 class PlotSalesAdmin(admin.ModelAdmin):
     list_display = ('plot_id',)
+
+@admin.register(PaymentMethod)
+class PaymentMethodAdmin(admin.ModelAdmin): 
+    list_display = ('name',)
+
+@admin.register(PaymentStatus)
+class PaymentStatusAdmin(admin.ModelAdmin): 
+    list_display = ('name',)
+
+@admin.register(BrokerPayment)
+class BrokerPaymentAdmin(admin.ModelAdmin): 
+    list_display = ('payment_id',)
 

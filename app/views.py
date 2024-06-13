@@ -2870,7 +2870,7 @@ def make_labour_present(request,pk):
     return Response(ser.errors,status=400)
    
 
-# project subcontract attendence
+# # project subcontract attendence
 @api_view(['GET'])
 @login_required(login_url='login')
 def attendancelist(request,pk):  #change name 
@@ -2896,6 +2896,40 @@ def attendancelist(request,pk):  #change name
         
     querysets =ProjectSubContract.objects.filter(company__in=company)
     return PaginationAndFilter(querysets, request,ProjectSubContractAttendenceSerialiser,date_field ="created_at")
+
+@api_view(['GET'])
+@login_required(login_url='apilogin')
+def attendancelistpro(request, pk):  # Change name
+    user = request.user
+    allow, msg = check_user(request, ProjectSubContractLabourAttendence, instance=False)  # CHANGE model
+    if not allow:
+        context = {"unauthorized": msg}
+        return render(request, "login.html", context)
+
+    contractor = request.GET.get('contractor')  # Corrected spelling
+    start_date = request.GET.get('start_date')
+    end_date = request.GET.get('end_date')
+    project_id = request.GET.get('project')  # Retrieve project ID
+
+    company, _ = get_user_company(user)
+    pk = int(pk)
+    if pk != 0 or contractor != "0" or start_date or end_date or project_id:  # Check if any filter is provided
+        querysets = ProjectSubContractLabourAttendence.objects.filter(company__in=company).order_by("-id")
+        if pk != 0:
+            querysets = querysets.filter(contract__id=pk, company__in=company)
+        if contractor != "0":
+            querysets = querysets.filter(contract__contractor__id=int(contractor))
+        if project_id:  # If project ID is provided, filter by project
+            querysets = querysets.filter(contract__project__id=int(project_id))
+        if start_date:
+            querysets = querysets.filter(date__gte=start_date)
+        if end_date:
+            querysets = querysets.filter(date__lte=end_date)
+        return PaginationAndFilter(querysets, request, ProjectSubContractLabourAttendenceSerializer, date_field="date")
+
+    querysets = ProjectSubContract.objects.filter(company__in=company)
+    return PaginationAndFilter(querysets, request, ProjectSubContractAttendenceSerialiser, date_field="created_at")
+
 
 
 
@@ -2952,7 +2986,7 @@ def pettycash_list(request, pk=None):
 def add_pettycash (request):  # CHANGE name
     user=request.user
     allow,msg= check_user(request,PettyCash,instance=False)  # CHANGE model
-    if not allow:
+    if not allow:       
         return JsonResponse({'details':[msg]}, status=status.HTTP_401_UNAUTHORIZED)
     
     request_data=request.POST.copy().dict()

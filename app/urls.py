@@ -101,7 +101,6 @@ urlpatterns = [
     path('purchaselist/',api.purchaselist,name='purchaselist'), 
 
     path('project-purchase-history/<int:pk>/',api.project_purchaselist,name='project-purchase-history'),
-
     path("purchase-status-change/<int:pk>/",api.purchase_status_change, name = 'purchase-status-change') ,
     # path('purchase-filter/<str:pk>/', api.purchase_filter, name="purchase_filter"),
 
@@ -190,7 +189,8 @@ urlpatterns = [
     path('delete_project-category/<int:pk>/', api.delete_project_category, name='delete_project-category'),
 
     # project
-    path('project/', api.project, name='project'),
+    path('project/', api.project, name='project'), 
+
     # api
     path('add_project/', api.add_project, name='add_project'),
     path('update_project/<int:pk>/', api.update_project, name='update_project'),
@@ -203,6 +203,7 @@ urlpatterns = [
     path('delete_attendancereport/<int:pk>/', views.delete_attendancereport, name='delete_attendancereport'),
     # path('attendancelist/<int:pk>/', views.attendancelist, name='attendancelist'),
     path('attendancelist/<str:pk>/', views.attendancelist, name="attendancelist"),
+    path('attendancelists/<str:pk>/', views.attendancelistpro, name="attendancelist"),
 
     # path('contractcategory/',views.contractcategory,name= 'contractcategory'),
     path('contractor',views.contractor,name= 'contractor'), 
@@ -225,7 +226,6 @@ urlpatterns = [
     path("employee_salary_list/<str:pk>/" , views.employee_salary_list,name="emp-salary-list"),
     path('employee-salary/<int:pk>/',views.employee_labour_salary, name="employee_labour_salary"),
     path('employee-salary/',views.employee_salary, name="employee-salary"),
-
 
     path('contractor-payment/',views.contractor_payment_management, name="contractor-payment"),
     path('signin/',views.signin, name="SignIn"),            
