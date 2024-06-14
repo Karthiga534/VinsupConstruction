@@ -190,9 +190,10 @@ urlpatterns = [
 
     # project
     path('project/', api.project, name='project'), 
+    path('project/<str:filter_by>/', api.project, name='project_filtered'), 
 
     # api
-    path('add_project/', api.add_project, name='add_project'),
+    path('add_project/', api.add_project, name='add_project'), 
     path('update_project/<int:pk>/', api.update_project, name='update_project'),
     path('delete_project/<int:pk>/', api.delete_project, name='delete_project'),
     path('update_projectstatus/', api.update_projectstatus, name='update_projectstatus'),
@@ -216,7 +217,7 @@ urlpatterns = [
     path('profit/',views.profit, name="profit"),   
     path('projectlist/',views.projectlist,name='projectlist'),  
 
-    # --------------------------------------------------------  *****  SALARY  ******** ---------------------------------------------
+# --------------------------------------------------------  *****  SALARY  ******** ---------------------------------------------
 
     path('labour-salary-list/<str:pk>/',views.labour_salary_list,name="labour-salary-list"),
     path('labour-salary/',views.labour_salary,name='labour-salary'),
@@ -247,11 +248,14 @@ urlpatterns = [
     path('delete_machinary_charges/<int:pk>/',views.delete_machinary_charges, name='delete_machinary_charges'),
 
 #-------------------------------------labourroles and salary--------------------------------------------------------
+
     path('labour_roles_and_salary/', views.labour_roles_and_salary, name='labour_roles_and_salary'),
     path('add_labour_role/', views.add_labour_roles_and_salary, name='add_labour_role'),
     path('update_labour_role/<int:pk>/', views.update_labour_roles_and_salary, name='update_labour_role'),
     path('delete_labour_role/<int:pk>/', views.delete_labour_roles_and_salary, name='delete_labour_role'),
+
 #---------------------------------------------- Labours -------------------------------------------------------------
+
     path('labours/',views.labours, name='labours'),
     path('add_labours/',views.add_labours, name='add_labours'),
     path('update_labours/<int:pk>/',views.update_labours, name='update_labours'),

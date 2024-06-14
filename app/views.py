@@ -1118,7 +1118,7 @@ def expense(request):  #change name
 @api_view(['POST'])
 @check_valid_user
 @check_user_company
-@check_admin
+# @check_admin
 @login_required(login_url='login')
 def add_expense (request):  # CHANGE name
     user=request.user
@@ -1129,7 +1129,7 @@ def add_expense (request):  # CHANGE name
     request_data=request.POST.copy().dict()
     attachments = request.FILES.get("attachment",None) 
 
-    if user.admin:
+    if user:
         request_data['company'] = user.company.id
 
     if attachments: 
@@ -3094,12 +3094,32 @@ def clientcash(request, pk):
     return render(request, 'project/clientcash.html', context)
 
 # API view
+# @api_view(['GET', 'POST'])
+# def clientcashpay(request, pk):
+#     project = get_object_or_404(Project, pk=pk)
+#     payment_history = PaymentHistory.objects.filter(project=project)
+    
+#     if request.method == 'POST':
+#         data = request.data.copy()
+#         data['project'] = project.id  # Set the project field
+#         serializer = PaymentHistorySerializer(data=data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data, status=status.HTTP_201_CREATED)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+#     return Response("This endpoint only supports POST requests.", status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
 @api_view(['GET', 'POST'])
 def clientcashpay(request, pk):
     project = get_object_or_404(Project, pk=pk)
-    payment_history = PaymentHistory.objects.filter(project=project)
-    
-    if request.method == 'POST':
+
+    if request.method == 'GET':
+        payment_history = PaymentHistory.objects.filter(project=project)
+        serializer = PaymentHistorySerializer(payment_history, many=True)
+        return Response(serializer.data)
+
+    elif request.method == 'POST':
         data = request.data.copy()
         data['project'] = project.id  # Set the project field
         serializer = PaymentHistorySerializer(data=data)
@@ -3108,7 +3128,7 @@ def clientcashpay(request, pk):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    return Response("This endpoint only supports POST requests.", status=status.HTTP_405_METHOD_NOT_ALLOWED)
+    return Response("Unsupported method", status=status.HTTP_405_METHOD_NOT_ALLOWED)
     
 
 
