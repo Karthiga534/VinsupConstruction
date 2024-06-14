@@ -1148,28 +1148,61 @@ def delete_material_library(request,pk):
 
 from django.template.loader import render_to_string
 # project
+# @login_required(login_url='login')
+# def project(request):  #change name 
+#     user=request.user
+#     allow,msg= check_user(request,Project,instance=False)  # CHANGE model
+#     if not allow:
+#          context ={"unauthorized":msg}
+#          return render(request,"login.html",context)      
+#     querysets = Project.objects.filter(company=request.user.company).order_by("-id")   #change query
+#     category =ProjectCategory.objects.filter(company=request.user.company).order_by("-id")
+#     engineer =Employee.objects.filter(company=request.user.company, user__disable = False).order_by("-id")
+#     duration =Duration.objects.all()
+#     priority =Priority.objects.all()
+#     print(category)
+#     queryset,pages ,search=customPagination(request,Project,querysets)    #change, model
+#     context= {'queryset': queryset,"location":"project","pages" :pages,"search" :search ,'category' :category ,
+#         "engineer" :engineer , 'duration' :duration ,"priority" :priority
+#     }   #change location name 
+#     return render(request,"project/project.html",context)    #change template name
+
+#     html = render_to_string('project/project.html', context)
+#     return JsonResponse({'html': html})
+
 @login_required(login_url='login')
-def project(request):  #change name 
-    user=request.user
-    allow,msg= check_user(request,Project,instance=False)  # CHANGE model
+def project(request, filter_by=None):
+    user = request.user
+    allow, msg = check_user(request, Project, instance=False)
     if not allow:
-         context ={"unauthorized":msg}
-         return render(request,"login.html",context)      
-    querysets = Project.objects.filter(company=request.user.company).order_by("-id")   #change query
-    category =ProjectCategory.objects.filter(company=request.user.company).order_by("-id")
-    engineer =Employee.objects.filter(company=request.user.company, user__disable = False).order_by("-id")
-    duration =Duration.objects.all()
-    priority =Priority.objects.all()
-    print(category)
-    queryset,pages ,search=customPagination(request,Project,querysets)    #change, model
-    context= {'queryset': queryset,"location":"project","pages" :pages,"search" :search ,'category' :category ,
-        "engineer" :engineer , 'duration' :duration ,"priority" :priority
-    }   #change location name 
-    return render(request,"project/project.html",context)    #change template name
+        context = {"unauthorized": msg}
+        return render(request, "login.html", context)
+    querysets = Project.objects.filter(company=user.company).order_by("-id")
 
-    html = render_to_string('project/project.html', context)
-    return JsonResponse({'html': html})
+    if filter_by == 'ongoing':
+        querysets = querysets.filter(status__code='1')  
+    elif filter_by == 'completed':
+        querysets = querysets.filter(status__code='0')  
 
+    category = ProjectCategory.objects.filter(company=user.company).order_by("-id")
+    engineer = Employee.objects.filter(company=user.company, user__disable=False).order_by("-id")
+    duration = Duration.objects.all()
+    priority = Priority.objects.all()
+
+    queryset, pages, search = customPagination(request, Project, querysets)
+
+    context = {
+        'queryset': queryset,
+        "location": "project",
+        "pages": pages,
+        "search": search,
+        'category': category,
+        "engineer": engineer,
+        'duration': duration,
+        "priority": priority
+    }
+
+    return render(request, "project/project.html", context)
 
  
 @api_view(['POST'])

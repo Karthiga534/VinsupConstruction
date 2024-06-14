@@ -41,12 +41,12 @@
                                                 <h2 class="mt-4 ff-secondary fw-semibold">
                                                     <span id="project_count">{{ project_count }}</span>
                                                 </h2>
-                                                <p class="mb-0 text-muted">
+                                                {% comment %} <p class="mb-0 text-muted">
                                                     <span class="badge bg-light text-success mb-0">
                                                         <i class="ri-arrow-up-line align-middle"></i>
 
                                                         {{ previous_month_project_count }} </span> vs. previous month
-                                                </p>
+                                                </p> {% endcomment %}
                                             </div>
                                             <div>
                                                 <div class="avatar-sm flex-shrink-0">
@@ -68,7 +68,7 @@
 
                             <!-- end col-->
                             <div class="col-md-3">
-                                <a href="{% url 'project' %}">
+                                <a href="{% url 'project_filtered' 'ongoing' %}">
                                 <div class="card card-animate">
                                     <div class="card-body">
                                         <div class="d-flex justify-content-between">
@@ -77,12 +77,12 @@
                                                 <h2 class="mt-4 ff-secondary fw-semibold">
                                                     <span id="project_count">{{ ongoing_project_count }}</span>
                                                 </h2>
-                                                <p class="mb-0 text-muted">
+                                                {% comment %} <p class="mb-0 text-muted">
                                                     <span class="badge bg-light text-danger mb-0">
                                                         <i class="ri-arrow-down-line align-middle"></i>
                                                         {{ previous_month_ongoing_project_count }}
                                                     </span> vs. previous month
-                                                </p>
+                                                </p> {% endcomment %}
                                             </div>
                                             <div>
                                                 <div class="avatar-sm flex-shrink-0">
@@ -101,7 +101,7 @@
                             <!-- end col-->
 
                             <div class="col-md-3">
-                                <a href="{% url 'project' %}">
+                                <a href="{% url 'project_filtered' 'completed' %}">
                                 <div class="card card-animate">
                                     <div class="card-body">
                                         <div class="d-flex justify-content-between">
@@ -110,12 +110,12 @@
                                                 <h2 class="mt-4 ff-secondary fw-semibold">
                                                     <span id="project_count">{{ completed_project_count }}</span>
                                                 </h2>
-                                                <p class="mb-0 text-muted">
+                                                {% comment %} <p class="mb-0 text-muted">
                                                     <span class="badge bg-light text-danger mb-0">
                                                         <i class="ri-arrow-down-line align-middle"></i>
                                                         {{ previous_month_completed_project_count }}
                                                     </span> vs. previous month
-                                                </p>
+                                                </p> {% endcomment %}
                                             </div>
                                             <div>
                                                 <div class="avatar-sm flex-shrink-0">
@@ -146,12 +146,12 @@
                                                 <h2 class="mt-4 ff-secondary fw-semibold">
                                                     <span id="contractor-count">{{ contractor_count }}</span>
                                                 </h2>
-                                                <p class="mb-0 text-muted">
+                                                {% comment %} <p class="mb-0 text-muted">
                                                     <span class="badge bg-light text-success mb-0">
                                                         <i class="ri-arrow-up-line align-middle"></i>
                                                         {{ previous_month_contractor_count }}
                                                     </span> vs. previous month
-                                                </p>
+                                                </p> {% endcomment %}
                                             </div>
                                             <div>
                                                 <div class="avatar-sm flex-shrink-0">
@@ -185,12 +185,12 @@
                                                     <span id="quatation-count" data-target="">{{ quatation_count  }}</span>
                                                        
                                                 </h2>
-                                                <p class="mb-0 text-muted">
+                                                {% comment %} <p class="mb-0 text-muted">
                                                     <span class="badge bg-light text-danger mb-0">
                                                         <i class="ri-arrow-down-line align-middle"></i>
                                                         {{ previous_month_quatation_count }}
                                                     </span> vs. previous month
-                                                </p>
+                                                </p> {% endcomment %}
                                             </div>
                                             <div>
                                                 <div class="avatar-sm flex-shrink-0">
@@ -219,12 +219,12 @@
                                                     <span id="projectsubcontract-count" data-target="">
                                                         {{ projectsubcontract_count }}</span>
                                                 </h2>
-                                                <p class="mb-0 text-muted">
+                                                {% comment %} <p class="mb-0 text-muted">
                                                     <span class="badge bg-light text-danger mb-0">
                                                         <i class="ri-arrow-down-line align-middle"></i>
                                                         {{ previous_month_projectsubcontract_count }}
                                                     </span> vs. previous month
-                                                </p>
+                                                </p> {% endcomment %}
                                             </div>
                                             <div>
                                                 <div class="avatar-sm flex-shrink-0">
@@ -500,12 +500,12 @@
                                                 <h2 class="mt-4 ff-secondary fw-semibold">
                                                     <span id="companylabour-count">{{ companylabour_count }}</span>
                                                 </h2>
-                                                <p class="mb-0 text-muted">
+                                                {% comment %} <p class="mb-0 text-muted">
                                                     <span class="badge bg-light text-success mb-0">
                                                         <i class="ri-arrow-up-line align-middle"></i>
                                                         {{ previous_month_companylabour_count }}
                                                     </span> vs. previous month
-                                                </p>
+                                                </p> {% endcomment %}
                                             </div>
                                             <div>
                                                 <div class="avatar-sm flex-shrink-0">
@@ -653,11 +653,11 @@
                                                     <span id="employee-count">{{ employee_count }}</span>
                                                 </h2>
                                                 <p class="mb-0 text-muted">
-                                                    <span class="badge bg-light text-danger mb-0">
+                                                    {% comment %} <span class="badge bg-light text-danger mb-0">
                                                         <i class="ri-arrow-down-line align-middle"></i>
 
                                                         {{ previous_month_employee_count }}
-                                                    </span> vs. previous month
+                                                    </span> vs. previous month {% endcomment %}
                                                 </p>
                                             </div>
 
