@@ -84,13 +84,13 @@
                                 <span id="unitError" class="error-message"></span>
 
                               </div>
-
+{% comment %} 
                               <div class="col-md-6 mt-2 ">
                                 <label for="id_price" class="form-label">price <span style="color: red;">*</span></label>
                                 <input type="number" name="price" class="form-control" id="price" value="">
                                 <span id="priceError" class="error-message"></span>
 
-                              </div>
+                              </div> {% endcomment %}
 
 
                             </div>
@@ -214,13 +214,13 @@
 
                                   </div>
 
-
+{% comment %} 
                                   <div class="mt-2 mb-2">
                                     <label for="editCategoryprice">price:</label>
                                     <input type="number" class="form-control" id="{{i.id}}_price" name="price"
                                       value="{{ i.price }}">
                                     <span id="{{i.id}}_priceError" class="error-message"></span>
-                                  </div>
+                                  </div> {% endcomment %}
 
                                   <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
@@ -302,11 +302,11 @@
                                       <label for="{{i.id}}_unit" class="form-label">Unit:</label>
                                       <input type="text" class="form-control" id="{{i.id}}_unit" name="unit" value="{{ i.unit }}" readonly>
                                   </div>
-
+{% comment %} 
                                   <div class="col-md-6 mt-2">
                                     <label for="{{i.id}}_price" class="form-label">Price:</label>
                                     <input type="text" class="form-control" id="{{i.id}}_price" name="price" value="{{ i.price }}" readonly>
-                                </div>
+                                </div> {% endcomment %}
 
                                     
                                 </div>
@@ -428,11 +428,11 @@
       var errors = {};
       var formData = new FormData();
 
-      var requiredKeys = ['item','unit','price'];   //change
+      var requiredKeys = ['item','unit'];   //change
 
 
       formData.append('item', getValueOrDefault(formElement.querySelector('input[name="item"]').value));              //change
-      formData.append('price', getValueOrDefault(formElement.querySelector('input[name="price"]').value));
+     // formData.append('price', getValueOrDefault(formElement.querySelector('input[name="price"]').value));
       formData.append('unit', getValueOrDefault(formElement.querySelector('select[name="unit"]').value));
 
 
@@ -526,11 +526,11 @@
       const formData = new FormData();
 
       formData.append('item', getValueOrDefault(formElement.querySelector('input[name="item"]').value));    //change
-      formData.append('price', getValueOrDefault(formElement.querySelector('input[name="price"]').value));
+     // formData.append('price', getValueOrDefault(formElement.querySelector('input[name="price"]').value));
       formData.append('unit', getValueOrDefault(formElement.querySelector('select[name="unit"]').value));
 
 
-      var requiredKeys = ['item','unit','price'];      //change
+      var requiredKeys = ['item','unit'];      //change
 
       requiredKeys.forEach(function (key) {
         var value = formData.get(key);
