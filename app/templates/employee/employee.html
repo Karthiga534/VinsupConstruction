@@ -59,13 +59,17 @@
                             <div class="modal-body">
                               <div class="row">
                                 <div class="col-md-6 mt-2">
+                                  <label for="id_name" class="form-label">Employee Name <span style="color: red;">*</span>  </label>
+                                  <input type="text" name="name" class="form-control" id="name" >
+                                  <span id="nameError" class="error-message"></span>
+                                </div>
+                                <div class="col-md-6 mt-2">
                                   <label for="" class="form-label"> Date <span style="color: red;">*</span>  </label>
                                   <input type="date" class="form-control" id="start_date"
                                     name="start_date">
                                   <span id="start_dateError"
                                     class="error-message"></span> 
                                 </div>
-
 
                                 <div class="col-md-6 mt-2">
                                   <label for="" class="form-label">Employee Image
@@ -74,16 +78,12 @@
                                       name="img">
                                   <span id="imgError"
                                       class="error-message"></span>
-                              </div>
-
-                                <div class="col-md-6 mt-2">
-                                  <label for="id_name" class="form-label">Employee Name <span style="color: red;">*</span>  </label>
-                                  <input type="text" name="name" class="form-control" id="name" >
-                                  <span id="nameError" class="error-message"></span>
                                 </div>
+
+                                
                                 <div class="col-md-6 mt-2">
                                   <label for="" class="form-label">Employee Role <span style="color: red;">*</span>  </label>
-                                  <select class="form-select mb-3" aria-label="Default select example" id="role"
+                                  <select class="form-select mb-0" aria-label="Default select example" id="role"
                                     name="role">
                                     {% for role in roles %}
                                     <option value="{{ role.id }}">{{ role.name }}</option>
@@ -92,20 +92,38 @@
                                   <span id="roleError" class="error-message"></span>
                                 </div>
                                 <div class="col-md-6 mt-2">
-                                  <label for="" class="form-label">Phone No  <span style="color: red;">*</span> </label>
+                                  <label for="" class="form-label">Mobile No  <span style="color: red;">*</span> </label>
                                   <input type="text" name="mobile" class="form-control" id="mobile">
                                   <span id="mobileError" class="error-message"></span>
                                 </div>
+                                
                                 <div class="col-md-6 mt-2">
-                                  <label for="" class="form-label">Address  <span style="color: red;">*</span> </label>
-                                  <textarea class="form-control" name="address" rows="3" id="address"></textarea>
-                                  <span id="addressError" class="error-message"></span>
-                                </div>
+                                  <label for="" class="form-label">Aadhaar Card
+                                    <span style="color: red;">*</span> </label>
+                                  <input type="file" class="form-control" id="aadhaar_card_image"
+                                      name="aadhaar_card_image">
+                                  <span id="aadhaar_card_imageError"
+                                      class="error-message"></span>
+                              </div>
+
+                              <div class="col-md-6 mt-2">
+                                <label for="" class="form-label">Pan Card
+                                  <span style="color: red;">*</span> </label>
+                                <input type="file" class="form-control" id="pan_card_image"
+                                    name="pan_card_image">
+                                <span id="pan_card_imageError"
+                                    class="error-message"></span>
+                            </div>
                                 <div class="col-md-6 mt-2">
                                   <label for="" class="form-label">Month Salary  <span style="color: red;">*</span> </label>
                                   <input type="text" name="monthly_salary" class="form-control" id="monthly_salary">
                                   <span id="monthly_salaryError" class="error-message"></span>
                                 </div>
+                              </div>
+                              <div class="col-md-6 mt-2">
+                                <label for="" class="form-label">Address  <span style="color: red;">*</span> </label>
+                                <textarea class="form-control" name="address" rows="3" id="address"></textarea>
+                                <span id="addressError" class="error-message"></span>
                               </div>
 
                               {% comment %} <div class="col-md-6 mt-2">
@@ -286,6 +304,7 @@
                                         value="{{i.start_date}}" readonly>
                                     </div>
 
+
                                     <div class="col-md-6 mt-3">
                                       <label for="{{ i.id }}_img" class="form-label">Employee Image:</label>
                                       <br>
@@ -323,6 +342,35 @@
                                       <input type="text" class="form-control" id="{{i.id}}_address" name="address"
                                         value="{{i.address}}" readonly>
                                     </div>
+
+                                    <div class="col-md-6 mt-3">
+                                      <label for="{{ i.id }}_aadhaar_card_image" class="form-label">Aadhaar Card:</label>
+                                      <br>
+                                      {% if i.aadhaar_card_image %}
+                                          <span class="file-span">
+                                              <a target="_blank" href="{{ i.aadhaar_card_image.url }}">{{ i.aadhaar_card_image|filename }}</a>
+                                          </span>
+                                      {% else %}
+                                          <span class="file-span">No image available</span>
+                                      {% endif %}
+                                  </div>
+                                  
+
+                                <div class="col-md-6 mt-3">
+                                  <label for="{{ i.id }}_pan_card_image" class="form-label">Pan Card:</label>
+                                  <br>
+                                  {% if i.pan_card_image %}
+                                      <span class="file-span">
+                                          <a target="_blank" href="{{ i.pan_card_image.url }}">{{ i.pan_card_image|filename }}</a>
+                                      </span>
+                                  {% else %}
+                                      <span class="file-span">No image available</span>
+                                  {% endif %}
+                                </div>
+
+                               
+                              
+                                
 
                                     <div class="col-md-6 mt-3">
                                       <label for="{{i.id}}_monthly_salary" class="form-label">Month Salary:</label>
@@ -407,20 +455,6 @@
                                           class="error-message"></span>
   
                                       </div>
-
-                                      {% comment %} <div class="col-md-6 mt-2">
-                                        <label for="{{ i.id }}_img">Employee Image:</label>
-                                        {% if i.img %}
-                                            <span class="file-span">
-                                                <a target="_blank" href="{{ i.img.url }}">{{ i.img|filename }}</a>
-                                            </span>
-                                        {% else %}
-                                            <span class="file-span">No image available</span>
-                                        {% endif %}
-                                       
-                                        <input type="file" class="form-control" id="{{ i.id }}_img" name="img" value="{{ i.img }}" readonly>
-                                      </div> {% endcomment %}
-                                    
                                     
       
 
@@ -434,6 +468,24 @@
                                         <span id="{{i.id}}_nameError" class="error-message"></span>
 
                                       </div>
+
+                                      <div class="col-md-6 mb-3">
+                                        <label for="{{ i.id }}_img" class="form-label">Employee Image:</label>
+                                        <input type="file" class="form-control mb-2" id="{{ i.id }}_id_img" name="img" value="{{ i.img }}">
+                                        
+                                        <span class="file-span">
+                                            {% if i.img %}
+                                                <a target="_blank" href="{{ i.img.url }}">
+                                                    {{ i.img|filename }}
+                                                </a>
+                                            {% else %}
+                                                No file uploaded
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                           
+                                      
+
 
                                       <div class="col-md-6 mt-2">
                                         <label for="" class="form-label">Employee Role :</label>
@@ -469,6 +521,36 @@
                                         <span id="{{i.id}}_addressError" class="error-message"></span>
 
                                       </div>
+
+                                      <div class="col-md-6 mb-3">
+                                        <label for="{{ i.id }}_aadhaar_card_image" class="form-label">Aadhaar Card:</label>
+                                        <input type="file" class="form-control mb-2" id="{{ i.id }}_id_aadhaar_card_image" name="aadhaar_card_image" value="{{ i.aadhaar_card_image }}">
+                                        
+                                        <span class="file-span">
+                                            {% if i.aadhaar_card_image %}
+                                                <a target="_blank" href="{{ i.aadhaar_card_image.url }}">
+                                                    {{ i.aadhaar_card_image|filename }}
+                                                </a>
+                                            {% else %}
+                                                No file uploaded
+                                            {% endif %}
+                                        </span>
+                                    </div>
+
+                                      <div class="col-md-6 mb-3">
+                                        <label for="{{ i.id }}_pan_card_image" class="form-label">Pan Card:</label>
+                                        <input type="file" class="form-control mb-2" id="{{ i.id }}_id_pan_card_image" name="pan_card_image" value="{{ i.pan_card_image }}">
+                                        
+                                        <span class="file-span">
+                                            {% if i.pan_card_image %}
+                                                <a target="_blank" href="{{ i.pan_card_image.url }}">
+                                                    {{ i.pan_card_image|filename }}
+                                                </a>
+                                            {% else %}
+                                                No file uploaded
+                                            {% endif %}
+                                        </span>
+                                    </div>
 
                                       <div class="col-md-6 mt-2">
 
@@ -707,7 +789,9 @@
           
           "mobile",
           "address",
-          "monthly_salary"
+          "monthly_salary",
+          "aadhaar_card_image",
+          "pan_card_image"
           // "bankaccount",
           // "ifsccode",
           // "bankname",
@@ -717,6 +801,16 @@
         formData.append(
           "img",
           getValueOrDefault($('#createForm input[name="img"]').val())
+        );
+
+        formData.append(
+          "aadhaar_card_image",
+          getValueOrDefault($('#createForm input[name="aadhaar_card_image"]').val())
+        );
+
+        formData.append(
+          "pan_card_image",
+          getValueOrDefault($('#createForm input[name="pan_card_image"]').val())
         );
 
         formData.append(
@@ -771,10 +865,21 @@
         );
 
 
-        var img = document.querySelector('#createForm input[type="file"]').files[0];
-					if (img) {
-						formData.append("img", img);
-					}
+        var imgFile = document.querySelector('#createForm input[name="img"]').files[0];
+        if (imgFile) {
+            formData.append("img", imgFile);
+        }
+        
+        var aadhaarCardFile = document.querySelector('#createForm input[name="aadhaar_card_image"]').files[0];
+        if (aadhaarCardFile) {
+            formData.append("aadhaar_card_image", aadhaarCardFile);
+        }
+        
+        var panCardFile = document.querySelector('#createForm input[name="pan_card_image"]').files[0];
+        if (panCardFile) {
+            formData.append("pan_card_image", panCardFile);
+        }
+        
 
 
         console.log("FormData:", formData);
@@ -866,6 +971,28 @@
 
         const formData = new FormData();
 
+        var formElement = document.getElementById(`editForm${saveId}`);
+
+        var img_input = formElement.querySelector('input[name="img"]');
+        if (img_input && img_input.files.length > 0) {
+            var img = img_input.files[0];
+            formData.append("img", img);
+        }
+
+        var aadhaar_card_image_input = formElement.querySelector('input[name="aadhaar_card_image"]');
+        if (aadhaar_card_image_input && aadhaar_card_image_input.files.length > 0) {
+            var aadhaar_card_image = aadhaar_card_image_input.files[0];
+            formData.append("aadhaar_card_image", aadhaar_card_image);
+        }
+
+        var pan_card_image_input = formElement.querySelector('input[name="pan_card_image"]');
+        if (pan_card_image_input && pan_card_image_input.files.length > 0) {
+            var pan_card_image = pan_card_image_input.files[0];
+            formData.append("pan_card_image", pan_card_image);
+        }
+
+
+       
         formData.append(
           "name",
           getValueOrDefault($(`#editForm${saveId} input[name="name"]`).val())
@@ -884,8 +1011,8 @@
 
 
         formData.append(
-          "mobile",
-          getValueOrDefault($(`#editForm${saveId} input[name="mobile"]`).val())
+            "mobile",
+            getValueOrDefault($(`#editForm${saveId} input[name="mobile"]`).val())
         );
 
         formData.append(
@@ -919,7 +1046,7 @@
         );
 
 
-   
+      
 
      
 

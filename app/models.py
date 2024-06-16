@@ -434,8 +434,7 @@ class EmpRoles(models.Model):
 
     def __str__(self):
         return self.name
-    
-    
+        
 #----------------------------------------------------------------------- COMPANY STAFFS-----------------------------------------------------
     
 # EMPLOYEE 
@@ -455,6 +454,9 @@ class Employee(models.Model):
     wage=models.DecimalField(max_digits=10, decimal_places=2,null=True, blank=True)
     payment_schedule = models.ForeignKey(PaymentSchedule, on_delete=models.CASCADE, null=True, blank=True) 
     monthly_salary = models.DecimalField(max_digits=10, decimal_places=2,null=True, blank=True)
+
+    aadhaar_card_image = models.FileField(upload_to="aadhaar_images", null=True, blank=True)
+    pan_card_image = models.FileField(upload_to="pan_images", null=True, blank=True)
 
     def __str__(self):
         return self.name
@@ -1632,8 +1634,8 @@ class ProjectSubContract(models.Model):
     name= models.CharField(max_length=255,null=True,blank=True)
     type = models.ForeignKey(ContractType, on_delete=models.CASCADE,null=True,blank=True)
     contractor = models.ForeignKey(Contractor, on_delete=models.CASCADE,null=True,blank=True)
-    start_date = models.DateField()
-    end_date = models.DateField()
+    start_date = models.DateField(null=True, blank=True)
+    end_date = models.DateField(null=True, blank=True)
     contract_amount = models.DecimalField(max_digits=10, decimal_places=2)
     payment_schedule = models.ForeignKey(PaymentSchedule, on_delete=models.CASCADE, null=True, blank=True)
     status = models.ForeignKey(WorkStatus, on_delete=models.CASCADE,null=True,blank=True)
@@ -2168,6 +2170,7 @@ class EmployeeProfile(models.Model):
     
 class CompanyProfile(models.Model):
     company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='profile')
+    attachment  =models.FileField(upload_to="img", null=True, blank=True)
     email = models.EmailField(null=True, blank=True)
     phone_number = models.CharField(max_length=15, null=True, blank=True)
     gst_number = models.CharField(max_length=15, null=True, blank=True)

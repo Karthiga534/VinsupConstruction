@@ -50,7 +50,7 @@
                                             Back </a>
                                     </div>
                                 </div>
-                                <h4>Project Status</h4>
+                                <h4>Payment Process</h4>
 
                                 <div class="row">
                                     <div class="col-md-4 mt-2">
@@ -218,6 +218,7 @@
                                                         <th>Payment Method</th>
                                                         <th>Payment Amount</th>
                                                         <th>Receipt</th>
+                                                        <th >Action</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -234,12 +235,194 @@
                                                                 No Image
                                                             {% endif %}
                                                         </td>
+                                                        <td>
+
+                                                            <div class="dropdown d-inline-block">
+                                                                <button class="btn btn-soft-secondary btn-sm dropdown" type="button"
+                                                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                                                    <i class="ri-more-fill align-middle"></i>
+                                                                </button>
+                                                                <ul class="dropdown-menu dropdown-menu-end">
+                                                                    <li><a class="dropdown-item edit-item-btn"
+                                                                             href="#!"
+                                                                            onclick="openModal('editModal','{{ payment.id }}')"><i
+                                                                                class="ri-pencil-fill align-bottom me-2 text-muted"></i>
+                                                                            Edit</a></li>
+                                                                </ul>
+                                                                <div class="modal fade" id="editModal_{{payment.id}}" tabindex="-1"
+													role="dialog" aria-labelledby="editModalLabel" aria-hidden="true"
+													data-bs-backdrop="static" data-bs-keyboard="false">
+
+													<div class="modal-dialog modal-lg">
+
+														<div class="modal-content">
+
+															<div class="modal-header">
+
+																<h5 class="modal-title" id="editModalLabel"> Edit
+																	Payment History </h5>
+
+																<button type="button" class="btn-close"
+																	data-bs-dismiss="modal" aria-label="Close"
+																	onclick="CloseModel('editModal','{{payment.id}}')"></button>
+
+															</div>
+
+															<form id="editForm{{ payment.id }}" enctype="multipart/form-data">
+
+																{% csrf_token %}
+																<div class="modal-body">
+
+																	<div class="row">
+
+																		<div class="col-md-6 mb-3">
+
+																			<label for="edit_date"
+																				class="form-label">Date:</label>
+
+																			<input type="date" class="form-control"
+																				id="{{payment.id}}_date"
+																				name="date"
+																				value="{{ payment.date|date:'Y-m-d' }}" />
+
+																			<span id="{{payment.id}}_dateError"
+																				class="error-message"></span>
+
+																		</div>
+
+
+																		
+
+
+																		<div class="col-md-6 mb-3">
+
+																			<label for="edit_receipt_number"
+																				class="form-label">Receipt Number:</label>
+
+																			<input type="text" class="form-control"
+																				id="{{payment.id}}_receipt_number" name="receipt_number"
+																				value="{{payment.receipt_number}}" />
+
+																			<span id="{{payment.id}}_receipt_numberError"
+																				class="error-message"></span>
+
+																		</div>
+
+																		
+																		
+
+
+
+
+																		<div class="col-md-6 mb-3">
+																			<label for="edit_payment_method"
+																				class="form-label">Payment Method:</label>
+																			<select class="form-select"
+																				aria-label="Default select example"
+																				id="{{payment.id}}_payment_method" name="payment_method">
+
+
+																				<option value="{{payment.payment_method.id}}"
+																					selected>{{payment.payment_method.name}}
+																				</option>
+																				<option>----------- </option>
+																				{% for j in payment_methods %}
+																				<option value="{{j.id}}">{{j.name}}
+																				</option>
+																				{% endfor %}
+
+
+																			</select>
+																			<span id="{{payment.id}}_payment_methodError"
+																				class="error-message"></span>
+																		</div>
+
+																		
+
+																		<div class="col-md-6 mb-3">
+
+																			<label for="edit_payment_amount"
+																				class="form-label">Payment Amount:</label>
+
+																			<input type="text" class="form-control"
+																				id="{{payment.id}}_payment_amount"
+																				name="payment_amount"
+																				value="{{payment.payment_amount}}" />
+
+																			<span id="{{payment.id}}_payment_amountError"
+																				class="error-message"></span>
+
+																		</div>
+
+
+																		
+
+																		 <div class="col-md-6 mb-3">
+																			<label for="edit_img">Receipt
+																				:</label>
+																			<input type="file" class="form-control mb-2"
+																				id="{{payment.id}}id_img"
+																				name="img"
+																				value="{{ payment.img }}">
+
+																			<span class="file-span">
+																				<a target="_blank"
+																					href="{{ payment.img.url}}">
+																					{{payment.img |filename }}
+																					</a></span>
+																		
+																		</div>
+																		
+																		
+
+
+																		
+
+																		
+
+
+																	</div>
+
+																	<div class="modal-footer">
+
+																		<button type="button" class="btn btn-secondary"
+																			id="" data-bs-dismiss="modal"
+																			onclick="CloseModel('editModal','{{payment.id}}')">
+
+																			Cancel
+
+																		</button>
+
+																		<button type="button" class="btn btn-primary"
+																			id="saveuom"
+																			onclick="updateFunction(this,'{{payment.id}}')">
+
+																			Save
+
+																		</button>
+
+																	</div>
+
+															</form>
+
+														</div>
+
+													</div>
+
+
+
+												</div>
+
+							</div>
+                        </div>
+                    </td>
                                                         
                                                             
 
                                                     </tr>
                                                     {% endfor %}
-                                                </tbody>
+                                                </tbody> 
+                                                
                                             </table>
                                         </div>
                                     </div>
@@ -260,6 +443,8 @@
             </div>
         </div>
 
+
+        
 
 
 
@@ -341,6 +526,115 @@ function createFunction(button, pk) {
 
         </script>
 
+<script>
+
+        function updateFunction(button, saveId) {
+
+            var formId = `editForm${saveId}`;   //change
+            var formElement = document.getElementById(formId);
+
+            var isValid = true;
+            var errors = {};
 
 
-        {% endblock header2 %}
+            try {
+                disableButton(button);
+                clearErrors();
+
+                var requiredKeys = ['date','payment_amount','payment_amount','receipt_number',];   //change
+
+
+                const formData = new FormData();
+
+                formData.append('date', getValueOrDefault(formElement.querySelector('input[name="date"]').value));              //change
+                formData.append('receipt_number', getValueOrDefault(formElement.querySelector('input[name="receipt_number"]').value));
+                formData.append('payment_amount', getValueOrDefault(formElement.querySelector('select[name="payment_method"]').value));
+                formData.append('payment_amount', getValueOrDefault(formElement.querySelector('input[name="payment_amount"]').value));
+
+                var img = formElement.querySelector('input[name="img"]').files[0];
+					if (img) {
+						formData.append("img", img);
+					}
+            
+
+        
+
+                
+
+
+                requiredKeys.forEach(function (key) {
+                    var value = formData.get(key);
+                    if (!value.trim()) {
+                        isValid = false;
+                        errors[key] = ['This field may not be blank.'];
+                    }
+                });
+
+                if (!isValid) {
+                    enableButton(button);
+                    console_log(errors);
+                    handleUpdateErrors(saveId, transformErrors(errors));
+                    return;
+                } else {
+                    $(`#${formId} input, #${formId} button`).prop('disabled', true);
+
+                }
+
+
+                console_log(csrftoken);
+                $.ajax({
+                    url: '/update_clientcashpay/' + saveId + '/',   //change
+                    type: 'PUT',
+                    headers: {
+                        'X-CSRFToken': csrftoken,
+                    },
+                    processData: false,
+                    contentType: false,
+                    data: formData,
+                    success: function (response, status, xhr) {
+                        if (xhr.status === 200) {
+                            showToast(updateMessage?.message, '', updateMessage?.bgColor,true);
+                            restoreForm(formId, button)
+                        } else {
+                            showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+                            restoreForm(formId, button)
+
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console_log(xhr, status, error);
+                        if (xhr.status === 400) {
+                            if (xhr?.responseJSON || xhr?.responseJSON?.errors) {
+                                handleUpdateErrors(saveId, transformErrors(xhr.responseJSON));
+                                restoreForm(formId, button)
+                            } else {
+
+                                showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+                                restoreForm(formId, button)
+
+                            }
+                        }
+                        else if (xhr.status === 401 || 404) {
+                            showToast(xhr?.responseJSON?.details, '', errorAlertMessage?.bgColor);
+                            restoreForm(formId, button)
+
+                        }
+                        else {
+
+                            showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+                            restoreForm(formId, button)
+
+                        }
+                    }
+                });
+            } catch (error) {
+                showToast(errorOccured?.message, '', errorOccured?.bgColor);
+                restoreForm(formId, button)
+                console.error(error);
+            }
+        }
+
+</script>
+
+
+{% endblock header2 %}

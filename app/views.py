@@ -391,63 +391,104 @@ def delete_emproles(request, id):
 
 #--------------------> Employee <-----------------------
 
+# @check_valid_user
+# @check_user_company
+# @check_admin
+# @login_required(login_url='login')
+# def employee(request):
+#     user=request.user
+#     allow,msg= check_user(request,Employee,instance=False)  # CHANGE model
+#     if not allow:
+#          context ={"unauthorized":msg}
+#          return render(request,"login.html",context)  
+#     if request.method == 'POST':
+#         request_data=request.POST.copy().dict()
+#         if user.admin:
+#             request_data ["company"] = user.company.id
+#         img = request.FILES.get("img",None)
+#         aadhaar_card_image = request.FILES.get("aadhaar_card_image",None)
+#         pan_card_image = request.FILES.get("pan_card_image",None)
+
+#         if img:
+#          request_data['img'] = img  
+
+#         if aadhaar_card_image:
+#          request_data['aadhaar_card_image'] = aadhaar_card_image 
+
+#         if pan_card_image:
+#          request_data['pan_card_image'] = pan_card_image 
+    
+#         form = EmployeeSerializer(data=request_data)  
+#         if form.is_valid():
+#             form.save()
+#             return JsonResponse({"msg":"success"},status=201)    
+#         else:
+#             return JsonResponse(form.errors,status=400)
+#     else:
+#         form = EmployeeSerializer()    
+#     querysets = Employee.objects.filter(company=request.user.company).order_by("-id")   
+#     queryset,pages,search =customPagination(request,Employee,querysets) 
+#     roles = EmpRoles.objects.filter(company = request.user.company )
+  
+#     context= {'queryset': queryset,"location":"employee","pages" :pages,"search":search,"roles" :roles,'form':form}   #change location name 
+
+#     return render(request,"employee/employee.html",context)    #change template name
+
+    
 @check_valid_user
 @check_user_company
 @check_admin
 @login_required(login_url='login')
 def employee(request):
-    user=request.user
-    allow,msg= check_user(request,Employee,instance=False)  # CHANGE model
+    user = request.user
+    allow, msg = check_user(request, Employee, instance=False)
     if not allow:
-         context ={"unauthorized":msg}
-         return render(request,"login.html",context)  
-    if request.method == 'POST':
-        request_data=request.POST.copy().dict()
-        if user.admin:
-            request_data ["company"] = user.company.id
-        img = request.FILES.get("img",None)
-
-        if img:
-         request_data['img'] = img  
+        context = {"unauthorized": msg}
+        return render(request, "login.html", context)
     
-        form = EmployeeSerializer(data=request_data)  
-        if form.is_valid():
-            form.save()
-            return JsonResponse({"msg":"success"},status=201)    
-        else:
-            return JsonResponse(form.errors,status=400)
-    else:
-        form = EmployeeSerializer()    
-    querysets = Employee.objects.filter(company=request.user.company).order_by("-id")   
-    queryset,pages,search =customPagination(request,Employee,querysets) 
-    roles = EmpRoles.objects.filter(company = request.user.company )
-  
-    context= {'queryset': queryset,"location":"employee","pages" :pages,"search":search,"roles" :roles,'form':form}   #change location name 
-
-    return render(request,"employee/employee.html",context)    #change template name
-
     if request.method == 'POST':
-        request_data=request.POST.copy().dict()
-        request_data ["company"] = request.user.company.id
-        print("request_data:", request_data)
+        request_data = request.POST.copy().dict()
+        if user.admin:
+            request_data["company"] = user.company.id
+
+        img = request.FILES.get("img", None)
+        aadhaar_card_image = request.FILES.get("aadhaar_card_image", None)
+        pan_card_image = request.FILES.get("pan_card_image", None)
+
+        # Associate the files with the request data if they exist
+        if img:
+            request_data['img'] = img
+
+        if aadhaar_card_image:
+            request_data['aadhaar_card_image'] = aadhaar_card_image
+
+        if pan_card_image:
+            request_data['pan_card_image'] = pan_card_image
+
         form = EmployeeSerializer(data=request_data)  
         if form.is_valid():
             form.save()
-            return JsonResponse({"msg":"success"},status=201)    
+            return JsonResponse({"msg": "success"}, status=201)
         else:
-            return JsonResponse(form.errors,status=400)
+            return JsonResponse(form.errors, status=400)
+    
     else:
         form = EmployeeSerializer()
+    
+    querysets = Employee.objects.filter(company=request.user.company).order_by("-id")
+    queryset, pages, search = customPagination(request, Employee, querysets)
+    roles = EmpRoles.objects.filter(company=request.user.company)
 
-    print("User company:", request.user.company)
-    employee = Employee.objects.filter(company=request.user.company).order_by("-id")
-    print("Filtered employee:", employee)
+    context = {
+        'queryset': queryset,
+        "location": "employee",
+        "pages": pages,
+        "search": search,
+        "roles": roles,
+        'form': form
+    }
 
-    roles = EmpRoles.objects.all() 
-    print("Roles:", roles)
-
-    return render(request, 'employee/employee.html', {'form':form,'employee':employee, 'roles': roles})
-
+    return render(request, "employee/employee.html", context)
 
 
 @api_view(['GET'])
@@ -499,41 +540,114 @@ def get_employee(request, id):
 #     else:
 #         return JsonResponse({'error': 'Invalid request method'}, status=405)
 
+# img = request.FILES.get("img",None)
+#     aadhaar_card_image = request.FILES.get("aadhaar_card_image",None)  
+#     if img:
+#          request_data['img'] = img    
+#     if aadhaar_card_image: 
+#          request_data['aadhaar_card_image'] = aadhaar_card_image 
+
+# @api_view(['PUT'])
+# @login_required(login_url='login')
+# def save_employee(request, id):
+#     try:
+#         instance = Employee.objects.get(id=id)
+#     except Employee.DoesNotExist:
+#         return Response({'error': 'Employee object does not exist'}, status=404)
+
+#     if request.method == 'PUT':
+#         user = request.user
+#         allow, msg = check_user(request, Employee, instance=False)
+        
+#         if not allow:
+#             return JsonResponse({"error": msg}, status=401)
+
+#         serializer = EmployeeSerializer(instance, data=request.data)
+        
+#         if serializer.is_valid():
+
+#             if user.admin:
+#                 request_data = serializer.validated_data
+#                 # Get the company instance associated with the logged-in user
+#                 company_instance = user.company
+#                 # Assign the company instance to the employee instance
+#                 request_data['company'] = company_instance
+
+#             img = request.FILES.get("img", None)
+#             aadhaar_card_image = request.FILES.get("aadhaar_card_image", None)
+#             pan_card_image = request.FILES.get("pan_card_image",None)
+
+            
+#             if img:
+#                 request_data['img'] = img
+#             if aadhaar_card_image:
+#                 request_data['aadhaar_card_image'] = aadhaar_card_image
+#             if pan_card_image:
+#                 request_data['pan_card_image'] = pan_card_image
+
+            
+         
+#                 # Update serializer data with modified request data
+#                 serializer.update(instance, request_data)
+#             else:
+#                 serializer.save()
+                
+#             return JsonResponse(serializer.data, status=200)
+#         else:
+#             return JsonResponse(serializer.errors, status=400)
+#     else:
+#         return JsonResponse({'error': 'Invalid request method'}, status=405)
+
 @api_view(['PUT'])
 @login_required(login_url='login')
 def save_employee(request, id):
     try:
         instance = Employee.objects.get(id=id)
     except Employee.DoesNotExist:
-        return Response({'error': 'Employee object does not exist'}, status=404)
+        return Response({'error': 'Employee object does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
-    if request.method == 'PUT':
-        user = request.user
-        allow, msg = check_user(request, Employee, instance=False)
-        
-        if not allow:
-            return JsonResponse({"error": msg}, status=401)
+    user = request.user
+    allow, msg = check_user(request, Employee, instance=instance)
+    
+    if not allow:
+        return Response({"error": msg}, status=status.HTTP_401_UNAUTHORIZED)
 
-        serializer = EmployeeSerializer(instance, data=request.data)
+    serializer = EmployeeSerializer(instance, data=request.data, partial=True)
+    
+    if serializer.is_valid():
+        # Update only the fields that are provided in request data
+        request_data = serializer.validated_data
         
-        if serializer.is_valid():
-            if user.admin:
-                request_data = serializer.validated_data
-                # Get the company instance associated with the logged-in user
-                company_instance = user.company
-                # Assign the company instance to the employee instance
-                request_data['company'] = company_instance
-         
-                # Update serializer data with modified request data
-                serializer.update(instance, request_data)
-            else:
-                serializer.save()
-                
-            return JsonResponse(serializer.data, status=200)
-        else:
-            return JsonResponse(serializer.errors, status=400)
+        # Handle special fields like company assignment if user is admin
+        if user.admin:
+            company_instance = user.company
+            request_data['company'] = company_instance
+        
+        # Handle file uploads separately
+        img = request.FILES.get("img", None)
+        aadhaar_card_image = request.FILES.get("aadhaar_card_image", None)
+        pan_card_image = request.FILES.get("pan_card_image", None)
+
+        if img:
+            request_data['img'] = img
+        if aadhaar_card_image:
+            request_data['aadhaar_card_image'] = aadhaar_card_image
+        if pan_card_image:
+            request_data['pan_card_image'] = pan_card_image
+
+        # Check if mobile number is provided and update if different
+        if 'mobile' in request_data and request_data['mobile'] != instance.mobile:
+            # Check if the new mobile number already exists in other records
+            if Employee.objects.filter(~Q(id=id), mobile=request_data['mobile']).exists():
+                return Response({"mobile": ["This mobile number is already in use."]}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Update the instance with the modified data
+        serializer.update(instance, request_data)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
     else:
-        return JsonResponse({'error': 'Invalid request method'}, status=405)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 @api_view(['DELETE'])
@@ -1558,101 +1672,178 @@ def signin(request):
 
 
 
-from datetime import date
-@login_required(login_url='login')
-def contractor_payment_management(request):
+# from datetime import date
+# @login_required(login_url='login')
+# def contractor_payment_management(request):
 
-    user=request.user
-    allow,msg= check_user(request,ProjectSubContract,instance=False)  # CHANGE model
-    if not allow:
-         context ={"unauthorized":msg}
-         return render(request,"login.html",context)      
-    contractors = ProjectSubContract.objects.filter(company=request.user.company).order_by("-id")   #change query
+#     user=request.user
+#     allow,msg= check_user(request,ProjectSubContract,instance=False)  # CHANGE model
+#     if not allow:
+#          context ={"unauthorized":msg}
+#          return render(request,"login.html",context)      
+#     contractors = ProjectSubContract.objects.filter(company=request.user.company).order_by("-id")   #change query
     
 
-    current_date = date.today()
+#     current_date = date.today()
 
-    contractors = ProjectSubContract.objects.all()
+#     contractors = ProjectSubContract.objects.all()
+#     querysets = []
+
+#     for contractor in contractors:
+#         start_date = None
+
+#         total_wages =None
+
+#         # Check if the contractor has an invoice
+#         invoice = ContractorInvoice.objects.filter(contract=contractor).first()
+#         if invoice:
+#             start_date = invoice.to_date
+#         else:
+#             start_date = contractor.start_date
+
+#         last_attendance = ProjectSubContractLabourAttendence.objects.filter(contract=contractor).order_by('-date').first()
+
+#         if last_attendance:
+#                 end_date = last_attendance.date
+#         else:
+#                 end_date = current_date
+
+     
+
+#         if start_date:
+
+#             labour_wages = contractor.projectsubcontractlabourwages
+
+#             if contractor.get_labour_attendence :
+#                 total_wages = (
+#                     contractor.get_labour_attendence.filter(date__range=[start_date, end_date]).aggregate(
+#                         maistry=Sum('maistry') * labour_wages.maistry ,
+#                         maison_cooli=Sum('maison_cooli')  * labour_wages.maison_cooli,
+#                         male_skilled=Sum('male_skilled') * labour_wages.male_skilled,
+#                         male_unskilled=Sum('male_unskilled') * labour_wages.male_unskilled,
+#                         female_skilled=Sum('female_skilled') * labour_wages.female_skilled,
+#                         female_unskilled=Sum('female_unskilled') * labour_wages.female_unskilled,
+
+#                         maistry_ot=Sum('maistry_ot') * (labour_wages.maistry / 8),
+#                         maison_cooli_ot=Sum('maison_cooli_ot') * (labour_wages.maison_cooli /8 ),
+#                         male_skilled_ot=Sum('male_skilled_ot') * (labour_wages.male_skilled / 8) ,
+#                         male_unskilled_ot=Sum('male_unskilled_ot') * (labour_wages.male_unskilled / 8),
+#                         female_skilled_ot=Sum('female_skilled_ot') * (labour_wages.female_skilled / 8 ),
+#                         female_unskilled_ot=Sum('female_unskilled_ot') *( labour_wages.female_unskilled /8 )
+#                     )
+#                 )
+
+#                 # total_wages = sum(total_wages.values())
+              
+
+
+#         query = {
+#                 "contractor_id": contractor.id,
+#                 "contractor_name": contractor.display,
+#                 # "start_date" :start_date ,
+#                 #  "end_date" :end_date,
+#                 "days" : (end_date -start_date).days,
+
+#                 "project_name" :contractor.project.proj_name,
+
+#                  "total_wages" :total_wages if total_wages else contractor.total_wages ,
+#                  "total_amount":contractor.get_contract_amount,
+
+#                   "total_service_amount":contractor.total_service_amount,
+#                    "get_paid_amount":contractor.get_paid_amount, 
+#                    "get_pending_amount":contractor.get_pending_amount,
+
+#                    "get_contract_invoice":contractor.get_contract_invoice,
+
+               
+#             }
+
+#         print(query)
+#         querysets.append(query)
+
+    
+#     queryset,pages,search =customPagination(request,ProjectSubContract,querysets)    #change, model
+#     contractors=Contractor.objects.filter(company=request.user.company)
+#     paymode =PaymentMethod.objects.all()
+#     context= {'queryset': queryset,"pending":"contractor","pages" :pages ,"contractors":contractors,"search" :search,"paymode" :paymode}   #change location name 
+#     return render(request,"salary/contractorpayment.html",context) 
+
+
+from datetime import date
+
+@login_required(login_url='login')
+def contractor_payment_management(request):
+    user = request.user
+    allow, msg = check_user(request, ProjectSubContract, instance=False)  # Ensure correct permissions
+    if not allow:
+        context = {"unauthorized": msg}
+        return render(request, "login.html", context)
+
+    contractors = ProjectSubContract.objects.filter(company=request.user.company).order_by("-id")
+
+    current_date = date.today()
     querysets = []
 
     for contractor in contractors:
         start_date = None
+        total_wages = None
 
-        total_wages =None
-
-        # Check if the contractor has an invoice
+        # Get the invoice date or fallback to contract start date
         invoice = ContractorInvoice.objects.filter(contract=contractor).first()
-        if invoice:
-            start_date = invoice.to_date
-        else:
-            start_date = contractor.start_date
+        start_date = invoice.to_date if invoice else contractor.start_date
 
         last_attendance = ProjectSubContractLabourAttendence.objects.filter(contract=contractor).order_by('-date').first()
+        end_date = last_attendance.date if last_attendance else current_date
 
-        if last_attendance:
-                end_date = last_attendance.date
+        # Ensure start_date and end_date are not None before calculating days
+        if start_date and end_date:
+            days = (end_date - start_date).days
         else:
-                end_date = current_date
-
-     
+            # Handle missing dates, set to 0 or some other default value
+            days = 0
 
         if start_date:
-
             labour_wages = contractor.projectsubcontractlabourwages
-
-            if contractor.get_labour_attendence :
+            if contractor.get_labour_attendence:
                 total_wages = (
                     contractor.get_labour_attendence.filter(date__range=[start_date, end_date]).aggregate(
-                        maistry=Sum('maistry') * labour_wages.maistry ,
-                        maison_cooli=Sum('maison_cooli')  * labour_wages.maison_cooli,
+                        maistry=Sum('maistry') * labour_wages.maistry,
+                        maison_cooli=Sum('maison_cooli') * labour_wages.maison_cooli,
                         male_skilled=Sum('male_skilled') * labour_wages.male_skilled,
                         male_unskilled=Sum('male_unskilled') * labour_wages.male_unskilled,
                         female_skilled=Sum('female_skilled') * labour_wages.female_skilled,
                         female_unskilled=Sum('female_unskilled') * labour_wages.female_unskilled,
-
                         maistry_ot=Sum('maistry_ot') * (labour_wages.maistry / 8),
-                        maison_cooli_ot=Sum('maison_cooli_ot') * (labour_wages.maison_cooli /8 ),
-                        male_skilled_ot=Sum('male_skilled_ot') * (labour_wages.male_skilled / 8) ,
+                        maison_cooli_ot=Sum('maison_cooli_ot') * (labour_wages.maison_cooli / 8),
+                        male_skilled_ot=Sum('male_skilled_ot') * (labour_wages.male_skilled / 8),
                         male_unskilled_ot=Sum('male_unskilled_ot') * (labour_wages.male_unskilled / 8),
-                        female_skilled_ot=Sum('female_skilled_ot') * (labour_wages.female_skilled / 8 ),
-                        female_unskilled_ot=Sum('female_unskilled_ot') *( labour_wages.female_unskilled /8 )
+                        female_skilled_ot=Sum('female_skilled_ot') * (labour_wages.female_skilled / 8),
+                        female_unskilled_ot=Sum('female_unskilled_ot') * (labour_wages.female_unskilled / 8)
                     )
                 )
 
-                # total_wages = sum(total_wages.values())
-              
-
-
         query = {
-                "contractor_id": contractor.id,
-                "contractor_name": contractor.display,
-                # "start_date" :start_date ,
-                #  "end_date" :end_date,
-                "days" : (end_date -start_date).days,
-
-                "project_name" :contractor.project.proj_name,
-
-                 "total_wages" :total_wages if total_wages else contractor.total_wages ,
-                 "total_amount":contractor.get_contract_amount,
-
-                  "total_service_amount":contractor.total_service_amount,
-                   "get_paid_amount":contractor.get_paid_amount, 
-                   "get_pending_amount":contractor.get_pending_amount,
-
-                   "get_contract_invoice":contractor.get_contract_invoice,
-
-               
-            }
+            "contractor_id": contractor.id,
+            "contractor_name": contractor.display,
+            "days": days,
+            "project_name": contractor.project.proj_name,
+            "total_wages": total_wages if total_wages else contractor.total_wages,
+            "total_amount": contractor.get_contract_amount,
+            "total_service_amount": contractor.total_service_amount,
+            "get_paid_amount": contractor.get_paid_amount,
+            "get_pending_amount": contractor.get_pending_amount,
+            "get_contract_invoice": contractor.get_contract_invoice,
+        }
 
         print(query)
         querysets.append(query)
 
-    
-    queryset,pages,search =customPagination(request,ProjectSubContract,querysets)    #change, model
-    contractors=Contractor.objects.filter(company=request.user.company)
-    paymode =PaymentMethod.objects.all()
-    context= {'queryset': queryset,"pending":"contractor","pages" :pages ,"contractors":contractors,"search" :search,"paymode" :paymode}   #change location name 
-    return render(request,"salary/contractorpayment.html",context)  
+    queryset, pages, search = customPagination(request, ProjectSubContract, querysets)
+    contractors = Contractor.objects.filter(company=request.user.company)
+    paymode = PaymentMethod.objects.all()
+    context = {'queryset': queryset, "pending": "contractor", "pages": pages, "contractors": contractors, "search": search, "paymode": paymode}
+    return render(request, "salary/contractorpayment.html", context)
+
 
 
 
@@ -3132,29 +3323,60 @@ def clientcashpay(request, pk):
     
 
 
+@api_view(['PUT'])
+def update_clientcashpay(request, payment_id):
+    try:
+        payment_history_instance = get_object_or_404(PaymentHistory, pk=payment_id)
+    except PaymentHistory.DoesNotExist:
+        return Response("Payment history not found", status=status.HTTP_404_NOT_FOUND)
 
+    if request.method == 'PUT':
+        serializer = PaymentHistorySerializer(payment_history_instance, data=request.data)
 
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    return Response("Unsupported method", status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
 #--------------------------------------Daily Task-----------------------------------
 
+# @api_view(['GET'])
+# @login_required(login_url='login')
+# def dailytask_list(request):
+#     user=request.user
+#     allow,msg= check_user(request,Dailytask,instance=False)  # CHANGE model
+#     if not allow:
+#          context ={"unauthorized":msg}
+#          return render(request,"login.html",context)    
+     
+#     querysets = Dailytask.objects.filter(company=request.user.company).order_by("-id")
+#     project = request.GET.get('project')
+#     project_id =get_int_or_zero(project)
+#     if project_id:
+#         querysets =querysets.filter(project__id = project_id)
+#     ser = dailyTaskSerializer(querysets,many=True)
+#     return Response (ser.data)
+
 @api_view(['GET'])
 @login_required(login_url='login')
-def dailytask_list(request):
-    user=request.user
-    allow,msg= check_user(request,Dailytask,instance=False)  # CHANGE model
+def dailytask_list(request, project_id=None):
+    user = request.user
+    allow, msg = check_user(request, Dailytask, instance=False)
     if not allow:
-         context ={"unauthorized":msg}
-         return render(request,"login.html",context)    
-     
-    querysets = Dailytask.objects.filter(company=request.user.company).order_by("-id")
-    project = request.GET.get('project')
-    project_id =get_int_or_zero(project)
-    if project_id:
-        querysets =querysets.filter(project__id = project_id)
-    ser = dailyTaskSerializer(querysets,many=True)
-    return Response (ser.data)
+        context = {"unauthorized": msg}
+        return render(request, "login.html", context)
+
+    querysets = Dailytask.objects.filter(company=user.company).order_by("-id")
+    
+    # Filter by project_id if provided
+    if project_id is not None:
+        querysets = querysets.filter(project__id=project_id)
+    
+    ser = dailyTaskSerializer(querysets, many=True)
+    return Response(ser.data)
 
 
 
@@ -3184,7 +3406,7 @@ def dailytask(request):  #change name
 
 @api_view(['GET'])
 @login_required(login_url='apilogin')
-def dailytask_list(request, pk=None):
+def dailytasks_list(request, pk=None):
     user_company = request.user.company  
 
     if pk:
