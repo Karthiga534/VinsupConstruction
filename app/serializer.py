@@ -445,12 +445,21 @@ class EmployeeSerializer(ModelSerializer):
         fields = "__all__"
 
 
+    # def validate_mobile(self, attrs):
+    #     if Employee.objects.filter(mobile=attrs).exists():
+    #         raise ValidationError ('already exists')
+    #     if CustomUser.objects.filter(phone_number=attrs).exists():
+    #         raise ValidationError ('Already exists')
+    #     return super().validate(attrs)
+
     def validate_mobile(self, attrs):
-        if Employee.objects.filter(mobile=attrs).exists():
-            raise ValidationError ('already exists')
-        if CustomUser.objects.filter(phone_number=attrs).exists():
-            raise ValidationError ('Already exists')
-        return super().validate(attrs)
+        if self.instance is None:
+            # If instance is None, it means we are creating a new employee
+            if Employee.objects.filter(mobile=attrs).exists():
+                raise ValidationError('This mobile number is already in use.')
+            if CustomUser.objects.filter(phone_number=attrs).exists():
+                raise ValidationError('This mobile number is already associated with another user.')
+        return attrs
 
     def create(self, validated_data):
         user_data={}
