@@ -149,6 +149,9 @@ class FilesAdmin(admin.ModelAdmin):
 class CompanyProfileAdmin(admin.ModelAdmin):
     list_display = ('id',)
 
+
+    
+
 @admin.register(EmployeeProfile)
 class EmployeeProfileAdmin(admin.ModelAdmin):
     list_display = ('id',)

@@ -2171,6 +2171,7 @@ class EmployeeProfile(models.Model):
 class CompanyProfile(models.Model):
     company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='profile')
     attachment  =models.FileField(upload_to="img", null=True, blank=True)
+   #attachment = models.ImageField(upload_to=company_profile_image_path, null=True, blank=True)
     email = models.EmailField(null=True, blank=True)
     phone_number = models.CharField(max_length=15, null=True, blank=True)
     gst_number = models.CharField(max_length=15, null=True, blank=True)
