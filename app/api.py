@@ -1860,12 +1860,14 @@ def update_profile(request):
             company.save()
 
         if company_profile:
-            company_profile.image = request.POST.get('image')
+            
             company_profile.email = request.POST.get('email')
             company_profile.phone_number = request.POST.get('phone_number')
             company_profile.gst_number = request.POST.get('gst_number')
             company_profile.address = request.POST.get('address')
             company_profile.area = request.POST.get('area')
+            if 'attachment' in request.FILES:
+                company_profile.attachment = request.FILES['attachment']
             company_profile.save()
 
         return redirect('profile')  
@@ -1879,6 +1881,10 @@ def update_profile(request):
         'company': company_data,
         'company_profile': company_profile_data,
     })
+
+
+
+
 
 @api_view(['GET'])
 @login_required(login_url='apilogin')
