@@ -197,7 +197,7 @@ def purchase(request):  #change name
     materiallibrary = MaterialLibrary.objects.filter(company=request.user.company).order_by("-id")
     inventory = InventoryStock.objects.filter(company=request.user.company).order_by("-id") 
     # querysets = PurchaseInvoice.objects.filter(company=request.user.company).order_by("-id")  
-    projects = Project.objects.filter(company=request.user.company).order_by("-id")  
+    projects = Project.objects.filter(company=request.user.company, is_disabled=False).order_by("-id")  
     # queryset,pages,search =customPagination(request,PurchaseInvoice,querysets)    #change, model
     # context= {'queryset': queryset,"location":"purchase","pages" :pages,'vendor_names': vendors,"search":search,"uom":uom, "projects" :projects ,
     #           "inventory":inventory,"materiallibrary":materiallibrary}   #change location name 
@@ -349,7 +349,7 @@ def quatation(request):  #change name
     status =ProcessStatus.objects.all()
     materiallibrary = MaterialLibrary.objects.filter(company=request.user.company).order_by("-id")  
     uom =Uom.objects.filter(company=request.user.company).order_by("-id")
-    site = Project.objects.filter(company=request.user.company).order_by("-id")
+    site = Project.objects.filter(company=request.user.company, is_disabled=False).order_by("-id")
     inventory = InventoryStock.objects.filter(company=request.user.company).order_by("-id") 
     querysets = Quatation.objects.filter(company=request.user.company).order_by("-id")   #change query
     queryset,pages,search =customPagination(request,Quatation,querysets)    #change, model
@@ -385,7 +385,7 @@ def quatationlist(request):
         context = {"unauthorized": msg}
         return render(request, "login.html", context)
     status =ProcessStatus.objects.all()
-    site = Project.objects.filter(company=request.user.company).order_by("-id")
+    site = Project.objects.filter(company=request.user.company, is_disabled=False).order_by("-id")
     # quatationitems = QuatationItems.objects.filter(company__name=request.user.company)
     querysets = Quatation.objects.filter(company=request.user.company).order_by("-id")
     queryset, pages, search = customPagination(request, Quatation, querysets)
@@ -404,7 +404,7 @@ def transfer(request):  #change name
          context ={"unauthorized":msg}
          return render(request,"login.html",context)    
     uom =Uom.objects.filter(company=request.user.company).order_by("-id")
-    site =Project.objects.filter(company=request.user.company).order_by("-id")
+    site =Project.objects.filter(company=request.user.company, is_disabled=False).order_by("-id")
     
     from_site = request.GET.get('from',"")
     print(from_site)
@@ -639,7 +639,7 @@ def transferlist(request):
     if not allow:
         context = {"unauthorized": msg}
         return render(request, "login.html", context)
-    site = Project.objects.filter(company=request.user.company).order_by("-id")
+    site = Project.objects.filter(company=request.user.company, is_disabled=False).order_by("-id")
     querysets = TransferInvoice.objects.filter(company=request.user.company).order_by("-id")
 
     queryset, pages, search = customPagination(request, TransferInvoice, querysets)
@@ -656,7 +656,7 @@ def viewstock(request):
          context ={"unauthorized":msg}
          return render(request,"login.html",context)      
     querysets = SiteStock.objects.filter(company=request.user.company).order_by("-id")   #change query
-    site =Project.objects.filter(company=request.user.company).order_by("-id")
+    site =Project.objects.filter(company=request.user.company, is_disabled=False).order_by("-id")
     
     siteId = request.GET.get('site',None)
     if siteId :
@@ -677,7 +677,7 @@ def sitestock(request):
          context ={"unauthorized":msg}
          return render(request,"login.html",context)      
     querysets = SiteStock.objects.filter(project__incharge=user.employee).order_by("-id")   #change query
-    site =Project.objects.filter(company=request.user.company).order_by("-id")
+    site =Project.objects.filter(company=request.user.company, is_disabled=False).order_by("-id")
     
     print(querysets)
     siteId = request.GET.get('site',None)
@@ -734,10 +734,10 @@ def subcontadd(request):  #change name
     if not allow:
          context ={"unauthorized":msg}
          return render(request,"login.html",context)   
-    project = Project.objects.filter(company=request.user.company).order_by("-id") 
+    project = Project.objects.filter(company=request.user.company, is_disabled=False).order_by("-id") 
     type = ContractType.objects.all()
     contractor = Contractor.objects.filter(company=request.user.company).order_by("-id")
-    employee = Employee.objects.filter(company=request.user.company).order_by("-id")  
+    employee = Employee.objects.filter(company=request.user.company,user__disable = False).order_by("-id")  
     paymentschedule = PaymentSchedule.objects.all()
     status=WorkStatus.objects.all()
     uom =Uom.objects.filter(company=request.user.company).order_by("-id")
@@ -825,10 +825,10 @@ def subcontractorlist(request):
     if not allow:
         context = {"unauthorized": msg}
         return render(request, "login.html", context)
-    project = Project.objects.filter(company=request.user.company).order_by("-id") 
+    project = Project.objects.filter(company=request.user.company, is_disabled=False).order_by("-id") 
     type = ContractType.objects.all()
     contractor = Contractor.objects.filter(company=request.user.company).order_by("-id")
-    employee = Employee.objects.filter(company=request.user.company).order_by("-id")  
+    employee = Employee.objects.filter(company=request.user.company,user__disable = False ).order_by("-id")  
     paymentschedule = PaymentSchedule.objects.all()
     status=WorkStatus.objects.all()
     uom =Uom.objects.filter(company=request.user.company).order_by("-id")
@@ -860,10 +860,10 @@ def delete_subcontractor(request,pk):
 def get_subcontractor(request, pk):
     try:
         subcontractor = ProjectSubContract.objects.get(pk=pk)
-        project = Project.objects.filter(company=request.user.company).order_by("-id") 
+        project = Project.objects.filter(company=request.user.company, is_disabled=False).order_by("-id") 
         type = ContractType.objects.all()
         contractor = Contractor.objects.filter(company=request.user.company).order_by("-id")
-        employee = Employee.objects.filter(company=request.user.company).order_by("-id")  
+        employee = Employee.objects.filter(company=request.user.company,user__disable = False ).order_by("-id")  
         paymentschedule = PaymentSchedule.objects.all()
         status=WorkStatus.objects.all()
         uom =Uom.objects.filter(company=request.user.company).order_by("-id")
@@ -892,10 +892,10 @@ def update_subcontractor(request, pk):
         return HttpResponseNotFound('<h1>Subcontractor not found</h1>')
 
     if request.method == 'GET':
-        project = Project.objects.filter(company=request.user.company).order_by("-id") 
+        project = Project.objects.filter(company=request.user.company ).order_by("-id") 
         type = ContractType.objects.all()
         contractor = Contractor.objects.filter(company=request.user.company).order_by("-id")
-        employee = Employee.objects.filter(company=request.user.company).order_by("-id")  
+        employee = Employee.objects.filter(company=request.user.company,user__disable = False ).order_by("-id")  
         paymentschedule = PaymentSchedule.objects.all()
         uom = Uom.objects.filter(company=request.user.company).order_by("-id")
 
@@ -1267,20 +1267,30 @@ def update_project(request, pk):  # CHANGE name
 
 
 
-@api_view(['DELETE'])
+@api_view(['PUT'])  # Changed to PUT
 @login_required(login_url='login')
-def delete_project(request,pk):
-    user=request.user
+def delete_project(request, id):
     try:
-        instance = Project.objects.get(id=pk)  # CHANGE model
-        allow,msg= check_user(request,Project,instance=instance)  # CHANGE model
-        if not allow:
-            return JsonResponse({'details':[msg]}, status=status.HTTP_401_UNAUTHORIZED)
-        instance.delete()
-        return JsonResponse( {'details': ['success']},status=204)
-    except Project.DoesNotExist:  # CHANGE model
-        return JsonResponse({'details': ['Item does not exist']}, status=404)
+        project = Project.objects.get(id=id)
+        project.is_disabled = True  # Disable the project
+        project.save()
+        return JsonResponse({'message': 'Project disabled successfully', 'is_disabled': project.is_disabled}, status=200)
+    except Project.DoesNotExist:
+        return JsonResponse({'error': 'Project not found'}, status=404)
 
+@api_view(['PUT'])  # Changed to PUT
+@login_required(login_url='login')
+def enable_project(request, id):
+    try:
+        project = Project.objects.get(id=id)
+        project.is_disabled = False  # Enable the project
+        project.save()
+        return JsonResponse({'message': 'Project enabled successfully', 'is_disabled': project.is_disabled}, status=200)
+    except Project.DoesNotExist:
+        return JsonResponse({'error': 'Project not found'}, status=404)
+    
+
+    
 def update_projectstatus(request):
     if request.method == 'POST':
         project_id = request.POST.get('project_id')
@@ -1429,9 +1439,9 @@ def dashboard_count(request):
     
     today = timezone.now().date()  
     
-    project_count = Project.objects.filter(company=user.company).count()
-    project_ongoing_count = Project.objects.filter(company=user.company, status__code=1).count()
-    project_completed_count = Project.objects.filter(company=user.company, status__code=0).count()
+    project_count = Project.objects.filter(company=user.company, is_disabled=False).count()
+    project_ongoing_count = Project.objects.filter(company=user.company, status__code=1, is_disabled=False).count()
+    project_completed_count = Project.objects.filter(company=user.company, status__code=0, is_disabled=False).count()
 
     sub_labour_count = ProjectSubContractLabourAttendence.objects.filter( company=user.company, date=today ).count()
     company_labour_count = ProjectLabourAttendence.objects.filter(  company=user.company, date=today ).count()
@@ -1460,10 +1470,10 @@ def getprojectlist(request):
     if not allow:
         return JsonResponse({'details': [msg]}, status=status.HTTP_401_UNAUTHORIZED)
 
-    projects= Project.objects.filter(company=request.user.company)
+    projects= Project.objects.filter(company=request.user.company, is_disabled=False)
 
-    ongoing_projects = projects.filter(status__code=ONGOING_STATUS_CODE).order_by("-id")
-    completed_projects = projects.filter(status__code=COMPLETED_STATUS_CODE).order_by("-id")
+    ongoing_projects = projects.filter(status__code=ONGOING_STATUS_CODE, is_disabled=False).order_by("-id")
+    completed_projects = projects.filter(status__code=COMPLETED_STATUS_CODE, is_disabled=False).order_by("-id")
 
     projects = ProjectSerializer(projects, many=True) 
     ongoing_serializer = ProjectSerializer(ongoing_projects, many=True)
@@ -2346,7 +2356,7 @@ def dailysitestockusage(request):
         return render(request, "login.html", context)
 
     subcontracts = ProjectSubContract.objects.filter(company=user.company).order_by("-id")
-    projects = Project.objects.filter(company=user.company).order_by("-id")
+    projects = Project.objects.filter(company=user.company, is_disabled=False).order_by("-id")
 
     from_site = request.GET.get('from', "")
     items = []
@@ -2467,7 +2477,7 @@ def sitestockusage(request):
         return render(request, "login.html", context)
 
     subcontracts = ProjectSubContract.objects.filter(company=user.company).order_by("-id")
-    projects = Project.objects.filter(company=user.company).order_by("-id")
+    projects = Project.objects.filter(company=user.company, is_disabled=False).order_by("-id")
 
     from_site = request.GET.get('from', "")
   

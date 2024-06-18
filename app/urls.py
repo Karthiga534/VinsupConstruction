@@ -196,7 +196,9 @@ urlpatterns = [
     # api
     path('add_project/', api.add_project, name='add_project'), 
     path('update_project/<int:pk>/', api.update_project, name='update_project'),
-    path('delete_project/<int:pk>/', api.delete_project, name='delete_project'),
+    path('delete_project/<int:id>/', api.delete_project, name='delete_project'),
+    path('enable_project/<int:id>/', api.enable_project, name='enable_project'),
+    # path('delete_employee/<int:id>/', views.delete_employee, name='delete_employee'),
     path('update_projectstatus/', api.update_projectstatus, name='update_projectstatus'),
 
     path('attendance/subcontract',views.attendancereport,name= 'proattendance'),

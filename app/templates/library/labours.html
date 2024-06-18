@@ -208,14 +208,15 @@
                                 <td>{{ i.name }}</td>
                                 <td>
                                     {% if i.image %}
-                                        <img src="{{ i.image.url }}" alt="{{ i.image.name }}" style="max-width: 100px; max-height: 100px;" />
+                                        <img src="{{ i.image.url }}" alt="{{ i.image.name }}" class="img-responsive"
+                                        style="height:40px;width:40px;" />
                                     {% else %}
                                         No Image
                                     {% endif %}
                                 </td>
                                 <td>{{ i.role }}</td>
                                 <td>{{ i.get_rate}}</td>
-                                <td>{{ i.get_ot_rate }}  </td>
+                                <td>{{ i.get_ot_rate }}  </td> 
                                 <td>{{ i.get_payment_schedule.days }}</td>
 
                                 {% if i.disable == True %}

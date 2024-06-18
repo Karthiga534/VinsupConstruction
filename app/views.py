@@ -1160,7 +1160,6 @@ def add_labours (request):  # CHANGE name
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)   
 
 
-
 @api_view(['PUT'])
 @login_required(login_url='login')
 @check_valid_user

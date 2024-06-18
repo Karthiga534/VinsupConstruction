@@ -216,7 +216,8 @@
                       </td> {% endcomment %}
                       <td>
                         {% if i.img %}
-                            <img src="{{ i.img.url }}" alt="{{ i.img.name }}" style="max-width: 100px; max-height: 100px;" />
+                            <img src="{{ i.img.url }}" alt="{{ i.img.name }}" class="img-responsive"
+														style="height:40px;width:40px;" />
                         {% else %}
                             No Image
                         {% endif %}

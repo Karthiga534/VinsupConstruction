@@ -199,7 +199,13 @@
                                             <td>{{ i.amount }}</td>
                                             <td>{{ i.site_location }}</td>
                                             <td>{{ i.employee }}</td>
-                                            <td>  <span class="file-span"> <a  target="_blank" href="{{ i.attachment.url}}" >{{i.attachment |filename }}</a></span>
+                                             <td>{% comment %}  <span class="file-span"> <a  target="_blank" href="{{ i.attachment.url}}" >{{i.attachment |filename }}</a></span> {% endcomment %}
+                                            {% if i.attachment %}
+                                                    <img src="{{ i.attachment.url }}" alt="{{ i.attachment.name }}" class="img-responsive"
+                                                    style="height:40px;width:40px;" />
+                                                {% else %}
+                                                    No Image
+                                                {% endif %}    
                                             </td>
                                            
                                             
