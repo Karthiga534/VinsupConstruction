@@ -1022,9 +1022,16 @@ class Project(models.Model):
     status = models.ForeignKey(WorkStatus, on_delete=models.CASCADE,null=True,blank=True)
     description = models.TextField(null=True,blank=True) 
     terms_conditions = models.TextField(null=True,blank=True)
+    is_disabled = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.proj_name} - {self.site_location}"
+    
+    # @property
+    # def disable(self):
+    #     if self.user:
+    #         return self.user.disable
+    #     return False
     
     @property
     def display(self):
