@@ -231,31 +231,6 @@ def emproles(request):
 
     return render(request, 'employee/emprole.html', {'form':form,'emproles':emproles})
 
-# @api_view(['POST'])
-# @check_valid_user
-# @check_user_company
-# @check_admin
-# @login_required(login_url='login')
-# def add_uom(request):
-#     user = request.user
-#     allow, msg = check_user(request, Uom, instance=False)    
-#     if not allow:
-#         return JsonResponse({'details': msg}, status=status.HTTP_403_FORBIDDEN)      
-
-#     request_data = request.data.copy() 
-    
-#     if user.admin:  
-#         request_data['company'] = user.company.id
-
-#     serializer = UomSerializer(data=request_data)  
-    
-#     if serializer.is_valid():
-#         serializer.save()
-#         return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
-#     else:
-#         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-
 @api_view(['POST'])
 @check_valid_user
 @check_user_company
@@ -277,24 +252,6 @@ def add_emproles(request):
     else:
         return JsonResponse(ser.errors,status=400)
 
-
-# @api_view(['PUT'])
-# def update_emproles(request, id):
-#     try:
-#         instance = EmpRoles.objects.get(id=id)
-#     except EmpRoles.DoesNotExist:
-#         return Response({'error': 'EmpRoles object does not exist'}, status=404)
-
-#     if request.method == 'PUT':
-#         serializer = EmpRolesSerializer(instance, data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return JsonResponse({'data': serializer.data}, status=200)
-#         else:
-#             # return JsonResponse({'name': ['Invalid request method']}, status=400)
-#             return JsonResponse(serializer.errors, status=400)
-#     else:
-#         return JsonResponse({'error': ['Invalid request method']}, status=405)    
 
 @api_view(['PUT'])
 @check_valid_user
@@ -548,83 +505,6 @@ def enable_employee(request, id):
     except Employee.DoesNotExist:
         return JsonResponse({'error': 'Data not found'}, status=404)
    
-#------------------------ UOM Table --------------------------
-
-# @login_required(login_url='login')
-# def uom(request):
-#     if request.method == 'POST':
-#         form = UomForm(request.POST)
-#         if form.is_valid():
-#             uom_instance = form.save(commit=False)  
-#             uom_instance.company = request.user.company  
-#             uom_instance.save()  
-#             return JsonResponse({"msg":"success"},status=201)
-#             # return redirect('uom')  
-#     else:
-#         form = UomForm()
-                   
-#     print("User company:", request.user.company)  
-#     uom = Uom.objects.filter(company=request.user.company).order_by("-id")
-#     print("Filtered Uom:", uom) 
-#     return render(request, 'library/uom.html', {'form': form, 'uom': uom})
-
-# @api_view(['GET'])
-# def get_data(request, id):
-#     try:
-#         print("enter")
-#         # instance = Uom.objects.filter(company=request.user.company)
-#         instance = Uom.objects.get(id=id)
-#         ser=UomSerializer(instance,many=False)
-#         data = {'data': ser.data} 
-#         return JsonResponse(data,status=200)
-#     except Uom.DoesNotExist:
-#         return JsonResponse({'error': 'Object not found'}, status=404)
-    
-# @api_view(['PUT'])
-# def save_data(request, id):
-#     try:
-#         instance = Uom.objects.get(id=id)
-#     except Uom.DoesNotExist:
-#         return Response({'error': 'Uom object does not exist'}, status=404)
-
-#     if request.method == 'PUT':
-#         serializer = UomSerializer(instance, data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return JsonResponse({'data': serializer.data}, status=200)
-#         else:
-#             # return JsonResponse({'name': ['Invalid request method']}, status=400)
-#             return JsonResponse(serializer.errors, status=400)
-#     else:
-#         return JsonResponse({'error': ['Invalid request method']}, status=405)
-
-# @api_view(['DELETE'])
-# def delete_uom(request, id):
-#     try:
-#         print("enter")
-#         instance = Uom.objects.get(id=id)
-#         instance.delete()
-#         return JsonResponse({'message': 'Data deleted successfully'}, status=204)
-#     except Uom.DoesNotExist:
-#         return JsonResponse({'error': 'Data not found'}, status=404)    
-
-# def procategory(request, category_id=None):
-#     if category_id:
-#         category = get_object_or_404(ProjectCategory, pk=category_id)
-#     else:
-#         category = None
-
-#     if request.method == 'POST':
-#         form = ProjectCategoryForm(request.POST, instance=category)
-#         if form.is_valid():
-#             form.save()
-#             return redirect('procategory')
-#     else:
-#         form = ProjectCategoryForm(instance=category)
-    
-#     categories = ProjectCategory.objects.all()  
-    
-#     return render(request, 'procategory.html', {'form': form, 'categories': categories})
 
 #-------------------------------------------------------------------- End Azar --------------------------------------------------------------------------------
 
