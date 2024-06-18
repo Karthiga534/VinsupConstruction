@@ -407,10 +407,24 @@
 			
 
 			// To attachment
-			const td5 = document.createElement('td');
+			//const td5 = document.createElement('td');
 			//td5.textContent = get_value(data.attachment)
-          	td5.innerHTML=`  <a href="${data.attachment }" target="_blank">${get_filename(data.attachment) }</a>`
-			newRow.appendChild(td5);
+          	//td5.innerHTML=`  <a href="${data.attachment }" target="_blank">${get_filename(data.attachment) }</a>`
+			//newRow.appendChild(td5);
+
+            const td5 = document.createElement('td');
+            const link = document.createElement('a');
+            link.href = data.attachment; 
+            link.target = '_blank'; 
+
+            const img = document.createElement('img');
+            img.src = data.attachment;
+            img.alt = 'Attachment Image'; 
+            img.style.maxWidth = '40px';            
+            link.appendChild(img);
+            td5.appendChild(link);
+            newRow.appendChild(td5);
+
 
 
 

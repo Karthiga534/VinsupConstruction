@@ -341,15 +341,6 @@ aria-labelledby="myLargeModalLabel-1" aria-hidden="true">
         const td4 = createTableCell(get_value(data.quatation_id));
         newRow.appendChild(td4);
 
-       // const td5 = createTableCell(get_value(data.status));
-      //  newRow.appendChild(td5);
-
-     // const td5 = createStatusCell(data.status_name, data.status_class);
-     //       td5.classList.add('status')
-     //       newRow.appendChild(td5);
-    
-       
-
         const dropdownButtonCell = document.createElement("td");
         const dropdownButton = document.createElement("button");
         dropdownButton.className = "btn btn-soft-secondary btn-sm dropdown";
@@ -370,50 +361,39 @@ aria-labelledby="myLargeModalLabel-1" aria-hidden="true">
 
 
         // actioncell
-        const actionCell = createViewActionCell('customTableDataModal');
-        newRow.appendChild(actionCell);
+    //    const actionCell = createViewActionCell('customTableDataModal');
+    //    newRow.appendChild(actionCell);
+
+        const viewOption = document.createElement("li");
+        const viewLink = document.createElement("a");
+        viewLink.className = "dropdown-item view-item-btn";
+        viewLink.textContent = "View";
+        viewLink.setAttribute("data-bs-toggle", "modal");
+        viewLink.setAttribute("href", "#!");
+        viewLink.addEventListener('click', () => {
+            const rowDataId = data.id;
+            window.location.href = `/quatation_details/${rowDataId}/`;
+        });
+        viewOption.appendChild(viewLink);
+        dropdownMenu.appendChild(viewOption);
+
+        // Edit option
+        const editOption = document.createElement("li");
+        const editLink = document.createElement("a");
+        editLink.className = "dropdown-item edit-item-btn";
+        editLink.textContent = "Edit";
+        editLink.setAttribute("data-bs-toggle", "modal");
+        editLink.setAttribute("href", "#!");
+        editLink.addEventListener('click', () => {
+            const rowDataId = data.id;
+            window.location.href = `/quatation_update/${rowDataId}/`;
+        });
+        editOption.appendChild(editLink);
+        dropdownMenu.appendChild(editOption);
+        dropdownButtonCell.appendChild(dropdownMenu);
+        newRow.appendChild(dropdownButtonCell);
 
         
-
-        // click event
-    //    actionCell.addEventListener('click', () => {
-    //        populateModalTable(data.get_quotation_items, modalTableBody) ;
-    //        payModalData(data)
-
-    //        openHistoryModal('statusmodel');
-    //    });
-
-
-    const viewOption = document.createElement("li");
-    const viewLink = document.createElement("a");
-    viewLink.className = "dropdown-item view-item-btn";
-    viewLink.textContent = "View";
-    viewLink.setAttribute("data-bs-toggle", "modal");
-    viewLink.setAttribute("href", "#!");
-    viewLink.addEventListener('click', () => {
-        const rowDataId = data.id;
-        window.location.href = `/quatation_details/${rowDataId}/`;
-    });
-    viewOption.appendChild(viewLink);
-    dropdownMenu.appendChild(viewOption);
-
-    // Edit option
-    const editOption = document.createElement("li");
-    const editLink = document.createElement("a");
-    editLink.className = "dropdown-item edit-item-btn";
-    editLink.textContent = "Edit";
-    editLink.setAttribute("data-bs-toggle", "modal");
-    editLink.setAttribute("href", "#!");
-    editLink.addEventListener('click', () => {
-        const rowDataId = data.id;
-        window.location.href = `/quatation_update/${rowDataId}/`;
-    });
-    editOption.appendChild(editLink);
-    dropdownMenu.appendChild(editOption);
-    dropdownButtonCell.appendChild(dropdownMenu);
-    newRow.appendChild(dropdownButtonCell);
-
-      
 
         return newRow;
     }

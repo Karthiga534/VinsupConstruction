@@ -363,6 +363,18 @@
 																Delete
 															</a>
 														</li> -->
+														<li>
+															<a class="dropdown-item remove-item-btn del-btn" href="#!" data-bs-toggle="modal" data-target="#deleteModal{{ i.id }}">
+																{% if i.is_disabled %}
+																<i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i>
+																Enable
+																{% else %}
+																<i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i>
+																Disable
+																{% endif %}
+															</a>
+														</li>
+														
 													</ul>
 
 													<a 
@@ -884,32 +896,83 @@
 
 							</div>
 							<!-- for delete -->
-
+{% comment %} 
 							<div class="modal fade" id="deleteModal{{ i.id}}" tabindex="-1"
-								aria-labelledby="deleteModalLabel-{{ forloop.counter }}" aria-hidden="true">
-								<div class="modal-dialog">
-									<div class="modal-content">
-										<div class="modal-header">
-											<h5 class="modal-title" id="deleteModalLabel-{{ forloop.counter }}"> Delete
-												Project </h5>
-											<button type="button" class="btn-close" data-bs-dismiss="modal"
-												aria-label="Close"></button>
-										</div>
-										<div class="modal-body">
-											<p> Are you sure you want to delete "{{ i.client }}"? </p>
-										</div>
-										<div class="modal-footer">
-											<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-												Cancel </button>
+                            aria-labelledby="deleteModalLabel-{{ forloop.counter }}" aria-hidden="true">
+                            <div class="modal-dialog">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <h5 class="modal-title" id="deleteModalLabel-{{ forloop.counter }}"> 
+                                    {{i.client}}</h5>
+                                  <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                                </div>
+                                {% if i.disable == True %}
+
+                                <div class="modal-body">
+                                  <p> Are you sure you want to Enable "{{ i.client }}"? </p>
+                                </div>
+                                <div class="modal-footer">
+                                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                                    onclick="CloseModel('editModal','{{i.id}}')">Close</button>
+
+                                  <button type="button" onclick="deleteFunction(this,'{{i.id}}')"
+                                    class="btn btn-success">Enable</button>
+
+                                </div>
+                                {% else %}
+
+                                <div class="modal-body">
+                                  <p> Are you sure you want to disable "{{ i.client }}"? </p>
+                                </div>
+                                <div class="modal-footer">
+                                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                                    onclick="CloseModel('editModal','{{i.id}}')">Close</button>
+
+                                  <button type="button" onclick="deleteFunction(this,'{{i.id}}')"
+                                    class="btn btn-danger">Disable</button>
+
+                                </div>
+                                
+                              
+
+                                {% endif %}
+                               
+                              </div>
+                            </div>
+                          </div> {% endcomment %}
 
 
-											<button type="button" onclick="deleteFunction(this,'{{i.id}}')"
-												class="btn btn-danger">Delete</button>
+						  <div class="modal fade" id="deleteModal{{ i.id }}" tabindex="-1"
+     aria-labelledby="deleteModalLabel-{{ forloop.counter }}" aria-hidden="true" data-client="{{ i.client }}">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel-{{ forloop.counter }}">{{ i.client }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            {% if i.is_disabled %}
+            <div class="modal-body">
+                <p>Are you sure you want to enable "{{ i.client }}"?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" onclick="updateProjectStatus(this, '{{ i.id }}', 'enable')" class="btn btn-success">Enable</button>
+            </div>
+            {% else %}
+            <div class="modal-body">
+                <p>Are you sure you want to disable "{{ i.client }}"?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" onclick="updateProjectStatus(this, '{{ i.id }}', 'disable')" class="btn btn-danger">Disable</button>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
 
-										</div>
-									</div>
-								</div>
-							</div>
+
 							</td>
 							</tr>
 
@@ -1285,64 +1348,78 @@
 			}
 
 
-
-
-
-
-
-
-			function deleteFunction(button, saveId) {
+			function updateProjectStatus(button, projectId, action) {
+				var stat_message = { "true": 'Disabled', "false": 'Enabled' };
+				var actionMap = {
+					'disable': { url: '/delete_project/', buttonClass: 'btn-success', buttonText: 'Enable' },
+					'enable': { url: '/enable_project/', buttonClass: 'btn-danger', buttonText: 'Disable' }
+				};
+			
+				var actionDetail = actionMap[action];
+			
 				try {
 					disableButton(button);
-
+			
 					$.ajax({
-						url: '/delete_project/' + saveId + '/',
-						type: 'DELETE',
+						url: actionDetail.url + projectId + '/',
+						type: 'PUT',
 						headers: {
 							'X-CSRFToken': csrftoken,
 						},
 						processData: false,
 						contentType: false,
 						success: function (response, status, xhr) {
-
-							if (xhr.status === 204) {
-
-								showToast(deleteMessage?.message, '', deleteMessage?.bgColor, true);
+							if (xhr.status === 200) {
+								const isDisabled = response.is_disabled.toString(); // Convert to string "true" or "false"
+								var message = stat_message[isDisabled] + ' successfully';
+			
+								showToast(message, '', deleteMessage?.bgColor, true);
+			
+								// Update the modal content dynamically
+								var modal = $('#deleteModal' + projectId);
+								var modalBody = modal.find('.modal-body p');
+								var actionButton = modal.find('.modal-footer button.btn-success, .modal-footer button.btn-danger');
+								var newClientName = modal.data('client');
+			
+								// Determine the new action and text based on the response
+								var newAction = isDisabled === "true" ? 'enable' : 'disable';
+								var newActionDetail = actionMap[newAction];
+			
+								// Update modal text and button
+								modalBody.text((isDisabled === "true" ? 'Are you sure you want to enable' : 'Are you sure you want to disable') + ' "' + newClientName + '"?');
+								actionButton
+									.removeClass('btn-success btn-danger')
+									.addClass(newActionDetail.buttonClass)
+									.text(newActionDetail.buttonText)
+									.attr('onclick', `updateProjectStatus(this, '${projectId}', '${newAction}')`);
+			
+								// Update the dropdown item text
+								var dropdownItem = $('a[data-target="#deleteModal' + projectId + '"]');
+								dropdownItem.html('<i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i>' + (isDisabled === "true" ? 'Enable' : 'Disable'));
+			
 								enableButton(button);
-
 							} else {
 								showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
 								enableButton(button);
-
 							}
 						},
 						error: function (xhr, status, error) {
-							console_log(xhr, status, error);
-							if (xhr.status === 400) {
-								if (xhr?.responseJSON || xhr?.responseJSON?.errors) {
-									showToast(xhr?.responseJSON?.details, '', errorAlertMessage?.bgColor);
-									enableButton(button);
-								} else {
-									showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
-									enableButton(button);
-								}
-							}
-							else if (xhr.status === 401 || 404) {
-								showToast(xhr?.responseJSON?.details, '', errorAlertMessage?.bgColor);
-								enableButton(button);
-							}
-							else {
-
+							console.log(xhr, status, error);
+							if (xhr.status === 400 || xhr.status === 401 || xhr.status === 404) {
+								showToast(xhr.responseJSON?.details || errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+							} else {
 								showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
-								enableButton(button);
 							}
+							enableButton(button);
 						}
 					});
 				} catch (error) {
 					showToast(errorOccured?.message, '', errorOccured?.bgColor);
 					console.error(error);
+					enableButton(button);
 				}
 			}
+			
 
 		</script>
 

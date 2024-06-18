@@ -103,7 +103,7 @@ def index(request):
     previous_month_start = current_month_start - timedelta(days=1)  #days
     previous_month_end = current_month_start - timedelta(days=1)
 
-    queryset = Project.objects.filter(company__in = company ,start_date__range=[previous_month_start,current_month_end])
+    queryset = Project.objects.filter( is_disabled=False,company__in = company ,start_date__range=[previous_month_start,current_month_end])
     ongoing =queryset.filter(status__code =1 )
     completed =queryset.filter(status__code =0 )
     print(ongoing,"on going")
@@ -391,49 +391,6 @@ def delete_emproles(request, id):
 
 #--------------------> Employee <-----------------------
 
-# @check_valid_user
-# @check_user_company
-# @check_admin
-# @login_required(login_url='login')
-# def employee(request):
-#     user=request.user
-#     allow,msg= check_user(request,Employee,instance=False)  # CHANGE model
-#     if not allow:
-#          context ={"unauthorized":msg}
-#          return render(request,"login.html",context)  
-#     if request.method == 'POST':
-#         request_data=request.POST.copy().dict()
-#         if user.admin:
-#             request_data ["company"] = user.company.id
-#         img = request.FILES.get("img",None)
-#         aadhaar_card_image = request.FILES.get("aadhaar_card_image",None)
-#         pan_card_image = request.FILES.get("pan_card_image",None)
-
-#         if img:
-#          request_data['img'] = img  
-
-#         if aadhaar_card_image:
-#          request_data['aadhaar_card_image'] = aadhaar_card_image 
-
-#         if pan_card_image:
-#          request_data['pan_card_image'] = pan_card_image 
-    
-#         form = EmployeeSerializer(data=request_data)  
-#         if form.is_valid():
-#             form.save()
-#             return JsonResponse({"msg":"success"},status=201)    
-#         else:
-#             return JsonResponse(form.errors,status=400)
-#     else:
-#         form = EmployeeSerializer()    
-#     querysets = Employee.objects.filter(company=request.user.company).order_by("-id")   
-#     queryset,pages,search =customPagination(request,Employee,querysets) 
-#     roles = EmpRoles.objects.filter(company = request.user.company )
-  
-#     context= {'queryset': queryset,"location":"employee","pages" :pages,"search":search,"roles" :roles,'form':form}   #change location name 
-
-#     return render(request,"employee/employee.html",context)    #change template name
-
     
 @check_valid_user
 @check_user_company
@@ -503,100 +460,7 @@ def get_employee(request, id):
     except Employee.DoesNotExist:
         return JsonResponse({'error': 'Object not found'}, status=404)    
    
-# @api_view(['PUT'])
-# @login_required(login_url='login')
-# # @check_valid_user
-# # @check_user_company
-# # @check_admin
-# def save_employee(request, id):
-#     try:
-#         instance = Employee.objects.get(id=id)
-#     except Employee.DoesNotExist:
-#         return Response({'error': 'Employee object does not exist'}, status=404)
 
-#     if request.method == 'PUT':
-#         user = request.user
-#         allow, msg = check_user(request, Employee, instance=False)  # CHANGE model
-        
-#         if not allow:
-#             return JsonResponse({"error": msg}, status=401)
-
-#         serializer = EmployeeSerializer(instance, data=request.data)
-        
-#         if serializer.is_valid():
-#             if user.admin:
-#                 request_data = serializer.validated_data
-#                 request_data['company'] = user.company.id
-         
-                
-#                 # Update serializer data with modified request data
-#                 serializer.update(instance, request_data)
-#             else:
-#                 serializer.save()
-                
-#             return JsonResponse(serializer.data, status=200)
-#         else:
-#             return JsonResponse(serializer.errors, status=400)
-#     else:
-#         return JsonResponse({'error': 'Invalid request method'}, status=405)
-
-# img = request.FILES.get("img",None)
-#     aadhaar_card_image = request.FILES.get("aadhaar_card_image",None)  
-#     if img:
-#          request_data['img'] = img    
-#     if aadhaar_card_image: 
-#          request_data['aadhaar_card_image'] = aadhaar_card_image 
-
-# @api_view(['PUT'])
-# @login_required(login_url='login')
-# def save_employee(request, id):
-#     try:
-#         instance = Employee.objects.get(id=id)
-#     except Employee.DoesNotExist:
-#         return Response({'error': 'Employee object does not exist'}, status=404)
-
-#     if request.method == 'PUT':
-#         user = request.user
-#         allow, msg = check_user(request, Employee, instance=False)
-        
-#         if not allow:
-#             return JsonResponse({"error": msg}, status=401)
-
-#         serializer = EmployeeSerializer(instance, data=request.data)
-        
-#         if serializer.is_valid():
-
-#             if user.admin:
-#                 request_data = serializer.validated_data
-#                 # Get the company instance associated with the logged-in user
-#                 company_instance = user.company
-#                 # Assign the company instance to the employee instance
-#                 request_data['company'] = company_instance
-
-#             img = request.FILES.get("img", None)
-#             aadhaar_card_image = request.FILES.get("aadhaar_card_image", None)
-#             pan_card_image = request.FILES.get("pan_card_image",None)
-
-            
-#             if img:
-#                 request_data['img'] = img
-#             if aadhaar_card_image:
-#                 request_data['aadhaar_card_image'] = aadhaar_card_image
-#             if pan_card_image:
-#                 request_data['pan_card_image'] = pan_card_image
-
-            
-         
-#                 # Update serializer data with modified request data
-#                 serializer.update(instance, request_data)
-#             else:
-#                 serializer.save()
-                
-#             return JsonResponse(serializer.data, status=200)
-#         else:
-#             return JsonResponse(serializer.errors, status=400)
-#     else:
-#         return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 @api_view(['PUT'])
 @login_required(login_url='login')
@@ -1160,7 +1024,6 @@ def add_labours (request):  # CHANGE name
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)   
 
 
-
 @api_view(['PUT'])
 @login_required(login_url='login')
 @check_valid_user
@@ -1178,16 +1041,18 @@ def update_labours(request, pk):  # CHANGE name
     if not allow:
         return JsonResponse({'details': [msg]}, status=401)
     
+    # Create a mutable copy of the request data
+    data = request.data.copy()
+    
     if user.admin:
-        request.data['company'] = user.company.id
+        data['company'] = user.company.id
 
-    serializer = CompanyLaboursSerializer(instance, data=request.data, partial=True, context={'request': request})   # CHANGE Serializer
+    serializer = CompanyLaboursSerializer(instance, data=data, partial=True, context={'request': request})  # CHANGE Serializer
     if serializer.is_valid():  
         serializer.save()
         return JsonResponse(serializer.data, status=200)
     else:
         return JsonResponse(serializer.errors, status=400)
-
 
 
 @api_view(['DELETE'])
@@ -1217,8 +1082,8 @@ def expense(request):  #change name
          return render(request,"login.html",context)    
       
     querysets = Expense.objects.filter(company=request.user.company).order_by("-id") 
-    employee = Employee.objects.filter(company=request.user.company).order_by("-id") 
-    site_location =Project.objects.filter(company=request.user.company).order_by("-id")   #change query
+    employee = Employee.objects.filter(company=request.user.company,user__disable = False).order_by("-id") 
+    site_location =Project.objects.filter(company=request.user.company, is_disabled=False).order_by("-id")   #change query
     queryset,pages,search =customPagination(request,Expense,querysets)    #change, model
     context= {'queryset': queryset,
               "location":"expense",
@@ -1300,7 +1165,7 @@ def expense_list(request):
          context = {"unauthorized": msg}
          return render(request, "login.html", context)
     querysets = Expense.objects.filter(company=request.user.company).order_by("-id")  #change query
-    project=  Project.objects.filter(company=request.user.company).order_by("-id")
+    project=  Project.objects.filter(company=request.user.company,is_disabled=False).order_by("-id")
     employee =Employee.objects.filter(company=request.user.company,user__disable = False).order_by("-id") 
     queryset, pages, search = customPagination(request, Expense, querysets)   #change, model
     context = {
@@ -2306,7 +2171,7 @@ def companylabour_attendance(request):
     if not allow:
          context ={"unauthorized":msg}
          return render(request,"login.html",context)    
-    project=Project.objects.filter(company=request.user.company).order_by("-id")
+    project=Project.objects.filter(company=request.user.company, is_disabled=False).order_by("-id")
     projectsubcontractor = CompanyLabours.objects.filter(company=request.user.company, disable=False).order_by("-id")
     querysets = ProjectLabourAttendence.objects.filter(company=request.user.company).order_by("-id")   #change query
     queryset,pages,search =customPagination(request,ProjectLabourAttendence,querysets)    #change, model
@@ -2419,7 +2284,7 @@ def employee_attendance(request):
          return render(request,"login.html",context)    
     employee =Employee.objects.filter(company=request.user.company,user__disable = False).order_by("-id")
 
-    project=Project.objects.filter(company=request.user.company).order_by("-id")
+    project=Project.objects.filter(company=request.user.company, is_disabled=False).order_by("-id")
     # projectsubcontractor = CompanyLabours.objects.filter(company=request.user.company).order_by("-id")
     # querysets = ProjectLabourAttendence.objects.filter(company=request.user.company).order_by("-id")   #change query
     # queryset,pages,search =customPagination(request,ProjectLabourAttendence,querysets)    #change, model
@@ -2617,7 +2482,7 @@ def employee_attendence_list(request,pk):  #change name
         querysets =Attendance.objects.filter(company__in=company)
         return PaginationAndFilter(querysets, request,AttendenceSerialiser,date_field ="date")
         
-    querysets =Employee.objects.filter(company__in=company).order_by('-id')
+    querysets =Employee.objects.filter(company__in=company,user__disable = False).order_by('-id')
     return PaginationAndFilter(querysets, request,EmployeeAttendenceSerialiser,date_field ="date")
 
 
@@ -2926,7 +2791,7 @@ def employee_salary_list(request,pk):  #change name
          context ={"unauthorized":msg}
          return render(request,"login.html",context)   
     company,_=get_user_company(user)
-    querysets =Employee.objects.filter(company__in=company)
+    querysets =Employee.objects.filter(company__in=company,user__disable = False)
 
     pk= int(pk)
     if pk !=0:   
@@ -2944,7 +2809,7 @@ def profit_and_loss(request,pk):  #change name
          context ={"unauthorized":msg}
          return render(request,"login.html",context)  
     company,_=get_user_company(user)  
-    querysets =Project.objects.filter(company__in=company)
+    querysets =Project.objects.filter(company__in=company, is_disabled=False)
     return PaginationAndFilter(querysets, request,ProfitandLoseSerializer,date_field ="start_date")
 
 
@@ -3134,7 +2999,7 @@ def pettycash(request):  #change name
       
     querysets = PettyCash.objects.filter(company=request.user.company).order_by("-id") 
     employee = Employee.objects.filter(company=request.user.company,user__disable = False).order_by("-id") 
-    site_location =Project.objects.filter(company=request.user.company).order_by("-id")   #change query
+    site_location =Project.objects.filter(company=request.user.company, is_disabled=False).order_by("-id")   #change query
     payment_method = PaymentMethod.objects.all().order_by("-id")
     queryset,pages,search =customPagination(request,PettyCash,querysets)    #change, model
     context= {'queryset': queryset,
@@ -3389,11 +3254,11 @@ def dailytask(request):  #change name
          return render(request,"login.html",context)    
       
     querysets = Dailytask.objects.filter(company=request.user.company).order_by("-id")
-    project = Project.objects.filter(company=request.user.company).order_by("-id") 
+    project = Project.objects.filter(company=request.user.company, is_disabled=False).order_by("-id") 
     subcontract =ProjectSubContract.objects.filter(company=request.user.company).order_by("-id")
     # subcontract_item =ProjectSubContractUnitRates.objects.all().order_by("-id")
     uom =Uom.objects.filter(company=request.user.company).order_by("-id")
-    queryset,pages,search =customPagination(request,Expense,querysets)    #change, model
+    queryset,pages,search =customPagination(request,Dailytask,querysets)    #change, model
     context= {'queryset': queryset,
               "location":"dailytask",
               "pages" :pages,
@@ -3493,7 +3358,7 @@ def site_allocation(request):
          return render(request,"login.html",context)    
     employee =Employee.objects.filter(company=request.user.company,user__disable = False    ).order_by("-id")
 
-    project=Project.objects.filter(company=request.user.company).order_by("-id")
+    project=Project.objects.filter(company=request.user.company, is_disabled=False).order_by("-id")
     context ={"employee":employee, "project":project}
     return render(request, 'site_allocation/emp_site_allocation.html',context)
 
@@ -3631,7 +3496,7 @@ def lab_site_allocation(request):
 
     #company=request.user.company,user__disable = False
 
-    project=Project.objects.filter(company=request.user.company).order_by("-id")
+    project=Project.objects.filter(company=request.user.company, is_disabled=False).order_by("-id")
     context ={"employee":employee, "project":project}
     return render(request, 'site_allocation/lab_site_allocation.html',context)
 
@@ -3781,7 +3646,7 @@ def get_purchase(request, pk):
         return HttpResponseNotFound('<h1>purchase not found</h1>')
 
     if request.method == 'GET':
-        projects = Project.objects.filter(company=request.user.company).order_by("-id") 
+        projects = Project.objects.filter(company=request.user.company, is_disabled=False).order_by("-id") 
         vendors = VendorRegistration.objects.filter(company=request.user.company).order_by("-id") 
         items = MaterialLibrary.objects.filter(company=request.user.company).order_by("-id")
         uom = Uom.objects.filter(company=request.user.company).order_by("-id")
@@ -3819,7 +3684,7 @@ def update_purchase(request, pk):
         return JsonResponse({'details': 'Invalid company reference'}, status=status.HTTP_400_BAD_REQUEST) 
 
     if request.method == 'GET':
-        projects = Project.objects.filter(company=request.user.company).order_by("-id") 
+        projects = Project.objects.filter(company=request.user.company, is_disabled=False).order_by("-id") 
         vendors = VendorRegistration.objects.filter(company=request.user.company).order_by("-id") 
         items = MaterialLibrary.objects.filter(company=request.user.company).order_by("-id")
         uom = Uom.objects.filter(company=request.user.company).order_by("-id")
@@ -3857,8 +3722,8 @@ def get_quatation(request, pk):
         return HttpResponseNotFound('<h1>Quatation not found</h1>')
 
     if request.method == 'GET':
-        projects = Project.objects.filter(company=request.user.company).order_by("-id") 
-        employees = Employee.objects.filter(company=request.user.company).order_by("-id") 
+        projects = Project.objects.filter(company=request.user.company, is_disabled=False).order_by("-id") 
+        employees = Employee.objects.filter(company=request.user.company,user__disable = False).order_by("-id") 
         # status =WorkStatus.objects.filter().order_by("-id")
         uom = Uom.objects.filter(company=request.user.company).order_by("-id")
         inventory=InventoryStock.objects.filter(company=request.user.company).order_by("-id")
@@ -3883,8 +3748,8 @@ def update_quatation(request, pk):
         return HttpResponseNotFound('<h1>Quatation not found</h1>')
 
     if request.method == 'GET':
-        projects = Project.objects.filter(company=request.user.company).order_by("-id") 
-        employees = Employee.objects.filter(company=request.user.company).order_by("-id") 
+        projects = Project.objects.filter(company=request.user.company, is_disabled=False).order_by("-id") 
+        employees = Employee.objects.filter(company=request.user.company,user__disable = False).order_by("-id") 
         # status =WorkStatus.objects.filter().order_by("-id")
         uom = Uom.objects.filter(company=request.user.company).order_by("-id")
         inventory=InventoryStock.objects.filter(company=request.user.company).order_by("-id")

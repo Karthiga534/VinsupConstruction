@@ -1022,9 +1022,16 @@ class Project(models.Model):
     status = models.ForeignKey(WorkStatus, on_delete=models.CASCADE,null=True,blank=True)
     description = models.TextField(null=True,blank=True) 
     terms_conditions = models.TextField(null=True,blank=True)
+    is_disabled = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.proj_name} - {self.site_location}"
+    
+    # @property
+    # def disable(self):
+    #     if self.user:
+    #         return self.user.disable
+    #     return False
     
     @property
     def display(self):
@@ -2170,7 +2177,8 @@ class EmployeeProfile(models.Model):
     
 class CompanyProfile(models.Model):
     company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='profile')
-    attachment  =models.FileField(upload_to="img", null=True, blank=True)
+    # attachment  =models.FileField(upload_to="img", null=True, blank=True)
+    attachment = models.ImageField(upload_to='company_profile/', null=True, blank=True)
     email = models.EmailField(null=True, blank=True)
     phone_number = models.CharField(max_length=15, null=True, blank=True)
     gst_number = models.CharField(max_length=15, null=True, blank=True)
@@ -2179,6 +2187,9 @@ class CompanyProfile(models.Model):
     
     def __str__(self):
         return f"{self.company.name} Profile"
+    
+    def company_profile(instance, filename):
+        return f'img/{filename}'
     
 
 class PettyCash(models.Model):
