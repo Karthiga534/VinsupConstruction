@@ -2177,8 +2177,8 @@ class EmployeeProfile(models.Model):
     
 class CompanyProfile(models.Model):
     company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='profile')
-    attachment  =models.FileField(upload_to="img", null=True, blank=True)
-   #attachment = models.ImageField(upload_to=company_profile_image_path, null=True, blank=True)
+    # attachment  =models.FileField(upload_to="img", null=True, blank=True)
+    attachment = models.ImageField(upload_to='company_profile_image_path/', null=True, blank=True)
     email = models.EmailField(null=True, blank=True)
     phone_number = models.CharField(max_length=15, null=True, blank=True)
     gst_number = models.CharField(max_length=15, null=True, blank=True)
@@ -2187,6 +2187,16 @@ class CompanyProfile(models.Model):
     
     def __str__(self):
         return f"{self.company.name} Profile"
+    
+    def company_profile_image_path(instance, filename):
+    # instance refers to the current instance of the model where the ImageField is defined
+    # filename is the original filename of the uploaded file
+
+    # Modify filename if needed, e.g., to ensure uniqueness or readability
+    # You can use various techniques to modify the filename if necessary
+
+    # Construct the final path where the file will be uploaded
+       return f'img/{filename}'
     
 
 class PettyCash(models.Model):

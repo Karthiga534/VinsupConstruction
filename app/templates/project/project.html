@@ -5,49 +5,47 @@
 
 {% block header2 %}
 
-<div id="layout-wrapper">
+	<div id="layout-wrapper">
 
-	<div class="main-content">
+		<div class="main-content">
 
-		<div class="page-content">
-			<div class="container-fluid">
-				<div class="row">
-					<div class="col-12">
-						<div class="page-title-box d-sm-flex align-items-center justify-content-between">
-							<h4 class="mb-sm-0">Project Management</h4>
-							<div class="page-title-right">
-								<ol class="breadcrumb m-0">
-									<li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
-									<li class="breadcrumb-item active">Projects</li>
-								</ol>
+			<div class="page-content">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-12">
+							<div class="page-title-box d-sm-flex align-items-center justify-content-between">
+								<h4 class="mb-sm-0">Project Management</h4>
+								<div class="page-title-right">
+									<ol class="breadcrumb m-0">
+										<li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
+										<li class="breadcrumb-item active">Projects</li>
+									</ol>
+								</div>
 							</div>
 						</div>
 					</div>
-				</div>
 
-				<div class="row">
-					<div class="col-xl-5 col-lg-5 col-md-6 col-xs-6 col-12">
+					<div class="row">
+						<div class="col-xl-5 col-lg-5 col-md-6 col-xs-6 col-12">
 
-					</div>
-					<div class="col-xl-5 col-lg-4 col-md-3 col-xs-6 col-12"></div>
-					<div class="col-xl-2 col-lg-3 col-md-3 col-xs-6 col-12">
+						</div>
+						<div class="col-xl-5 col-lg-4 col-md-3 col-xs-6 col-12"></div>
+						<div class="col-xl-2 col-lg-3 col-md-3 col-xs-6 col-12">
 
+							<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog"
+								aria-labelledby="myLargeModalLabel" aria-hidden="true">
+								<div class="modal-dialog modal-lg">
+									<form id="createForm" enctype="multipart/form-data">
 
-						<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog"
-							aria-labelledby="myLargeModalLabel" aria-hidden="true">
-							<div class="modal-dialog modal-lg">
-								<form id="createForm" enctype="multipart/form-data">
+										<div class="modal-content">
+											<div class="modal-header">
+												<h5 class="modal-title" id="myLargeModalLabel">New Project</h5>
+												<button type="button" class="btn-close" data-bs-dismiss="modal"
+													aria-label="Close">
+												</button>
 
-
-									<div class="modal-content">
-										<div class="modal-header">
-											<h5 class="modal-title" id="myLargeModalLabel">New Project</h5>
-											<button type="button" class="btn-close" data-bs-dismiss="modal"
-												aria-label="Close">
-											</button>
-
-										</div>
-										<hr>
+											</div>
+											<hr>
 										<div class="modal-body">
 											<div class="row">
 												<div class="col-lg-12">
@@ -284,6 +282,7 @@
 											{% comment %} <th data-ordering="false">Priority</th>
 											<th data-ordering="false"> Duration </th> {% endcomment %}
 											<th data-ordering="false">Status</th>
+											<th data-ordering="false">Current Status</th>
 											<th data-ordering="false">Action</th>
 										</tr>
 									</thead>
@@ -337,6 +336,13 @@
 																data-id="{{ i.id }}">Ongoing</a></li>
 													</ul>
 												</div>
+											</td>
+											<td>
+												{% if i.is_disabled %}
+													<span class="text-danger">deactive</span>
+												{% else %}
+													<span class="text-success">active</span>
+												{% endif %}
 											</td>
 											<td>
 
@@ -642,20 +648,6 @@
 
 																		</div>
 
-																		{% comment %} <div class="col-md-6">
-
-																			<label for="edit_proj_id"
-																				class="form-label">Project Id:</label>
-
-																			<input type="text" class="form-control"
-																				id="{{i.id}}_proj_id" name="proj_id"
-																				value="{{i.proj_id}}" />
-
-																			<span id="{{i.id}}_proj_idError"
-																				class="error-message"></span>
-
-																		</div> {% endcomment %}
-
 																		<div class="col-md-6 mb-3">
 
 																			<label for="edit_proj_name"
@@ -754,28 +746,6 @@
 																				class="error-message"></span>
 																		</div>
 
-																		<!-- <div class="col-md-6 mb-3">
-																			<label for="edit_duration"
-																				class="form-label">Duration :</label>
-																			<select class="form-select"
-																				aria-label="Default select example"
-																				id="{{i.id}}_duration" name="duration">
-
-																				<option value="{{i.duration.id}}"
-																					selected>{{i.duration.name}}
-																				</option>
-																				<option>----------- </option>
-																				{% for j in duration %}
-																				<option value="{{j.id}}">{{j.name}}
-																				</option>
-																				{% endfor %}
-
-
-																			</select>
-																			<span id="{{i.id}}_durationError"
-																				class="error-message"></span>
-																		</div> -->
-
 																		<div class="col-md-6 mb-3">
 
 																			<label for="edit_estimation"
@@ -791,9 +761,6 @@
 
 																		</div>
 
-
-																		{% comment %} <div class="col-md-6 mb-3"></div>
-																		{% endcomment %}
 																		<div class="col-md-6 mb-3">
 																			<label for="editmodeldesign">Model
 																				Design:</label>
@@ -807,17 +774,6 @@
 																					href="{{ i.modeldesign.url}}">
 																					{{i.modeldesign |filename }}
 																					</a></span>
-																			<!-- <div class="p-1"
-																				style="width:92%;border:1px solid gray;font-size:12px">
-																				<a
-																					href="{{ i.modeldesign.url }}">{{i.modeldesign}}</a>
-																				<span id="{{i.id}}_modeldesignError"
-																					class="error-message"></span>
-
-																			</div> -->
-																			<!-- <button class="btn btn-primary btn-sm"
-																				style="margin-left:92%;margin-top:-49px"><i
-																					class="mdi mdi-arrow-down"></i></button> -->
 
 																		</div>
 
@@ -895,82 +851,35 @@
 												</div>
 
 							</div>
-							<!-- for delete -->
-{% comment %} 
-							<div class="modal fade" id="deleteModal{{ i.id}}" tabindex="-1"
-                            aria-labelledby="deleteModalLabel-{{ forloop.counter }}" aria-hidden="true">
-                            <div class="modal-dialog">
-                              <div class="modal-content">
-                                <div class="modal-header">
-                                  <h5 class="modal-title" id="deleteModalLabel-{{ forloop.counter }}"> 
-                                    {{i.client}}</h5>
-                                  <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                    aria-label="Close"></button>
-                                </div>
-                                {% if i.disable == True %}
 
-                                <div class="modal-body">
-                                  <p> Are you sure you want to Enable "{{ i.client }}"? </p>
-                                </div>
-                                <div class="modal-footer">
-                                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
-                                    onclick="CloseModel('editModal','{{i.id}}')">Close</button>
-
-                                  <button type="button" onclick="deleteFunction(this,'{{i.id}}')"
-                                    class="btn btn-success">Enable</button>
-
-                                </div>
-                                {% else %}
-
-                                <div class="modal-body">
-                                  <p> Are you sure you want to disable "{{ i.client }}"? </p>
-                                </div>
-                                <div class="modal-footer">
-                                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
-                                    onclick="CloseModel('editModal','{{i.id}}')">Close</button>
-
-                                  <button type="button" onclick="deleteFunction(this,'{{i.id}}')"
-                                    class="btn btn-danger">Disable</button>
-
-                                </div>
-                                
-                              
-
-                                {% endif %}
-                               
-                              </div>
-                            </div>
-                          </div> {% endcomment %}
-
-
-						  <div class="modal fade" id="deleteModal{{ i.id }}" tabindex="-1"
-     aria-labelledby="deleteModalLabel-{{ forloop.counter }}" aria-hidden="true" data-client="{{ i.client }}">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="deleteModalLabel-{{ forloop.counter }}">{{ i.client }}</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            {% if i.is_disabled %}
-            <div class="modal-body">
-                <p>Are you sure you want to enable "{{ i.client }}"?</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" onclick="updateProjectStatus(this, '{{ i.id }}', 'enable')" class="btn btn-success">Enable</button>
-            </div>
-            {% else %}
-            <div class="modal-body">
-                <p>Are you sure you want to disable "{{ i.client }}"?</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" onclick="updateProjectStatus(this, '{{ i.id }}', 'disable')" class="btn btn-danger">Disable</button>
-            </div>
-            {% endif %}
-        </div>
-    </div>
-</div>
+						<div class="modal fade" id="deleteModal{{ i.id }}" tabindex="-1"
+							aria-labelledby="deleteModalLabel-{{ forloop.counter }}" aria-hidden="true" data-client="{{ i.client }}">
+							<div class="modal-dialog">
+								<div class="modal-content">
+									<div class="modal-header">
+										<h5 class="modal-title" id="deleteModalLabel-{{ forloop.counter }}">{{ i.client }}</h5>
+										<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+									</div>
+									{% if i.is_disabled %}
+									<div class="modal-body">
+										<p>Are you sure you want to enable "{{ i.client }}"?</p>
+									</div>
+									<div class="modal-footer">
+										<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+										<button type="button" onclick="updateProjectStatus(this, '{{ i.id }}', 'enable')" class="btn btn-success">Enable</button>
+									</div>
+									{% else %}
+									<div class="modal-body">
+										<p>Are you sure you want to disable "{{ i.client }}"?</p>
+									</div>
+									<div class="modal-footer">
+										<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+										<button type="button" onclick="updateProjectStatus(this, '{{ i.id }}', 'disable')" class="btn btn-danger">Disable</button>
+									</div>
+									{% endif %}
+								</div>
+							</div>
+						</div>
 
 
 							</td>
