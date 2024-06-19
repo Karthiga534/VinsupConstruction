@@ -1468,7 +1468,7 @@ class ProjectMachineExpenseSerializer(serializers.ModelSerializer):
      if payment_schedule:
         data ["payment_schedule"] = {
             'id': payment_schedule.id,
-            'name': payment_schedule.days,
+            'name': payment_schedule.name,
         },
 
      return data

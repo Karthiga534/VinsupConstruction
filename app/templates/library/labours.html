@@ -90,7 +90,7 @@
                                                             </div>
 
 
-                                                            <div class="col-md-6 mb-4">
+                                                            {% comment %} <div class="col-md-6 mb-4">
                                                                 <br><label for="id_company_rate"
                                                                     class="form-label mt-3">Company
                                                                     Rate :
@@ -99,7 +99,7 @@
                                                                         id="company_rate">
                                                                     <span id="company_rateError"
                                                                         class="error-message"></span></label>
-                                                            </div>
+                                                            </div> {% endcomment %}
 
                                                             <br>
                                                             <br>
@@ -128,7 +128,7 @@
                                                                     name="payment_schedule">
                                                                     <option value=""> ------- </option>
                                                                     {% for i in payment_schedules %}
-                                                                    <option value="{{ i.id }}">{{ i.days }}</option>
+                                                                    <option value="{{ i.id }}">{{ i.name }}</option>
                                                                     {% endfor %}
                                                                 </select>
                                                                 <span id="payment_scheduleError"
@@ -217,7 +217,7 @@
                                 <td>{{ i.role }}</td>
                                 <td>{{ i.get_rate}}</td>
                                 <td>{{ i.get_ot_rate }}  </td> 
-                                <td>{{ i.get_payment_schedule.days }}</td>
+                                <td>{{ i.get_payment_schedule.name }}</td>
 
                                 {% if i.disable == True %}
                         
@@ -319,7 +319,7 @@
                                                                 name="role" value="{{ i.role.name }}" disabled />
                                                         </div>
 
-                                                        <div class="col-md-6 mb-4 mt-2">
+                                                        {% comment %} <div class="col-md-6 mb-4 mt-2">
                                                             <br><label for="id_company_rate"
                                                                 class="form-label mt-3">Company
                                                                 Rate : 
@@ -330,7 +330,7 @@
                                                                    >
                                                                 <!-- <span id="company_rateError"
                                                                     class="error-message"></span></label> -->
-                                                        </div>
+                                                        </div> {% endcomment %}
 
 
                                                         <div class="col-md-6 mt-2">
@@ -350,7 +350,7 @@
                                                                 :</label>
                                                             <input type="text" class="form-control"
                                                                 id="{{ i.id}}_payment_schedule" name="payment_schedule"
-                                                                value="{{i.get_payment_schedule.days}}" disabled />
+                                                                value="{{i.get_payment_schedule.name}}" disabled />
                                                         </div>
 
                                                     </div>
@@ -428,7 +428,7 @@
                                                                 </div>
 
 
-                                                                <div class="col-md-6 mb-4">
+                                                                {% comment %} <div class="col-md-6 mb-4">
                                                                     <br><label for="id_company_rate"
                                                                         class="form-label mt-3">Company
                                                                         Rate : 
@@ -439,7 +439,7 @@
                                                                            >
                                                                            <span id="{{i.id}}_company_rateError"
                                                                            class="error-message"></span>
-                                                                </div>
+                                                                </div> {% endcomment %}
 
 
                                                                 <hr>
@@ -470,12 +470,12 @@
                                                                     <span id="{{ i.id }}_payment_scheduleError"
                                                                         class="error-message"></span>
                                                                     <option value="{{ i.get_payment_schedule.id }}"
-                                                                        selected>{{ i.get_payment_schedule.days }}
+                                                                        selected>{{ i.get_payment_schedule.name }}
                                                                     </option>
                                                                     <option value="" disabled>----------------
                                                                     </option>
                                                                     {% for i in payment_schedules %}
-                                                                    <option value="{{ i.id }}">{{ i.days }}
+                                                                    <option value="{{ i.id }}">{{ i.name }}
                                                                     </option>
                                                                     {% endfor %}
                                                                 </select>
@@ -678,9 +678,9 @@
             var errors = {};
             var formData = new FormData();
 
-            var requiredKeys = ['name', 'image', 'role', 'rate', 'ot_rate', 'payment_schedule','company_rate'];
+            var requiredKeys = ['name', 'image', 'role', 'rate', 'ot_rate', 'payment_schedule'];
 
-            company_rate = getValueOrDefault(formElement.querySelector('input[name="company_rate"]').checked)
+            //company_rate = getValueOrDefault(formElement.querySelector('input[name="company_rate"]').checked)
             ot_rate = getValueOrDefault(formElement.querySelector('input[name="ot_rate"]').value)
             rate = getValueOrDefault(formElement.querySelector('input[name="rate"]').value)
             paymentSchedule = getValueOrDefault(formElement.querySelector('select[name="payment_schedule"]').value)
@@ -689,7 +689,7 @@
             formData.append('name', getValueOrDefault(formElement.querySelector('input[name="name"]').value));
             formData.append('role', getValueOrDefault(formElement.querySelector('select[name="role"]').value));
 
-            formData.append('company_rate', company_rate);
+            //formData.append('company_rate', company_rate);
 
             if (image) {
                 formData.append('image', image);
@@ -710,9 +710,9 @@
 
             }
 
-            if (company_rate) {
-                var requiredKeys = ['name', 'image', 'role'];
-            }
+            //if (company_rate) {
+            //    var requiredKeys = ['name', 'image', 'role'];
+           // }
 
 
 
@@ -827,9 +827,9 @@
             const formData = new FormData();
 
 
-            var requiredKeys = ['name', 'image', 'role', 'rate', 'ot_rate', 'payment_schedule','company_rate'];
+            var requiredKeys = ['name', 'image', 'role', 'rate', 'ot_rate', 'payment_schedule',];
 
-            company_rate = getValueOrDefault(formElement.querySelector('input[name="company_rate"]').checked)
+            //company_rate = getValueOrDefault(formElement.querySelector('input[name="company_rate"]').checked)
             ot_rate = getValueOrDefault(formElement.querySelector('input[name="ot_rate"]').value)
             rate = getValueOrDefault(formElement.querySelector('input[name="rate"]').value)
             paymentSchedule = getValueOrDefault(formElement.querySelector('select[name="payment_schedule"]').value)
@@ -838,7 +838,7 @@
             formData.append('name', getValueOrDefault(formElement.querySelector('input[name="name"]').value));
             formData.append('role', getValueOrDefault(formElement.querySelector('select[name="role"]').value));
 
-            formData.append('company_rate', company_rate);
+            //formData.append('company_rate', company_rate);
 
             if (image) {
                 formData.append('image', image);
@@ -859,9 +859,9 @@
 
             }
 
-            if (company_rate) {
-                var requiredKeys = ['name', 'image', 'role'];
-            }
+            //if (company_rate) {
+            //    var requiredKeys = ['name', 'image', 'role'];
+           // }
 
             // formData.append('name', getValueOrDefault(formElement.querySelector('input[name="name"]').value));    //change
             // formData.append('rate', getValueOrDefault(formElement.querySelector('input[name="rate"]').value));

@@ -91,98 +91,34 @@ class CustomLogoutView(LogoutView):
 
 #--------------------- Dashboard Table ---------------------
 
-
 @login_required(login_url='login')
 def index(request):
+    company, _ = get_company(request.user)
 
-    company,_ =get_company(request.user)
+    queryset = Project.objects.filter(is_disabled=False, company__in=company)
+    ongoing = queryset.filter(status__code=1)
+    completed = queryset.filter(status__code=0)
 
-    current_month_start, next_month_start = get_current_month()
-    current_month_end = next_month_start - timedelta(days=1)
-   
-    previous_month_start = current_month_start - timedelta(days=1)  #days
-    previous_month_end = current_month_start - timedelta(days=1)
-
-    queryset = Project.objects.filter( is_disabled=False,company__in = company ,start_date__range=[previous_month_start,current_month_end])
-    ongoing =queryset.filter(status__code =1 )
-    completed =queryset.filter(status__code =0 )
-    print(ongoing,"on going")
-
-    project_count,previous_month_project_count,project_count_difference = filter_by_month_range(Project,company, current_month_start,current_month_end ,
-                                                                           previous_month_start ,previous_month_end ,"start_date" ,queryset)
-    
-    employee_count,previous_month_employee_count,employee_count_difference = filter_by_month_range(Employee,company, current_month_start,current_month_end ,
-                                                                           previous_month_start ,previous_month_end ,"start_date" ,queryset=False)
-
-
-    contractor_count,previous_month_contractor_count,contractor_count_difference = filter_by_month_range(Contractor,company, current_month_start,current_month_end ,
-                                                                           previous_month_start ,previous_month_end ,"start_date",queryset=False)
-
-
-    quatation_count,previous_month_quatation_count,quatation_count_difference = filter_by_month_range(Quatation,company, current_month_start,current_month_end ,
-                                                                           previous_month_start ,previous_month_end ,"start_date",queryset=False)                                                                     
-
-
-    projectsubcontract_count,previous_month_projectsubcontract_count,projectsubcontract_count_difference = filter_by_month_range(ProjectSubContract,company, current_month_start,current_month_end ,
-                                                                           previous_month_start ,previous_month_end ,"start_date",queryset=False)
-    
-    companylabour_count,previous_month_companylabour_count,companylabour_count_difference = filter_by_month_range(CompanyLabours,company, current_month_start,current_month_end ,
-                                                                           previous_month_start ,previous_month_end ,"date",queryset=False)
-
-
-    expense_count,previous_month_expense_count,expense_count_difference = filter_by_month_range(Expense,company, current_month_start,current_month_end ,
-                                                                           previous_month_start ,previous_month_end ,"date",queryset=False)
-
-
-    completed_project_count,previous_month_completed_project_count,completed_project_count_difference = filter_by_month_range(Project,company, current_month_start,current_month_end ,
-                                                                           previous_month_start ,previous_month_end ,"start_date",queryset=completed) 
-
-
-    ongoing_project_count,previous_month_ongoing_project_count,ongoing_project_count_difference = filter_by_month_range(Project,company, current_month_start,current_month_end ,
-                                                                           previous_month_start ,previous_month_end ,"start_date",queryset=ongoing)                                                                       
-
-   
+    project_count = queryset.count()
+    employee_count = Employee.objects.filter(user__disable = False,company__in=company).count()
+    contractor_count = Contractor.objects.filter(company__in=company).count()
+    quatation_count = Quatation.objects.filter(company__in=company).count()
+    projectsubcontract_count = ProjectSubContract.objects.filter(company__in=company).count()
+    companylabour_count = CompanyLabours.objects.filter(company__in=company, disable=False).count()
+    expense_count = Expense.objects.filter(company__in=company).count()
+    ongoing_project_count = ongoing.count()
+    completed_project_count = completed.count()
 
     return render(request, 'index.html', {
         'project_count': project_count,
-        'previous_month_project_count': previous_month_project_count,
-        'project_count_difference': project_count_difference,
-
         'employee_count': employee_count,
-        'previous_month_employee_count': previous_month_employee_count,
-        'employee_count_difference': employee_count_difference,
-        
         'contractor_count': contractor_count,
-        'previous_month_contractor_count': previous_month_contractor_count,
-        'contractor_count_difference': contractor_count_difference,
-        
         'quatation_count': quatation_count,
-        'previous_month_quatation_count': previous_month_quatation_count,
-        'quatation_count_difference': quatation_count_difference,
-
         'projectsubcontract_count': projectsubcontract_count,
-        'projectsubcontract_month_quatation_count': previous_month_projectsubcontract_count,
-        'projectsubcontract_count_difference': projectsubcontract_count_difference,
-
         'companylabour_count': companylabour_count,
-        'previous_month_companylabour_count': previous_month_companylabour_count,
-        'companylabour_count_difference': companylabour_count_difference, 
-
-
         'expense_count': expense_count,
-        'previous_month_expense_count': previous_month_expense_count,
-        'expense_count_difference': expense_count_difference,
-
         'ongoing_project_count': ongoing_project_count,
-        'previous_month_ongoing_project_count': previous_month_ongoing_project_count,
-        'ongoing_project_count_difference': ongoing_project_count_difference,
-
         'completed_project_count': completed_project_count,
-        'previous_month_completed_project_count': previous_month_completed_project_count,
-        'completed_project_count_difference': completed_project_count_difference,
-
-
-     
     })
 
 #----------------------- Company Staff Table ----------------------
