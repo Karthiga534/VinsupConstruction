@@ -91,6 +91,7 @@
                                   </select>
                                   <span id="roleError" class="error-message"></span>
                                 </div>
+                                
                                 <div class="col-md-6 mt-2">
                                   <label for="" class="form-label">Mobile No  <span style="color: red;">*</span> </label>
                                   <input type="text" name="mobile" class="form-control" id="mobile">
@@ -470,7 +471,7 @@
 
                                       </div>
 
-                                      <div class="col-md-6 mb-3">
+                                      <div class="col-md-6 mt-2">
                                         <label for="{{ i.id }}_img" class="form-label">Employee Image:</label>
                                         <input type="file" class="form-control mb-2" id="{{ i.id }}_id_img" name="img" value="{{ i.img }}">
                                         
@@ -523,7 +524,7 @@
 
                                       </div>
 
-                                      <div class="col-md-6 mb-3">
+                                      <div class="col-md-6 mt-2">
                                         <label for="{{ i.id }}_aadhaar_card_image" class="form-label">Aadhaar Card:</label>
                                         <input type="file" class="form-control mb-2" id="{{ i.id }}_id_aadhaar_card_image" name="aadhaar_card_image" value="{{ i.aadhaar_card_image }}">
                                         
@@ -538,7 +539,7 @@
                                         </span>
                                     </div>
 
-                                      <div class="col-md-6 mb-3">
+                                    <div class="col-md-6 mt-2">
                                         <label for="{{ i.id }}_pan_card_image" class="form-label">Pan Card:</label>
                                         <input type="file" class="form-control mb-2" id="{{ i.id }}_id_pan_card_image" name="pan_card_image" value="{{ i.pan_card_image }}">
                                         
@@ -784,9 +785,9 @@
         var requiredKeys = [
           //change
           "start_date",
-          "role",
           "name",
           "img",
+          "role",
           
           "mobile",
           "address",

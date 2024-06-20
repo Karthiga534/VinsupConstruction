@@ -88,7 +88,7 @@
 											<span class="error-message" id="nameError"></span>
 										</div>
 										<div class="col-md-4 mb-2">
-											<label for="" class="form-label">Project :</label>
+											<label for="" class="form-label">Project <span style="color: red;">*</span></label>
 											<select class="form-select" aria-label="Default select example" id="project"
 												name="project">
 												<option value="">---------------------</option>
@@ -124,7 +124,7 @@
 												<option value="{{ i.id }}">{{ i.name }}</option>
 												{% endfor %}
 											</select>
-											<span id="typeError" class="error-message"></span>
+											<span id="contractorError" class="error-message"></span>
 										</div>
 
 										<div class="col-md-4 mb-2">
@@ -153,7 +153,7 @@
 												id="payment_schedule" name="payment_schedule">
 												<option value="">---------------------</option>
 												{% for i in paymentschedule %}
-												<option value="{{ i.id }}">{{ i.days }}</option>
+												<option value="{{ i.id }}">{{ i.name }}</option>
 												{% endfor %}
 											</select>
 											<span id="payment_scheduleError" class="error-message"></span>

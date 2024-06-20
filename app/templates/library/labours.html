@@ -68,19 +68,9 @@
                                                                 <span id="imageError" class="error-message "></span>
                                                             </div>
                                                             
-                                                            <!-- <div class="mb-3">
-                                                                <label for="image" class="form-label">Image:</label>
-                                                                <input type="file" name="image" class="form-control" id="image">
-                                                                <span id="imageError" class="error-message text-danger"></span>
-                                                            </div> -->
-
-
-
-
-
-                                                            <div class="col-md-6 mb-4">
+                                                            <div class="col-md-6 mt-2">
                                                                 <label for="id_role" class="form-label">Role <span style="color: red;">*</span> </label>
-                                                                <select class="form-select" id="role" name="role">
+                                                                <select class="form-control" id="role" name="role">
                                                                     <option value=""> ------- </option>
                                                                     {% for i in roles %}
                                                                     <option value="{{ i.id }}">{{ i.name }}</option>
@@ -90,30 +80,19 @@
                                                             </div>
 
 
-                                                            {% comment %} <div class="col-md-6 mb-4">
-                                                                <br><label for="id_company_rate"
-                                                                    class="form-label mt-3">Company
-                                                                    Rate :
-                                                                    &nbsp;&nbsp;<input type="checkbox"
-                                                                        name="company_rate" class="form-check-input"
-                                                                        id="company_rate">
-                                                                    <span id="company_rateError"
-                                                                        class="error-message"></span></label>
-                                                            </div> {% endcomment %}
-
+                                                            {% comment %} <br>
                                                             <br>
-                                                            <br>
-                                                            <hr>
+                                                            <hr> {% endcomment %}
 
 
-                                                            <div class="col-md-6">
+                                                            <div class="col-md-6 mt-2">
                                                                 <label for="id_rate" class="form-label">Rate <span style="color: red;">*</span></label>
                                                                 <input type="text" name="rate" class="form-control"
                                                                     id="rate" value="">
                                                                 <span id="rateError" class="error-message"></span>
                                                             </div>
 
-                                                            <div class="col-md-6">
+                                                            <div class="col-md-6 mt-2">
                                                                 <label for="id_ot_rate" class="form-label">OT
                                                                     Rate <span style="color: red;">*</span></label>
                                                                 <input type="text" name="ot_rate" class="form-control"
@@ -121,10 +100,10 @@
                                                                 <span id="ot_rateError" class="error-message"></span>
                                                             </div>
 
-                                                            <div class="col-md-6">
+                                                            <div class="col-md-6 mt-2">
                                                                 <label for="id_payment_schedule"
                                                                     class="form-label">Payment schedule <span style="color: red;">*</span></label>
-                                                                <select class="form-select" id="payment_schedule"
+                                                                <select class="form-control" id="payment_schedule"
                                                                     name="payment_schedule">
                                                                     <option value=""> ------- </option>
                                                                     {% for i in payment_schedules %}

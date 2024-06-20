@@ -36,7 +36,7 @@
                   <div class="col-xl-2 col-lg-2 col-md-2 col-12">
                     <button type="button" class="btn btn-info" style="float: right" data-bs-toggle="modal"
                       data-bs-target=".bs-example-modal-lg">
-                      Add Attendance
+                      + Add 
                     </button>
                     <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog"
                       aria-labelledby="myLargeModalLabel" aria-hidden="true">
@@ -53,6 +53,11 @@
                             {% csrf_token %}
                             <div class="modal-body">
                               <div class="row">
+                                <div class="col-lg-4 col-md-4 col-xs-6 col-12">
+                                  <label for="" class="form-label mt-2">Date <span style="color: red;">*</span></label>
+                                  <input type="date" class="form-control" id="date" name="date" />
+                                  <span id="dateError" class="error-message"></span>
+                                </div>
                                 <div class="col-lg-4 col-md-4 col-xs-6 col-12">
                                   <label for="" class="form-label mt-2">Project Name <span style="color: red;">*</span></label>
                                   <select class="form-select mb-3" aria-label="Default select example" id="project"
@@ -77,29 +82,27 @@
                                   <span id="labourError" name="labourError" class="error-message"></span>
                                 </div>
 
+                                
+
+                                <div class="col-lg-4 col-md-4 col-xs-6 col-12">
+                                  <label for="" class="form-label mt-2">Clock_in :</label>
+                                  <input type="time" class="form-control" id="clock_in" name="clock_in" />
+                                  <span id="clock_inError" class="error-message"></span>
+                                </div>
+
+                                <div class="col-lg-4 col-md-4 col-xs-6 col-12">
+                                  <label for="" class="form-label mt-2">Clock_out :</label>
+                                  <input type="time" class="form-control" id="clock_out" name="clock_out" />
+                                  <span id="clock_outError" class="error-message"></span>
+                                </div>
+
                                 <div class="col-lg-4 col-md-4 col-xs-6 col-12">
                                   <label for="" class="form-label mt-2">Over_Time :</label>
                                   <input type="text" class="form-control" id="over_time" name="over_time" />
                                   <span class="error-message" id="over_timeError"></span>
                                 </div>
 
-                                <div class="col-lg-4 col-md-4 col-xs-6 col-12">
-                                  <label for="" class="form-label mt-2">clock_in :</label>
-                                  <input type="time" class="form-control" id="clock_in" name="clock_in" />
-                                  <span id="clock_inError" class="error-message"></span>
-                                </div>
-
-                                <div class="col-lg-4 col-md-4 col-xs-6 col-12">
-                                  <label for="" class="form-label mt-2">clock_out :</label>
-                                  <input type="time" class="form-control" id="clock_out" name="clock_out" />
-                                  <span id="clock_outError" class="error-message"></span>
-                                </div>
-
-                                <div class="col-lg-4 col-md-4 col-xs-6 col-12">
-                                  <label for="" class="form-label mt-2">date <span style="color: red;">*</span></label>
-                                  <input type="date" class="form-control" id="date" name="date" />
-                                  <span id="dateError" class="error-message"></span>
-                                </div>
+                                
 
 
                               </div>

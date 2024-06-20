@@ -61,7 +61,7 @@
                                         <div class="col-xl-4 col-lg-4 col-md-4 col-12"></div>
                                         <div class="col-xl-2 col-lg-2 col-md-2 col-12">
 
-                                            <a href="{% url 'subcontadd' %}" type="button" class="btn btn-info mb-2" style="float:right;" >Add</a>
+                                            <a href="{% url 'subcontadd' %}" type="button" class="btn btn-info mb-2" style="float:right;" >+ Add</a>
                                           
                                         </div>
                                         <!-- /.modal-dialog -->
@@ -105,7 +105,7 @@
                                                     <td>{{ i.start_date }}</td> 
                                                     <td>{{ i.end_date }}</td>                                               
                                                     <td>{{ i.contract_amount }}</td> 
-                                                    <td>{{ i.payment_schedule.days }}</td> 
+                                                    <td>{{ i.payment_schedule.name }}</td> 
                                             
                                                     
                                                     <td>

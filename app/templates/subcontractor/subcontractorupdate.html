@@ -129,9 +129,9 @@
                                             <label for="edit_payment_schedule" class="form-label">Payment Schedule:</label>
                                             <select class="form-select" aria-label="Default select example" id="{{subcontractor.id}}_payment_schedule" name="payment_schedule">
 
-                                                <option value="{{subcontractor.payment_schedule.id}}" selected>{{subcontractor.payment_schedule.days}} </option>
+                                                <option value="{{subcontractor.payment_schedule.id}}" selected>{{subcontractor.payment_schedule.name}} </option>
                                                 {% for j in paymentschedule %}
-                                                <option value="{{j.id}}">{{j.days}} </option>
+                                                <option value="{{j.id}}">{{j.name}} </option>
                                                 {% endfor %}    
                                             </select>
                                             <span id="{{subcontractor.id}}_payment_scheduleError" class="error-message"></span>

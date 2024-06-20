@@ -1,5 +1,6 @@
 from functools import wraps
 from django.http import JsonResponse
+from django.shortcuts import redirect
 from .utils import get_user_company,get_company_id
 
 def check_user_company(view_func):
@@ -31,6 +32,9 @@ def check_admin(view_func):
     def _wrapped_view(request, *args, **kwargs):
         user = request.user  
         if  not user.admin :
+            return redirect('login')
             return JsonResponse({"details": "you are not allowed"}, status=401)
         return view_func(request, *args, **kwargs)
     return _wrapped_view
+
+

@@ -40,14 +40,14 @@
                                     <div class="col-xl-4 col-lg-4 col-md-4 col-12"></div>
                                     <div class="col-xl-2 col-lg-2 col-md-2 col-12">
                                         <button type="button" class="btn btn-info" style="float:right;"
-                                            data-bs-toggle="modal" data-bs-target=".bs-example-modal-lg">Add
-                                            Contractor</button>
+                                            data-bs-toggle="modal" data-bs-target=".bs-example-modal-lg">+ Add </button>
                                         <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog"
                                             aria-labelledby="myLargeModalLabel" aria-hidden="true">
                                             <div class="modal-dialog modal-lg">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
-                                                        <h5 class="modal-title" id="myLargeModalLabel">Add Contractor
+                                                        <h5 class="modal-title" id="myLargeModalLabel">Add
+                                                            Contractor
                                                         </h5>
                                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                             aria-label="Close" onclick="clearErrors()">
@@ -85,11 +85,8 @@
                                                                         id="contact_no"
                                                                         name="contact_no"
                                                                         value="" />
-                                                                    <span
-                                                                        id="  
-                                                                        contact_noError"
-                                                                        class="error-message"></span
-                                                                         >
+                                                                    <span id="contact_noError"
+                                                                        class="error-message"></span >
                                                                 </div>
                                                             </div>
                                                             <div class="row">
@@ -127,9 +124,9 @@
                                                                     </div>
                                                                
                                                                     <div class="col-md-6 mt-2">
-                                                                        <label for="" class="form-label">Starting Date
+                                                                        <label for="start_date" class="form-label">Starting Date
                                                                             <span style="color: red;">*</span></label>
-                                                                        <input type="date" class="form-control" id=""
+                                                                        <input type="date" class="form-control" id="start_date"
                                                                             name="start_date">
                                                                         <span id="start_dateError"
                                                                             class="error-message"></span>
@@ -433,7 +430,7 @@
                                                                                             class="error-message"></span>
                                                                                     </div>
 
-                                                                                    <div class="col-md-6 mb-3">
+                                                                                    <div class="col-md-6 mt-2">
 
                                                                                         <label for="edit_start_date"
                                                                                             class="form-label">Start Date:</label>
@@ -876,6 +873,7 @@
                 "address",
                 "unit",
                 "rate",
+                "start_date",
          
               
                 "category"

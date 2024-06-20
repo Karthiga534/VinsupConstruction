@@ -79,7 +79,7 @@
                                                                         <select class="form-select" id="payment_schedule" name="payment_schedule">
                                                                             <option value=""> ------- </option>
                                                                             {% for i in payment_schedules %}
-                                                                                <option value="{{ i.id }}">{{ i.days }}</option>
+                                                                                <option value="{{ i.id }}">{{ i.name }}</option>
                                                                             {% endfor %}
                                                                         </select>
                                                                         <span id="payment_scheduleError" class="error-message"></span>
@@ -142,7 +142,7 @@
                                                 <td>{{ forloop.counter }}</td>
                                                 <td>{{ i.name }}</td>
                                                 <td>{{ i.rate }}</td>   
-                                                <td>{{ i.payment_schedule }}</td>
+                                                <td>{{ i.payment_schedule.name }}</td>
         
                                                 <td>
                                                     <div class="btn-group" role="group">
@@ -175,7 +175,7 @@
                                                                 <div class="modal-body">
                                                                     <div class="row">
                                                                         <div class="col-md-6">
-                                                                            <label for="{{i.id}}_labour_name" class="form-label">Labour Name
+                                                                            <label for="{{i.id}}_labour_name" class="form-label">Role Name
                                                                                 :</label>
                                                                             <input type="text" class="form-control" id="{{i.id}}_labour_name" name="name" 
                                                                                 value="{{i.name}}" readonly/>
@@ -190,7 +190,7 @@
                                                                             <label for="{{i.id}}_payment_schedule" class="form-label">Payment Schedule:
                                                                                 </label>
                                                                             <input type="text" class="form-control" id="{{ i.id}}_payment_schedule"
-                                                                                 name="payment_schedule" value="{{i.payment_schedule}}" disabled />
+                                                                                 name="payment_schedule" value="{{i.payment_schedule.name }}" disabled />
                                                                         </div>
         
                                                                     </div>
@@ -231,7 +231,7 @@
                                                                         {% csrf_token %}
                                                                         <div class="row">
                                                                         <div class="col-md-6">
-                                                                            <label for="editCompanyName">Labour Name:</label>
+                                                                            <label for="editCompanyName">Role Name:</label>
                                                                             <input type="text" class="form-control" name="name"
                                                                                 id="{{i.id}}_name" value="{{ i.name }}">
                                                                             <span id="{{i.id}}_nameError"class="error-message"></span>
@@ -249,10 +249,10 @@
                                                                             <label for="{{ i.id }}_payment_schedule">Payment Schedule:</label>
                                                                             <select class="form-select" id="{{ i.id }}_payment_schedule" name="payment_schedule">
                                                                                 <span id="{{ i.id }}_payment_scheduleError" class="error-message"></span>
-                                                                                <option value="{{ i.payment_schedule.id }}" selected>{{ i.payment_schedule.days }}</option>
+                                                                                <option value="{{ i.payment_schedule.id }}" selected>{{ i.payment_schedule.name }}</option>
                                                                                 <option value="" disabled>----------------</option>
                                                                                 {% for i in payment_schedules %}
-                                                                                    <option value="{{ i.id }}">{{ i.days }}</option>
+                                                                                    <option value="{{ i.id }}">{{ i.name }}</option>
                                                                                 {% endfor %}
                                                                             </select>
                                                                         </div>
