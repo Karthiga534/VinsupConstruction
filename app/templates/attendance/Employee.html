@@ -167,11 +167,12 @@
                   </div>
                 </div>
                 <hr />
-                <table id="example" 
-                  style="width: 100%">
+                <table id="example"
+									class="table table-bordered dt-responsive nowrap table-striped align-middle"
+									style="width:100%">
                   <thead>
                     <tr>
-                      <th data-ordering="false">S.No</th>
+                      <th style="width: 50px;" data-ordering="false">S.No</th>
                       <th data-ordering="false"> Date </th>
                       <th data-ordering="false">Project Name </th>
                       <th data-ordering="false">Employee Name </th>
@@ -618,6 +619,7 @@
     //seriaal number
     const td1 = document.createElement("td");
     td1.textContent = serialNumber;
+    //td1.style.textAlign = "center"; 
     newRow.appendChild(td1);
 
     // date

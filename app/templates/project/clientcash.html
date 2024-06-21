@@ -190,10 +190,10 @@
                                                                                         <span id="payment_amountError" class="error-message"></span>
                                                                                     </div>
                                                                                     <div class="col-md-6">
-                                                                                        <label for="" class="form-label">Upload Receipt
+                                                                                        <label for="img" class="form-label">Upload Receipt
                                                                                             :</label>
                                                                                         <input type="file" class="form-control" id="img"
-                                                                                            name="img">
+                                                                                            name="img" required>
                                                                                         <span id="imgError"
                                                                                             class="error-message"></span>
                                                                                     </div>
@@ -218,7 +218,8 @@
                                                                                     </button>
             
                                                                                 </div>
-                                                                            </form>
+                                                                            </form> 
+                                                                           
                                                                             
                                                                         </div>
 
@@ -479,83 +480,101 @@
 
 
 
-        <script>
+<script>
 
 
-            const posturl = "clientcashpay";
+    const posturl = "clientcashpay";
 
-function createFunction(button, pk) {
-    var formId = `createForm`;
-    var formElement = document.getElementById(formId);
-    try {
-        disableButton(button);
-        var isValid = true;
-        var errors = {};
-        var formData = new FormData(formElement);
+    function createFunction(button, pk) {
+        var formId = `createForm`;
+        var formElement = document.getElementById(formId);
+       // var imgError = document.getElementById('imgError');
+        try {
+            disableButton(button);
+            var isValid = true;
+            var errors = {};
+            var formData = new FormData(formElement);
 
-        var requiredKeys = ['date', 'receipt_number', 'payment_amount', 'payment_method'];
+            var requiredKeys = ['date', 'receipt_number', 'payment_amount', 'payment_method'];
 
-        requiredKeys.forEach(function (key) {
-            var value = formData.get(key);
-            if (!value.trim()) {
-                isValid = false;
-                errors[key] = ['This field may not be blank.'];
-            }
-        });
+            //var imgFile = formElement.querySelector('input[name="img"]').files[0];
+            //if (imgFile) {
+           //     formData.append("img", imgFile);
+           //     isValid = false;
+           //     errors['img'] = 'This field may not be blank.';
+           //     imgError.textContent = errors['img'];
+           // } else {
+           //     // If no file is uploaded, show an error message
+           //     isValid = false;
+           //     errors['img'] = 'This field may not be blank.';
+           //     imgError.textContent = errors['img'];
+          //      imgError.style.color = 'red'; 
+           // }
 
-        if (!isValid) {
-            enableButton(button);
-            console.log(errors);
-            handleCreateErrors(errors);
-            return;
-        } else {
-            $(`#${formId} input, #${formId} button`).prop('disabled', true);
-        }
 
-        $.ajax({
-            url: `/${posturl}/${pk}/`,
-            type: 'POST',
-            headers: {
-                'X-CSRFToken': csrftoken,
-            },
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function (response, status, xhr) {
-                if (xhr.status === 201) {
-                    showToast(successMesssage?.message, '', successMesssage?.bgColor, true);
-                } else {
-                    console.error(response);
-                    restoreForm(formId, button);
+            requiredKeys.forEach(function (key) {
+                var value = formData.get(key);
+                if (!value.trim()) {
+                    isValid = false;
+                    errors[key] = ['This field may not be blank.'];
                 }
-            },
-            error: function (xhr, status, error) {
-                console.log(xhr, status, error);
-                if (xhr.status === 400) {
-                    if (xhr?.responseJSON || xhr?.responseJSON?.errors) {
-                        handleCreateErrors(transformErrors(xhr.responseJSON));
+            });
+
+            if (!isValid) {
+                enableButton(button);
+                console.log(errors);
+                handleCreateErrors(errors);
+                return;
+            } else {
+                $(`#${formId} input, #${formId} button`).prop('disabled', true);
+            }
+
+            $.ajax({
+                url: `/${posturl}/${pk}/`,
+                type: 'POST',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                },
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response, status, xhr) {
+                    if (xhr.status === 201) {
+                        showToast(successMesssage?.message, '', successMesssage?.bgColor, true);
+                    } else {
+                        console.error(response);
+                        restoreForm(formId, button);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log(xhr, status, error);
+                    if (xhr.status === 400) {
+                        if (xhr?.responseJSON || xhr?.responseJSON?.errors) {
+                            handleCreateErrors(transformErrors(xhr.responseJSON));
+                        } else {
+                            showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+                        }
+                    } else if (xhr.status === 401 || 404) {
+                        showToast(xhr?.responseJSON?.details, '', errorAlertMessage?.bgColor);
                     } else {
                         showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
                     }
-                } else if (xhr.status === 401 || 404) {
-                    showToast(xhr?.responseJSON?.details, '', errorAlertMessage?.bgColor);
-                } else {
-                    showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+                    restoreForm(formId, button);
                 }
+            });
+            } catch (error) {
+                showToast(errorOccured?.message, '', errorOccured?.bgColor);
+                console.error(error);
+                restoreForm(formId, button);
+            } finally {
                 restoreForm(formId, button);
             }
-        });
-        } catch (error) {
-            showToast(errorOccured?.message, '', errorOccured?.bgColor);
-            console.error(error);
-            restoreForm(formId, button);
-        } finally {
-            restoreForm(formId, button);
-        }
     }
 
 
-        </script>
+</script> 
+
+
 
 <script>
 

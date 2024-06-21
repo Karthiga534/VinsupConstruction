@@ -112,7 +112,7 @@
                                                     value="option">
                                             </div>
                                         </th> -->
-                                        <th data-ordering="false">S.No</th>
+                                        <th style="width: 50px;" data-ordering="false">S.No</th>
                                         <th data-ordering="false">Uom Name</th>
                                        
 
@@ -129,7 +129,8 @@
                                                     value="{{ category.id }}">
                                             </div>
                                         </th> -->
-                                        <td>{{ forloop.counter }}</td>
+                                        {% comment %} <td style="text-align: center; vertical-align: middle;">{{ forloop.counter }}</td> {% endcomment %}
+                                        <td >{{ forloop.counter }}</td>
                                         <td>{{ i.name }}</td>
                                       
 

@@ -3112,15 +3112,20 @@ def clientcashpay(request, pk):
         return Response(serializer.data)
 
     elif request.method == 'POST':
-        data = request.data.copy()
-        data['project'] = project.id  # Set the project field
+        data = request.data.copy()  # Copy request data to modify
+        data['project'] = project.id  # Assign project ID to data
+
+        img = request.FILES.get("img",None)
+
+        if img:
+          data['img'] = img 
+
         serializer = PaymentHistorySerializer(data=data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+        
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    return Response("Unsupported method", status=status.HTTP_405_METHOD_NOT_ALLOWED)
     
 
 

@@ -85,6 +85,7 @@
                                   <label for="" class="form-label">Employee Role <span style="color: red;">*</span>  </label>
                                   <select class="form-select mb-0" aria-label="Default select example" id="role"
                                     name="role">
+                                    <option value="">----------------</option>
                                     {% for role in roles %}
                                     <option value="{{ role.id }}">{{ role.name }}</option>
                                     {% endfor %}
@@ -187,7 +188,7 @@
                   <table id="example" class="table table-bordered table-striped align-middle" style="width:100%">
                     <thead>
                       <tr>
-                        <th data-ordering="false">S.No</th>
+                        <th style="width: 50px;" data-ordering="false">S.No</th> 
                         <th data-ordering="false">Date</th> 
                        <th data-ordering="false">Employee Image</th>
                         <th data-ordering="false">Employee Name</th>

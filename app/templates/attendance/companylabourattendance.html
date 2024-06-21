@@ -169,7 +169,7 @@
                   style="width: 100%">
                   <thead>
                     <tr>
-                      <th data-ordering="false">S.No</th>
+                      <th style="width: 50px;" data-ordering="false">S.No</th>
                       <th data-ordering="false"> Date </th>
                       <th data-ordering="false">Project Name </th>
                       <th data-ordering="false">Labour Name</th>
@@ -617,9 +617,15 @@
     newRow.setAttribute("data-item-id", data.id);
 
     //seriaal number
+    //const td1 = document.createElement("td");
+    //td1.textContent = serialNumber;
+   // newRow.appendChild(td1);
+
     const td1 = document.createElement("td");
     td1.textContent = serialNumber;
+    //td1.style.textAlign = "center"; // Apply center alignment
     newRow.appendChild(td1);
+
 
     // date
     const td2 = document.createElement("td");
