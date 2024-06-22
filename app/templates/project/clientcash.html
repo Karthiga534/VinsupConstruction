@@ -163,19 +163,19 @@
                                                                                 {% csrf_token %}
                                                                                 <div class="row">
                                                                                     <div class="col-md-6">
-                                                                                        <label for="date" class="form-label">Date:</label>
+                                                                                        <label for="date" class="form-label">Date<span style="color: red;">*</span> </label>
                                                                                         <input type="date" class="form-control" id="date" name="date">
                                                                                         <span id="dateError" class="error-message"></span>
                                                                                     </div>
                                                                                     <div class="col-md-6">
-                                                                                        <label for="receipt_number" class="form-label">Receipt No:</label>
+                                                                                        <label for="receipt_number" class="form-label">Receipt No<span style="color: red;">*</span> </label>
                                                                                         <input type="text" class="form-control" name="receipt_number" id="receipt_number">
                                                                                         <span id="receipt_numberError" class="error-message"></span>
                                                                                     </div>
                                                                                 </div>
                                                                                 <div class="row mt-3">
                                                                                     <div class="col-md-6">
-                                                                                        <label for="payment_method" class="form-label">Payment Method:</label>
+                                                                                        <label for="payment_method" class="form-label">Payment Method<span style="color: red;">*</span> </label>
                                                                                         <select class="form-select mb-3" aria-label="Default select example" name="payment_method" id="payment_method">
                                                                                             <option value="">----------------</option>
                                                                                             {% for method in payment_methods %}
@@ -185,19 +185,20 @@
                                                                                         <span id="payment_methodError" class="error-message"></span>
                                                                                     </div>
                                                                                     <div class="col-md-6">
-                                                                                        <label for="payment_amount" class="form-label">Payment Amount:</label>
+                                                                                        <label for="payment_amount" class="form-label">Payment Amount<span style="color: red;">*</span> </label>
                                                                                         <input type="number" class="form-control" name="payment_amount" id="payment_amount" min="0.01" step="0.01">
                                                                                         <span id="payment_amountError" class="error-message"></span>
                                                                                     </div>
                                                                                     <div class="col-md-6">
                                                                                         <label for="img" class="form-label">Upload Receipt
-                                                                                            :</label>
+                                                                                            </label>
                                                                                         <input type="file" class="form-control" id="img"
                                                                                             name="img" required>
                                                                                         <span id="imgError"
                                                                                             class="error-message"></span>
-                                                                                    </div>
-                                                                                </div>
+                                                                                    </div> 
+
+                                                                                   
                                  
                                                                                 <div class="modal-footer">
 
@@ -362,8 +363,6 @@
 																				<option value="{{j.id}}">{{j.name}}
 																				</option>
 																				{% endfor %}
-
-
 																			</select>
 																			<span id="{{payment.id}}_payment_methodError"
 																				class="error-message"></span>
@@ -497,19 +496,7 @@
 
             var requiredKeys = ['date', 'receipt_number', 'payment_amount', 'payment_method'];
 
-            //var imgFile = formElement.querySelector('input[name="img"]').files[0];
-            //if (imgFile) {
-           //     formData.append("img", imgFile);
-           //     isValid = false;
-           //     errors['img'] = 'This field may not be blank.';
-           //     imgError.textContent = errors['img'];
-           // } else {
-           //     // If no file is uploaded, show an error message
-           //     isValid = false;
-           //     errors['img'] = 'This field may not be blank.';
-           //     imgError.textContent = errors['img'];
-          //      imgError.style.color = 'red'; 
-           // }
+
 
 
             requiredKeys.forEach(function (key) {

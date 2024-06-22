@@ -174,5 +174,8 @@ admin.site.register(SiteAllocation)
 #     list_display = ('id','date',)
 
 
-
+@admin.register(Logo)
+class LogoAdmin(admin.ModelAdmin):
+    list_display = ('id',)
+    # search_fields = ('name',)
 

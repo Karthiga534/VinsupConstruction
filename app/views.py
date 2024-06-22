@@ -109,6 +109,8 @@ def index(request):
     ongoing_project_count = ongoing.count()
     completed_project_count = completed.count()
 
+    logos = Logo.objects.all()
+
     return render(request, 'index.html', {
         'project_count': project_count,
         'employee_count': employee_count,
@@ -119,6 +121,7 @@ def index(request):
         'expense_count': expense_count,
         'ongoing_project_count': ongoing_project_count,
         'completed_project_count': completed_project_count,
+        'logos': logos,
     })
 
 #----------------------- Company Staff Table ----------------------
@@ -3837,3 +3840,31 @@ def get_employees(request):
     return Response(employees_list)
 
 
+@api_view(['GET', 'POST'])
+def logo_list_create(request):
+    if request.method == 'GET':
+        logos = Logo.objects.all()
+        serializer = LogoSerializer(logos, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    elif request.method == 'POST':
+        serializer = LogoSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET', 'PUT'])
+def logo_detail(request, pk):
+    logo = get_object_or_404(Logo, pk=pk)
+
+    if request.method == 'GET':
+        serializer = LogoSerializer(logo)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    elif request.method == 'PUT':
+        serializer = LogoSerializer(logo, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

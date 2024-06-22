@@ -1666,3 +1666,10 @@ class PaymentMethodSerializer(serializers.ModelSerializer):
         model = PaymentMethod
         fields = '__all__'
 
+class LogoSerializer(serializers.ModelSerializer):
+    # texts = LogoTextSerializer(many=True, read_only=True)
+    # shapes = LogoShapeSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Logo
+        fields = '__all__'

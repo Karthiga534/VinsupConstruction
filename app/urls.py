@@ -559,6 +559,10 @@ urlpatterns = [
     path('employees/', views.get_employees, name='get_employees'),
 
 
+    path('logos/', views.logo_list_create, name='logo-list-create'),
+    path('logos/<int:pk>/', views.logo_detail, name='logo-detail'),
+
+
 
 
 ]+static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
