@@ -2380,21 +2380,21 @@ def dailysitestockusage(request):
     return render(request, "sitestock/dailysitestockusage.html", context)
 
 
-    subcontracts = ProjectSubContract.objects.filter(company=user.company).order_by("-id")
-    projects = Project.objects.filter(company=user.company).order_by("-id")
+    # subcontracts = ProjectSubContract.objects.filter(company=user.company).order_by("-id")
+    # projects = Project.objects.filter(company=user.company).order_by("-id")
 
-    from_site = request.GET.get('from', "")
+    # from_site = request.GET.get('from', "")
   
-    context = {
-        "location": "transfer",
-        "projects": projects,
-        "subcontracts": subcontracts,
-        # "inventory": user.company,
-        # 'items': items,
+    # context = {
+    #     "location": "transfer",
+    #     "projects": projects,
+    #     "subcontracts": subcontracts,
+    #     # "inventory": user.company,
+    #     # 'items': items,
       
         
-    }
-    return render(request, "sitestock/dailysitestockusagelist.html", context)
+    # }
+    # return render(request, "sitestock/dailysitestockusagelist.html", context)
 
 # site stock update 
 @api_view(['PUT'])

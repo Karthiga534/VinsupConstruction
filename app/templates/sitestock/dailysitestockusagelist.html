@@ -60,19 +60,21 @@
 											</div>
 
 											<!-- Subcontractor Dropdown -->
-											<div class="col-md-4 mb-3 mt-4" >
+											<div class="col-md-4 mb-3 mt-4">
 												<label for="subcontract" class="form-label">Subcontract:</label>
 												<select class="form-select" id="subcontract" name="subcontract">
-
+	
 													<option value="0" selected>--------</option>
-
+	
 													{% for subcontract in subcontracts %}
-
-
-												{% endfor %}
-											</select>
-											<span id="subcontractError" class="error-message"></span>
-										</div>
+	
+													<option value="{{ subcontract.id }}">{{subcontract.display_contractor_dropdown }}
+														</option>
+	
+													{% endfor %}
+												</select>
+												<span id="subcontractError" class="error-message"></span>
+											</div>
 										<div class="col-xl-3 col-lg-3 col-md-3 col-xs-6 col-12">
 											<br><br>
 												<button type="submit" onclick="getReport(this,'example')"
@@ -168,16 +170,16 @@
 											<span id="projectError" class="error-message"></span>
 										</div>
 
-										<div class="col-4 mt-2">
+										<div class="col-md-4 mb-3 mt-4">
 											<label for="subcontract" class="form-label">Subcontract:</label>
-											<select class="form-select" id="esubcontract" name="subcontract">
+											<select class="form-select" id="subcontract" name="subcontract">
 
-												<option value="">--------</option>
+												<option value="0" selected>--------</option>
 
 												{% for subcontract in subcontracts %}
 
-												<option value="{{ subcontract.id }}">
-													{{ subcontract.display_contractor_dropdown }}</option>
+												<option value="{{ subcontract.id }}">{{subcontract.display_contractor_dropdown }}
+													</option>
 
 												{% endfor %}
 											</select>

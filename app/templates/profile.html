@@ -34,6 +34,7 @@
         }
     }
 </style>
+
         <div class="main-content">
             <div class="page-content">
                 <div class="container-fluid">
@@ -57,19 +58,31 @@
 							<div class="card-body">
 								<h2>Company Profile</h2>
 								<hr>
-                                <form method="post" action="{% url 'update_profile' %}" enctype="multipart/form-data">
+                                <!-- <form method="post" action="{% url 'update_profile' %}" enctype="multipart/form-data">
                                     {% csrf_token %}
-                                    <div class="row">
-                                        <div class="form-group mb-2">
+                                    <div class="row"> -->
+                                        <form method="post" action="{% url 'update_profile' %}" enctype="multipart/form-data">
+                                            {% csrf_token %}
+                                            <div class="row">
+                                                <div class="form-group mb-2">
+                                                    <div class="image">
+                                                        {% if company_profile.image %}
+                                                            <img src="{{ company_profile.image.url }}" alt="Profile Image" id="upload-img">
+                                                        {% else %}
+                                                            <img src="{% static 'path/to/default/image.jpg' %}" alt="Default Image" id="upload-img">
+                                                        {% endif %}
+                                                        <input type="file" name="image" id="attachment">
+                                                    </div>
+                                                </div>
+                                        <!-- <div class="form-group mb-2">
                                             <div class="image">
-                                                {% if company_profile.attachment %}
-                                                    <img src="{{ company_profile.attachment.url }}" alt="Profile Image">
-                                                {% else %}
-                                                    <img src="{% static 'assets/images/favi.jpg' %}" alt="Default Image">
-                                                {% endif %}
+                                            
+                                               
+                                           <img  alt="Default Image" id="upload-img" >
+                                               
                                                 <input type="file" name="attachment" id="attachment">
                                             </div>
-                                        </div>
+                                        </div> -->
                                         
                                         <div class="form-group mb-2">
                                             <label for="company" class="form-label">Company Name :</label>
@@ -155,12 +168,51 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
 
-    <script src="assets/js/pages/datatables.init.js">      </script>
+    <script src="assets/js/pages/datatables.init.js"></script>
     <!-- App js -->
     <script src="assets/js/app.js"></script>
 	
 	
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+    <script>
+        // var img=''
+        // let imgF=document.querySelector('#upload-img')
+        
+        // document.querySelector('#attachment').addEventListener('change',function(){
+        //    let file=this.files[0]
+           
+        //     const reader=new FileReader();
+
+        //     reader.addEventListener('load',()=>{
+
+        //       console.log(reader)
+
+        //       imgF.setAttribute('src',reader.result)
+            
+
+                
+  
+      
+        //     });
+        //     reader.readAsDataURL(file)
+        // });
+
+        
+        document.querySelector('#attachment').addEventListener('change', function(){
+            let file = this.files[0];
+            const reader = new FileReader();
+
+            reader.addEventListener('load', () => {
+                document.querySelector('#upload-img').setAttribute('src', reader.result);
+            });
+
+            reader.readAsDataURL(file);
+        });
+        
+    </script>
+
 	<script type="text/javascript">
             $(document).ready(function() {
                 var i = 0;
