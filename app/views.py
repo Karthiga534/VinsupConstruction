@@ -110,6 +110,7 @@ def index(request):
     completed_project_count = completed.count()
 
     logos = Logo.objects.all()
+    
 
     return render(request, 'index.html', {
         'project_count': project_count,

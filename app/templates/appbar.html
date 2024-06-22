@@ -58,8 +58,13 @@
                         <button type="button" class="btn shadow-none" id="page-header-user-dropdown"
                             data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <span class="d-flex align-items-center">
+                                {% comment %} <img class="rounded-circle header-profile-user"
+                                    src="{% static 'assets/images/users/avatar-6.jpg' %}" alt="Header Avatar"> {% endcomment %}
+
+                                    {% if company_profile.image %}
                                 <img class="rounded-circle header-profile-user"
-                                    src="{% static 'assets/images/users/avatar-6.jpg' %}" alt="Header Avatar">
+                                src="{{ company_profile.image }}" alt="Header Avatar">
+                                {% endif %} 
                                 <span class="text-start ms-xl-2">
                                     <span class="d-none d-xl-inline-block ms-1 fw-medium user-name-text"></span>
                                     <span

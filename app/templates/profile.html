@@ -67,22 +67,14 @@
                                                 <div class="form-group mb-2">
                                                     <div class="image">
                                                         {% if company_profile.image %}
-                                                            <img src="{{ company_profile.image.url }}" alt="Profile Image" id="upload-img">
+                                                            <img src="{{ company_profile.image }}" alt="Profile Image" id="upload-img">
                                                         {% else %}
-                                                            <img src="{% static 'path/to/default/image.jpg' %}" alt="Default Image" id="upload-img">
+                                                            {% comment %} <img src="{% static 'path/to/default/image.jpg' %}" alt="Default Image" id="upload-img"> {% endcomment %}
                                                         {% endif %}
-                                                        <input type="file" name="image" id="attachment">
+                                                        <input type="file" name="image" name="image"> 
                                                     </div>
-                                                </div>
-                                        <!-- <div class="form-group mb-2">
-                                            <div class="image">
-                                            
-                                               
-                                           <img  alt="Default Image" id="upload-img" >
-                                               
-                                                <input type="file" name="attachment" id="attachment">
-                                            </div>
-                                        </div> -->
+                                                </div>                                             
+                                        
                                         
                                         <div class="form-group mb-2">
                                             <label for="company" class="form-label">Company Name :</label>
