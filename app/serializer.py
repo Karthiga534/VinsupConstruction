@@ -1480,7 +1480,7 @@ class CompanySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class CompanyProfileSerializer(serializers.ModelSerializer):
-    company = CompanySerializer()
+    # company = CompanySerializer()
 
     class Meta:
         model = CompanyProfile

@@ -5,3 +5,4 @@ def my_env_var(request):
     return {
         'my_env_var': settings.JS_ENV
     }
+
