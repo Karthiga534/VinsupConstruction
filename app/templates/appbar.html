@@ -58,16 +58,17 @@
                                 {% comment %} <img class="rounded-circle header-profile-user"
                                     src="{% static 'assets/images/users/avatar-6.jpg' %}" alt="Header Avatar"> {% endcomment %}
 
-                                    {% if company_profile.image %}
+                                {% comment %} {% if request.user.authenticated %} {% endcomment %}
                                 <img class="rounded-circle header-profile-user"
-                                src="{{ company_profile.image }}" alt="Header Avatar">
-                                {% endif %} 
+                                src="{{ request.user.get_avatar.image.url }}" alt="Header Avatar">
+                                {% comment %} {% endif %}  {% endcomment %}
                                 <span class="text-start ms-xl-2">
-                                    <span class="d-none d-xl-inline-block ms-1 fw-medium user-name-text"></span>
+                                    <span class="d-none d-xl-inline-block ms-1 fw-medium user-name-text"> </span>
                                     <span
                                         class="d-none d-xl-block ms-1 fs-12 user-name-sub-text">{{request.user.name}}</span>
                                 </span>
                             </span>
+
                         </button> 
 
                  

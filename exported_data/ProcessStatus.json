@@ -28,5 +28,23 @@
     "name": "canceled",
     "code": "-2",
     "classname": "statustag badge align-middle fs-10 bg-danger"
+  },
+  {
+    "id": 6,
+    "name": "submitted",
+    "code": "s",
+    "classname": "statustag badge align-middle fs-10 bg-info"
+  },
+  {
+    "id": 7,
+    "name": "approved",
+    "code": "a",
+    "classname": "statustag badge align-middle fs-10 bg-success"
+  },
+  {
+    "id": 8,
+    "name": "rejected",
+    "code": "r",
+    "classname": "statustag badge align-middle fs-10 bg-danger"
   }
 ]
