@@ -64,6 +64,10 @@ def login_admin(request):
 
             try:
                 user = CustomUser.objects.get(email=email)
+                if not user.admin :
+                    errors["user"]="You are not allowed to login"
+                    return render(request, "login.html", {'form': form, 'errors': errors,'cred':{"email":email,"password":password}})
+
                 if user.check_password(password):
                     login(request, user)                 
                     return redirect("index")
@@ -71,8 +75,9 @@ def login_admin(request):
                     errors['password'] = 'Invalid Password'
             except CustomUser.DoesNotExist:
                 errors['email'] = 'Invalid Email Id'
-        print(errors,'errors')
-        return render(request, "login.html", {'form': form, 'errors': errors,'cred':{"email":email,"password":password}})
+        errors["user"]="Enter Valid Credentail"
+
+        return render(request, "login.html", {'form': form, 'errors': errors})
     
     return render(request, "login.html", {'form': form, 'errors': errors})
 
@@ -91,7 +96,11 @@ class CustomLogoutView(LogoutView):
 
 #--------------------- Dashboard Table ---------------------
 
+
 @login_required(login_url='login')
+@check_valid_user
+@check_user_company
+@check_admin
 def index(request):
     company, _ = get_company(request.user)
 
@@ -3869,3 +3878,4 @@ def logo_detail(request, pk):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    

@@ -31,6 +31,7 @@ def check_admin(view_func):
     @wraps(view_func)
     def _wrapped_view(request, *args, **kwargs):
         user = request.user  
+        print(user.admin)
         if  not user.admin :
             return redirect('login')
             return JsonResponse({"details": "you are not allowed"}, status=401)

@@ -1,0 +1,7 @@
+if user.admin or user.is_amployee:
+	if user.admin:
+
+		pass
+
+	if user.is_em[ployee:
+		if user.employee.role.

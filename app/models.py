@@ -2212,6 +2212,7 @@ class PaymentHistory(models.Model):
     payment_method = models.ForeignKey(PaymentMethod, on_delete=models.CASCADE, null=True, blank=True)
     payment_amount = models.DecimalField(max_digits=10, decimal_places=2)
 
+
 class DailySiteStockUsage(models.Model):
     company = models.ForeignKey(Company, on_delete=models.CASCADE, null=True, blank=True)
     stock=models.ForeignKey(SiteStock,on_delete=models.CASCADE, null=True, blank=True)
@@ -2222,6 +2223,22 @@ class DailySiteStockUsage(models.Model):
     date = models.DateField(auto_now_add=True)
     qty = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
     unit = models.ForeignKey(Uom,on_delete=models.CASCADE,null=True,blank=True)
+    status = models.ForeignKey(ProcessStatus,null=True,blank=True, on_delete=models.CASCADE)
+
+    def save(self, *args, **kwargs):
+        if not  self.status :
+            self.status =ProcessStatus.objects.filter(code = "s").last()
+        return super().save(*args, **kwargs)
+
+    @property
+    def get_status(self):
+        if self.status:
+            return self.status.name
+        return None    
+
+         
+
+    
 
 # @property
 #   def get_dailysitestockusage_items(self):

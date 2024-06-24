@@ -104,6 +104,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         super().save(*args, **kwargs)
 
     
+
+    
     def clean(self):
         super().clean()
         if self.email is None and self.phone_number is None:
@@ -175,6 +177,23 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         if self.admin:
             return self.company_set.all()
         return [] 
+    
+    @property
+    def get_companyprofile(self):
+        if self.company and self.company.companyprofile:
+            return self.company.companyprofile
+        
+        return "Nill"
+    
+    @property
+    def get_avatar(self):
+        if self.employee:
+            return self.employee.img
+        if self.owner:
+            return self.owner.img
+        
+        return None
+
 
 
 
@@ -380,6 +399,13 @@ class Company(models.Model):
                 return self.companyasset_set.all()
         return None
     
+    @property
+    def companyprofile(self):
+        if self.profile.all():
+                return self.profile.all().last()
+        return None
+    
+    
 
     @property
     def assetlimit(self):
@@ -423,6 +449,7 @@ class OwnerInfo(models.Model):
     owner=models.ForeignKey(CustomUser,null=True,blank=True,on_delete=models.CASCADE)
     proof=models.FileField(upload_to="proof/", null=True, blank=True)
     address =models.TextField(null=True,blank=True)
+    img=models.FileField(upload_to="proof/", null=True, blank=True)
 
 
     def set_owner(self, owner):

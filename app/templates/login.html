@@ -55,7 +55,7 @@
                                         <div class="mb-3">
                                             <label for="username" class="form-label">Email</label>
                                             <input type="text" class="form-control" id="Enter your email" value="{{cred.email}}"
-                                                placeholder="Enter username" name="email">
+                                                placeholder="Enter Email" name="email">
                                                 <span class="text-danger is-invalid">{{errors.email}}</span>
                                         </div>
                                         <div class="mb-3">
@@ -84,6 +84,7 @@
                                         </div>
                                         <div class="mt-4">
                                             <button class="btn btn-success w-100" type="submit">Sign In</button>
+                                            <span class="text-danger  is-invalid">{{errors.user}}</span>
                                         </div>
                                         <div class="mt-4 text-center">
                                         </div>
