@@ -64,6 +64,10 @@ def login_admin(request):
 
             try:
                 user = CustomUser.objects.get(email=email)
+                if not user.admin :
+                    errors["user"]="You are not allowed to login"
+                    return render(request, "login.html", {'form': form, 'errors': errors,'cred':{"email":email,"password":password}})
+
                 if user.check_password(password):
                     login(request, user)                 
                     return redirect("index")
@@ -71,10 +75,11 @@ def login_admin(request):
                     errors['password'] = 'Invalid Password'
             except CustomUser.DoesNotExist:
                 errors['email'] = 'Invalid Email Id'
-        print(errors,'errors')
-        return render(request, "login.html", {'form': form, 'errors': errors,'cred':{"email":email,"password":password}})
+        errors["user"]="Enter Valid Credentail"
+
+        return render(request, "login.html", {'form': form, 'errors': errors})
     
-    return render(request, "login.html", {'form': form, 'errors': errors}) 
+    return render(request, "login.html", {'form': form, 'errors': errors})
 
 
 
@@ -91,7 +96,11 @@ class CustomLogoutView(LogoutView):
 
 #--------------------- Dashboard Table ---------------------
 
+
 @login_required(login_url='login')
+@check_valid_user
+@check_user_company
+@check_admin
 def index(request):
     company, _ = get_company(request.user)
 
@@ -110,7 +119,6 @@ def index(request):
     completed_project_count = completed.count()
 
     logos = Logo.objects.all()
-    # company_profile = CompanyProfile.objects.filter(company=request.user.company)
     
 
     return render(request, 'index.html', {
@@ -124,7 +132,6 @@ def index(request):
         'ongoing_project_count': ongoing_project_count,
         'completed_project_count': completed_project_count,
         'logos': logos,
-        # 'company_profile':company_profile,
     })
 
 #----------------------- Company Staff Table ----------------------
@@ -3872,21 +3879,3 @@ def logo_detail(request, pk):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-# @login_required(login_url='login')
-# def appbar(request):
-#     user=request.user
-#     allow,msg= check_user(request,CompanyProfile,instance=False)  # CHANGE model
-#     if not allow:
-#          context ={"unauthorized":msg}
-#          return render(request,"login.html",context)    
-      
-#     company_profile = CompanyProfile.objects.filter(company=request.user.company).order_by("-id") 
-    
-#     return render(request,"appbar.html",{'company_profile':company_profile})
-
-@login_required(login_url='login')
-def appbar(request):
-      
-    company_profiles = CompanyProfile.objects.filter(company=request.company).order_by("-id")
-    
-    return render(request, "appbar.html", {'company_profiles': company_profiles})
