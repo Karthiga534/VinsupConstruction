@@ -51,8 +51,9 @@ def post_data(request,id):
 #---------------------------------------------------------------- Dharshini --------------------------------------------------------------------------
 
 #------------------- Custom User -----------------------
-
+@check_admin
 def login_admin(request):
+    
     form = LoginForm()
     errors ={}
     if request.method == "POST":  
@@ -98,8 +99,7 @@ class CustomLogoutView(LogoutView):
 
 
 @login_required(login_url='login')
-@check_valid_user
-@check_user_company
+
 @check_admin
 def index(request):
     company, _ = get_company(request.user)
@@ -139,6 +139,7 @@ def index(request):
 #--------------> Employee Role <-----------------
 
 @login_required(login_url='login')
+@check_admin
 def emproles(request):
     user=request.user
     allow,msg= check_user(request,EmpRoles,instance=False)  # CHANGE model
@@ -581,6 +582,7 @@ def enable_employee(request, id):
 
 # contract category
 @login_required(login_url='login')
+@check_admin
 def contract_category(request):  #change name 
     user=request.user
     allow,msg= check_user(request,Contractcategory,instance=False)  # CHANGE model
@@ -664,6 +666,7 @@ def delete_contract_category(request,pk):
   
 # contract category
 @login_required(login_url='login')
+@check_admin
 def contractor(request):  #change name 
     user=request.user
     allow,msg= check_user(request,Contractor,instance=False)  # CHANGE model
@@ -752,6 +755,7 @@ def delete_contractor(request,pk):
         return JsonResponse({'details': ['Item does not exist']}, status=404)
 
 @login_required(login_url='login')
+@check_admin
 def machinary_charges(request):   #change name 
     user = request.user
     allow, msg = check_user(request, CompanyMachinaryCharges, instance=False)   # CHANGE model
@@ -835,6 +839,7 @@ def delete_machinary_charges(request,pk):
 
 #-----------------------------------------labour roles AND SALARY  ---------------------------------
 @login_required(login_url='login')
+@check_admin
 def labour_roles_and_salary(request):
     user = request.user
     allow, msg = check_user(request, LabourRolesAndSalary, instance=False)
@@ -924,6 +929,7 @@ def delete_labour_roles_and_salary(request, pk):
 #-----------------------------------Labours--------------------------------------------------
 
 @login_required(login_url='login')
+@check_admin
 def labours(request):   #change name 
     user = request.user
     allow, msg = check_user(request, CompanyLabours, instance=False)   # CHANGE model
@@ -1023,6 +1029,7 @@ def delete_labours(request,pk):
 #-------------------------------------------- Expense -----------------------------
 
 @login_required(login_url='login')
+@check_admin
 def expense(request):  #change name 
     user=request.user
     allow,msg= check_user(request,Expense,instance=False)  # CHANGE model
@@ -1165,6 +1172,7 @@ def projectlist(request):
 # --------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='login')
+@check_admin
 def labour_salary(request):
     user=request.user
     allow,msg= check_user(request,CompanyLabours,instance=False)  # CHANGE model
@@ -1235,6 +1243,7 @@ def make_labour_payment(request,pk):  #change name
 
 
 @login_required(login_url='login')
+@check_admin
 def employee_salary(request):
     user=request.user
     allow,msg= check_user(request,Employee,instance=False)  # CHANGE model
@@ -1259,6 +1268,7 @@ def employee_salary(request):
 
 
 @api_view(['PUT'])
+@check_admin
 @login_required(login_url='login')
 def employee_labour_salary(request,pk):
 
@@ -1586,6 +1596,7 @@ def signin(request):
 from datetime import date
 
 @login_required(login_url='login')
+@check_admin
 def contractor_payment_management(request):
     user = request.user
     allow, msg = check_user(request, ProjectSubContract, instance=False)  # Ensure correct permissions
@@ -1836,6 +1847,7 @@ def make_invoice_payment(request,pk):  #change name
 
 
 @login_required(login_url='login')
+@check_admin
 def attendancereport(request):
     user=request.user
     allow,msg= check_user(request,ProjectSubContractLabourAttendence,instance=False)  # CHANGE model
@@ -1930,6 +1942,7 @@ def get_process_status(request):
 
 
 @login_required(login_url='login')
+@check_admin
 def uom(request):  #change name 
     user=request.user
     allow,msg= check_user(request,Uom,instance=False)  # CHANGE model
@@ -2114,6 +2127,7 @@ def delete_uom(request,pk):
 # labour attendence
 
 @login_required(login_url='login')
+@check_admin
 def companylabour_attendance(request):
     user=request.user
     allow,msg= check_user(request,ProjectLabourAttendence,instance=False)  # CHANGE model
@@ -2204,6 +2218,7 @@ from django.db.models import Q
 from .utils import PaginationAndFilter
 @api_view(['GET'])
 @login_required(login_url='login')
+
 def companylabourattendancelist(request,pk):  #change name 
     user=request.user
     allow,msg= check_user(request,ProjectLabourAttendence,instance=False)  # CHANGE model
@@ -2225,6 +2240,7 @@ def companylabourattendancelist(request,pk):  #change name
 
 # employee xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 @login_required(login_url='login')
+@check_admin
 def employee_attendance(request):
     user=request.user
     allow,msg= check_user(request,ProjectLabourAttendence,instance=False)  # CHANGE model
@@ -2939,6 +2955,7 @@ def attendancelistpro(request, pk):  # Change name
 
 
 @login_required(login_url='login')
+@check_admin
 def pettycash(request):  #change name 
     user=request.user
     allow,msg= check_user(request,PettyCash,instance=False)  # CHANGE model
@@ -3037,6 +3054,7 @@ def update_pettycash(request, pk):
     
 @api_view(['DELETE'])
 @login_required(login_url='login')
+@check_admin
 def delete_pettycash(request,pk):
     user=request.user
     try:
@@ -3200,6 +3218,7 @@ def dailytask_list(request, project_id=None):
 
 
 @login_required(login_url='login')
+@check_admin
 def dailytask(request):  #change name 
     user=request.user
     allow,msg= check_user(request,Dailytask,instance=False)  # CHANGE model
@@ -3304,6 +3323,7 @@ def delete_dailytask(request,pk):
 #-------------------------------------------------> Employee Site Allocation <---------------------------------------
 
 @login_required(login_url='login')
+@check_admin
 def site_allocation(request):
     user=request.user
     allow,msg= check_user(request,SiteAllocation,instance=False)  # CHANGE model
@@ -3440,6 +3460,7 @@ def delete_site_allocation_list(request, pk):
 #-------------------------------------------------> Labour Site Allocation <---------------------------------------
 
 @login_required(login_url='login')
+@check_admin
 def lab_site_allocation(request):
     user=request.user
     allow,msg= check_user(request,SiteAllocation,instance=False)  # CHANGE model
@@ -3592,6 +3613,7 @@ def purchase_details(request, purchase_id):
     return JsonResponse(data)
 
 @api_view(['GET'])
+@check_admin
 @login_required(login_url='login')
 def get_purchase(request, pk):
     try:
@@ -3618,6 +3640,7 @@ def get_purchase(request, pk):
         return render(request, 'purchase/purchasedetails.html', context)
     
 @api_view(['PUT', 'GET'])
+@check_admin
 @check_valid_user
 @check_user_company
 @login_required(login_url='login')
@@ -3668,6 +3691,7 @@ def update_purchase(request, pk):
         return JsonResponse({'error': 'Invalid request method'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 @api_view(['GET'])
+@check_admin
 @login_required(login_url='login')
 def get_quatation(request, pk):
     try:
@@ -3694,6 +3718,7 @@ def get_quatation(request, pk):
         return render(request, 'quatation/quatationdetails.html', context)
 
 @api_view(['PUT', 'GET'])
+@check_admin
 @login_required(login_url='login')
 def update_quatation(request, pk):
     try:
@@ -3879,3 +3904,4 @@ def logo_detail(request, pk):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
+
