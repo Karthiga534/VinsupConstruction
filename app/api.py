@@ -29,6 +29,7 @@ COMPLETED_STATUS_CODE = 0
 #Vendor Registration
 
 @login_required(login_url='login')
+@check_admin
 def vendor(request):  #change name 
     user=request.user
     allow,msg= check_user(request,VendorRegistration,instance=False)  # CHANGE model
@@ -112,6 +113,7 @@ def delete_vendor(request,pk):
 #--------------------
 
 @login_required(login_url='login')
+@check_admin
 def vendorquatation(request):  #change name 
     user=request.user
     allow,msg= check_user(request,VendorQuatation,instance=False)  # CHANGE model
@@ -186,6 +188,7 @@ def delete_vendorquatation(request,pk):
 #--------------------
     
 @login_required(login_url='login')
+@check_admin
 def purchase(request):  #change name 
     user=request.user
     allow,msg= check_user(request,PurchaseInvoice,instance=False)  # CHANGE model
@@ -249,6 +252,7 @@ def add_purchase(request):
 #--------------------
 
 @login_required(login_url='login')
+@check_admin
 def purchaselist(request):
     user = request.user
     allow, msg = check_user(request, PurchaseInvoice, instance=False)
@@ -262,6 +266,7 @@ def purchaselist(request):
     return render(request, "purchase/purchaselist.html", context)
 
 @login_required(login_url='login')
+@check_admin
 def project_purchaselist(request,pk):
     user = request.user
     allow, msg = check_user(request, PurchaseInvoice, instance=False)
@@ -307,7 +312,7 @@ def purchase_status_change(request,pk):
     allow,msg= check_user(request,PurchaseInvoice,instance=instance)  # CHANGE model
     if not allow:
         return JsonResponse({'details':[msg]}, status=status.HTTP_401_UNAUTHORIZED)
-    print('pppppppppppppppppppppppppp')
+    
     serializer = PurchaseInvoiceStatusSerializer(instance, data=request.data,partial=True)   # CHANGE Serializer
     if serializer.is_valid():  
         serializer.save()
@@ -324,6 +329,7 @@ def purchase_status_change(request,pk):
 #-------------------------------------------
 
 @login_required(login_url='login')
+@check_admin
 def inventory(request):  #change name 
     user=request.user
     allow,msg= check_user(request,InventoryStock,instance=False)  # CHANGE model
@@ -340,6 +346,7 @@ def inventory(request):  #change name
 #--------------------
 
 @login_required(login_url='login')
+@check_admin
 def quatation(request):  #change name 
     user=request.user
     allow,msg= check_user(request,Quatation,instance=False)  # CHANGE model
@@ -378,6 +385,7 @@ def quatation_status_change(request,pk):
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @login_required(login_url='login')
+@check_admin
 def quatationlist(request):
     user = request.user
     allow, msg = check_user(request, Quatation, instance=False)
@@ -397,6 +405,7 @@ def quatationlist(request):
 # ----------------------------------------------------------------------------------
 
 @login_required(login_url='login')
+@check_admin
 def transfer(request):  #change name 
     user=request.user
     allow,msg= check_user(request,TransferInvoice,instance=False)  # CHANGE model
@@ -453,6 +462,7 @@ def transfer_filter(request,pk):  #change name
     return PaginationAndFilter(querysets, request, TransferInvoiceSerializer,date_field='created_at')
 
 @api_view(['GET'])
+@check_admin
 @login_required(login_url='login')
 def transfer_from(request,pk):  #change name 
     user=request.user
@@ -633,6 +643,7 @@ from django.db.models import Prefetch
 from django.db.models.functions import Coalesce
 
 @login_required(login_url='login')
+@check_admin
 def transferlist(request):
     user = request.user
     allow, msg = check_user(request, TransferInvoice, instance=False)
@@ -649,6 +660,7 @@ def transferlist(request):
 
 
 @login_required(login_url='login')
+@check_admin
 def viewstock(request):
     user=request.user
     allow,msg= check_user(request,SiteStock,instance=False)  # CHANGE model
@@ -670,6 +682,7 @@ def viewstock(request):
  
 
 @login_required(login_url='login')
+@check_admin
 def sitestock(request):
     user=request.user
     allow,msg= check_user(request,SiteStock,instance=False)  # CHANGE model
@@ -696,6 +709,7 @@ def sitestock(request):
 from decimal import Decimal
 @api_view(['POST'])
 @login_required(login_url='login')
+
 def site_stock_update(request):
     user=request.user
     allow,msg= check_user(request,SiteStock,instance=False)  # CHANGE model
@@ -728,6 +742,7 @@ def site_stock_update(request):
 #--------------------
     
 @login_required(login_url='login')
+@check_admin
 def subcontadd(request):  #change name 
     user=request.user
     allow,msg= check_user(request,ProjectSubContract,instance=False)  # CHANGE model
@@ -819,6 +834,7 @@ def add_subcontadd(request):
 #------> List Project Sub Contractor 
     
 @login_required(login_url='login')
+@check_admin
 def subcontractorlist(request):
     user = request.user
     allow, msg = check_user(request, ProjectSubContract, instance=False)
@@ -884,6 +900,7 @@ def get_subcontractor(request, pk):
 from rest_framework.response import Response
 
 @api_view(['GET', 'PUT'])
+@check_admin
 @login_required(login_url='login')
 def update_subcontractor(request, pk):
     try:
@@ -974,6 +991,7 @@ def update_status(request):
 # project category
 
 @login_required(login_url='login')
+@check_admin
 def project_category(request):  #change name 
     user=request.user
     allow,msg= check_user(request,ProjectCategory,instance=False)  # CHANGE model
@@ -1062,6 +1080,7 @@ def delete_project_category(request,pk):
 
 # material-library
 @login_required(login_url='login')
+@check_admin
 def material_library(request):  #change name 
     user=request.user
     allow,msg= check_user(request,MaterialLibrary,instance=False)  # CHANGE model
@@ -1171,6 +1190,7 @@ from django.template.loader import render_to_string
 #     return JsonResponse({'html': html})
 
 @login_required(login_url='login')
+@check_admin
 def project(request, filter_by=None):
     user = request.user
     allow, msg = check_user(request, Project, instance=False)
@@ -1307,119 +1327,6 @@ def update_projectstatus(request):
     return JsonResponse({'success': False, 'error': 'Invalid request method'})
  
 # ---------------------------------------------------------------------------------------------------------
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -1838,6 +1745,7 @@ def profile(request):
     })
 
 @login_required(login_url='login')
+@check_admin
 def update_profile(request):
     user = request.user
     company = user.company if hasattr(user, 'company') else None
@@ -2378,6 +2286,7 @@ def get_sub_contract_lists(request, project_id):
 #------------------------------------------------ Daily Site Stock Usage----------------------------------------
 
 @login_required(login_url='login')
+@check_admin
 def dailysitestockusage(request):
     user = request.user
     allow, msg = check_user(request, DailySiteStockUsage, instance=False)
@@ -2499,6 +2408,7 @@ def add_dailysitestockusage(request):
         return JsonResponse({'error': 'No data provided'}, status=status.HTTP_400_BAD_REQUEST)
 
 @login_required(login_url='login')
+@check_admin
 def sitestockusage(request):
     user = request.user
     allow, msg = check_user(request, DailySiteStockUsage, instance=False)
