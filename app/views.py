@@ -79,7 +79,7 @@ def login_admin(request):
 
         return render(request, "login.html", {'form': form, 'errors': errors})
     
-    return render(request, "login.html", {'form': form, 'errors': errors})
+    return render(request, "login.html", {'form': form, 'errors': errors}) 
 
 
 

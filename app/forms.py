@@ -7,11 +7,23 @@ from .models import ProjectCategory,Uom,EmpRoles,Employee,VendorRegistration
 
 #------------------------------------------------------------- Custom User -------------------------------------------------------------
 
+# class LoginForm(forms.Form):
+#     email = forms.CharField(widget=forms.EmailInput)
+#     password = forms.CharField(widget=forms.PasswordInput)
+#     mobile_number = forms.CharField(
+#         max_length=15, 
+#         widget=forms.TextInput(attrs={'placeholder': 'Mobile Number'}),
+#         required=False  # make it optional or set to True if required
+#     )
+
 class LoginForm(forms.Form):
-    email = forms.CharField(widget=forms.EmailInput)
-    password = forms.CharField(widget=forms.PasswordInput)
-
-
+    login_identifier = forms.CharField(
+        max_length=255,
+        widget=forms.TextInput(attrs={'placeholder': 'Email or Mobile Number'})
+    )
+    password = forms.CharField(
+        widget=forms.PasswordInput(attrs={'placeholder': 'Password'})
+    )
 
 #------------------------------------------------------------- Company Staff -------------------------------------------------------------
 

@@ -445,6 +445,7 @@ class Employee(models.Model):
     img =models.FileField(upload_to="doc",null=True,blank=True)
     name=models.CharField(max_length=50,null=True,blank=True)
     role=models.ForeignKey(EmpRoles, on_delete=models.CASCADE,null=True,blank=True) 
+    email=models.EmailField(null=True, blank=True)
     mobile=models.CharField(max_length=10,null=True,blank=True)
     address=models.CharField(max_length=200,null=True,blank=True)
     bankname=models.CharField(max_length=50,null=True,blank=True)
