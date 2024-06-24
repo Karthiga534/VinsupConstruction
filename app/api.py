@@ -1837,6 +1837,45 @@ def profile(request):
         'company_profile': company_profile_data,
     })
 
+@login_required(login_url='login')
+def update_profile(request):
+    user = request.user
+    company = user.company if hasattr(user, 'company') else None
+
+    if company:
+        company_profile, created = CompanyProfile.objects.get_or_create(company=company)
+    else:
+        company_profile = None
+
+    if request.method == 'POST':
+        if company:
+            company.name = request.POST.get('company')
+            company.monthly_working_days = request.POST.get('monthly_working_days')
+            company.monthly_paid_leaves = request.POST.get('monthly_paid_leaves')
+            company.save()
+
+        if company_profile:
+            if 'image' in request.FILES:
+                company_profile.image = request.FILES['image']
+            company_profile.email = request.POST.get('email')
+            company_profile.phone_number = request.POST.get('phone_number')
+            company_profile.gst_number = request.POST.get('gst_number')
+            company_profile.address = request.POST.get('address')
+            company_profile.area = request.POST.get('area')
+            company_profile.save()
+
+        return redirect('profile')
+
+    user_data = CustomUserSerializer(user).data
+    company_data = CompanySerializer(company).data if company else None
+    company_profile_data = CompanyProfileSerializer(company_profile).data if company_profile else None
+
+    return render(request, 'update_profile.html', {
+        'user': user_data,
+        'company': company_data,
+        'company_profile': company_profile_data,
+    })
+
 # @login_required(login_url='login')
 # def update_profile(request):
 #     user = request.user
@@ -1849,10 +1888,6 @@ def profile(request):
 #         company_profile = None
 
 #     if request.method == 'POST':
-      
-#         # user.email = request.POST.get('email')
-#         # user.save()
-
 #         if company:
 #             company.name = request.POST.get('company')
 #             company.monthly_working_days = request.POST.get('monthly_working_days')
@@ -1860,7 +1895,8 @@ def profile(request):
 #             company.save()
 
 #         if company_profile:
-#             company_profile.image = request.POST.get('image')
+#             if request.FILES.get('image'): 
+#                 company_profile.image = request.FILES['image'] 
 #             company_profile.email = request.POST.get('email')
 #             company_profile.phone_number = request.POST.get('phone_number')
 #             company_profile.gst_number = request.POST.get('gst_number')
@@ -1879,46 +1915,6 @@ def profile(request):
 #         'company': company_data,
 #         'company_profile': company_profile_data,
 #     })
-
-@login_required(login_url='login')
-def update_profile(request):
-    user = request.user
-    company = user.company if user.admin else None
-
-    # Create or retrieve company profile
-    if company:
-        company_profile, created = CompanyProfile.objects.get_or_create(company=company)
-    else:
-        company_profile = None
-
-    if request.method == 'POST':
-        if company:
-            company.name = request.POST.get('company')
-            company.monthly_working_days = request.POST.get('monthly_working_days')
-            company.monthly_paid_leaves = request.POST.get('monthly_paid_leaves')
-            company.save()
-
-        if company_profile:
-            if request.FILES.get('image'): 
-                company_profile.image = request.FILES['image'] 
-            company_profile.email = request.POST.get('email')
-            company_profile.phone_number = request.POST.get('phone_number')
-            company_profile.gst_number = request.POST.get('gst_number')
-            company_profile.address = request.POST.get('address')
-            company_profile.area = request.POST.get('area')
-            company_profile.save()
-
-        return redirect('profile')  
-
-    user_data = CustomUserSerializer(user).data
-    company_data = CompanySerializer(company).data if company else None
-    company_profile_data = CompanyProfileSerializer(company_profile).data if company_profile else None
-
-    return render(request, 'update_profile.html', {
-        'user': user_data,
-        'company': company_data,
-        'company_profile': company_profile_data,
-    })
 
 @api_view(['GET'])
 @login_required(login_url='apilogin')

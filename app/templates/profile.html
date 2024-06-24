@@ -63,17 +63,20 @@
                                     <div class="row"> -->
                                         <form method="post" action="{% url 'update_profile' %}" enctype="multipart/form-data">
                                             {% csrf_token %}
-                                            <div class="row">
-                                                <div class="form-group mb-2">
-                                                    <div class="image">
-                                                        {% if company_profile.image %}
-                                                            <img src="{{ company_profile.image }}" alt="Profile Image" id="upload-img">
-                                                        {% else %}
-                                                            {% comment %} <img src="{% static 'path/to/default/image.jpg' %}" alt="Default Image" id="upload-img"> {% endcomment %}
-                                                        {% endif %}
-                                                        <input type="file" name="image" name="image"> 
+
+                                                <div class="row">
+                                                    <div class="form-group mb-2">
+                                                        <div class="image">
+                                                            {% if company_profile.image %}
+                                                                <img src="{{ company_profile.image }}" alt="Profile Image" id="upload-img">
+                                                            {% else %}
+                                                                <img src="{% static 'path/to/default/image.jpg' %}" alt="Default Image" id="upload-img">
+                                                            {% endif %}
+                                                            <input type="file" name="image" id="image"> 
+                                                        </div>
                                                     </div>
-                                                </div>                                             
+                                                </div>
+                                                
                                         
                                         
                                         <div class="form-group mb-2">
@@ -168,7 +171,7 @@
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 
-    <script>
+    <!-- <script>
         // var img=''
         // let imgF=document.querySelector('#upload-img')
         
@@ -202,8 +205,8 @@
 
             reader.readAsDataURL(file);
         });
-        
-    </script>
+
+    </script> -->
 
 	<script type="text/javascript">
             $(document).ready(function() {
@@ -226,6 +229,20 @@
                 });
             });
         </script>
+
+<script>
+    document.querySelector('#image').addEventListener('change', function(){
+        let file = this.files[0];
+        const reader = new FileReader();
+
+        reader.addEventListener('load', () => {
+            document.querySelector('#upload-img').setAttribute('src', reader.result);
+        });
+
+        reader.readAsDataURL(file);
+    });
+</script>
+
 
         
 	
