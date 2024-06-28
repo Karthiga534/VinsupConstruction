@@ -1202,6 +1202,7 @@ class ProjectSchedule(models.Model):
     
 class ProjectScheduleHistory(models.Model):
     project_schedule = models.ForeignKey(ProjectSchedule, on_delete=models.CASCADE,null=True,blank=True)
+    img =models.FileField(upload_to="doc",null=True,blank=True)
     work = models.CharField(max_length=100)
     qty = models.IntegerField(default=0, null=True, blank=True)
     unit = models.ForeignKey(Uom, on_delete=models.CASCADE, null=True, blank=True)
