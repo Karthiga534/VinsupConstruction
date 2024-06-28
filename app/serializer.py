@@ -1673,3 +1673,18 @@ class LogoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Logo
         fields = '__all__'
+
+class StockStatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = StockStatus
+        fields = '__all__'
+
+class ProjectScheduleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProjectSchedule
+        fields = '__all__'
+
+class ProjectScheduleHistorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProjectScheduleHistory
+        fields = '__all__'

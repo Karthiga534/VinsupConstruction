@@ -14,7 +14,7 @@
 					<div class="col-12">
 						<div class="page-title-box d-sm-flex align-items-center justify-content-between">
 							<h4 class="mb-sm-0"></h4>
-							<div class="page-title-right">
+							<div class="page-title-right"> 
 								<ol class="breadcrumb m-0">
 									<li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
 									<li class="breadcrumb-item active">Daily Site Stock Usage</li>
@@ -361,7 +361,7 @@
 							min="0" max="${data.qty}"
 							onchange="calculateTotalAmount(this)"
 							data-item="${data.item.item}">
-						<div class="text-danger supplyQtyError"></div>
+						<div class="text-danger supplyQtyError"></div> 
 					</td>
 
 				
@@ -376,9 +376,9 @@
 	<script>
 		// create form
 
-		function createFunction(button) {
+		{% comment %} function createFunction(button) {
 			clearErrors()
-			const [proceed, table_Data] = getTableData();
+			const [proceed, table_Data] = getTableData(); 
 			console.log(table_Data?.length)
 
 			if (!proceed) {
@@ -465,7 +465,7 @@
 				}
 
 				formData.append("table", JSON.stringify(table_Data))
-
+ 
 				$.ajax({
 					url: '/add_dailysitestockusage/',                //change
 					type: 'POST',
@@ -518,7 +518,135 @@
 				restoreForm(formId, button)
 				console.error(error);
 			}
+		}  {% endcomment %}
+
+
+		function createFunction(button) {
+			clearErrors();
+		
+			// Get table data and ensure it's proceeding
+			const [proceed, table_Data] = getTableData();
+			console.log(table_Data?.length);
+		
+			if (!proceed) {
+				return;
+			}
+		
+			if (table_Data?.length <= 0) {
+				console.log('selectedItemsArray is not empty:', table_Data);
+				showToast("Please select Items First", '', deleteMessage?.bgColor);
+				return;
+			}
+		
+			const formId = 'createForm'; // change
+			const formElement = document.getElementById(formId);
+		
+			try {
+				disableButton(button);
+				let isValid = true;
+				let errors = {};
+				let formData = new FormData();
+		
+				const requiredKeys = []; // change
+		
+				let tableData = [];
+				let project = getValueOrDefault(formElement.querySelector('select[name="project"]').value);
+				let subcontract = getValueOrDefault(formElement.querySelector('select[name="subcontract"]').value);
+				let date = getValueOrDefault(formElement.querySelector('input[name="date"]').value);
+		
+				// Convert project and subcontract to numbers if they are not empty or null
+				project = project ? Number(project) : null;
+				subcontract = subcontract ? Number(subcontract) : null;
+		
+				// Check for valid project and subcontract before adding them
+				table_Data.forEach((item) => {
+					if (project && !isNaN(project)) {
+						item['project'] = project;
+					}
+		
+					if (subcontract && !isNaN(subcontract)) {
+						item['subcontract'] = subcontract;
+					}
+		
+					if (date) {
+						// Validate the date format and convert to ISO string
+						let parsedDate = new Date(date);
+						if (!isNaN(parsedDate)) {
+							item['date'] = parsedDate.toISOString();
+						}
+					}
+		
+					tableData.push(item);
+				});
+		
+				// Check if a valid site is selected
+				const dropdown = document.getElementById('project');
+				let site = dropdown.value !== '0';
+		
+				formData.append('site', site);
+		
+				console.log('Processed Table Data:', tableData);
+		
+				requiredKeys.forEach(function (key) {
+					var value = formData.get(key);
+					if (!value.trim()) {
+						isValid = false;
+						errors[key] = ['This field may not be blank.'];
+					}
+				});
+		
+				if (!isValid) {
+					enableButton(button);
+					console.log(errors);
+					handleCreateErrors(errors);
+					return;
+				} else {
+					$(`#${formId} input, #${formId} button`).prop('disabled', true);
+				}
+		
+				formData.append("table", JSON.stringify(tableData));
+		
+				$.ajax({
+					url: '/add_dailysitestockusage/', // change
+					type: 'POST',
+					headers: {
+						'X-CSRFToken': csrftoken,
+					},
+					data: formData,
+					processData: false,
+					contentType: false,
+					success: function (response, status, xhr) {
+						if (xhr.status === 201) {
+							showToast(successMesssage?.message, '', successMesssage?.bgColor);
+							goBack(); // Call goBack to navigate back after success
+						} else {
+							console.error(status);
+							restoreForm(formId, button);
+						}
+					},
+					error: function (xhr, status, error) {
+						console.log(xhr, status, error);
+						if (xhr.status === 400) {
+							if (xhr?.responseJSON || xhr?.responseJSON?.errors) {
+								handleCreateErrors(transformErrors(xhr.responseJSON));
+							} else {
+								showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+							}
+						} else if (xhr.status === 401 || 404) {
+							showToast(xhr?.responseJSON?.details, '', errorAlertMessage?.bgColor);
+						} else {
+							showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+						}
+						restoreForm(formId, button);
+					}
+				});
+			} catch (error) {
+				showToast(errorOccured?.message, '', errorOccured?.bgColor);
+				restoreForm(formId, button);
+				console.error(error);
+			}
 		}
+		
 
 	</script>
 

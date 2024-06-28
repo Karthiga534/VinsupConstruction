@@ -16,10 +16,14 @@ from datetime import datetime, timedelta
 from rest_framework.response import Response
 from django.utils.dateparse import parse_date
 from django.http import HttpResponseBadRequest
+from django.contrib.auth import get_user_model
 from django.contrib.auth.views import LogoutView
+from rest_framework import status as http_status
 from .models import Project, Employee, Contractor
 from rest_framework.authtoken.models import Token
 from django.utils.crypto import get_random_string
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
 from django.contrib.auth import login,authenticate,logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseNotFound, JsonResponse
@@ -30,8 +34,6 @@ from django.shortcuts import render, redirect, get_object_or_404
 from rest_framework.decorators import api_view, permission_classes
 from app.decorators import check_user_company,check_valid_user,check_admin
 from app.utils import PaginationAndFilter, customPagination,check_user,get_current_month,filter_by_month_range,get_company
-
-
 
 
 
@@ -51,38 +53,122 @@ def post_data(request,id):
 #---------------------------------------------------------------- Dharshini --------------------------------------------------------------------------
 
 #------------------- Custom User -----------------------
-@check_admin
-def login_admin(request):
+
+
+# def login_admin(request):
     
+#     form = LoginForm()
+#     errors ={}
+#     if request.method == "POST":  
+#         form = LoginForm(request.POST)
+#         errors ={}
+#         if form.is_valid():
+#             email = form.cleaned_data['email']
+#             password = form.cleaned_data['password'] 
+
+#             try:
+#                 user = CustomUser.objects.get(email=email )
+#                 if not user.admin :
+#                     errors["user"]="You are not allowed to login"
+#                     return render(request, "login.html", {'form': form, 'errors': errors,'cred':{"email":email,"password":password}})
+
+#                 if user.check_password(password):
+#                     login(request, user)                 
+#                     return redirect("index")
+#                 else:
+#                     errors['password'] = 'Invalid Password'
+#             except CustomUser.DoesNotExist:
+#                 errors['email'] = 'Invalid Email Id'
+#         errors["user"]="Enter Valid Credentail"
+
+#         return render(request, "login.html", {'form': form, 'errors': errors})
+    
+#     return render(request, "login.html", {'form': form, 'errors': errors})
+
+# CustomUser = get_user_model()
+
+# def login_admin(request):
+#     form = LoginForm()
+#     errors = {}
+    
+#     if request.method == "POST":  
+#         form = LoginForm(request.POST)
+        
+#         if form.is_valid():
+#             email = form.cleaned_data.get('email')
+#             phone_number = form.cleaned_data.get('phone_number')
+#             password = form.cleaned_data['password'] 
+            
+#             try:
+#                 if email:
+#                     user = CustomUser.objects.get(email=email)
+#                 else:
+#                     user = CustomUser.objects.get(phone_number=phone_number)
+
+#                 if not user.admin:
+#                     errors["user"] = "You are not allowed to login"
+#                     return render(request, "login.html", {'form': form, 'errors': errors, 'cred': {"email": email, "phone_number": phone_number, "password": password}})
+                
+#                 if user.check_password(password):
+#                     login(request, user)
+#                     return redirect("index")
+#                 else:
+#                     errors['password'] = 'Invalid Password'
+#             except CustomUser.DoesNotExist:
+#                 if email:
+#                     errors['email'] = 'Invalid Email Id'
+#                 else:
+#                     errors['phone_number'] = 'Invalid Phone Number'
+
+#         errors["user"] = "Enter Valid Credential"
+#         return render(request, "login.html", {'form': form, 'errors': errors})
+    
+#     return render(request, "login.html", {'form': form, 'errors': errors})
+
+CustomUser = get_user_model()
+
+def login_admin(request):
     form = LoginForm()
-    errors ={}
+    errors = {}
+    
     if request.method == "POST":  
         form = LoginForm(request.POST)
-        errors ={}
+        
         if form.is_valid():
-            email = form.cleaned_data['email']
-            password = form.cleaned_data['password'] 
-
+            identifier = form.cleaned_data.get('identifier')
+            password = form.cleaned_data['password']
+            
             try:
-                user = CustomUser.objects.get(email=email)
-                if not user.admin :
-                    errors["user"]="You are not allowed to login"
-                    return render(request, "login.html", {'form': form, 'errors': errors,'cred':{"email":email,"password":password}})
-
+                try:
+                    validate_email(identifier)
+                    is_email = True
+                except ValidationError:
+                    is_email = False
+                
+                if is_email:
+                    user = CustomUser.objects.get(email=identifier)
+                else:
+                    user = CustomUser.objects.get(phone_number=identifier)
+                
+                if not user.admin:
+                    errors["user"] = "You are not allowed to login"
+                    return render(request, "login.html", {'form': form, 'errors': errors, 'cred': {"identifier": identifier, "password": password}})
+                
                 if user.check_password(password):
-                    login(request, user)                 
+                    login(request, user)
                     return redirect("index")
                 else:
                     errors['password'] = 'Invalid Password'
             except CustomUser.DoesNotExist:
-                errors['email'] = 'Invalid Email Id'
-        errors["user"]="Enter Valid Credentail"
+                if is_email:
+                    errors['identifier'] = 'Invalid Email Id'
+                else:
+                    errors['identifier'] = 'Invalid Phone Number'
 
+        errors["user"] = "Enter Valid Credential"
         return render(request, "login.html", {'form': form, 'errors': errors})
     
     return render(request, "login.html", {'form': form, 'errors': errors})
-
-
 
 class CustomLogoutView(LogoutView):
     next_page = reverse_lazy('login') 
@@ -3143,8 +3229,8 @@ def clientcashpay(request, pk):
         return Response(serializer.data)
 
     elif request.method == 'POST':
-        data = request.data.copy()  # Copy request data to modify
-        data['project'] = project.id  # Assign project ID to data
+        data = request.data.copy()  
+        data['project'] = project.id 
 
         img = request.FILES.get("img",None)
 
@@ -3905,3 +3991,130 @@ def logo_detail(request, pk):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 
+# def project_schedule(request, pk):
+#     project = get_object_or_404(Project, pk=pk)
+#     project_schedule = ProjectSchedule.objects.filter(project=project)
+#     unit = Uom.objects.filter(company=request.user.company).order_by("-id")
+
+#     context = {
+#         'project': project,
+#         'project_schedule': project_schedule,
+#         'unit': unit,
+#     }
+
+#     return render(request, 'project/project_schedule.html', context)
+
+def project_schedule(request, pk):
+    project = get_object_or_404(Project, pk=pk)
+    
+    # Fetch project schedule and order by start_date first, then by end_date
+    project_schedule = ProjectSchedule.objects.filter(project=project).order_by('start_date', 'end_date')
+    # project_schedule_history = ProjectScheduleHistory.objects.filter(project_schedule=project_schedule).order_by("-id") 
+
+    if project_schedule.exists():
+        latest_project_schedule = project_schedule.last()  # Get the latest schedule or adjust as needed
+        project_schedule_history = ProjectScheduleHistory.objects.filter(project_schedule=latest_project_schedule).order_by("-id")
+    else:
+        project_schedule_history = []
+    
+    unit = Uom.objects.filter(company=request.user.company).order_by("-id")
+
+    context = {
+        'project': project,
+        'project_schedule': project_schedule,
+        'project_schedule_history':project_schedule_history,
+        'unit': unit,
+    }
+
+    return render(request, 'project/project_schedule.html', context)
+
+@api_view(['GET', 'POST'])
+def add_project_schedule(request, pk):
+    project = get_object_or_404(Project, pk=pk)
+
+    if request.method == 'GET':
+        project_schedule = ProjectSchedule.objects.filter(project=project)
+        serializer = ProjectScheduleSerializer(project_schedule, many=True)
+        return Response(serializer.data)
+
+    elif request.method == 'POST':
+        data = request.data.copy()
+        data['project'] = project.id
+
+        # Check if status is provided, otherwise set to "Yet to Start"
+        if 'status' not in data or not data['status']:
+            try:
+                yet_to_start_status = WorkStatus.objects.get(code='-2')
+                data['status'] = yet_to_start_status.id
+            except WorkStatus.DoesNotExist:
+                return Response({'error': 'Default status "Yet to Start" not found.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer = ProjectScheduleSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET', 'POST'])
+def add_project_schedule_history(request, pk):
+    project_schedule = get_object_or_404(ProjectSchedule, pk=pk)
+
+    if request.method == 'GET':
+        project_schedule = ProjectScheduleHistory.objects.filter(project_schedule=project_schedule)
+        serializer = ProjectScheduleHistorySerializer(project_schedule, many=True)
+        return Response(serializer.data)
+
+    elif request.method == 'POST':
+        data = request.data.copy()
+        data['project_schedule'] = project_schedule.id
+
+        serializer = ProjectScheduleHistorySerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+def update_project_schedule_status(request):
+    if request.method == 'POST':
+        project_schedule_id = request.data.get('project_schedule_id')
+        new_status_code = request.data.get('new_status_code')
+        
+        try:
+            project_schedule = ProjectSchedule.objects.get(pk=project_schedule_id)
+        except ProjectSchedule.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'ProjectSchedule not found'}, status=404)
+
+        try:
+            new_status = WorkStatus.objects.get(code=new_status_code)
+        except WorkStatus.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Invalid status code'}, status=400)
+
+        project_schedule.status = new_status
+        project_schedule.save()
+
+        return JsonResponse({'success': True}, status=200)
+    
+    return JsonResponse({'success': False, 'error': 'Invalid request method'}, status=405)
+
+
+
+
+# @api_view(['PUT'])
+# def update_clientcashpay(request, payment_id):
+#     try:
+#         payment_history_instance = get_object_or_404(PaymentHistory, pk=payment_id)
+#     except PaymentHistory.DoesNotExist:
+#         return Response("Payment history not found", status=status.HTTP_404_NOT_FOUND)
+
+#     if request.method == 'PUT':
+#         serializer = PaymentHistorySerializer(payment_history_instance, data=request.data)
+
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+#     return Response("Unsupported method", status=status.HTTP_405_METHOD_NOT_ALLOWED)

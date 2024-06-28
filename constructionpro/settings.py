@@ -53,7 +53,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'plotsale',
     'rest_framework.authtoken',
-     "corsheaders",
+    "corsheaders",
 ]
 
 MIDDLEWARE = [

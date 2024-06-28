@@ -357,6 +357,12 @@ urlpatterns = [
     path('clientcashpay/<int:pk>/', views.clientcashpay, name='clientcashpay'),
     path('update_clientcashpay/<int:payment_id>/', views.update_clientcashpay, name='update_clientcashpay'),
 
+    path('project_schedule/<int:pk>/',views.project_schedule,name='project_schedule'),
+    path('add_project_schedule/<int:pk>/', views.add_project_schedule, name='add_project_schedule'),
+    path('add_project_schedule_history/<int:pk>/', views.add_project_schedule_history, name='add_project_schedule_history'),
+    path('update-project-schedule-status/', views.update_project_schedule_status, name='update_project_schedule_status'),
+    # path('project_schedule_history/<int:pk>/', views.project_schedule_history, name='project_schedule_history'),
+
  
     #     # employee attendence
     # path('attendance/employee',views.employee_attendance,name= 'employee-labour-attendance'), #render only
@@ -483,6 +489,7 @@ urlpatterns = [
     path('add_dailysitestockusage/',api.add_dailysitestockusage, name='add_dailysitestockusage'),
     path('stockusagelist/', api.sitestockusage, name="dailysitestockusagelist"),
     path('dailysitestockusagelist/<int:pk>/', api.dailysitestockusagelist, name='dailysitestock-usagelist'), 
+    # path("usage_status_change/<int:pk>/",api.usage_status_change, name = 'usage_status_change') ,
 
     # path('dailysitestockusage/', api.dailysitestockusage, name='dailysitestockusage'),
 

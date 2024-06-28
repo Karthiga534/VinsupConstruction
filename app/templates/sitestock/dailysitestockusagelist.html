@@ -64,7 +64,7 @@
 												<label for="subcontract" class="form-label">Subcontract:</label>
 												<select class="form-select" id="subcontract" name="subcontract">
 	
-													<option value="0" selected>--------</option>
+													<option value="0" selected>All</option>
 	
 													{% for subcontract in subcontracts %}
 	
@@ -95,7 +95,8 @@
 													<th data-ordering="false">Project</th>
 													<th data-ordering="false">Subcontract</th>
 													<th data-ordering="false">Unit</th>
-													<th data-ordering="false">Action</th>
+													<th data-ordering="false">Status</th>
+													<th data-ordering="false" colspan="2">Action</th>
 
 												</tr>
 											</thead>
@@ -142,11 +143,11 @@
 									<div class="row">
 										<div class="col-4">
 											<label for="item_name" class="form-label">Item Name</label>
-											<input type="text" id="eitem" class="form-control" name="item" value="">
+											<input type="text" id="eitem" class="form-control" name="item" value="" disabled>
 										</div>
 										<div class="col-4 ">
 											<label for="" class="form-label"> Qty</label>
-											<input type="text" class="form-control" name="qty" value="">
+											<input type="text" class="form-control" name="qty" value="" disabled>
 										</div>
 
 										<div class="col-4">
@@ -157,7 +158,7 @@
 
 										<div class="col-4 mt-2">
 											<label for="project" class="form-label">Project:</label>
-											<select class="form-select" id="eproject" name="project">
+											<select class="form-select" id="project" name="project">
 
 												<option value="">--------</option>
 
@@ -170,7 +171,7 @@
 											<span id="projectError" class="error-message"></span>
 										</div>
 
-										<div class="col-md-4 mb-3 mt-4">
+										<div class="col-4 mt-2">
 											<label for="subcontract" class="form-label">Subcontract:</label>
 											<select class="form-select" id="subcontract" name="subcontract">
 
@@ -348,7 +349,16 @@
 
 				const unit_nameCell = document.createElement('td');
 				unit_nameCell.textContent = get_value(data.unit_name);
-				newRow.appendChild(unit_nameCell);
+			    newRow.appendChild(unit_nameCell);
+
+				// Unit Name Cell
+				//const unit_nameCell = document.createElement('td');
+				//unit_nameCell.textContent = get_value(data.unit);
+				//newRow.appendChild(unit_nameCell);
+
+				const statusCell = document.createElement('td');
+				statusCell.textContent = get_value(data.status); 
+				newRow.appendChild(statusCell);
 
 				const actionCell = document.createElement('td');
 
@@ -443,9 +453,9 @@
 
 
 
-					// if (subcontract_name) {
-					// 	formData.append('subcontract', subcontract_name);
-					// }
+					if (subcontract_name) {
+					 	formData.append('subcontract', subcontract_name);
+				    }
 
 					if (project_name) {
 						formData.append('project', project_name);

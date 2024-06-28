@@ -8,7 +8,7 @@ from django.db.models import Sum
 from django.utils import timezone
 from django.db.models import UniqueConstraint
 from django.core.exceptions import ValidationError
-
+from django.contrib.postgres.fields import ArrayField
 
 today_date = timezone.now().date()
 
@@ -32,6 +32,13 @@ class ProcessStatus(models.Model):
     name = models.CharField(max_length=50, null=True, blank=True)
     code = models.CharField(max_length=50, null=True, blank=True)
     classname = models.CharField(max_length=256, null=True, blank=True)
+
+    def __str__(self):
+        return f'{self.name}'
+    
+class StockStatus(models.Model):
+    name = models.CharField(max_length=50, null=True, blank=True)
+    code = models.CharField(max_length=50, null=True, blank=True)
 
     def __str__(self):
         return f'{self.name}'
@@ -1177,6 +1184,36 @@ class Project(models.Model):
     def total_purchase_pending_amount(self):
       return self.total_purchase_amount -self.total_purchase_paid_amount
 
+class ProjectSchedule(models.Model):
+    project = models.ForeignKey(Project, on_delete=models.CASCADE,null=True,blank=True)
+    task_name = models.CharField(max_length=100)
+    description = models.TextField(blank=True, null=True)
+    unit = models.ForeignKey(Uom, on_delete=models.CASCADE, null=True, blank=True)
+    qty = models.IntegerField(default=0, null=True, blank=True)
+    start_date = models.DateField(null=True,blank=True)
+    end_date = models.DateField(null=True,blank=True)
+    # assigned_to = models.ForeignKey(Employee, on_delete=models.CASCADE,null=True,blank=True)  
+    status = models.ForeignKey(WorkStatus, on_delete=models.CASCADE, null=True, blank=True)
+   
+
+    def __str__(self):
+        return self.task_name
+    
+    
+class ProjectScheduleHistory(models.Model):
+    project_schedule = models.ForeignKey(ProjectSchedule, on_delete=models.CASCADE,null=True,blank=True)
+    work = models.CharField(max_length=100)
+    qty = models.IntegerField(default=0, null=True, blank=True)
+    unit = models.ForeignKey(Uom, on_delete=models.CASCADE, null=True, blank=True)
+    date = models.DateField(null=True,blank=True)
+
+    def __str__(self):
+        return f'{self.work} - {self.project_schedule}'
+    
+class ProjectDiagram(models.Model):
+    project = models.ForeignKey(Project, on_delete=models.CASCADE,null=True,blank=True)
+    description = models.TextField(null=True,blank=True)
+    img =models.FileField(upload_to="doc",null=True,blank=True)
 
 
 # ----------------------------- stock management ---------------------------------- ---------------------------------------------------- 
@@ -2224,11 +2261,11 @@ class DailySiteStockUsage(models.Model):
     date = models.DateField(auto_now_add=True)
     qty = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
     unit = models.ForeignKey(Uom,on_delete=models.CASCADE,null=True,blank=True)
-    status = models.ForeignKey(ProcessStatus,null=True,blank=True, on_delete=models.CASCADE)
+    status = models.ForeignKey(StockStatus,null=True,blank=True, on_delete=models.CASCADE)
 
     def save(self, *args, **kwargs):
         if not  self.status :
-            self.status =ProcessStatus.objects.filter(code = "s").last()
+            self.status =StockStatus.objects.filter(code = "s").last()
         return super().save(*args, **kwargs)
 
     @property

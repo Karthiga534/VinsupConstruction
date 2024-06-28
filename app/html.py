@@ -1,54 +1,87 @@
-from .forms import LoginForm
-from django.contrib.auth import login,authenticate,logout
-from django.shortcuts import render,redirect
-from .models import CustomUser
-from .auth_models import OwnerInfo
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404
-from rest_framework.decorators import api_view, permission_classes
+import logging
+from .utils import *
 from app.auth_ser import *
+from .forms import LoginForm
+from .models import CustomUser
 from rest_framework import status
+from .auth_models import OwnerInfo
 from django.db.models import Count
 from django.http import JsonResponse
-from rest_framework.response import Response
 from django.core.paginator import Paginator
-from .utils import *
-
-import logging
-
+from django.shortcuts import render,redirect
+from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
+from django.contrib.auth import get_user_model
+from django.core.validators import validate_email
+from django.contrib.auth import login,authenticate,logout
+from django.contrib.auth.decorators import login_required
+from rest_framework.decorators import api_view, permission_classes
 logger = logging.getLogger(__name__)
 
+
+# TEMPLATE_PATH ='superadmin'
+
+# def login_admin(request):
+#     if request.method =="POST":
+#         form = LoginForm(request.POST)
+#         if form.is_valid():
+         
+#             email = form.cleaned_data['email']
+#             password = form.cleaned_data['password']
+
+#             try:
+#                 user = CustomUser.objects.get(email=email)
+#                 if user.check_password(password):
+#                     login(request, user)
+#                     if not user.is_staff :
+#                         return redirect("login-admin")
+#                     return redirect("admin-dashboard")
+                   
+#                 else:
+#                     return render(request,"login.html", {'form': form})
+                   
+#             except CustomUser.DoesNotExist:
+#                 print("User does not exist")
+            
+#             user =authenticate(request, email=email, password=password)
+
+#         else:
+#             print(form.errors)
+#     form = LoginForm()
+#     return render(request,f"{TEMPLATE_PATH}/login.html", {'form': form})
 
 TEMPLATE_PATH ='superadmin'
 
 def login_admin(request):
-    if request.method =="POST":
+    if request.method == "POST":
         form = LoginForm(request.POST)
         if form.is_valid():
-         
-            email = form.cleaned_data['email']
+            identifier = form.cleaned_data['identifier']
             password = form.cleaned_data['password']
 
+            user = None
             try:
-                user = CustomUser.objects.get(email=email)
+                if '@' in identifier:
+                    user = CustomUser.objects.get(email=identifier)
+                else:
+                    user = CustomUser.objects.get(phone_number=identifier)
+
                 if user.check_password(password):
                     login(request, user)
-                    if not user.is_staff :
+                    if not user.is_staff:
                         return redirect("login-admin")
                     return redirect("admin-dashboard")
-                   
                 else:
-                    return render(request,"login.html", {'form': form})
-                   
+                    return render(request, "login.html", {'form': form, 'error': "Invalid password"})
             except CustomUser.DoesNotExist:
-                print("User does not exist")
-            
-            user =authenticate(request, email=email, password=password)
-
+                return render(request, "login.html", {'form': form, 'error': "User does not exist"})
         else:
-            print(form.errors)
-    form = LoginForm()
-    return render(request,f"{TEMPLATE_PATH}/login.html", {'form': form})
+            return render(request, "login.html", {'form': form, 'errors': form.errors})
+    else:
+        form = LoginForm()
+        return render(request, f"{TEMPLATE_PATH}/login.html", {'form': form})
+
+
 
 
 def logout_admin(request):
@@ -96,8 +129,8 @@ def super_users(request):
     return render(request,f"{TEMPLATE_PATH}/superadminuser.html",context)
 
 
-from .forms import RegistrationForm
 import secrets
+from .forms import RegistrationForm
 
 def register_user(request):
     allow,allow_msg= allow_super_user(request)  

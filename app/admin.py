@@ -100,6 +100,7 @@ admin.site.register(ContractorInvoice)
 admin.site.register(ContractType)
 admin.site.register(PaymentSchedule)
 admin.site.register(WorkStatus)
+admin.site.register(StockStatus)
 admin.site.register(PaymentMethod)
 # admin.site.register(Expense)
 
@@ -179,3 +180,14 @@ class LogoAdmin(admin.ModelAdmin):
     list_display = ('id',)
     # search_fields = ('name',)
 
+@admin.register(ProjectSchedule)
+class ProjectScheduleAdmin(admin.ModelAdmin):
+    list_display = ('task_name', 'project', 'start_date', 'end_date', 'status')
+
+@admin.register(ProjectScheduleHistory)
+class ProjectScheduleHistoryAdmin(admin.ModelAdmin):
+    list_display = ('work', 'project_schedule', 'qty', 'date')
+
+@admin.register(ProjectDiagram)
+class ProjectDiagramAdmin(admin.ModelAdmin):
+    list_display = ('id',)

@@ -389,6 +389,12 @@
 														<img src="{% static 'assets/icon/cashinward.png' %}" class ='button-img-icon'>
 													</a>
 
+													<a 
+													class="btn btn-soft-secondary btn-sm p-0 m-1"
+														href="{% url 'project_schedule' i.id %}">
+														<img src="{% static 'assets/icon/s.jpg' %}" class ='button-img-icon'>
+													</a>
+
 												
 
 												</div>
@@ -611,7 +617,7 @@
 
 																			<input type="date" class="form-control"
 																				id="{{i.id}}_end_date" name="end_date"
-																				value="{{i.end_date |date:'Y-m-d'}}" />
+																				value="{{ i.end_date|date:'Y-m-d'}}" />
 
 																			<span id="{{i.id}}_end_dateError"
 																				class="error-message"></span>

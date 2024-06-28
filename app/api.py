@@ -709,7 +709,6 @@ def sitestock(request):
 from decimal import Decimal
 @api_view(['POST'])
 @login_required(login_url='login')
-
 def site_stock_update(request):
     user=request.user
     allow,msg= check_user(request,SiteStock,instance=False)  # CHANGE model
@@ -2294,6 +2293,7 @@ def dailysitestockusage(request):
         context = {"unauthorized": msg}
         return render(request, "login.html", context)
 
+    status = StockStatus.objects.all()
     subcontracts = ProjectSubContract.objects.filter(company=user.company).order_by("-id")
     projects = Project.objects.filter(company=user.company, is_disabled=False).order_by("-id")
 
@@ -2319,6 +2319,7 @@ def dailysitestockusage(request):
         "subcontracts": subcontracts,
         "inventory": user.company,
         'items': items,
+        "status":status,
       
         
     }
@@ -2407,6 +2408,8 @@ def add_dailysitestockusage(request):
     else:
         return JsonResponse({'error': 'No data provided'}, status=status.HTTP_400_BAD_REQUEST)
 
+
+
 @login_required(login_url='login')
 @check_admin
 def sitestockusage(request):
@@ -2415,7 +2418,8 @@ def sitestockusage(request):
     if not allow:
         context = {"unauthorized": msg}
         return render(request, "login.html", context)
-
+    
+    status = StockStatus.objects.all()
     subcontracts = ProjectSubContract.objects.filter(company=user.company).order_by("-id")
     projects = Project.objects.filter(company=user.company, is_disabled=False).order_by("-id")
 
@@ -2427,12 +2431,14 @@ def sitestockusage(request):
         "subcontracts": subcontracts,
         # "inventory": user.company,
         # 'items': items,
+        "status":status,
       
         
     }
     return render(request, "sitestock/dailysitestockusagelist.html", context)
 
 
+    
 @api_view(['GET'])
 @login_required(login_url='login')
 def dailysitestockusagelist(request, pk):
@@ -2441,6 +2447,8 @@ def dailysitestockusagelist(request, pk):
     if not allow:
         context = {"unauthorized": msg}
         return render(request, "login.html", context)
+    
+    status = StockStatus.objects.all()
 
     # projects = Project.objects.filter(company=request.user.company).order_by("-id")
     # subcontractors = ProjectSubContract.objects.filter(company=request.user.company).order_by("-id")
