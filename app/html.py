@@ -342,7 +342,8 @@ def update_user(request,pk):
             # Extract address data
             owner = {
                 'address': request.POST.get('address'),
-                "proof" :request.FILES.get("proof",None)
+                "proof" :request.FILES.get("proof",None),
+                "img" :request.FILES.get("img",None)
             }
 
             user_data["company"] = company

@@ -440,7 +440,7 @@ class Company(models.Model):
         # if self.inventorystock.set_all():
         #     return self.inventorystock.set_all()
         # return None
-        return self.inventory_stocks.all() if self.inventory_stocks.exists() else None  
+        return self.inventory_stocks.all() if self.inventory_stocks.exists() else None   
 
 
 
