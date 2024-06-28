@@ -343,6 +343,21 @@
                                                                             value="{{i.owner.address}}"
                                                                             readonly>{{i.owner.address}} </textarea>
                                                                     </div>
+
+                                                                    <div class="col-md-6 mb-2">
+                                                                        <label for="{{ i.id }}_img" class="form-label">Image:</label>
+                                                                    
+                                                                        <!-- Display the current image if it exists -->
+                                                                         {% if i.owner.img %}
+                                                                            <div>
+                                                                                <img src="{{ i.owner.img.url }}" alt="Current Image" style="max-width: 100px; max-height: 100px; margin-bottom: 10px;">
+                                                                            </div>
+                                                                        {% else %} 
+                                                                        
+                                                                            <p>No image available.</p>
+                                                                        {% endif %} 
+                                                                    </div>
+                                                                    
                                                                 </div>
                                                             </div>
 
@@ -391,6 +406,9 @@
                                                                         <textarea rows="3" class="form-control" readonly
                                                                             name="company_address"> {{i.company.address}} </textarea>
                                                                     </div>
+
+                                                                    
+                                                                    
                                                                 </div>
                                                             </div>
 
@@ -469,6 +487,16 @@
                                                                                     id="{{i.id}}_phone_number">
 
                                                                                 <span id="{{i.id}}_phone_numberError"
+                                                                                    class="error-message"></span>
+                                                                            </div>
+
+                                                                            <div class="mb-2">
+                                                                                <label for="" class="form-label">Image
+                                                                                    :</label>
+                                                                                <input type="file" class="form-control"
+                                                                                    value="{{i.owner.img}}"
+                                                                                    name="img" id="{{i.id}}_img">
+                                                                                <span id="{{i.id}}_imgError"
                                                                                     class="error-message"></span>
                                                                             </div>
 
@@ -874,6 +902,11 @@
             if (proofFile) {
                 formData.append("proof", proofFile);
             }
+
+            const imgFile = document.querySelector(`#edituserForm${saveId} input[name="img"]`).files[0];
+                if (imgFile) {
+                    formData.append("img", imgFile);
+                }
 
             console.log(csrftoken);
             $.ajax({

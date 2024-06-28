@@ -283,6 +283,7 @@ def add_branch(request,pk):
         'email': request.POST.get('company_email'),
         'phone': request.POST.get('company_phone'),
         'address': request.POST.get('company_address'),
+        
     }
 
     serializer = BranchCreateSerializer(user,data={**request.POST.dict(),"company" :company})

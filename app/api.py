@@ -1757,7 +1757,7 @@ def update_profile(request):
     if request.method == 'POST':
         if company:
             company.name = request.POST.get('company')
-            company.monthly_working_days = request.POST.get('monthly_working_days')
+            company.monthly_working_days = request.POST.get('monthly_working_days') 
             company.monthly_paid_leaves = request.POST.get('monthly_paid_leaves')
             company.save()
 

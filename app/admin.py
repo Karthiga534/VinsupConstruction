@@ -190,4 +190,6 @@ class ProjectScheduleHistoryAdmin(admin.ModelAdmin):
 
 @admin.register(ProjectDiagram)
 class ProjectDiagramAdmin(admin.ModelAdmin):
-    list_display = ('id',)
+    list_display = ('id',) 
+
+admin.site.register(OwnerInfo)
