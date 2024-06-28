@@ -4118,3 +4118,29 @@ def update_project_schedule_status(request):
 #         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 #     return Response("Unsupported method", status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+
+
+# def project_schedule_history(request, pk):
+#     project = get_object_or_404(Project, pk=pk)
+    
+#     # Fetch project schedule and order by start_date first, then by end_date
+#     project_schedule = ProjectSchedule.objects.filter(project=project).order_by('start_date', 'end_date')
+#     # project_schedule_history = ProjectScheduleHistory.objects.filter(project_schedule=project_schedule).order_by("-id") 
+
+#     if project_schedule.exists():
+#         latest_project_schedule = project_schedule.last()  # Get the latest schedule or adjust as needed
+#         project_schedule_history = ProjectScheduleHistory.objects.filter(project_schedule=latest_project_schedule).order_by("-id")
+#     else:
+#         project_schedule_history = []
+    
+#     unit = Uom.objects.filter(company=request.user.company).order_by("-id")
+
+#     context = {
+#         'project': project,
+#         'project_schedule': project_schedule,
+#         'project_schedule_history':project_schedule_history,
+#         'unit': unit,
+#     }
+
+#     return render(request, 'project/project_schedule.html', context)

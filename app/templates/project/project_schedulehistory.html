@@ -1,0 +1,401 @@
+{% extends "base.html" %}
+{% load filters %}
+{% load static %}
+<!-- CSRF Token for AJAX requests -->
+{% csrf_token %}
+
+
+{% block header2 %}
+
+
+<div id="layout-wrapper">
+
+    <div class="main-content">
+
+        <div class="page-content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                            <h4 class="mb-sm-0">P</h4>
+                            <div class="page-title-right">
+                                <ol class="breadcrumb m-0">
+                                    <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
+                                    <li class="breadcrumb-item active">Project Schedule History</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+
+
+                    <div class="row">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col text-end">
+                                        <a class="btn btn-info btn-sm custom-button mr-3" href="{% url 'project' %}">
+                                            Back </a>
+                                    </div>
+                                </div>
+                                <h4>Project Schedule</h4>
+
+                                <div class="row">
+                                    <div class="col-md-4 mt-2">
+                                        <input type="text" class="form-control" id="" name="client" value="{{project.id}}"  hidden
+                                        disabled>
+                                        <label for="" class="form-label">Client Name:</label>
+                                        <input type="text" class="form-control" name="client" value="{{ project.client }}"
+                                            disabled>
+                                        <span id="clientError" class="error-message"></span>
+                                    </div>
+                                    <div class="col-md-4 mt-2">
+                                        <label for="" class="form-label">Project Name:</label>
+                                        <input type="text" class="form-control" name="proj_name"
+                                            value="{{ project.proj_name }}" disabled>
+                                        <span id="projNameError" class="error-message"></span>
+                                    </div>
+                                    <div class="col-md-4 mt-2">
+                                        <label for="" class="form-label">Site Location:</label>
+                                        <input type="text" class="form-control" name="site_location"
+                                            value="{{ project.site_location }}" disabled>
+                                        <span id="siteLocationError" class="error-message"></span>
+                                    </div>
+                                    <div class="col-md-4 mt-2">
+                                        <label for="" class="form-label">Contact No:</label>
+                                        <input type="text" class="form-control" name="contact_no"
+                                            value="{{ project.contact_no }}" disabled>
+                                        <span id="contactNoError" class="error-message"></span>
+                                    </div>
+                                    
+                                    
+                                    <div class="col-md-4 mt-2">
+                                        <label for="" class="form-label">Estimation:</label>
+                                        <input type="text" class="form-control" name="estimation"
+                                            value="{{ project.estimation }}" disabled>
+                                        <span id="estimationError" class="error-message"></span>
+                                    </div>
+                                </div>
+
+                                
+
+
+                                <div class="col-md-12"> <!-- Use most of the space for the table -->
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <h2></h2>
+                                                </div>
+
+                                                <div class="col text-end p-2">
+
+                                                    <button type="button" class="btn btn-primary btn-sm custom-button"
+                                                        data-bs-toggle="modal" data-bs-target=".bs-example-modal-lg">+
+                                                        Add
+                                                        </button>
+
+                                                </div>
+
+                                            </div>
+                                            <div class="row">
+                                                <div class="card">
+                                                    <div class="card-header">
+                                                        <div class="col-xl-2 col-lg-2 col-md-2 col-12">
+
+                                                            <div class="modal fade bs-example-modal-lg p-5"
+                                                                tabindex="-1" role="dialog"
+                                                                aria-labelledby="myLargeModalLabel" aria-hidden="true">
+                                                                
+                                                             
+                                                                <div class="modal-dialog modal-lg p-5">
+                                                                    
+
+                                                                    <div class="modal-content p-4">
+                                                                        
+
+
+                                                                        <div class="d-flex justify-content-between align-items-center mb-4">
+                                                                            <h5 class="modal-title">Create Schedule History</h5>
+                                                                            <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close" onclick="CloseModel('editModal','{{i.id}}')"></button>
+                                                                        </div>
+                                                                        
+                                                                        
+
+
+                                                                        <div class="row">
+
+                                                                            <form id="createForm">
+                                                                                {% csrf_token %}
+                                                                                <div class="row">
+                                                                                    <div class="col-md-6">
+                                                                                        <label for="task_name" class="form-label">Task Name<span style="color: red;">*</span> </label>
+                                                                                        <input type="text" class="form-control" id="task_name" name="task_name">
+                                                                                        <span id="task_nameError" class="error-message"></span>
+                                                                                    </div>
+                                                                                    <div class="col-md-6">
+                                                                                        <label for="qty" class="form-label">Qty<span style="color: red;">*</span> </label>
+                                                                                        <input type="text" class="form-control" name="qty" id="qty">
+                                                                                        <span id="qtyError" class="error-message"></span>
+                                                                                    </div>
+                                                                                    
+                                                                                </div>
+                                                                                <div class="row mt-3">
+                                                                                    <div class="col-md-6">
+                                                                                        <label for="unit" class="form-label">Unit<span style="color: red;">*</span> </label>
+                                                                                        <select class="form-select mb-3" aria-label="Default select example" name="unit" id="unit">
+                                                                                            <option value="">----------------</option>
+                                                                                            {% for i in unit %}
+                                                                                            <option value="{{ i.id }}">{{ i.name }}</option>
+                                                                                            {% endfor %}
+                                                                                        </select>
+                                                                                        <span id="unitError" class="error-message"></span>
+                                                                                    </div>
+                                                                                    <div class="col-md-6">
+                                                                                        <label for="start_date" class="form-label">Start Date<span style="color: red;">*</span> </label>
+                                                                                        <input type="date" class="form-control" name="start_date" id="start_date" >
+                                                                                        <span id="start_dateError" class="error-message"></span>
+                                                                                    </div>
+                                                                                    <div class="col-md-6">
+                                                                                        <label for="end_date" class="form-label">End Date<span style="color: red;">*</span> </label>
+                                                                                        <input type="date" class="form-control" name="end_date" id="end_date" >
+                                                                                        <span id="end_dateError" class="error-message"></span>
+                                                                                    </div>
+                                                                                    <div class="col-md-6">
+                                                                                        <label for="description" class="form-label">Description<span style="color: red;">*</span> </label>
+                                                                                        <textarea class="form-control" name="description" id="description"></textarea>
+                                                                                        <span id="descriptionError" class="error-message"></span>
+                                                                                    </div>
+                                                                                    <div class="col-md-6">
+                                                                                        <label for="image" class="form-label">Image<span style="color: red;">*</span> </label>
+                                                                                        <input type="file" class="form-control" name="image" id="image">
+                                                                                        <span id="imageError" class="error-message"></span>
+                                                                                    </div>
+                                                                                    
+
+                                                                                   
+                                 
+                                                                                <div class="modal-footer">  
+
+                                                                                    <button type="button" class="btn btn-secondary"
+                                                                                        id="" data-bs-dismiss="modal"
+                                                                                        onclick="CloseModel('editModal','{{i.id}}')">
+            
+                                                                                        Cancel
+            
+                                                                                    </button>
+            
+                                                                                    <button type="button" class="btn btn-primary"
+                                                                                        id="saveuom"
+                                                                                        onclick="createFunction(this, '{{ project.id }}')">
+            
+                                                                                        Save
+            
+                                                                                    </button>
+            
+                                                                                </div>
+                                                                            </form> 
+                                                                           
+                                                                            
+                                                                        </div>
+
+                                                                    </div>
+                                                                    <!-- /.modal-content -->
+                                                                </div>
+                                                                <!-- /.modal-dialog -->
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+
+
+                                            <table class="table table-bordered">
+                                                <thead>
+                                                    <tr>
+                                                        <th>S.No</th>
+                                                        <th>Task Name</th>
+                                                        <th>Description</th>
+                                                        <th>Unit</th>
+                                                        <th>Quantity</th>
+                                                        <th>Start Date</th>
+                                                        <th>End Date</th>
+                                                        <th >Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for i in project_schedule %}
+                                                    <tr>
+                                                        <td>{{ forloop.counter }}</td>
+                                                        <td>{{ i.task_name }}</td>
+                                                        <td>{{ i.description }}</td>
+                                                        <td>{{ i.unit }}</td>
+                                                        <td>{{ i.qty }}</td>
+                                                        <td>{{ i.start_date|date:"d-m-Y" }}</td>
+                                                        <td>{{ i.end_date|date:"d-m-Y" }}</td>
+
+                                                        <!-- <td>
+
+                                                            <div class="dropdown d-inline-block">
+                                                               
+                                                                <a class="dropdown-toggle" href="#" role="button"
+                                                                   id="dropdownMenuButton-{{ i.id }}" data-bs-toggle="dropdown"
+                                                                   aria-expanded="false">
+                                                                </a>
+                                                                <ul class="dropdown-menu status-dropdown" aria-labelledby="dropdownMenuButton-{{ i.id }}">
+                                                                    <li><a class="dropdown-item" href="#" data-status="-2" data-id="{{ i.id }}">Yet to Start</a></li>
+                                                                    <li><a class="dropdown-item" href="#" data-status="-1" data-id="{{ i.id }}">Pending</a></li>
+                                                                    <li><a class="dropdown-item" href="#" data-status="0" data-id="{{ i.id }}">Completed</a></li>
+                                                                    <li><a class="dropdown-item" href="#" data-status="1" data-id="{{ i.id }}">Ongoing</a></li>
+                                                                </ul>
+                                                            </div>
+                                                            
+                                                        </td>  -->
+                                                        
+                                                        <td>
+
+                                                            <div class="dropdown d-inline-block">
+                                                                <button class="btn btn-soft-secondary btn-sm dropdown" type="button"
+                                                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                                                    <i class="ri-more-fill align-middle"></i>
+                                                                </button>
+                                                                <ul class="dropdown-menu dropdown-menu-end">
+                                                                    <li>
+                                                                        <!-- Assume the projectScheduleId is stored as a data attribute in the link -->
+                                                                        <a class="dropdown-item edit-item-btn" href="#!" id="openScheduleHistoryModal" data-project-schedule-id="{{ project_schedule.id }}">
+                                                                            <i class="ri-pencil-fill align-bottom me-2 text-muted"></i>
+                                                                            Schedule History
+                                                                        </a>
+
+                                                                    </li>
+                                                                </ul>
+                                                                
+                                                        </td>
+
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody> 
+                                                
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+
+                            </div>
+
+                        </div>
+
+
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        
+
+
+
+<script>
+
+
+    const posturl = "add_project_schedule";
+
+    function createFunction(button, pk) {
+        var formId = `createForm`;
+        var formElement = document.getElementById(formId);
+       // var imgError = document.getElementById('imgError');
+        try {
+            disableButton(button);
+            var isValid = true;
+            var errors = {};
+            var formData = new FormData(formElement);
+
+            var requiredKeys = [];
+
+
+
+
+            requiredKeys.forEach(function (key) {
+                var value = formData.get(key);
+                if (!value.trim()) {
+                    isValid = false;
+                    errors[key] = ['This field may not be blank.'];
+                }
+            });
+
+            if (!isValid) {
+                enableButton(button);
+                console.log(errors);
+                handleCreateErrors(errors);
+                return;
+            } else {
+                $(`#${formId} input, #${formId} button`).prop('disabled', true);
+            }
+
+            $.ajax({
+                url: `/${posturl}/${pk}/`,
+                type: 'POST',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                },
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response, status, xhr) {
+                    if (xhr.status === 201) {
+                        showToast(successMesssage?.message, '', successMesssage?.bgColor, true);
+                    } else {
+                        console.error(response);
+                        restoreForm(formId, button);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log(xhr, status, error);
+                    if (xhr.status === 400) {
+                        if (xhr?.responseJSON || xhr?.responseJSON?.errors) {
+                            handleCreateErrors(transformErrors(xhr.responseJSON));
+                        } else {
+                            showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+                        }
+                    } else if (xhr.status === 401 || 404) {
+                        showToast(xhr?.responseJSON?.details, '', errorAlertMessage?.bgColor);
+                    } else {
+                        showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+                    }
+                    restoreForm(formId, button);
+                }
+            });
+            } catch (error) {
+                showToast(errorOccured?.message, '', errorOccured?.bgColor);
+                console.error(error);
+                restoreForm(formId, button);
+            } finally {
+                restoreForm(formId, button);
+            }
+    }
+
+
+</script> 
+
+
+
+
+<!-- Include jQuery (if not already included) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+
+
+
+
+
+{% endblock header2 %}
