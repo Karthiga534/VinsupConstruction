@@ -1446,7 +1446,7 @@ class Quatation(models.Model):
     site=models.ForeignKey(Project, on_delete=models.CASCADE,null=True,blank=True)
     start_date=models.DateField(auto_now_add=True)
     created_by = models.ForeignKey(Employee, on_delete=models.CASCADE,null=True,blank=True)
-    status = models.ForeignKey(ProcessStatus, on_delete=models.CASCADE,null=True,blank=True)
+    status = models.ForeignKey(StockStatus, on_delete=models.CASCADE,null=True,blank=True)
  
 
     #created by Employee , Status
