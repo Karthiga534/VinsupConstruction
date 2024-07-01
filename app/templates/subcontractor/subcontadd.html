@@ -236,10 +236,15 @@
 															<span id="total_qtyError" class="error-message"></span>
 														</td>
 
-													<td>
+													{% comment %} <td>
 														<input type="number" class="form-control" name="amount"
 															id="amount">
 															<span id="amountError" class="error-message"></span>
+													</td> {% endcomment %}
+
+													<td>
+														<input type="number" class="form-control" name="amount" readonly>
+														<span id="amountError" class="error-message"></span>
 													</td>
 													
 													<!-- <td>
@@ -376,7 +381,7 @@
 
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 	
-	<script >
+	{% comment %} <script >
 		$(document).ready(function () {
 			var i = 1;
 
@@ -417,8 +422,64 @@
 			});
 		});
 
+		
+
 	
+	</script> {% endcomment %}
+
+
+	<script>
+		$(document).ready(function () {
+			var i = 1;
+	
+			$(".add-row").click(function (event) {
+				event.preventDefault();
+				++i;
+	
+				var newRow = `<tr>
+					<td>${i}</td>
+					<td><input type="text" class="form-control" name="work"></td>
+					<td>
+						<select class="form-select form-control" aria-label="Default select example" name="unit">
+							<option value=""> ------------------</option>
+							{% for uom_item in uom %}
+							<option value="{{ uom_item.id }}">{{ uom_item.name }}</option>
+							{% endfor %}
+						</select>
+						<span class="error-message" id="unitError"></span>
+					</td>
+					<td><input type="text" class="form-control" name="rate"></td>
+					<td><input type="text" class="form-control" name="total_qty"></td>
+					<td><input type="text" class="form-control" name="amount" readonly></td>
+					<td><button type="button" class="btn btn-danger btn-icon waves-effect waves-light remove-table-row">
+							<i class="ri-delete-bin-5-line"></i></button></td>
+				</tr>`;
+	
+				$("#tabl tbody").append(newRow);
+			});
+	
+			$(document).on('click', '.remove-table-row', function () {
+				$(this).closest('tr').remove();
+			});
+	
+			// Event listener for input changes in dynamically added rows
+			$(document).on('input', '#tabl input[name="rate"], #tabl input[name="total_qty"]', function () {
+				var row = $(this).closest('tr');
+				calculateAmount(row);
+			});
+	
+			// Function to calculate amount and update the input field
+			function calculateAmount(row) {
+				var rate = parseFloat(row.find('input[name="rate"]').val()) || 0;
+				var totalQty = parseFloat(row.find('input[name="total_qty"]').val()) || 0;
+				var amount = rate * totalQty;
+				row.find('input[name="amount"]').val(amount.toFixed(2)); // Update amount field
+			}
+		});
 	</script>
+
+	
+	
 
 	<script>
 		// create form
@@ -470,6 +531,8 @@
 					rowData['amount'] = $(this).find('input[name^="amount"]').val();
 					tableData.push(rowData);
 				});
+
+				
 
 				console.log(tableData)
 

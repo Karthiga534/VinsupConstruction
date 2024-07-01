@@ -488,6 +488,7 @@ urlpatterns = [
     path('dailysitestockusage/', api.dailysitestockusage, name='dailysitestockusage'), 
     path('add_dailysitestockusage/',api.add_dailysitestockusage, name='add_dailysitestockusage'),
     path('stockusagelist/', api.sitestockusage, name="dailysitestockusagelist"),
+    path('update-stock-status/', api.update_stock_status, name='update_stock_status'),
     path('dailysitestockusagelist/<int:pk>/', api.dailysitestockusagelist, name='dailysitestock-usagelist'), 
     # path("usage_status_change/<int:pk>/",api.usage_status_change, name = 'usage_status_change') ,
 

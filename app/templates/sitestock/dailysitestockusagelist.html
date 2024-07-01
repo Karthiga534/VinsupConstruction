@@ -3,6 +3,22 @@
 {% load static %}
 
 {% block header2 %}
+
+<style>
+	.badge.bg-success {
+		background-color: green;
+	}
+	
+	.badge.bg-primary {
+		background-color: blue;
+	}
+	
+	.badge.bg-danger {
+		background-color: red;
+	}
+	
+</style>
+
 <!-- Begin page -->
 <div id="layout-wrapper">
 
@@ -38,7 +54,7 @@
 									</div>
 									<div class="col-xl-4 col-lg-4 col-md-4 col-12"></div>
 									<div class="col-xl-2 col-lg-2 col-md-2 col-12">
-										<a href="{% url 'dailysitestockusage' %}" type="button" class="btn btn-info"
+										<a href="{% url 'dailysitestockusage' %}" type="button" class="btn btn-info" 
 											style="float:right;">Stock Update</a>
 
 									</div>
@@ -95,8 +111,8 @@
 													<th data-ordering="false">Project</th>
 													<th data-ordering="false">Subcontract</th>
 													<th data-ordering="false">Unit</th>
-													<th data-ordering="false">Status</th>
-													<th data-ordering="false" colspan="2">Action</th>
+													<th data-ordering="false" colspan="2">Status</th>
+													<th data-ordering="false" >Action</th>
 
 												</tr>
 											</thead>
@@ -322,9 +338,27 @@
 			}
 
 
-			// populate table data
+
+			const statusOptions = JSON.parse('{{ status_options|escapejs }}');
+
+			function getStatusColor(statusCode) {
+				switch (statusCode) {
+					case "0":
+						return 'badge bg-success'; 
+					case "1":
+						return 'badge bg-primary';  
+					case "2":
+						return 'badge bg-danger';  
+					default:
+						return 'badge bg-secondary'; 
+				}
+			}
+
+			function updateStatus(itemId, newStatusId) {
+				console.log(`Updating status for item ${itemId} to status ${newStatusId}`);
+			}
+
 			function createTableRow(serialNumber, data) {
-				console_log("hdgjsg")
 				const newRow = document.createElement('tr');
 
 				const serialCell = document.createElement('td');
@@ -332,51 +366,134 @@
 				newRow.appendChild(serialCell);
 
 				const itemNameCell = document.createElement('td');
-				itemNameCell.textContent = get_value(data.item_name);
+				itemNameCell.textContent = data.item_name;
 				newRow.appendChild(itemNameCell);
 
 				const qtyCell = document.createElement('td');
-				qtyCell.textContent = get_value(data.qty);
+				qtyCell.textContent = data.qty;
 				newRow.appendChild(qtyCell);
 
 				const project_nameCell = document.createElement('td');
-				project_nameCell.textContent = get_value(data.project_name);
+				project_nameCell.textContent = data.project_name;
 				newRow.appendChild(project_nameCell);
 
 				const subcontract_nameCell = document.createElement('td');
-				subcontract_nameCell.textContent = get_value(data.subcontract_name);
+				subcontract_nameCell.textContent = data.subcontract_name;
 				newRow.appendChild(subcontract_nameCell);
 
 				const unit_nameCell = document.createElement('td');
-				unit_nameCell.textContent = get_value(data.unit_name);
-			    newRow.appendChild(unit_nameCell);
+				unit_nameCell.textContent = data.unit_name;
+				newRow.appendChild(unit_nameCell);
 
-				// Unit Name Cell
-				//const unit_nameCell = document.createElement('td');
-				//unit_nameCell.textContent = get_value(data.unit);
-				//newRow.appendChild(unit_nameCell);
+				// Display status cell (without dropdown)
+				const displayStatusCell = document.createElement('td');
+				const displayStatusBadge = document.createElement('span');
+				displayStatusBadge.id = `status-badge-${data.id}`;
+				displayStatusBadge.className = `statustag badge align-middle fs-10 ${getStatusColor(data.status_code)}`;
+				
+				// Retrieve status from local storage if available
+				const storedStatus = localStorage.getItem(`status-${data.id}`);
+				if (storedStatus) {
+					const { statusName, statusCode } = JSON.parse(storedStatus);
+					displayStatusBadge.textContent = statusName;
+					displayStatusBadge.className = `statustag badge align-middle fs-10 ${getStatusColor(statusCode)}`;
+				} else {
+					displayStatusBadge.textContent = data.status_name; 
+				}
+				
+				displayStatusCell.appendChild(displayStatusBadge);
+				newRow.appendChild(displayStatusCell);
 
-				const statusCell = document.createElement('td');
-				statusCell.textContent = get_value(data.status); 
-				newRow.appendChild(statusCell);
+				const changeStatusCell = document.createElement('td');
+				const statusDiv = document.createElement('div');
+				statusDiv.className = 'dropdown d-inline-block';
 
-				const actionCell = document.createElement('td');
+				const dropdownToggle = document.createElement('a');
+				dropdownToggle.className = 'dropdown-toggle';
+				dropdownToggle.href = '#';
+				dropdownToggle.setAttribute('role', 'button');
+				dropdownToggle.id = `dropdownMenuButton-${data.id}`;
+				dropdownToggle.setAttribute('data-bs-toggle', 'dropdown');
+				dropdownToggle.setAttribute('aria-expanded', 'false');
+				statusDiv.appendChild(dropdownToggle);
 
-				actionCell.innerHTML = ` <button class="btn btn-soft-secondary btn-sm dropdown" type="button" onclick="openCustomDataModal('stockHistoryModal')" >
-							<i class="ri-eye-fill align-middle"></i>
-			 				</button>`
+				const dropdownMenu = document.createElement('ul');
+				dropdownMenu.className = 'dropdown-menu status-dropdown';
+				dropdownMenu.setAttribute('aria-labelledby', `dropdownMenuButton-${data.id}`);
 
+				statusOptions.forEach(option => {
+					const listItem = document.createElement('li');
+					const dropdownItem = document.createElement('a');
+					dropdownItem.className = 'dropdown-item';
+					dropdownItem.href = '#';
+					dropdownItem.textContent = option.fields.name;
+					dropdownItem.setAttribute('data-status', option.pk);
+					dropdownItem.setAttribute('data-id', data.id);
 
-				newRow.appendChild(actionCell);
+					// Event listener to handle status change
+					dropdownItem.addEventListener('click', function(e) {
+						e.preventDefault();
+						const newStatusId = option.pk;
+						const newStatusName = option.fields.name;
+						
+						// Update status visually with the name and color
+						displayStatusBadge.textContent = newStatusName;
+						displayStatusBadge.className = `statustag badge align-middle fs-10 ${getStatusColor(newStatusId)}`; // Update badge color
 
+						// Store updated status in local storage
+						localStorage.setItem(`status-${data.id}`, JSON.stringify({
+							statusName: newStatusName,
+							statusCode: newStatusId
+						}));
 
-				actionCell.addEventListener('click', () => {
+						// Send the update to the backend
+						updateStatus(data.id, newStatusId);
+					});
 
-					populateModalData(data)
+					listItem.appendChild(dropdownItem);
+					dropdownMenu.appendChild(listItem);
 				});
+
+				statusDiv.appendChild(dropdownMenu);
+				changeStatusCell.appendChild(statusDiv);
+				newRow.appendChild(changeStatusCell);
+
+				// Action cell (for other actions, such as viewing details)
+				const actionCell = document.createElement('td');
+				actionCell.innerHTML = `<button class="btn btn-soft-secondary btn-sm dropdown" type="button" onclick="openCustomDataModal('stockHistoryModal')">
+					<i class="ri-eye-fill align-middle"></i>
+				</button>`;
+				actionCell.addEventListener('click', () => {
+					populateModalData(data);
+				});
+				newRow.appendChild(actionCell);
 
 				return newRow;
 			}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 			// populate data in modal
 			function populateModalData(data) {
@@ -399,8 +516,11 @@
 				}
 
 
-				const I4 = formElement.querySelector('input[name="unit"]')
-				I4.value = data.unit_name;
+				//const I4 = formElement.querySelector('input[name="unit"]')
+				//I4.value = data.unit_name;
+
+				const I4 = formElement.querySelector('input[name="unit"]');
+    			I4.value = data.unit_name;
 
 				// const I5 = formElement.querySelector('select[name="subcontract_name"]')
 				// I5.selected = data.subcontract;
@@ -447,9 +567,9 @@
 
 					const subcontract_name = getValueOrDefault(formElement.querySelector('select[name="subcontract"]').value);
 					const project_name = getValueOrDefault(formElement.querySelector('select[name="project"]').value);
-					const qty = getValueOrDefault(formElement.querySelector('input[name="qty"]').value);
-					const unit_name = getValueOrDefault(formElement.querySelector('input[name="unit"]').value);
-					const item_name = getValueOrDefault(formElement.querySelector('input[name="item"]').value);
+					//const qty = getValueOrDefault(formElement.querySelector('input[name="qty"]').value);
+					//const unit_name = getValueOrDefault(formElement.querySelector('input[name="unit"]').value);
+					//const item_name = getValueOrDefault(formElement.querySelector('input[name="item"]').value);
 
 
 
@@ -465,14 +585,14 @@
 					// 	formData.append('unit', unit_name);
 
 					// }
-					if (qty) {
-						formData.append('qty', qty);
+					//if (qty) {
+					//	formData.append('qty', qty);
 
-					}
-					if (item_name) {
-						formData.append('item', item_name);
+					//}
+					//if (item_name) {
+					//	formData.append('item', item_name);
 
-					}
+					//}
 
 
 
@@ -563,6 +683,104 @@
 
 			}
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Function to send an AJAX request to update the status
+function updateStatus(itemId, newStatusId) {
+    fetch('/update-stock-status/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': getCSRFToken(), // Add CSRF token for security
+        },
+        body: new URLSearchParams({
+            'id': itemId,
+            'status': newStatusId
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            console.log('Status updated successfully:', data.status_name);
+            // Update the status badge visually with the new status
+            const statusBadge = document.getElementById(`status-badge-${itemId}`);
+            statusBadge.textContent = data.status_name; // Update to new status name
+            statusBadge.className = `${getStatusColor(data.status_code)} align-middle fs-10`; // Update badge color
+        } else {
+            console.error('Failed to update status:', data.error);
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+// Function to get CSRF token from cookies
+function getCSRFToken() {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, 10) === 'csrftoken=') {
+                cookieValue = decodeURIComponent(cookie.substring(10));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+dropdownItem.addEventListener('click', function(e) {
+    e.preventDefault();
+    const newStatusId = option.pk;
+    const newStatusName = option.fields.name;
+    
+    // Update status visually with the name and color
+    displayStatusBadge.textContent = newStatusName;
+    displayStatusBadge.className = `statustag badge align-middle fs-10 ${getStatusColor(newStatusId)}`; // Update badge color
+
+    // Store updated status in local storage
+    localStorage.setItem(`status-${data.id}`, JSON.stringify({
+        statusName: newStatusName,
+        statusCode: newStatusId
+    }));
+
+    // Send the update to the backend
+    updateStatus(data.id, newStatusId);
+
+    // Disable action button if status is "Approved"
+    if (newStatusName.toLowerCase() === 'approved') {
+        actionCell.querySelector('button').disabled = true;
+    } else {
+        actionCell.querySelector('button').disabled = false; // Ensure it's enabled for other statuses
+    }
+});
+
+// Inside createTableRow function
+// Check initial status from local storage
+const storedStatus = localStorage.getItem(`status-${data.id}`);
+if (storedStatus) {
+    const { statusName, statusCode } = JSON.parse(storedStatus);
+    displayStatusBadge.textContent = statusName;
+    displayStatusBadge.className = `statustag badge align-middle fs-10 ${getStatusColor(statusCode)}`;
+    
+    // Disable action button if status is "Approved"
+    if (statusName.toLowerCase() === 'approved') {
+        actionCell.querySelector('button').disabled = true;
+    }
+} else {
+    displayStatusBadge.textContent = data.status_name;
+}
 
 
 

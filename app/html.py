@@ -292,7 +292,7 @@ def register_customuser(request) :
         user_data = {
             'name': request.POST.get('name'),
             'email': request.POST.get('email'),
-            'phone_number': request.POST.get('phone_number'),
+            'phone_number': request.POST.get('phone_number'), 
         }
         
         # Extract company data
@@ -306,7 +306,8 @@ def register_customuser(request) :
         # Extract address data
         owner = {
             'address': request.POST.get('address'),
-            "proof" :request.FILES.get("proof",None)
+            "proof" :request.FILES.get("proof",None),
+            "img" :request.FILES.get("img",None),
         }
 
         serializer = AdminOwnerSerializer(data={**request.POST.dict(),"owner":owner,"company" :company})
@@ -339,7 +340,7 @@ def update_user(request,pk):
                 'address': request.POST.get('company_address'),
             }
 
-            # Extract address data
+            # Extract address data 
             owner = {
                 'address': request.POST.get('address'),
                 "proof" :request.FILES.get("proof",None),

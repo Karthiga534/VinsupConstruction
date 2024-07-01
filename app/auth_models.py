@@ -1,7 +1,8 @@
-
 from .utils import *
 from django.db import models
 from django.utils import timezone
+from django.dispatch import receiver
+from django.db.models.signals import post_save
 from django.contrib.auth.models import AbstractBaseUser,BaseUserManager,PermissionsMixin, User 
 today_date = timezone.now().date()
 
@@ -193,6 +194,12 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
             return self.owner.img
         
         return None
+
+   
+
+  
+
+   
 
 
 
@@ -449,13 +456,19 @@ class OwnerInfo(models.Model):
     owner=models.ForeignKey(CustomUser,null=True,blank=True,on_delete=models.CASCADE)
     proof=models.FileField(upload_to="proof/", null=True, blank=True)
     address =models.TextField(null=True,blank=True)
-    img=models.FileField(upload_to="proof/", null=True, blank=True)
+    img=models.FileField(upload_to="profile_images/", null=True, blank=True)
 
 
     def set_owner(self, owner):
         # Your logic to set the owner info owner
         self.owner = owner
         self.save()
+
+@receiver(post_save, sender=OwnerInfo)
+def update_custom_user_image(sender, instance, **kwargs):
+    if instance.owner:
+        instance.owner.image = instance.img
+        instance.owner.save(update_fields=['image'])
 
 
 
