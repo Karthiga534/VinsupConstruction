@@ -575,7 +575,8 @@ urlpatterns = [
 
 
   path('project-schedulehistory/<int:pk>/', views.project_schedulehistory, name='project_schedulehistory'),
-  path('add_project_schedulehistory/<int:pk>/', views.add_project_schedulehistory, name='add_project_schedulehistory'),
+  path('add-project-schedulehistory/<int:pk>/', views.add_project_schedulehistory, name='add_project_schedulehistory'),
+
 
 
 

@@ -4091,38 +4091,33 @@ def project_schedulehistory(request, pk):
     project_schedule = get_object_or_404(ProjectSchedule, pk=pk)
     project = project_schedule.project
     project_schedule_history = ProjectScheduleHistory.objects.filter(project_schedule=project_schedule).order_by("-id")
+    unit = Uom.objects.filter(company=request.user.company).order_by("-id")
     
     context = {
         'project': project,
         'project_schedules': project_schedule,
         'project_schedule_history': project_schedule_history,
+        'unit': unit,
     }
     
     return render(request, 'project/project_schedulehistory.html', context)
 
-
 @api_view(['GET', 'POST'])
 def add_project_schedulehistory(request, pk):
     project_schedule = get_object_or_404(ProjectSchedule, pk=pk)
-    unit = Uom.objects.all()
 
     if request.method == 'POST':
-        # Assuming you are using a serializer for validation and saving data
-        serializer = ProjectScheduleHistorySerializer(data=request.POST, files=request.FILES)
+        serializer = ProjectScheduleHistorySerializer(data=request.data, files=request.FILES)
         if serializer.is_valid():
-            # Attach the project_schedule instance to the serializer before saving
             serializer.save(project_schedule=project_schedule)
             return JsonResponse({'status': 'success', 'message': 'Schedule history created successfully'}, status=201)
         else:
             return JsonResponse({'errors': serializer.errors}, status=400)
-    
-    # Handle GET request to render the template with required data
-    project_schedule_history = ProjectScheduleHistory.objects.filter(project_schedule=project_schedule)
-    serializer = ProjectScheduleHistorySerializer(project_schedule_history, many=True)
-    return render(request, 'project_schedulehistory.html', {'unit': unit, 'project_schedulehistory': serializer.data})
 
+    elif request.method == 'GET':
+        project_schedule_history = ProjectScheduleHistory.objects.filter(project_schedule=project_schedule)
+        serializer = ProjectScheduleHistorySerializer(project_schedule_history, many=True)
+        return JsonResponse(serializer.data, safe=False)
 
-
-
-
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)
 
