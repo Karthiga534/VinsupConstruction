@@ -462,13 +462,11 @@
 				$(this).closest('tr').remove();
 			});
 	
-			// Event listener for input changes in dynamically added rows
 			$(document).on('input', '#tabl input[name="rate"], #tabl input[name="total_qty"]', function () {
 				var row = $(this).closest('tr');
 				calculateAmount(row);
 			});
 	
-			// Function to calculate amount and update the input field
 			function calculateAmount(row) {
 				var rate = parseFloat(row.find('input[name="rate"]').val()) || 0;
 				var totalQty = parseFloat(row.find('input[name="total_qty"]').val()) || 0;

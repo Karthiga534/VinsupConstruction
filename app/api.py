@@ -354,7 +354,7 @@ def quatation(request):  #change name
     if not allow:
          context ={"unauthorized":msg}
          return render(request,"login.html",context)    
-    status =ProcessStatus.objects.all()
+    status =StockStatus.objects.all()
     materiallibrary = MaterialLibrary.objects.filter(company=request.user.company).order_by("-id")  
     uom =Uom.objects.filter(company=request.user.company).order_by("-id")
     site = Project.objects.filter(company=request.user.company, is_disabled=False).order_by("-id")
@@ -393,12 +393,13 @@ def quatationlist(request):
     if not allow:
         context = {"unauthorized": msg}
         return render(request, "login.html", context)
-    status =ProcessStatus.objects.all()
+    status =SiteStock.objects.all()
     site = Project.objects.filter(company=request.user.company, is_disabled=False).order_by("-id")
     # quatationitems = QuatationItems.objects.filter(company__name=request.user.company)
     querysets = Quatation.objects.filter(company=request.user.company).order_by("-id")
     queryset, pages, search = customPagination(request, Quatation, querysets)
-    context = {'queryset': queryset, "location": "quatationlist", "pages": pages, "status": status , "search": search, 'site': site}
+    context = {'queryset': queryset, "location": "quatationlist", "pages": pages , "search": search, 'site': site,"status":status
+        }
     return render(request, "quatation/quatationlist.html", context)
 
 
@@ -2464,26 +2465,6 @@ def sitestockusage(request):
         "status_options": status_options,  # Pass serialized status options to the template
     }
     return render(request, "sitestock/dailysitestockusagelist.html", context)
-
-# @csrf_exempt  # Use only if CSRF token is not being sent with AJAX
-# @login_required(login_url='login')
-# @require_POST
-# def update_stock_status(request):
-#     stock_usage_id = request.POST.get('id')
-#     new_status_id = request.POST.get('status')
-
-#     if not stock_usage_id or not new_status_id:
-#         return JsonResponse({'error': 'Invalid data'}, status=400)
-
-#     try:
-#         stock_usage = get_object_or_404(DailySiteStockUsage, pk=stock_usage_id)
-#         new_status = get_object_or_404(StockStatus, pk=new_status_id)
-#         stock_usage.status = new_status
-#         stock_usage.save()
-
-#         return JsonResponse({'success': 'Status updated'})
-#     except Exception as e:
-#         return JsonResponse({'error': str(e)}, status=500)
 
 @csrf_exempt
 @login_required(login_url='login')
