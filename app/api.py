@@ -1,6 +1,5 @@
 import json
 import logging
-
 from .models import *
 from .serializer import *
 from datetime import datetime
@@ -10,6 +9,8 @@ from rest_framework.response import Response
 from django.utils.dateparse import parse_date
 from django.http import JsonResponse, Http404
 from rest_framework.decorators import api_view
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 from rest_framework.pagination import PageNumberPagination
 from django.db.models import Case, When, Value, IntegerField
@@ -2410,6 +2411,33 @@ def add_dailysitestockusage(request):
 
 
 
+# @login_required(login_url='login')
+# @check_admin
+# def sitestockusage(request):
+#     user = request.user
+#     allow, msg = check_user(request, DailySiteStockUsage, instance=False)
+#     if not allow:
+#         context = {"unauthorized": msg}
+#         return render(request, "login.html", context)
+    
+#     status = StockStatus.objects.all()
+#     subcontracts = ProjectSubContract.objects.filter(company=user.company).order_by("-id")
+#     projects = Project.objects.filter(company=user.company, is_disabled=False).order_by("-id")
+
+#     from_site = request.GET.get('from', "")
+  
+#     context = {
+#         "location": "transfer",
+#         "projects": projects,
+#         "subcontracts": subcontracts,
+#         # "inventory": user.company,
+#         # 'items': items,
+#         "status":status,
+      
+        
+#     }
+#     return render(request, "sitestock/dailysitestockusagelist.html", context)
+
 @login_required(login_url='login')
 @check_admin
 def sitestockusage(request):
@@ -2424,21 +2452,97 @@ def sitestockusage(request):
     projects = Project.objects.filter(company=user.company, is_disabled=False).order_by("-id")
 
     from_site = request.GET.get('from', "")
+
+    # Serialize the StockStatus options for JavaScript use
+    status_options = serialize('json', status)
   
     context = {
         "location": "transfer",
         "projects": projects,
         "subcontracts": subcontracts,
-        # "inventory": user.company,
-        # 'items': items,
-        "status":status,
-      
-        
+        "status": status,
+        "status_options": status_options,  # Pass serialized status options to the template
     }
     return render(request, "sitestock/dailysitestockusagelist.html", context)
 
+# @csrf_exempt  # Use only if CSRF token is not being sent with AJAX
+# @login_required(login_url='login')
+# @require_POST
+# def update_stock_status(request):
+#     stock_usage_id = request.POST.get('id')
+#     new_status_id = request.POST.get('status')
 
+#     if not stock_usage_id or not new_status_id:
+#         return JsonResponse({'error': 'Invalid data'}, status=400)
+
+#     try:
+#         stock_usage = get_object_or_404(DailySiteStockUsage, pk=stock_usage_id)
+#         new_status = get_object_or_404(StockStatus, pk=new_status_id)
+#         stock_usage.status = new_status
+#         stock_usage.save()
+
+#         return JsonResponse({'success': 'Status updated'})
+#     except Exception as e:
+#         return JsonResponse({'error': str(e)}, status=500)
+
+@csrf_exempt
+@login_required(login_url='login')
+def update_stock_status(request):
+    if request.method == 'POST':
+        item_id = request.POST.get('id')
+        new_status_id = request.POST.get('status')
+
+        # Find the DailySiteStockUsage item and update its status
+        try:
+            item = DailySiteStockUsage.objects.get(id=item_id)
+            new_status = StockStatus.objects.get(id=new_status_id)
+            item.status = new_status
+            item.save()
+
+            return JsonResponse({'success': True, 'status_name': new_status.name, 'status_code': new_status.code})
+        except DailySiteStockUsage.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Item not found'})
+        except StockStatus.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Invalid status'})
+    return JsonResponse({'success': False, 'error': 'Invalid request method'})
     
+# @api_view(['GET'])
+# @login_required(login_url='login')
+# def dailysitestockusagelist(request, pk):
+#     user = request.user
+#     allow, msg = check_user(request, DailySiteStockUsage, instance=False)
+#     if not allow:
+#         context = {"unauthorized": msg}
+#         return render(request, "login.html", context)
+    
+#     status = StockStatus.objects.all()
+
+#     # projects = Project.objects.filter(company=request.user.company).order_by("-id")
+#     # subcontractors = ProjectSubContract.objects.filter(company=request.user.company).order_by("-id")
+#     querysets = DailySiteStockUsage.objects.filter(company=request.user.company).order_by("-id")
+    
+
+#     # queryset, pages, search = customPagination(request, DailySiteStockUsage, querysets)
+#     # context = {
+#     #     'queryset': queryset,
+#     #     'location': "dailysitestockusagelist",
+#     #     'pages': pages,
+#     #     'search': search,
+#     #     'projects': projects,
+#     #     'subcontractors': subcontractors,
+       
+#     # }
+#     # return render(request, "sitestock/dailysitestockusagelist.html", context)
+#     projectid= get_int_or_zero(pk)
+#     if projectid !=0:
+#         querysets =querysets.filter(project__id=projectid)
+#     subcontractid =request.GET.get('subcontract')
+#     subcontid= get_int_or_zero(subcontractid)
+#     if subcontid:
+#         querysets =querysets.filter(subcontract__id=subcontid)
+#     # ser = DailySiteStockUsageSerializer(querysets,many=True)
+#     return PaginationAndFilter(querysets, request, DailySiteStockUsageSerializer,date_field='created_at')
+
 @api_view(['GET'])
 @login_required(login_url='login')
 def dailysitestockusagelist(request, pk):
@@ -2449,23 +2553,9 @@ def dailysitestockusagelist(request, pk):
         return render(request, "login.html", context)
     
     status = StockStatus.objects.all()
-
-    # projects = Project.objects.filter(company=request.user.company).order_by("-id")
-    # subcontractors = ProjectSubContract.objects.filter(company=request.user.company).order_by("-id")
     querysets = DailySiteStockUsage.objects.filter(company=request.user.company).order_by("-id")
     
 
-    # queryset, pages, search = customPagination(request, DailySiteStockUsage, querysets)
-    # context = {
-    #     'queryset': queryset,
-    #     'location': "dailysitestockusagelist",
-    #     'pages': pages,
-    #     'search': search,
-    #     'projects': projects,
-    #     'subcontractors': subcontractors,
-       
-    # }
-    # return render(request, "sitestock/dailysitestockusagelist.html", context)
     projectid= get_int_or_zero(pk)
     if projectid !=0:
         querysets =querysets.filter(project__id=projectid)
@@ -2473,10 +2563,7 @@ def dailysitestockusagelist(request, pk):
     subcontid= get_int_or_zero(subcontractid)
     if subcontid:
         querysets =querysets.filter(subcontract__id=subcontid)
-    # ser = DailySiteStockUsageSerializer(querysets,many=True)
     return PaginationAndFilter(querysets, request, DailySiteStockUsageSerializer,date_field='created_at')
-
-
 
 
 @api_view(['POST'])
