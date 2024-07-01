@@ -36,10 +36,10 @@
                                 <div class="row">
                                     <div class="col text-end">
                                         <a class="btn btn-info btn-sm custom-button mr-3" href="{% url 'project' %}">
-                                            Back </a>
+                                            Back </a> 
                                     </div>
                                 </div>
-                                <h4>Project Schedule</h4>
+                                <h4>Project Schedule History</h4>
 
                                 <div class="row">
                                     <div class="col-md-4 mt-2">
@@ -141,27 +141,30 @@
                                                                                     </div>
                                                                                     
                                                                                 </div>
-                                                                                <div class="row mt-3">
+                                                                                <div class="row mt-3">  
                                                                                     <div class="col-md-6">
-                                                                                        <label for="unit" class="form-label">Unit<span style="color: red;">*</span> </label>
-                                                                                        <select class="form-select mb-3" aria-label="Default select example" name="unit" id="unit">
-                                                                                            <option value="">----------------</option>
-                                                                                            {% for i in unit %}
-                                                                                            <option value="{{ i.id }}">{{ i.name }}</option>
+                                                                                        <label for="unit" class="form-label">Unit</label>
+                                                                                        <select class="form-select" id="unit" name="unit">
+                                                                                            <option value="">----------</option>
+                                                                                            {% for uom in unit %}
+                                                                                            <option value="{{ uom.id }}">{{ uom.name }}</option>
                                                                                             {% endfor %}
                                                                                         </select>
-                                                                                        <span id="unitError" class="error-message"></span>
+                                                                                  
+                                                                                        <span id="unitError"
+                                                                                            class="error-message"></span>
                                                                                     </div>
+                                                                                    
                                                                                     <div class="col-md-6">
-                                                                                        <label for="start_date" class="form-label">Start Date<span style="color: red;">*</span> </label>
-                                                                                        <input type="date" class="form-control" name="start_date" id="start_date" >
-                                                                                        <span id="start_dateError" class="error-message"></span>
+                                                                                        <label for="date" class="form-label"> Date<span style="color: red;">*</span> </label>
+                                                                                        <input type="date" class="form-control" name="date" id="date" >
+                                                                                        <span id="dateError" class="error-message"></span>
                                                                                     </div>
-                                                                                    <div class="col-md-6">
+                                                                                    <!-- <div class="col-md-6">
                                                                                         <label for="end_date" class="form-label">End Date<span style="color: red;">*</span> </label>
                                                                                         <input type="date" class="form-control" name="end_date" id="end_date" >
                                                                                         <span id="end_dateError" class="error-message"></span>
-                                                                                    </div>
+                                                                                    </div> -->
                                                                                     <div class="col-md-6">
                                                                                         <label for="description" class="form-label">Description<span style="color: red;">*</span> </label>
                                                                                         <textarea class="form-control" name="description" id="description"></textarea>
@@ -176,23 +179,15 @@
 
                                                                                    
                                  
-                                                                                <div class="modal-footer">  
-
-                                                                                    <button type="button" class="btn btn-secondary"
-                                                                                        id="" data-bs-dismiss="modal"
-                                                                                        onclick="CloseModel('editModal','{{i.id}}')">
-            
-                                                                                        Cancel
-            
-                                                                                    </button>
-            
-                                                                                    <button type="button" class="btn btn-primary"
-                                                                                        id="saveuom"
-                                                                                        onclick="createFunction(this, '{{ project.id }}')">
-            
-                                                                                        Save
-            
-                                                                                    </button>
+                                                                                    <div class="modal-footer">
+                                                                                        <button
+                                                                                            class="btn btn-link link-success fw-medium shadow-none"
+                                                                                            data-bs-dismiss="modal"><i
+                                                                                                class="ri-close-line me-1 align-middle"
+                                                                                                onclick="clearErrors()"></i> Close</button>
+                                                                                        <button type="button" class="btn btn-primary "
+                                                                                            onclick="createFunction(this)">Save </button>
+                                                                                    </div>
             
                                                                                 </div>
                                                                             </form> 
@@ -217,12 +212,13 @@
                                                 <thead>
                                                     <tr>
                                                         <th>S.No</th>
+                                                        <th>Date</th>
                                                         <th>Task Name</th>
                                                         <th>Description</th>
                                                         <th>Unit</th>
-                                                        <th>Quantity</th>
-                                                        <th>Start Date</th>
-                                                        <th>End Date</th>
+                                                        <th>Qty</th>
+                                                        <th>Image</th>
+                                                        <!-- <th>End Date</th>  -->
                                                         <th >Action</th>
                                                     </tr>
                                                 </thead>
@@ -230,12 +226,14 @@
                                                     {% for i in project_schedule %}
                                                     <tr>
                                                         <td>{{ forloop.counter }}</td>
+                                                        <th>{{i.date}}</th>
                                                         <td>{{ i.task_name }}</td>
                                                         <td>{{ i.description }}</td>
                                                         <td>{{ i.unit }}</td>
                                                         <td>{{ i.qty }}</td>
-                                                        <td>{{ i.start_date|date:"d-m-Y" }}</td>
-                                                        <td>{{ i.end_date|date:"d-m-Y" }}</td>
+                                                        <td><img src="{{ schedule.image.url }}" alt="Image" style="max-width: 100px;"></td>
+                                                        <!-- <td>{{ i.start_date|date:"d-m-Y" }}</td>
+                                                        <td>{{ i.end_date|date:"d-m-Y" }}</td> -->
 
                                                         <!-- <td>
 
@@ -265,11 +263,18 @@
                                                                 <ul class="dropdown-menu dropdown-menu-end">
                                                                     <li>
                                                                         <!-- Assume the projectScheduleId is stored as a data attribute in the link -->
-                                                                        <a class="dropdown-item edit-item-btn" href="#!" id="openScheduleHistoryModal" data-project-schedule-id="{{ project_schedule.id }}">
-                                                                            <i class="ri-pencil-fill align-bottom me-2 text-muted"></i>
-                                                                            Schedule History
+                                                                        <a 
+                                                                        class="btn btn-soft-secondary btn-sm p-0 m-1"
+                                                                            href="{% url 'project_schedulehistory' i.id %}">
+                                                                            <img src="{% static 'assets/icon/cashinward.png' %}" class ='button-img-icon'>
                                                                         </a>
-
+                    
+                                                                        <a 
+                                                                        class="btn btn-soft-secondary btn-sm p-0 m-1"
+                                                                            href="{% url 'project_schedule' i.id %}">
+                                                                            <img src="{% static 'assets/icon/s.jpg' %}" class ='button-img-icon'>
+                                                                        </a>
+                    
                                                                     </li>
                                                                 </ul>
                                                                 
@@ -292,99 +297,130 @@
                         </div>
 
 
-
-
                     </div>
                 </div>
             </div>
         </div>
 
-
+        <script>
+            const posturl = "add_project_schedulehistory";
+            
+            function createFunction(button, pk) {
+                var formId = `createForm`;
+                var formElement = document.getElementById(formId);
+                
+                try {
+                    disableButton(button);
+                    var isValid = true;
+                    var errors = {};
+                    var formData = new FormData(formElement);
         
-
-
-
-<script>
-
-
-    const posturl = "add_project_schedule";
-
-    function createFunction(button, pk) {
-        var formId = `createForm`;
-        var formElement = document.getElementById(formId);
-       // var imgError = document.getElementById('imgError');
-        try {
-            disableButton(button);
-            var isValid = true;
-            var errors = {};
-            var formData = new FormData(formElement);
-
-            var requiredKeys = [];
-
-
-
-
-            requiredKeys.forEach(function (key) {
-                var value = formData.get(key);
-                if (!value.trim()) {
-                    isValid = false;
-                    errors[key] = ['This field may not be blank.'];
-                }
-            });
-
-            if (!isValid) {
-                enableButton(button);
-                console.log(errors);
-                handleCreateErrors(errors);
-                return;
-            } else {
-                $(`#${formId} input, #${formId} button`).prop('disabled', true);
-            }
-
-            $.ajax({
-                url: `/${posturl}/${pk}/`,
-                type: 'POST',
-                headers: {
-                    'X-CSRFToken': csrftoken,
-                },
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function (response, status, xhr) {
-                    if (xhr.status === 201) {
-                        showToast(successMesssage?.message, '', successMesssage?.bgColor, true);
-                    } else {
-                        console.error(response);
-                        restoreForm(formId, button);
-                    }
-                },
-                error: function (xhr, status, error) {
-                    console.log(xhr, status, error);
-                    if (xhr.status === 400) {
-                        if (xhr?.responseJSON || xhr?.responseJSON?.errors) {
-                            handleCreateErrors(transformErrors(xhr.responseJSON));
-                        } else {
-                            showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+                    // Perform client-side validation if needed
+                    var requiredKeys = ['task_name', 'qty', 'unit', 'date', 'description', 'image'];
+        
+                    requiredKeys.forEach(function (key) {
+                        var value = formData.get(key);
+                        if (!value.trim()) {
+                            isValid = false;
+                            errors[key] = ['This field may not be blank.'];
                         }
-                    } else if (xhr.status === 401 || 404) {
-                        showToast(xhr?.responseJSON?.details, '', errorAlertMessage?.bgColor);
+                    });
+        
+                    if (!isValid) {
+                        enableButton(button);
+                        handleCreateErrors(errors);
+                        return;
                     } else {
-                        showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+                        $(`#${formId} input, #${formId} button`).prop('disabled', true);
                     }
+        
+                    $.ajax({
+                        url: `/${posturl}/${pk}/`,
+                        type: 'POST',
+                        headers: {
+                            'X-CSRFToken': getCookie('csrftoken'), // Function to get CSRF token
+                        },
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function (response, status, xhr) {
+                            if (xhr.status === 201) {
+                                showToast('Successfully created schedule history!', '', 'bg-success', true);
+                                location.reload(); // Reload the page to see the new entry
+                            } else {
+                                console.error(response);
+                                restoreForm(formId, button);
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            console.log(xhr, status, error);
+                            if (xhr.status === 400) {
+                                if (xhr.responseJSON || xhr.responseJSON.errors) {
+                                    handleCreateErrors(xhr.responseJSON);
+                                } else {
+                                    showToast('An error occurred. Please try again.', '', 'bg-danger');
+                                }
+                            } else if (xhr.status === 401 || xhr.status === 404) {
+                                showToast(xhr.responseJSON.details, '', 'bg-danger');
+                            } else {
+                                showToast('An error occurred. Please try again.', '', 'bg-danger');
+                            }
+                            restoreForm(formId, button);
+                        }
+                    });
+                } catch (error) {
+                    showToast('An error occurred. Please try again.', '', 'bg-danger');
+                    console.error(error);
+                    restoreForm(formId, button);
+                } finally {
                     restoreForm(formId, button);
                 }
-            });
-            } catch (error) {
-                showToast(errorOccured?.message, '', errorOccured?.bgColor);
-                console.error(error);
-                restoreForm(formId, button);
-            } finally {
-                restoreForm(formId, button);
             }
-    }
-
-
-</script> 
+        
+            function disableButton(button) {
+                button.disabled = true;
+            }
+        
+            function enableButton(button) {
+                button.disabled = false;
+            }
+        
+            function restoreForm(formId, button) {
+                $(`#${formId} input, #${formId} button`).prop('disabled', false);
+                enableButton(button);
+            }
+        
+            function handleCreateErrors(errors) {
+                for (var key in errors) {
+                    if (errors.hasOwnProperty(key)) {
+                        var errorElement = document.getElementById(`${key}Error`);
+                        if (errorElement) {
+                            errorElement.textContent = errors[key].join(', ');
+                        }
+                    }
+                }
+            }
+        
+            // Function to get CSRF token from cookies
+            function getCookie(name) {
+                var cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    var cookies = document.cookie.split(';');
+                    for (var i = 0; i < cookies.length; i++) {
+                        var cookie = cookies[i].trim();
+                        // Does this cookie string begin with the name we want?
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+        </script>
+        
+        
+        
 
 
 

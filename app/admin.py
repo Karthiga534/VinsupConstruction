@@ -71,6 +71,13 @@ class ContractorAdmin(admin.ModelAdmin):
 class ContractCategoryAdmin(admin.ModelAdmin):
     list_display = ('id',)
 
+   
+
+@admin.register(ProjectScheduleHistory)
+class ProjectScheduleHistoryAdmin(admin.ModelAdmin):
+    list_display = ('work', 'qty', 'unit', 'date', 'project_schedule')
+
+
 
 
 
@@ -184,9 +191,6 @@ class LogoAdmin(admin.ModelAdmin):
 class ProjectScheduleAdmin(admin.ModelAdmin):
     list_display = ('task_name', 'project', 'start_date', 'end_date', 'status')
 
-@admin.register(ProjectScheduleHistory)
-class ProjectScheduleHistoryAdmin(admin.ModelAdmin):
-    list_display = ('work', 'project_schedule', 'qty', 'date')
 
 @admin.register(ProjectDiagram)
 class ProjectDiagramAdmin(admin.ModelAdmin):
