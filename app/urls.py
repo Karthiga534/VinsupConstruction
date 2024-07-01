@@ -359,7 +359,7 @@ urlpatterns = [
 
     path('project_schedule/<int:pk>/',views.project_schedule,name='project_schedule'),
     path('add_project_schedule/<int:pk>/', views.add_project_schedule, name='add_project_schedule'),
-    path('add_project_schedule_history/<int:pk>/', views.add_project_schedule_history, name='add_project_schedule_history'),
+   
     path('update-project-schedule-status/', views.update_project_schedule_status, name='update_project_schedule_status'),
     # path('project_schedule_history/<int:pk>/', views.project_schedule_history, name='project_schedule_history'),
 
@@ -568,6 +568,16 @@ urlpatterns = [
 
     path('logos/', views.logo_list_create, name='logo-list-create'),
     path('logos/<int:pk>/', views.logo_detail, name='logo-detail'),
+
+
+
+
+
+  path('project-schedulehistory/<int:pk>/', views.project_schedulehistory, name='project_schedulehistory'),
+  path('add_project_schedulehistory/<int:pk>/', views.add_project_schedulehistory, name='add_project_schedulehistory'),
+
+
+
 
 
 

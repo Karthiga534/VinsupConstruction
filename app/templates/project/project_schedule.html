@@ -312,10 +312,14 @@
                                                                 <ul class="dropdown-menu dropdown-menu-end">
                                                                     <li>
                                                                         <!-- Assume the projectScheduleId is stored as a data attribute in the link -->
-                                                                        <a class="dropdown-item edit-item-btn" href="#!" id="openScheduleHistoryModal" data-project-schedule-id="{{ project_schedule.id }}">
+                                                                        <!-- <a class="dropdown-item edit-item-btn" href="#!" id="openScheduleHistoryModal" data-project-schedule-id="{{ project_schedule.id }}">
                                                                             <i class="ri-pencil-fill align-bottom me-2 text-muted"></i>
                                                                             Schedule History
-                                                                        </a>
+                                                                        </a> -->
+                                                                        <a 
+													class="btn btn-soft-secondary btn-sm p-0 m-1"
+														href="{% url 'project_schedulehistory' i.id %}">ytghjugyu
+													</a>
 
                                                                     </li>
                                                                 </ul>

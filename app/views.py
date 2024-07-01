@@ -37,6 +37,7 @@ from app.utils import PaginationAndFilter, customPagination,check_user,get_curre
 
 
 
+
 paginator = PageNumberPagination()
 date_format = "%Y-%m-%d"
 clocked_in_message ='already clocked in for this date'
@@ -4056,25 +4057,7 @@ def add_project_schedule(request, pk):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(['GET', 'POST'])
-def add_project_schedule_history(request, pk):
-    project_schedule = get_object_or_404(ProjectSchedule, pk=pk)
 
-    if request.method == 'GET':
-        project_schedule = ProjectScheduleHistory.objects.filter(project_schedule=project_schedule)
-        serializer = ProjectScheduleHistorySerializer(project_schedule, many=True)
-        return Response(serializer.data)
-
-    elif request.method == 'POST':
-        data = request.data.copy()
-        data['project_schedule'] = project_schedule.id
-
-        serializer = ProjectScheduleHistorySerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
 def update_project_schedule_status(request):
@@ -4102,45 +4085,44 @@ def update_project_schedule_status(request):
 
 
 
-# @api_view(['PUT'])
-# def update_clientcashpay(request, payment_id):
-#     try:
-#         payment_history_instance = get_object_or_404(PaymentHistory, pk=payment_id)
-#     except PaymentHistory.DoesNotExist:
-#         return Response("Payment history not found", status=status.HTTP_404_NOT_FOUND)
-
-#     if request.method == 'PUT':
-#         serializer = PaymentHistorySerializer(payment_history_instance, data=request.data)
-
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-#     return Response("Unsupported method", status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
-
-# def project_schedule_history(request, pk):
-#     project = get_object_or_404(Project, pk=pk)
+def project_schedulehistory(request, pk):
+    project_schedule = get_object_or_404(ProjectSchedule, pk=pk)
+    project = project_schedule.project
+    project_schedule_history = ProjectScheduleHistory.objects.filter(project_schedule=project_schedule).order_by("-id")
     
-#     # Fetch project schedule and order by start_date first, then by end_date
-#     project_schedule = ProjectSchedule.objects.filter(project=project).order_by('start_date', 'end_date')
-#     # project_schedule_history = ProjectScheduleHistory.objects.filter(project_schedule=project_schedule).order_by("-id") 
-
-#     if project_schedule.exists():
-#         latest_project_schedule = project_schedule.last()  # Get the latest schedule or adjust as needed
-#         project_schedule_history = ProjectScheduleHistory.objects.filter(project_schedule=latest_project_schedule).order_by("-id")
-#     else:
-#         project_schedule_history = []
+    context = {
+        'project': project,
+        'project_schedules': project_schedule,
+        'project_schedule_history': project_schedule_history,
+    }
     
-#     unit = Uom.objects.filter(company=request.user.company).order_by("-id")
+    return render(request, 'project/project_schedulehistory.html', context)
 
-#     context = {
-#         'project': project,
-#         'project_schedule': project_schedule,
-#         'project_schedule_history':project_schedule_history,
-#         'unit': unit,
-#     }
 
-#     return render(request, 'project/project_schedule.html', context)
+@api_view(['GET', 'POST'])
+def add_project_schedulehistory(request, pk):
+    project_schedule = get_object_or_404(ProjectSchedule, pk=pk)
+    unit = Uom.objects.all()
+
+    if request.method == 'POST':
+        # Assuming you are using a serializer for validation and saving data
+        serializer = ProjectScheduleHistorySerializer(data=request.POST, files=request.FILES)
+        if serializer.is_valid():
+            # Attach the project_schedule instance to the serializer before saving
+            serializer.save(project_schedule=project_schedule)
+            return JsonResponse({'status': 'success', 'message': 'Schedule history created successfully'}, status=201)
+        else:
+            return JsonResponse({'errors': serializer.errors}, status=400)
+    
+    # Handle GET request to render the template with required data
+    project_schedule_history = ProjectScheduleHistory.objects.filter(project_schedule=project_schedule)
+    serializer = ProjectScheduleHistorySerializer(project_schedule_history, many=True)
+    return render(request, 'project_schedulehistory.html', {'unit': unit, 'project_schedulehistory': serializer.data})
+
+
+
+
+
+
