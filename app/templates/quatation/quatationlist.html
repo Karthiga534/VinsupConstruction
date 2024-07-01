@@ -102,8 +102,8 @@
                                     <th data-ordering="false">Date</th>
                                     <th data-ordering="false">Site Name</th>
                                     <th data-ordering="false">Quatation No</th>
-                                    {% comment %} <th data-ordering="false">Status</th> {% endcomment %}
-                                    <th data-ordering="false" colspan="2">Action</th>
+                                    {% comment %} <th data-ordering="false" colspan="2">Status</th> {% endcomment %}
+                                    <th data-ordering="false" >Action</th>
 
                                 </tr>
                             </thead>
@@ -685,7 +685,93 @@ aria-labelledby="myLargeModalLabel-1" aria-hidden="true">
 
 
 
+{% comment %} 
+// Function to send an AJAX request to update the status
+function updateStatus(itemId, newStatusId) {
+    fetch('/update-quatation-status/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': getCSRFToken(), // Add CSRF token for security
+        },
+        body: new URLSearchParams({
+            'id': itemId,
+            'status': newStatusId
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            console.log('Status updated successfully:', data.status_name);
+            // Update the status badge visually with the new status
+            const statusBadge = document.getElementById(`status-badge-${itemId}`);
+            statusBadge.textContent = data.status_name; // Update to new status name
+            statusBadge.className = `${getStatusColor(data.status_code)} align-middle fs-10`; // Update badge color
+        } else {
+            console.error('Failed to update status:', data.error);
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
 
+// Function to get CSRF token from cookies
+function getCSRFToken() {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, 10) === 'csrftoken=') {
+                cookieValue = decodeURIComponent(cookie.substring(10));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+dropdownItem.addEventListener('click', function(e) {
+    e.preventDefault();
+    const newStatusId = option.pk;
+    const newStatusName = option.fields.name;
+    
+    // Update status visually with the name and color
+    displayStatusBadge.textContent = newStatusName;
+    displayStatusBadge.className = `statustag badge align-middle fs-10 ${getStatusColor(newStatusId)}`; // Update badge color
+
+    // Store updated status in local storage
+    localStorage.setItem(`status-${data.id}`, JSON.stringify({
+        statusName: newStatusName,
+        statusCode: newStatusId
+    }));
+
+    // Send the update to the backend
+    updateStatus(data.id, newStatusId);
+
+    // Disable action button if status is "Approved"
+    if (newStatusName.toLowerCase() === 'approved') {
+        actionCell.querySelector('button').disabled = true;
+    } else {
+        actionCell.querySelector('button').disabled = false; // Ensure it's enabled for other statuses
+    }
+});
+
+// Inside createTableRow function
+// Check initial status from local storage
+const storedStatus = localStorage.getItem(`status-${data.id}`);
+if (storedStatus) {
+    const { statusName, statusCode } = JSON.parse(storedStatus);
+    displayStatusBadge.textContent = statusName;
+    displayStatusBadge.className = `statustag badge align-middle fs-10 ${getStatusColor(statusCode)}`;
+    
+    // Disable action button if status is "Approved"
+    if (statusName.toLowerCase() === 'approved') {
+        actionCell.querySelector('button').disabled = true;
+    }
+} else {
+    displayStatusBadge.textContent = data.status_name;
+}
+ {% endcomment %}
 
 
 </script>
