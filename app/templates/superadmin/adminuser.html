@@ -84,6 +84,15 @@
                                                         </div>
                                                         <div class="col-md-6">
                                                             <form id="createinfoForm" enctype="multipart/form-data">
+
+                                                                <div class=" mb-2">
+                                                                    <label for="" class="form-label">Image
+                                                                        :</label>
+                                                                    <input type="file" class="form-control" id="img"
+                                                                        name="img" required>
+                                                                    <span id="imgError" class="error-message"></span>
+                                                                </div>
+
                                                                 <div class=" mb-2">
                                                                     <label for="" class="form-label">Id Proof
                                                                         :</label>
@@ -483,15 +492,23 @@
                                                                                     class="error-message"></span>
                                                                             </div>
 
+
                                                                             <div class="mb-2">
-                                                                                <label for="" class="form-label">Image
-                                                                                    :</label>
-                                                                                <input type="file" class="form-control"
-                                                                                    value="{{ i.owner.img }}"
-                                                                                    name="img" id="{{i.id}}_img">
-                                                                                <span id="{{i.id}}_imgError"
-                                                                                    class="error-message"></span>
+                                                                                <label for="{{ i.id }}_img" class="form-label">Image:</label>
+                                                                                <input type="file" class="form-control mb-2" id="{{ i.id }}_img" name="img" value="{{ i.img }}">
+                                                                                
+                                                                                <span class="file-span">
+                                                                                    {% if i.owner.img %}
+                                                                                        <a target="_blank" href="{{ i.owner.img.url }}" >{{i.owner.img}}</a>
+                                                                                    {% else %}
+                                                                                        No file uploaded
+                                                                                    {% endif %}
+                                                                                </span>
                                                                             </div>
+
+                                                                            
+                                                                            
+                                                                            
 
                                                                         </form>
                                                                     </div>
@@ -1095,6 +1112,11 @@
             if (proofFile) {
                 formData.append("proof", proofFile);
             }
+
+            const imgFile = document.querySelector(`#createinfoForm input[name="img"]`).files[0];
+                if (imgFile) {
+                    formData.append("img", imgFile);
+                }
 
             formData.append('name', getValueOrDefault($('#createuserForm input[name="name"]').val()));
             formData.append('email', getValueOrDefault($('#createuserForm input[name="email"]').val()));
