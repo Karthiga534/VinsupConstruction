@@ -617,8 +617,9 @@
 					contentType: false,
 					success: function (response, status, xhr) {
 						if (xhr.status === 201) {
-							showToast(successMesssage?.message, '', successMesssage?.bgColor);
+							showToast(successMesssage?.message, '', successMesssage?.bgColor,true);
 							goBack(); // Call goBack to navigate back after success
+							//goBackWithRefresh();
 						} else {
 							console.error(status);
 							restoreForm(formId, button);
@@ -646,6 +647,13 @@
 				console.error(error);
 			}
 		}
+
+		function goBackWithRefresh() {
+			window.history.back();
+		
+			location.reload();
+		}
+		
 		
 
 	</script>

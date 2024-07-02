@@ -465,6 +465,7 @@
 							console.error(status);
 							if (xhr.status === 201) {
 								showToast(successMesssage?.message, '', successMesssage?.bgColor, true);
+                                window.location.href = '/subcontractorlist/';
 							} else {
 								console.error(error);
 								restoreForm(formId, button)

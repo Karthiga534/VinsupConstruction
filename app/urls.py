@@ -135,6 +135,7 @@ urlpatterns = [
     path('add_quatation/',api.add_quatation, name='add_quatation'),   
     path('quotation/', api.quatationlist, name="quatationlist"),
     path("quatation-status-change/<int:pk>/",api.quatation_status_change, name = 'quatation-status-change') ,
+    path('update_quotation_status/', api.update_quotation_status_api, name='update_quotation_status'),
   
 #----------------------- Site Stocks ----------------------
 
@@ -142,7 +143,7 @@ urlpatterns = [
     path('update-site-stock' ,api.site_stock_update,name='site-stock-update'),
 
     path('viewstock/',api.viewstock, name="viewstock"),
-
+ 
 #------------------------- Sub Contractor List --------------------
 
     path('subcontadd/',api.subcontadd, name="subcontadd"),
