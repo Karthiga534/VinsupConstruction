@@ -482,7 +482,7 @@
 	<script>
 		// create form
 
-		function createFunction(button) {
+		 function createFunction(button) {
 			
 			var formId = `createForm`;   //change
 			var formElement = document.getElementById(formId);
@@ -567,13 +567,12 @@
 					success: function (response, status, xhr) {
 						console.error(status);
 						if (xhr.status === 201) {
-							showToast(successMesssage?.message, '', successMesssage?.bgColor);
-							goBack(); 
-							
+							showToast(successMesssage?.message, '', successMesssage?.bgColor, true);
+							//goBack();
 						} else {
 							console.error(error);
 							restoreForm(formId, button)
-
+	
 						}
 					},
 					error: function (xhr, status, error) {
@@ -581,38 +580,34 @@
 						if (xhr.status === 400) {
 							if (xhr?.responseJSON || xhr?.responseJSON?.errors) {
 								handleCreateErrors(transformErrors(xhr.responseJSON));
-								// restoreForm(formId, button)
-
+								restoreForm(formId, button)
+	
 							} else {
 								showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
-								// restoreForm(formId, button)
-
+								restoreForm(formId, button)
+	
 							}
 						}
 						else if (xhr.status === 401 || 404) {
 							showToast(xhr?.responseJSON?.details, '', errorAlertMessage?.bgColor);
-							// restoreForm(formId, button)
-
+							restoreForm(formId, button)
+	
 						}
 						else {
 							showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
-							// restoreForm(formId, button)
-
+							restoreForm(formId, button)
+	
 						}
 					}
-
+					
 				});
 			} catch (error) {
 				showToast(errorOccured?.message, '', errorOccured?.bgColor);
 				restoreForm(formId, button)
 				console.error(error);
 			}
-			finally{
-				restoreForm(formId, button)
-			}
-		}
-
-
+		} 
+		
 
 
 	</script>

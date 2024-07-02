@@ -354,14 +354,14 @@ def quatation(request):  #change name
     if not allow:
          context ={"unauthorized":msg}
          return render(request,"login.html",context)    
-    status =StockStatus.objects.all()
+
     materiallibrary = MaterialLibrary.objects.filter(company=request.user.company).order_by("-id")  
     uom =Uom.objects.filter(company=request.user.company).order_by("-id")
     site = Project.objects.filter(company=request.user.company, is_disabled=False).order_by("-id")
     inventory = InventoryStock.objects.filter(company=request.user.company).order_by("-id") 
     querysets = Quatation.objects.filter(company=request.user.company).order_by("-id")   #change query
     queryset,pages,search =customPagination(request,Quatation,querysets)    #change, model
-    context= {"materiallibrary":materiallibrary,'queryset': queryset,"location":"quatation", "status":status,"pages" :pages,"search":search,"uom":uom,"inventory":inventory,'site':site}   #change location name 
+    context= {"materiallibrary":materiallibrary,'queryset': queryset,"location":"quatation","pages" :pages,"search":search,"uom":uom,"inventory":inventory,'site':site}   #change location name 
     return render(request,"quatation/quatation.html",context)    #change template name
 
 @api_view(['POST'])
@@ -393,14 +393,38 @@ def quatationlist(request):
     if not allow:
         context = {"unauthorized": msg}
         return render(request, "login.html", context)
-    status =SiteStock.objects.all()
+    
+    status = StockStatus.objects.all()
+
+    status_options = serialize('json', status)
     site = Project.objects.filter(company=request.user.company, is_disabled=False).order_by("-id")
     # quatationitems = QuatationItems.objects.filter(company__name=request.user.company)
     querysets = Quatation.objects.filter(company=request.user.company).order_by("-id")
     queryset, pages, search = customPagination(request, Quatation, querysets)
-    context = {'queryset': queryset, "location": "quatationlist", "pages": pages , "search": search, 'site': site,"status":status
+    context = {'queryset': queryset, "location": "quatationlist", "pages": pages , "search": search, 'site': site,"status": status,
+        "status_options": status_options, 
         }
     return render(request, "quatation/quatationlist.html", context)
+
+
+@api_view(['POST'])
+def update_quotation_status_api(request):
+    if request.method == 'POST':
+        data = request.data
+        try:
+            item_id = data.get('id')
+            new_status_id = data.get('status')
+            item = Quatation.objects.get(id=item_id)
+            new_status = StockStatus.objects.get(id=new_status_id)
+            item.status = new_status
+            item.save()
+            serializer = QuatationSerializer(item)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Quatation.DoesNotExist:
+            return Response({'error': 'Item not found'}, status=status.HTTP_404_NOT_FOUND)
+        except StockStatus.DoesNotExist:
+            return Response({'error': 'Invalid status'}, status=status.HTTP_400_BAD_REQUEST)
+    return Response({'error': 'Invalid request method'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
 
@@ -763,6 +787,7 @@ def subcontadd(request):  #change name
     context= {'queryset': queryset,"location":"subcontadd","pages" :pages,"search":search,"uom":uom,
               'paymentschedule':paymentschedule,'employee':employee,'contractor':contractor,'type':type,'project':project,'status':status,
               'labourwaves':labourwaves}   #change location name 
+    
     return render(request,"subcontractor/subcontadd.html",context)    #change template name
 
 #------> Add Project Sub Contractor 
@@ -2438,7 +2463,7 @@ def add_dailysitestockusage(request):
         
 #     }
 #     return render(request, "sitestock/dailysitestockusagelist.html", context)
-
+ 
 @login_required(login_url='login')
 @check_admin
 def sitestockusage(request):
@@ -2466,6 +2491,43 @@ def sitestockusage(request):
     }
     return render(request, "sitestock/dailysitestockusagelist.html", context)
 
+# @csrf_exempt
+# @login_required(login_url='login')
+# def update_stock_status(request):
+#     if request.method == 'POST':
+#         item_id = request.POST.get('id')
+#         new_status_id = request.POST.get('status')
+
+#         # Find the DailySiteStockUsage item and update its status
+#         try:
+#             item = DailySiteStockUsage.objects.get(id=item_id)
+#             new_status = StockStatus.objects.get(id=new_status_id)
+#             item.status = new_status
+#             item.save()
+
+#             return JsonResponse({'success': True, 'status_name': new_status.name, 'status_code': new_status.code})
+#         except DailySiteStockUsage.DoesNotExist:
+#             return JsonResponse({'success': False, 'error': 'Item not found'})
+#         except StockStatus.DoesNotExist:
+#             return JsonResponse({'success': False, 'error': 'Invalid status'})
+#     return JsonResponse({'success': False, 'error': 'Invalid request method'})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 @csrf_exempt
 @login_required(login_url='login')
 def update_stock_status(request):
@@ -2473,10 +2535,29 @@ def update_stock_status(request):
         item_id = request.POST.get('id')
         new_status_id = request.POST.get('status')
 
-        # Find the DailySiteStockUsage item and update its status
         try:
+            # Fetch the DailySiteStockUsage item
             item = DailySiteStockUsage.objects.get(id=item_id)
             new_status = StockStatus.objects.get(id=new_status_id)
+
+            # Get the previous status
+            previous_status = item.status
+
+            # Handle the transition to "Approved" (code is 1)
+            if new_status.code == "1":
+                # Only decrease qty if it was previously not approved
+                if previous_status is None or previous_status.code != "1":
+                    if item.stock:
+                        item.stock.qty -= item.qty
+                        item.stock.save()
+
+            # Handle transition from "Approved" to any other status
+            elif previous_status and previous_status.code == "1":
+                if item.stock:
+                    item.stock.qty += item.qty
+                    item.stock.save()
+
+            # Update the item's status
             item.status = new_status
             item.save()
 
@@ -2486,6 +2567,22 @@ def update_stock_status(request):
         except StockStatus.DoesNotExist:
             return JsonResponse({'success': False, 'error': 'Invalid status'})
     return JsonResponse({'success': False, 'error': 'Invalid request method'})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     
 # @api_view(['GET'])
 # @login_required(login_url='login')
