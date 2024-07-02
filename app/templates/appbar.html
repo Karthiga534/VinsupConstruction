@@ -57,11 +57,17 @@
                             <span class="d-flex align-items-center">
                                 {% comment %} <img class="rounded-circle header-profile-user"
                                     src="{% static 'assets/images/users/avatar-6.jpg' %}" alt="Header Avatar"> {% endcomment %}
-
-                                {% comment %} {% if request.user.authenticated %} {% endcomment %}
-                                <img class="rounded-circle header-profile-user"
-                                src="{{ request.user.image.url }}" alt="Header Avatar"> 
-                                {% comment %} {% endif %}  {% endcomment %}
+{% comment %} 
+                                    {% if request.user.is_authenticated %} {% endcomment %}
+                                    {% if request.user.image %}
+                                        <img class="rounded-circle header-profile-user" src="{{ request.user.image.url }}" alt="Header Avatar">
+                                    {% else %}
+                                        <img class="rounded-circle header-profile-user" src="{% static 'assets/images/users/avatar-6.jpg' %}" alt="Header Avatar">
+                                    {% endif %}
+                                    {% comment %} {% else %}
+                                        <img class="rounded-circle header-profile-user" src="{% static 'assets/images/users/avatar-6.jpg' %}" alt="Header Avatar">
+                                    {% endif %} {% endcomment %}
+                                
                                 <span class="text-start ms-xl-2">
                                     <span class="d-none d-xl-inline-block ms-1 fw-medium user-name-text"> </span>
                                     <span
