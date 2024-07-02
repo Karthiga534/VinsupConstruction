@@ -4085,39 +4085,91 @@ def update_project_schedule_status(request):
 
 
 
-
-
 def project_schedulehistory(request, pk):
     project_schedule = get_object_or_404(ProjectSchedule, pk=pk)
-    project = project_schedule.project
     project_schedule_history = ProjectScheduleHistory.objects.filter(project_schedule=project_schedule).order_by("-id")
-    unit = Uom.objects.filter(company=request.user.company).order_by("-id")
+    uom = Uom.objects.filter(company=request.user.company).order_by("-id")
+    project = Project.objects.filter(company=request.user.company).order_by("-id")
     
     context = {
-        'project': project,
-        'project_schedules': project_schedule,
+        'project_schedule': project_schedule,
         'project_schedule_history': project_schedule_history,
-        'unit': unit,
+        'unit': uom,
+        'project': project,
     }
     
     return render(request, 'project/project_schedulehistory.html', context)
+
+
+
+
+
 
 @api_view(['GET', 'POST'])
 def add_project_schedulehistory(request, pk):
     project_schedule = get_object_or_404(ProjectSchedule, pk=pk)
 
     if request.method == 'POST':
-        serializer = ProjectScheduleHistorySerializer(data=request.data, files=request.FILES)
+        serializer = ProjectScheduleHistorySerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(project_schedule=project_schedule)
-            return JsonResponse({'status': 'success', 'message': 'Schedule history created successfully'}, status=201)
-        else:
-            return JsonResponse({'errors': serializer.errors}, status=400)
+            return Response({'status': 'success', 'message': 'Schedule history created successfully'}, status=201)
+        return Response({'errors': serializer.errors}, status=400)
 
     elif request.method == 'GET':
         project_schedule_history = ProjectScheduleHistory.objects.filter(project_schedule=project_schedule)
-        serializer = ProjectScheduleHistorySerializer(project_schedule_history, many=True)
-        return JsonResponse(serializer.data, safe=False)
+        serializer = ProjectScheduleHistorySerializer(project_schedule_history, many=True, context={'request': request})
+        return Response(serializer.data)
 
-    return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)
+    return Response({'status': 'error', 'message': 'Invalid request method'}, status=405)
 
+
+def delete_project_schedule(request, pk):
+    if request.method == 'DELETE':
+        project_schedule = get_object_or_404(ProjectSchedule, pk=pk)
+        project_schedule.delete()
+        return JsonResponse({'message': 'Project schedule deleted successfully'}, status=204)
+    else:
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
+    
+@api_view(['PUT'])
+@login_required(login_url='login')
+def update_project_schedule(request, pk):
+    user = request.user
+
+    try:
+        instance = ProjectSchedule.objects.get(id=pk)  
+    except ProjectSchedule.DoesNotExist:
+        return JsonResponse({'details': 'Project Schedule object does not exist'}, status=404)
+    request_data = request.data
+    serializer = ProjectScheduleSerializer(instance, data=request_data, partial=True)
+    if serializer.is_valid():
+        serializer.save()
+        return JsonResponse(serializer.data, status=200)
+    else:
+        return JsonResponse(serializer.errors, status=400)
+    
+def delete_project_schedule_history(request, pk):
+    if request.method == 'DELETE':
+        project_schedule = get_object_or_404(ProjectScheduleHistory, pk=pk)
+        project_schedule.delete()
+        return JsonResponse({'message': 'Project schedule deleted successfully'}, status=204)
+    else:
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
+    
+@api_view(['PUT'])
+@login_required(login_url='login')
+def update_project_schedule_history(request, pk):
+    user = request.user
+
+    try:
+        instance = ProjectScheduleHistory.objects.get(id=pk)  
+    except ProjectScheduleHistory.DoesNotExist:
+        return JsonResponse({'details': 'Project Schedule object does not exist'}, status=404)
+    request_data = request.data
+    serializer = ProjectScheduleHistorySerializer(instance, data=request_data, partial=True)
+    if serializer.is_valid():
+        serializer.save()
+        return JsonResponse(serializer.data, status=200)
+    else:
+        return JsonResponse(serializer.errors, status=400)

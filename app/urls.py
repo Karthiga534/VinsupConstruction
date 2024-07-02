@@ -359,9 +359,21 @@ urlpatterns = [
 
     path('project_schedule/<int:pk>/',views.project_schedule,name='project_schedule'),
     path('add_project_schedule/<int:pk>/', views.add_project_schedule, name='add_project_schedule'),
-   
+    path('delete-project-schedule/<int:pk>/', views.delete_project_schedule, name='delete-project-schedule'),
+    path('update-project-schedule/<int:pk>/', views.update_project_schedule, name='update-project-schedule'),
     path('update-project-schedule-status/', views.update_project_schedule_status, name='update_project_schedule_status'),
     # path('project_schedule_history/<int:pk>/', views.project_schedule_history, name='project_schedule_history'),
+
+
+
+
+
+    path('project-schedulehistory/<int:pk>/', views.project_schedulehistory, name='project_schedulehistory'),
+    path('add-project-schedulehistory/<int:pk>/', views.add_project_schedulehistory, name='add_project_schedulehistory'),  # Add this line
+    path('delete-project-schedule-history/<int:pk>/', views.delete_project_schedule_history, name='delete-project-schedule-history'),
+    path('update-project-schedule-history/<int:pk>/', views.update_project_schedule_history, name='update-project-schedule-history'),
+
+
 
  
     #     # employee attendence
@@ -574,8 +586,10 @@ urlpatterns = [
 
 
 
-  path('project-schedulehistory/<int:pk>/', views.project_schedulehistory, name='project_schedulehistory'),
-  path('add-project-schedulehistory/<int:pk>/', views.add_project_schedulehistory, name='add_project_schedulehistory'),
+#   path('project-schedulehistory/<int:pk>/', views.project_schedulehistory, name='project_schedulehistory'),
+#   path('add-project-schedulehistory/<int:pk>/', views.add_project_schedulehistory, name='add_project_schedulehistory'),
+# urls.py
+
 
 
 

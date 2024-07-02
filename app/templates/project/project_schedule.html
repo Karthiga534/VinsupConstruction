@@ -175,7 +175,7 @@
                                                                                         <input type="text" class="form-control" id="task_name" name="task_name">
                                                                                         <span id="task_nameError" class="error-message"></span>
                                                                                     </div>
-                                                                                    <div class="col-md-6">
+                                                                                <div class="col-md-6">
                                                                                         <label for="qty" class="form-label">Qty<span style="color: red;">*</span> </label>
                                                                                         <input type="text" class="form-control" name="qty" id="qty">
                                                                                         <span id="qtyError" class="error-message"></span>
@@ -260,7 +260,7 @@
                                                         <th>Start Date</th>
                                                         <th>End Date</th>
                                                         <th>Status</th>
-                                                        {% comment %} <th >Action</th> {% endcomment %}
+                                                        <th >Action</th> 
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -301,30 +301,193 @@
                                                             </div>
                                                             
                                                         </td> 
-                                                        
-                                                        {% comment %} <td>
+                                                        <td>
 
-                                                            <div class="dropdown d-inline-block">
-                                                                <button class="btn btn-soft-secondary btn-sm dropdown" type="button"
-                                                                    data-bs-toggle="dropdown" aria-expanded="false">
-                                                                    <i class="ri-more-fill align-middle"></i>
-                                                                </button>
-                                                                <ul class="dropdown-menu dropdown-menu-end">
-                                                                    <li>
-                                                                        <!-- Assume the projectScheduleId is stored as a data attribute in the link -->
-                                                                        <!-- <a class="dropdown-item edit-item-btn" href="#!" id="openScheduleHistoryModal" data-project-schedule-id="{{ project_schedule.id }}">
-                                                                            <i class="ri-pencil-fill align-bottom me-2 text-muted"></i>
-                                                                            Schedule History
-                                                                        </a> -->
-                                                                        <a 
-													class="btn btn-soft-secondary btn-sm p-0 m-1"
-														href="{% url 'project_schedulehistory' i.id %}">History
-													</a>
+                                                           
 
-                                                                    </li>
-                                                                </ul>
+
+
+
+
+
+
+
+
+
+
+                                                                <div class="btn-group" role="group">
+                                                                    <!-- <button class="btn btn-soft-secondary btn-sm me-2" type="button" data-id="{{i.id}}" onclick="openModal('viewModal', '{{ i.id }}')">
+                                                                        <i class="ri-eye-fill align-bottom me-2 text-muted"></i> -->
+                                                                        <!-- History
+                                                                    </button> -->
+
+                                                                    <a class="btn btn-soft-secondary btn-sm me-2" href="{% url 'project_schedulehistory' i.id %}">
+                                                                        <!-- <i class="ri-eye-fill align-bottom me-2 text-muted"></i> -->
+                                                                        History
+                                                                    </a>
+                                                                    
+                                                                    {% comment %} <button class="btn btn-soft-primary btn-sm me-2" type="button" onclick="openModal('editModal','{{ i.id }}')">
+                                                                        <!-- <i class="ri-pencil-fill align-bottom me-2 text-muted"></i>  -->
+                                                                        Edit
+                                                                    </button>
+                                                                    <button class="btn btn-soft-danger btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#deleteModal{{ i.id }}">
+                                                                        
+                                                                        Delete
+                                                                    </button>  {% endcomment %}
+                                                                    <div class="dropdown">
+                                                                      <button class="btn btn-soft-secondary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton{{i.id}}" data-bs-toggle="dropdown" aria-expanded="false">
+                                                                          ...
+                                                                      </button>
+                                                                      <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton{{i.id}}">
+                                                                          <li><a class="dropdown-item" href="#" onclick="openModal('editModal', '{{ i.id }}')">Edit</a></li>
+                                                                          <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#deleteModal{{ i.id }}">Delete</a></li>
+                                                                      </ul>
+                                                                  </div>
+      
+      
+                                                                    <div class="modal fade" id="editModal_{{ i.id}}" tabindex="-1" aria-labelledby="editModalLabel"
+                                aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+                                <div class="modal-dialog modal-lg">
+                                  <div class="modal-content">
+                                    <div class="modal-header">
+                                      <h5 class="modal-title" id="editModalLabel"> Edit Project Schedule '{{i.task_name}}'
+                                       </h5>
+                                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                                        onclick="CloseModel('editModal','{{i.id}}')"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                      <form id="editForm{{ i.id }}" enctype="multipart/form-data">
+                                        {% csrf_token %}
+                                        <div class="row">
+                                          <div class="col-md-6 mb-3">
+      
+                                          <label for="edit_task_name" class="form-label">Task Name:</label>
+                                          <input type="text" class="form-control" id="{{i.id}}_task_name" name="task_name"
+                                            value="{{i.task_name}}" />
+      
+                                          <span id="{{i.id}}_task_nameError" class="error-message"></span>
+                                        </div>
+      
+                                        <div class="col-md-6 mb-3">
+                                          <label for="edit_unit"
+                                              class="form-label">Unit:</label>
+                                          <select class="form-select"
+                                              aria-label="Default select example"
+                                              id="{{i.id}}_unit"
+                                              name="unit">
+      
+                                              <option value="{{i.unit.id}}"
+                                                  selected>{{i.unit.name}}
+                                              </option>
+                                              <option>----------- </option>
+                                              {% for j in unit %}
+      
+                                              <option value="{{j.id}}">{{j.name}}
+                                              </option>
+                                              {% endfor %}
+                                          </select>
+                                          <span id="{{i.id}}_unitError"
+                                              class="error-message"></span>
+                                      </div>
+                                        
+      
+                                          <div class="col-md-6 mb-3">
+      
+                                              <label for="edit_qty" class="form-label">Quantity:</label>
+                                              <input type="text" class="form-control" id="{{i.id}}_qty" name="qty"
+                                                value="{{i.qty}}" />
+          
+                                              <span id="{{i.id}}_qtyError" class="error-message"></span>
+                                            </div>
+      
+                                            <div class="col-md-6 mb-3">
+      
+                                              <label for="edit_start_date"
+                                                  class="form-label">Start Date:</label>
+      
+                                              <input type="date" class="form-control"
+                                                  id="{{i.id}}_start_date"
+                                                  name="start_date"
+                                                  value="{{ i.start_date|date:'Y-m-d' }}" />
+      
+                                              <span id="{{i.id}}_start_dateError"
+                                                  class="error-message"></span>
+      
+                                          </div>
+      
+      
+                                          <div class="col-md-6 mb-3">
+      
+                                              <label for="edit_start_date"
+                                                  class="form-label">End Date:</label>
+      
+                                              <input type="date" class="form-control"
+                                                  id="{{i.id}}_end_date" name="end_date"
+                                                  value="{{ i.end_date|date:'Y-m-d'}}" />
+      
+                                              <span id="{{i.id}}_end_dateError"
+                                                  class="error-message"></span>
+      
+                                          </div>
+      
+                                          <div class="col-md-6 mb-3">
+      
+                                              <label for="edit_name" class="form-label">Description:</label>
+                                              <!-- <input type="text" class="form-control" id="{{i.id}}_description"
+                                                name="description" value="{{i.description}}" /> -->
+                                                <textarea type="text" class="form-control"
+                                                id="{{i.id}}_description" name="description" rows="5"
+                                                value="{{ i.description }}"> {{ i.description }} </textarea>
+        
+        
+                                              <span id="{{i.id}}_nameError" class="error-message"></span>
+                                            </div>
+                                        </div>
+                                      </form>
+                                    </div>
+                                    <div class="modal-footer">
+                                      <button type="button" class="btn btn-secondary" id="" data-bs-dismiss="modal"
+                                        onclick="CloseModel('editModal','{{i.id}}')">
+                                        Cancel
+                                      </button>
+                                      <button type="button" class="btn btn-primary" id="savecategory"
+                                        onclick="updateFunction(this,'{{i.id}}')">
+                                        Save
+                                      </button>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+      
+      
+                                                                    <div class="modal fade" id="deleteModal{{ i.id}}" tabindex="-1"
+                                                                                  aria-labelledby="deleteModalLabel-{{ forloop.counter }}" aria-hidden="true">
+                                                                                  <div class="modal-dialog">
+                                                                                      <div class="modal-content">
+                                                                                      <div class="modal-header">
+                                                                                          <h5 class="modal-title" id="deleteModalLabel-{{ forloop.counter }}"> 
+                                                                                          {{i.task_name}}</h5>
+                                                                                          <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                                                          aria-label="Close"></button>
+                                                                                      </div>
+                                                                                      <div class="modal-body">
+                                                                                          <p> Are you sure you want to delete "{{ i.task_name }}"? </p>
+                                                                                      </div>
+                                                                                      <div class="modal-footer">
+                                                                                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"> Cancel </button>
+      
+      
+                                                                                          <button type="button" onclick="deleteFunction(this,'{{i.id}}')"
+                                                                                          class="btn btn-danger">Delete</button>
+      
+                                                                                      </div>
+                                                                                      </div>
+                                                                                  </div>
+                                                                                  </div>
+
+
                                                                 
-                                                        </td> {% endcomment %}
+                                                        </td> 
 
                                                     </tr>
                                                     {% endfor %}
@@ -352,7 +515,48 @@
 
 
         
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
 
+
+const viewButtons = document.querySelectorAll('.view-btn');
+const editButtons = document.querySelectorAll('.edit-btn');
+const delButtons = document.querySelectorAll('.del-btn');
+console.log(delButtons)
+viewButtons.forEach(button => {
+  button.addEventListener('click', function () {
+    const modalId = this.getAttribute('data-target');
+    const modal = document.querySelector(modalId);
+    if (modal) {
+      $(modal).modal('show');
+    }
+  });
+});
+
+
+editButtons.forEach(button => {
+  button.addEventListener('click', function () {
+    const modalId = this.getAttribute('data-target');
+    const modal = document.querySelector(modalId);
+    if (modal) {
+      $(modal).modal('show');
+    }
+  });
+});
+
+delButtons.forEach(button => {
+  button.addEventListener('click', function () {
+    const modalId = this.getAttribute('data-target');
+    const modal = document.querySelector(modalId);
+    if (modal) {
+      $(modal).modal('show');
+    }
+  });
+});
+
+
+});
+</script>
 
 
 <script>
@@ -500,7 +704,160 @@
     });
 </script>
 
+<script>
+    function deleteFunction(button, saveId) {
+        try {
+          disableButton(button);
+    
+          $.ajax({
+            url: '/delete-project-schedule/' + saveId + '/',
+            type: 'DELETE',
+            headers: {
+              'X-CSRFToken': csrftoken,
+            },
+            processData: false,
+            contentType: false,
+            success: function (response, status, xhr) {
+              if (xhr.status === 204) {
+                showToast(deleteMessage?.message, '', deleteMessage?.bgColor, true);
+                enableButton(button);
+    
+              } else {
+                showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+                enableButton(button);
+    
+              }
+            },
+            error: function (xhr, status, error) {
+              console.log(xhr, status, error);
+              if (xhr.status === 400) {
+                if (xhr?.responseJSON || xhr?.responseJSON?.errors) {
+                  showToast(xhr?.responseJSON?.details, '', errorAlertMessage?.bgColor);
+                  enableButton(button);
+                } else {
+                  showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+                  enableButton(button);
+                }
+              }
+              else if (xhr.status === 401 || 404) {
+                showToast(xhr?.responseJSON?.details, '', errorAlertMessage?.bgColor);
+                enableButton(button);
+              }
+              else {
+    
+                showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+                enableButton(button);
+              }
+            }
+          });
+        } catch (error) {
+          showToast(errorOccured?.message, '', errorOccured?.bgColor);
+          console.error(error);
+        }
+      }
+    
+    </script>
 
+<script>
+    function updateFunction(button, saveId) {
+
+        var formId = `editForm${saveId}`;   //change
+        var formElement = document.getElementById(formId);
+    
+        var isValid = true;
+        var errors = {};
+    
+    
+        try {
+          disableButton(button);
+          clearErrors();
+    
+          const formData = new FormData();
+    
+          formData.append('task_name', getValueOrDefault(formElement.querySelector('input[name="task_name"]').value));    //change
+          formData.append('description', getValueOrDefault(formElement.querySelector('textarea[name="description"]').value));
+          formData.append('start_date', getValueOrDefault(formElement.querySelector('input[name="start_date"]').value));
+          formData.append('end_date', getValueOrDefault(formElement.querySelector('input[name="end_date"]').value));
+          formData.append('qty', getValueOrDefault(formElement.querySelector('input[name="qty"]').value));
+          formData.append('unit', getValueOrDefault(formElement.querySelector('select[name="unit"]').value));
+
+    
+    
+          var requiredKeys = ['task_name',];     //change
+    
+          requiredKeys.forEach(function (key) {
+            var value = formData.get(key);
+            if (!value.trim()) {
+              isValid = false;
+              errors[key] = ['This field may not be blank.'];
+            }
+          });
+    
+          if (!isValid) {
+            enableButton(button);
+            console.log(errors);
+            handleUpdateErrors(saveId, transformErrors(errors));
+            return;
+          } else {
+            $(`#${formId} input, #${formId} button`).prop('disabled', true);
+    
+          }
+    
+    
+          console.log(csrftoken);
+          $.ajax({
+            url: '/update-project-schedule/' + saveId + '/',   //change
+            type: 'PUT',
+            headers: {
+              'X-CSRFToken': csrftoken,
+            },
+            processData: false,
+            contentType: false,
+            data: formData,
+            success: function (response, status, xhr) {
+              if (xhr.status === 200) {
+                showToast(updateMessage?.message, '', updateMessage?.bgColor, true);
+                restoreForm(formId, button)
+              } else {
+                showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+                restoreForm(formId, button)
+    
+              }
+            },
+            error: function (xhr, status, error) {
+              console.log(xhr, status, error);
+              if (xhr.status === 400) {
+                if (xhr?.responseJSON || xhr?.responseJSON?.errors) {
+                  handleUpdateErrors(saveId, transformErrors(xhr.responseJSON));
+                  restoreForm(formId, button)
+                } else {
+    
+                  showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+                  restoreForm(formId, button)
+    
+                }
+              }
+              else if (xhr.status === 401 || 404) {
+                showToast(xhr?.responseJSON?.details, '', errorAlertMessage?.bgColor);
+                restoreForm(formId, button)
+    
+              }
+              else {
+    
+                showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+                restoreForm(formId, button)
+    
+              }
+            }
+          });
+        } catch (error) {
+          showToast(errorOccured?.message, '', errorOccured?.bgColor);
+          restoreForm(formId, button)
+          console.error(error);
+        }
+      }
+    
+</script>
 
 
 
