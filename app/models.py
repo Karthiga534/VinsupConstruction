@@ -1204,11 +1204,17 @@ def validate_video_file(value):
     file_extension = value.name.split('.')[-1].lower()
     if file_extension not in valid_extensions:
         raise ValidationError(f"Unsupported file extension. Allowed extensions are: {', '.join(valid_extensions)}")
+    
+class ProjectImage(models.Model):
+    image = models.ImageField(upload_to="doc", null=True, blank=True)
 
+    def __str__(self):
+        return f'Image {self.id}'
     
 class ProjectScheduleHistory(models.Model):
     project_schedule = models.ForeignKey(ProjectSchedule, on_delete=models.CASCADE,null=True,blank=True)
-    img =models.FileField(upload_to="doc",null=True,blank=True)
+    #img = models.ImageField(upload_to="doc", null=True, blank=True)
+    images = models.ManyToManyField('ProjectImage', related_name='project_schedule_history', blank=True)
     video = models.FileField(upload_to="doc/videos", null=True, blank=True, validators=[validate_video_file])
     video_url = models.URLField(null=True, blank=True)  # Field to store video links
     work = models.CharField(max_length=100)
@@ -1219,8 +1225,6 @@ class ProjectScheduleHistory(models.Model):
 
     def __str__(self):
         return f'{self.work} - {self.project_schedule}'
-    
-
     
 class ProjectDiagram(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE,null=True,blank=True)

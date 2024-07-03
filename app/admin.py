@@ -191,7 +191,7 @@ class LogoAdmin(admin.ModelAdmin):
 class ProjectScheduleAdmin(admin.ModelAdmin):
     list_display = ('task_name', 'project', 'start_date', 'end_date', 'status')
 
-
+# admin.site.register(ProjectScheduleHistoryFile)
 @admin.register(ProjectDiagram)
 class ProjectDiagramAdmin(admin.ModelAdmin):
     list_display = ('id',) 

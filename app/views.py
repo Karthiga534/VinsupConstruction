@@ -4105,23 +4105,90 @@ def project_schedulehistory(request, pk):
 
 
 
-@api_view(['GET', 'POST'])
+# @api_view(['GET', 'POST'])
+# def add_project_schedulehistory(request, pk):
+#     project_schedule = get_object_or_404(ProjectSchedule, pk=pk)
+
+#     if request.method == 'POST':
+#         serializer = ProjectScheduleHistorySerializer(data=request.data)
+#         if serializer.is_valid():
+#             serializer.save(project_schedule=project_schedule)
+#             return Response({'status': 'success', 'message': 'Schedule history created successfully'}, status=201)
+#         return Response({'errors': serializer.errors}, status=400)
+
+#     elif request.method == 'GET':
+#         project_schedule_history = ProjectScheduleHistory.objects.filter(project_schedule=project_schedule)
+#         serializer = ProjectScheduleHistorySerializer(project_schedule_history, many=True, context={'request': request})
+#         return Response(serializer.data)
+
+#     return Response({'status': 'error', 'message': 'Invalid request method'}, status=405)
+
+
+# @api_view(['GET', 'POST'])
+# def add_project_schedulehistory(request, pk):
+#     project_schedule = get_object_or_404(ProjectSchedule, pk=pk)
+
+#     if request.method == 'POST':
+#         serializer = ProjectScheduleHistorySerializer(data=request.data)
+
+#         if serializer.is_valid():
+#             # Save project_schedule along with other validated data
+#             serializer.save(project_schedule=project_schedule)
+
+#             # Handle images separately if needed
+#             images = request.FILES.getlist('img')
+#             for img in images:
+#                 # Process each image as required, e.g., save to disk, associate with model instance
+
+#                 return Response({'status': 'success', 'message': 'Schedule history created successfully'}, status=status.HTTP_201_CREATED)
+#         else:
+#             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+#     elif request.method == 'GET':
+#         project_schedule_history = ProjectScheduleHistory.objects.filter(project_schedule=project_schedule)
+#         serializer = ProjectScheduleHistorySerializer(project_schedule_history, many=True, context={'request': request})
+#         return Response(serializer.data)
+
+#     return Response({'status': 'error', 'message': 'Invalid request method'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+@api_view(['POST'])
 def add_project_schedulehistory(request, pk):
     project_schedule = get_object_or_404(ProjectSchedule, pk=pk)
 
     if request.method == 'POST':
-        serializer = ProjectScheduleHistorySerializer(data=request.data)
+        # Retrieve image files from request.FILES
+        img_files = request.FILES.getlist('images')
+
+        # Create a dictionary containing all other fields for serializer initialization
+        data = {
+            'project_schedule': project_schedule.id,
+            'work': request.data.get('work'),
+            'qty': request.data.get('qty'),
+            'unit': request.data.get('unit'),
+            'date': request.data.get('date'),
+            'video_url': request.data.get('video_url'),
+            
+            'video': request.data.get('video'),
+        }
+
+        # Initialize serializer with data
+        serializer = ProjectScheduleHistorySerializer(data=data)
+
         if serializer.is_valid():
-            serializer.save(project_schedule=project_schedule)
-            return Response({'status': 'success', 'message': 'Schedule history created successfully'}, status=201)
-        return Response({'errors': serializer.errors}, status=400)
+            # Save the serializer instance
+            instance = serializer.save()
 
-    elif request.method == 'GET':
-        project_schedule_history = ProjectScheduleHistory.objects.filter(project_schedule=project_schedule)
-        serializer = ProjectScheduleHistorySerializer(project_schedule_history, many=True, context={'request': request})
-        return Response(serializer.data)
+            # Handle img_files separately if they exist
+            for img_file in img_files:
+                project_image = ProjectImage(image=img_file)
+                project_image.save()
+                instance.images.add(project_image)
 
-    return Response({'status': 'error', 'message': 'Invalid request method'}, status=405)
+            return Response({'status': 'success', 'message': 'Schedule history created successfully'}, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    return Response({'status': 'error', 'message': 'Invalid request method'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
 def delete_project_schedule(request, pk):

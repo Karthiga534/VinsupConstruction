@@ -1684,7 +1684,14 @@ class ProjectScheduleSerializer(serializers.ModelSerializer):
         model = ProjectSchedule
         fields = '__all__'
 
+# class ProjectScheduleHistorySerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = ProjectScheduleHistory
+#         fields = '__all__'
+
 class ProjectScheduleHistorySerializer(serializers.ModelSerializer):
+    images = serializers.PrimaryKeyRelatedField(queryset=ProjectImage.objects.all(), many=True, required=False)
+
     class Meta:
         model = ProjectScheduleHistory
-        fields = '__all__'
+        fields = ['project_schedule', 'images', 'video', 'video_url', 'work', 'qty', 'unit', 'date']

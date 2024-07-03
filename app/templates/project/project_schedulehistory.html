@@ -185,11 +185,18 @@
                                                                                             <span id="unitError" class="error-message"></span>
                                                                                         </div> {% endcomment %}
                                                                                         
-                                                                                        <div class="col-md-6">
+                                                                                        {% comment %} <div class="col-md-6">
                                                                                             <label for="id_img" class="form-label">Image <span style="color: red;">*</span></label>
                                                                                             <input type="file" name="img" class="form-control" id="img">
                                                                                             <span id="imgError" class="error-message "></span>
+                                                                                        </div> {% endcomment %}
+
+                                                                                        <div class="col-md-6">
+                                                                                            <label for="id_images" class="form-label">Images <span style="color: red;">*</span></label>
+                                                                                            <input type="file" name="images" class="form-control" id="images" multiple>
+                                                                                            <span id="imagesError" class="error-message"></span>
                                                                                         </div>
+                                                                                        
 
                                                                                         <div class="col-md-6">
                                                                                             <label for="id_video" class="form-label">Video <span style="color: red;">*</span></label>
@@ -259,15 +266,14 @@
                                                                     {% else %}
                                                                         No Image
                                                                     {% endif %} {% endcomment %}
-
-                                                                    {% if i.img %}
-                                                                        <!-- Display image with a clickable link -->
-                                                                        <a href="{{ i.img.url }}" target="_blank">
-                                                                            <img src="{{ i.img.url }}" alt="{{ i.img.name }}" class="img-responsive" style="height:40px;width:40px;" />
-                                                                        </a>
-                                                                    {% else %}
-                                                                        No Image
-                                                                    {% endif %}
+                                                                    {% for image in i.images.all %}
+                                                                    <!-- Display image with a clickable link -->
+                                                                    <a href="{{ image.image.url }}" target="_blank">
+                                                                        <img src="{{ image.image.url }}" alt="Image {{ image.id }}" class="img-responsive" style="height:40px;width:40px;" />
+                                                                    </a>
+                                                                {% empty %}
+                                                                    No Image
+                                                                {% endfor %}
 
                                                                 </td>
                                                                 <td>
@@ -398,7 +404,7 @@
                                                 <span class="file-span">
                                                     <a target="_blank"
                                                         href="{{ i.img }}">
-                                                        {{i.img |filename }}
+                                                        {{i.img  }}
                                                         </a></span>
                                             
                                             </div>
@@ -514,10 +520,20 @@ function createFunction(button, projectScheduleId) {
         formData.append('work', getValueOrDefault(formElement.querySelector('input[name="work"]').value));
         //formData.append('unit', getValueOrDefault(formElement.querySelector('select[name="unit"]').value));
         //formData.append('qty', getValueOrDefault(formElement.querySelector('input[name="qty"]').value));
-        var img = document.querySelector('#createForm input[type="file"]').files[0];
-        if (img) {
-            formData.append("img", img);
+        //var img = document.querySelector('#createForm input[type="file"]').files[0];
+        //if (img) {
+        //    formData.append("img", img);
+        //}
+
+        var imagesFiles = document.querySelector('#images').files;
+
+    // Check if any image file is selected
+    if (imagesFiles.length > 0) {
+        // Loop through each selected file and append to FormData
+        for (var i = 0; i < imagesFiles.length; i++) {
+            formData.append("images", imagesFiles[i]); // Append each file to FormData with same key "img"
         }
+    }
 
         //var video = document.querySelector('#createForm input[type="file"]').files[0];
         //if (video) {
