@@ -4027,7 +4027,7 @@ def project_schedule(request, pk):
         'unit': unit,
     }
 
-    return render(request, 'project/project_schedule.html', context)
+    return render(request, 'project/project_schedule.html', context) 
 
 @api_view(['GET', 'POST'])
 def add_project_schedule(request, pk):
