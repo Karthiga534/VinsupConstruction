@@ -17,12 +17,14 @@ from rest_framework.response import Response
 from django.utils.dateparse import parse_date
 from django.http import HttpResponseBadRequest
 from django.contrib.auth import get_user_model
+from django.core.validators import URLValidator
 from django.contrib.auth.views import LogoutView
 from rest_framework import status as http_status
 from .models import Project, Employee, Contractor
 from rest_framework.authtoken.models import Token
 from django.utils.crypto import get_random_string
 from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
 from django.core.exceptions import ValidationError
 from django.contrib.auth import login,authenticate,logout
 from django.contrib.auth.decorators import login_required
@@ -34,7 +36,6 @@ from django.shortcuts import render, redirect, get_object_or_404
 from rest_framework.decorators import api_view, permission_classes
 from app.decorators import check_user_company,check_valid_user,check_admin
 from app.utils import PaginationAndFilter, customPagination,check_user,get_current_month,filter_by_month_range,get_company
-
 
 
 
@@ -4013,7 +4014,7 @@ def project_schedule(request, pk):
     # project_schedule_history = ProjectScheduleHistory.objects.filter(project_schedule=project_schedule).order_by("-id") 
 
     if project_schedule.exists():
-        latest_project_schedule = project_schedule.last()  # Get the latest schedule or adjust as needed
+        latest_project_schedule = project_schedule.last()  
         project_schedule_history = ProjectScheduleHistory.objects.filter(project_schedule=latest_project_schedule).order_by("-id")
     else:
         project_schedule_history = []
@@ -4224,21 +4225,68 @@ def delete_project_schedule_history(request, pk):
     else:
         return JsonResponse({'error': 'Method not allowed'}, status=405)
     
-@api_view(['PUT'])
-@login_required(login_url='login')
-def update_project_schedule_history(request, pk):
-    user = request.user
+# @api_view(['PUT'])
+# @login_required(login_url='login')
+# def update_project_schedule_history(request, pk):
+#     user = request.user
 
-    try:
-        instance = ProjectScheduleHistory.objects.get(id=pk)  
-    except ProjectScheduleHistory.DoesNotExist:
-        return JsonResponse({'details': 'Project Schedule object does not exist'}, status=404)
-    request_data = request.data
-    serializer = ProjectScheduleHistorySerializer(instance, data=request_data, partial=True)
-    if serializer.is_valid():
-        serializer.save()
-        return JsonResponse(serializer.data, status=200)
+#     try:
+#         instance = ProjectScheduleHistory.objects.get(id=pk)  
+#     except ProjectScheduleHistory.DoesNotExist:
+#         return JsonResponse({'details': 'Project Schedule object does not exist'}, status=404)
+#     request_data = request.data
+#     serializer = ProjectScheduleHistorySerializer(instance, data=request_data, partial=True)
+#     if serializer.is_valid():
+#         serializer.save()
+#         return JsonResponse(serializer.data, status=200)
+#     else:
+#         return JsonResponse(serializer.errors, status=400)
+
+
+
+def update_project_schedule_history(request, pk):
+    if request.method == 'PUT':
+        # Retrieve delete flags and video URL from request
+        delete_images = json.loads(request.POST.get('delete_images', '[]'))
+        delete_video = request.POST.get('delete_video', False)
+        delete_video_url = request.POST.get('delete_video_url', False)
+        video_url = request.POST.get('video_url', '')
+
+        # Get the ProjectScheduleHistory object
+        schedule_history = get_object_or_404(ProjectScheduleHistory, pk=pk)
+
+        # Update video URL
+        schedule_history.video_url = video_url
+
+        # Handle image deletions
+        if delete_images:
+            for image_id in delete_images:
+                # Assuming you have a model for images related to schedule history
+                image_to_delete = get_object_or_404(ProjectImage, pk=image_id)
+                image_to_delete.delete()
+
+        # Handle new images addition
+        new_images = request.FILES.getlist('images', [])
+        for image_file in new_images:
+            # Create new image objects or associate with ProjectScheduleHistory
+            new_image = ProjectImage.objects.create(image=image_file, schedule_history=schedule_history)
+            # You might want to add more fields or relationships depending on your model
+
+        # Handle video deletion
+        if delete_video:
+            # Assuming you have a field for video in your model
+            schedule_history.video = None
+
+        # Handle video URL deletion
+        if delete_video_url:
+            schedule_history.video_url = ''
+
+        # Save the updated schedule history
+        schedule_history.save()
+
+        return JsonResponse({'message': 'Update successful'}, status=200)
     else:
+<<<<<<< HEAD
         return JsonResponse(serializer.errors, status=400)
     
 
@@ -4264,3 +4312,6 @@ def share_project_schedule_history(request, project_id):
     contact_numbers_list = list(contact_numbers)
     
     return JsonResponse({'contact_numbers': contact_numbers_list})
+=======
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
+>>>>>>> origin/cms

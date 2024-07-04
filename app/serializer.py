@@ -8,9 +8,9 @@ from app.auth_models import Company
 # from .models import Purchase
 from rest_framework import serializers
 from rest_framework.serializers import *
+from django.core.validators import URLValidator
 from django.contrib.auth.hashers import make_password
 from .models import PurchaseItems, MaterialLibrary, InventoryStock
-
 
 
 #-------------------------------------------------------------------- Dharshini ----------------------------------------------------------------
@@ -1689,9 +1689,30 @@ class ProjectScheduleSerializer(serializers.ModelSerializer):
 #         model = ProjectScheduleHistory
 #         fields = '__all__'
 
+# class ProjectScheduleHistorySerializer(serializers.ModelSerializer):
+#     images = serializers.PrimaryKeyRelatedField(queryset=ProjectImage.objects.all(), many=True, required=False)
+
+#     class Meta:
+#         model = ProjectScheduleHistory
+#         fields = ['project_schedule', 'images', 'video', 'video_url', 'work', 'qty', 'unit', 'date']
+
 class ProjectScheduleHistorySerializer(serializers.ModelSerializer):
     images = serializers.PrimaryKeyRelatedField(queryset=ProjectImage.objects.all(), many=True, required=False)
+    video_url = serializers.URLField(required=False, allow_blank=True)  # Allow blank values
 
     class Meta:
         model = ProjectScheduleHistory
         fields = ['project_schedule', 'images', 'video', 'video_url', 'work', 'qty', 'unit', 'date']
+
+    def validate_video_url(self, value):
+        """
+        Ensure the video_url is a valid URL if provided.
+        """
+        if value.strip():  # Check if value is not empty after stripping whitespace
+            validator = URLValidator()
+            try:
+                validator(value)  # Validate the URL format using URLValidator
+            except ValidationError:
+                raise serializers.ValidationError("Enter a valid URL.")
+
+        return value
