@@ -4240,3 +4240,27 @@ def update_project_schedule_history(request, pk):
         return JsonResponse(serializer.data, status=200)
     else:
         return JsonResponse(serializer.errors, status=400)
+    
+
+
+
+
+from django.shortcuts import get_object_or_404
+from django.http import JsonResponse
+from .models import Project, ProjectScheduleHistory
+
+@api_view(['GET'])
+def share_project_schedule_history(request, project_id):
+    # Fetch project and associated schedule history items
+    project = get_object_or_404(Project, id=project_id)
+    project_schedule_history = ProjectScheduleHistory.objects.filter(project=project)
+    
+    # Retrieve unique contact numbers from associated project schedule history
+    contact_numbers = set()  # Using a set to avoid duplicates
+    for history_item in project_schedule_history:
+        contact_numbers.add(history_item.project.contact_no)
+    
+    # Convert set to list for easy manipulation if needed
+    contact_numbers_list = list(contact_numbers)
+    
+    return JsonResponse({'contact_numbers': contact_numbers_list})

@@ -247,6 +247,7 @@
                                                         {% comment %} <th>Qty</th> {% endcomment %}
                                                         <th>Image</th>
                                                         <th>Video</th>
+                                                        <th>Share</th>
                                                         <th >Action</th>
                                                     </tr>
                                                 </thead>
@@ -292,6 +293,23 @@
 
                                                                 
                                                                 </td>
+
+
+                                                                <td>
+                                                                    <!-- Add share button for all items -->
+                                                                    <!-- <button class="btn btn-success btn-sm custom-button" onclick="shareOnWhatsApp('{{ i.date }}', '{{ i.work }}', '{% if i.img %}{{ i.img.url }}{% else %}{% endif %}', '{% if i.video %}{{ i.video.url }}{% else %}{% endif %}', '{{ project.contact_no }}')">
+                                                                        Share
+                                                                    </button> -->
+
+                                                                    
+                                                                        <button class="btn btn-success" onclick="shareProjectScheduleViaWhatsApp('{{ project.id }}')">
+                                                                            Share WhatsApp
+                                                                        </button>
+                                                                    
+                                                                </td>
+                                                                
+
+                                                                
                                                                 <td>
 
 
@@ -783,6 +801,50 @@ function createFunction(button, projectScheduleId) {
 </script>
 
 
+<!-- <script>
+    function shareOnWhatsApp(date, work, imgUrl, videoUrl, clientNumber) {
+        const message = `Date: ${date}\nWork: ${work}\nImage: ${imgUrl ? imgUrl : 'No Image'}\nVideo: ${videoUrl ? videoUrl : 'No Video'}`;
+        const whatsappUrl = `https://api.whatsapp.com/send?phone=${clientNumber}&text=${encodeURIComponent(message)}`;
+        window.open(whatsappUrl, '_blank');
+    }
+    </script> -->
+   
+    <script>
+        function shareProjectScheduleViaWhatsApp(projectId) {
+            // AJAX request to fetch project schedule history details
+            $.ajax({
+                type: 'GET',
+                url: `/api/share-project-schedule-history/${projectId}/`,  // Update with your actual API endpoint
+                success: function(response) {
+                    const { contact_numbers } = response;
+                    
+                    // Ensure there's at least one contact number fetched
+                    if (contact_numbers.length > 0) {
+                        // Use the first contact number (you may adjust this logic)
+                        const contactNo = contact_numbers[0];
+                        
+                        // Construct WhatsApp message
+                        let message = "Project Schedule History:\n";
+                        // Optionally, add details if needed from the response
+                        
+                        // Construct WhatsApp URL
+                        const whatsapp_url = `https://api.whatsapp.com/send?phone=${contactNo}&text=${encodeURIComponent(message)}`;
+                        
+                        // Automatically redirect to WhatsApp URL
+                        window.location.href = whatsapp_url;
+                    } else {
+                        console.error('No contact number found for the project schedule history.');
+                        // Handle case where no contact number is found
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error fetching project schedule history details:', error);
+                    // Handle error if needed
+                }
+            });
+        }
+    </script>
+    
 
 
 
