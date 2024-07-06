@@ -153,28 +153,28 @@
 
                                                                         <div class="row">
 
-                                                                            <!-- <form id="createForm"> -->
-                                                                                <form id="createForm" method="post" action="{% url 'add_project_schedulehistory' pk=project_schedule.id %}" enctype="multipart/form-data">
-                                                                                    {% csrf_token %}
-                                                                                    <div class="row">
-                                                                                        <div class="col-md-6">
-                                                                                            <label for="date" class="form-label">Date<span style="color: red;">*</span> </label>
-                                                                                            <input type="date" class="form-control" name="date" id="date">
-                                                                                            <span id="dateError" class="error-message"></span>
-                                                                                        </div>
-                                                                                        <div class="col-md-6">
-                                                                                            <label for="work" class="form-label">Task Name<span style="color: red;">*</span> </label>
-                                                                                            <input type="text" class="form-control" id="work" name="work">
-                                                                                            <span id="workError" class="error-message"></span>
-                                                                                        </div>
-                                                                                        {% comment %} <div class="col-md-6">
+                                                                            <form id="createForm"  action="{% url 'add_project_schedulehistory' pk=project_schedule.id %}" enctype="multipart/form-data">
+                                                                                {% csrf_token %}
+                                                                                <div class="row">
+                                                                                    <div class="col-md-6">
+                                                                                        <label for="date" class="form-label">Date <span style="color: red;">*</span></label>
+                                                                                        <input type="date" class="form-control" name="date" id="date" required>
+                                                                                        <span id="dateError" class="error-message"></span>
+                                                                                    </div>
+                                                                                    <div class="col-md-6">
+                                                                                        <label for="work" class="form-label">Task Name <span style="color: red;">*</span></label>
+                                                                                        <input type="text" class="form-control" id="work" name="work" required>
+                                                                                        <span id="workError" class="error-message"></span>
+                                                                                    </div>
+
+                                                                                    {% comment %} <div class="col-md-6">
                                                                                             <label for="qty" class="form-label">Qty<span style="color: red;">*</span> </label>
                                                                                             <input type="text" class="form-control" name="qty" id="qty">
                                                                                             <span id="qtyError" class="error-message"></span>
                                                                                         </div> {% endcomment %}
-                                                                                    </div>
-                                                                                    <div class="row mt-3">  
-                                                                                        {% comment %} <div class="col-md-6">
+                                                                                </div>
+                                                                                <div class="row mt-3">
+                                                                                    {% comment %} <div class="col-md-6">
                                                                                             <label for="unit" class="form-label">Unit</label>
                                                                                             <select class="form-select" id="unit" name="unit">
                                                                                                 <option value="">----------</option>
@@ -184,42 +184,31 @@
                                                                                             </select>
                                                                                             <span id="unitError" class="error-message"></span>
                                                                                         </div> {% endcomment %}
-                                                                                        
-                                                                                        {% comment %} <div class="col-md-6">
-                                                                                            <label for="id_img" class="form-label">Image <span style="color: red;">*</span></label>
-                                                                                            <input type="file" name="img" class="form-control" id="img">
-                                                                                            <span id="imgError" class="error-message "></span>
-                                                                                        </div> {% endcomment %}
-
-                                                                                        <div class="col-md-6">
-                                                                                            <label for="id_images" class="form-label">Images <span style="color: red;">*</span></label>
-                                                                                            <input type="file" name="images" class="form-control" id="images" multiple>
-                                                                                            <span id="imagesError" class="error-message"></span>
-                                                                                        </div>
-                                                                                        
-
-                                                                                        <div class="col-md-6">
-                                                                                            <label for="id_video" class="form-label">Video <span style="color: red;">*</span></label>
-                                                                                            <input type="file" name="video" class="form-control" id="video">
-                                                                                            <span id="videoError" class="error-message "></span>
-                                                                                        </div>
-
-                                                                                        <div class="col-md-6">
-                                                                                            <label for="id_video_url" class="form-label">Or Video URL</label>
-                                                                                            <input type="url" name="video_url" class="form-control" id="video_url" placeholder="https://youtube.com/watch?v=example">
-                                                                                            <span id="videoUrlError" class="error-message text-danger"></span>
-                                                                                        </div>
-
-                                                                                        <div class="modal-footer">  
-                                                                                            <button type="button" class="btn btn-secondary" id="" data-bs-dismiss="modal" onclick="CloseModel('editModal','{{i.id}}')">
-                                                                                                Cancel
-                                                                                            </button>
-                                                                                            <button type="button" class="btn btn-primary" id="saveuom" onclick="createFunction(this, '{{ project_schedule.id }}')">
-                                                                                                Save
-                                                                                            </button>
-                                                                                        </div>
+                                                                                    <div class="col-md-6">
+                                                                                        <label for="images" class="form-label">Images <span style="color: red;"></span></label>
+                                                                                        <input type="file" name="images" class="form-control" id="images" multiple>
+                                                                                        <span id="imagesError" class="error-message"></span>
                                                                                     </div>
-                                                                                </form>
+                                                                                    {% comment %} <div class="col-md-6">
+                                                                                        <label for="video" class="form-label">Video <span style="color: red;"></span></label>
+                                                                                        <input type="file" name="video" class="form-control" id="video">
+                                                                                        <span id="videoError" class="error-message"></span>
+                                                                                    </div> {% endcomment %}
+                                                                                    <div class="col-md-6">
+                                                                                        <label for="video_url" class="form-label">Or Video URL</label>
+                                                                                        <input type="url" name="video_url" class="form-control" id="video_url" placeholder="https://youtube.com/watch?v=example">
+                                                                                        <span id="videoUrlError" class="error-message text-danger"></span>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="row mt-3">
+                                                                                    
+                                                                                </div>
+                                                                                <div class="modal-footer mt-3">
+                                                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="CloseModel('editModal','{{ i.id }}')">Cancel</button>
+                                                                                    <button type="button" class="btn btn-primary" onclick="createFunction(this, '{{ project_schedule.id }}')">Save</button>
+                                                                                </div>
+                                                                            </form>
+                                                                            
                                                                             
                                                                            
                                                                             
@@ -262,13 +251,7 @@
                                                                 {% comment %} <td>{{ i.unit }}</td>
                                                                 <td>{{ i.qty }}</td> {% endcomment %}
                                                                 <td>
-                                                                    {% comment %} {% if i.img %}
-                                                                        <img src="{{ i.img.url }}" alt="{{ i.img.name }}" class="img-responsive" style="height:40px;width:40px;" />
-                                                                    {% else %}
-                                                                        No Image
-                                                                    {% endif %} {% endcomment %}
                                                                     {% for image in i.images.all %}
-                                                                    <!-- Display image with a clickable link -->
                                                                     <a href="{{ image.image.url }}" target="_blank">
                                                                         <img src="{{ image.image.url }}" alt="Image {{ image.id }}" class="img-responsive" style="height:40px;width:40px;" />
                                                                     </a>
@@ -278,227 +261,310 @@
 
                                                                 </td>
                                                                 <td>
-                                                                    {% if i.video %}
-                                                                            <!-- Display uploaded video file -->
-                                                                            <video width="120" height="80" controls class="video-responsive">
-                                                                                <source src="{{ i.video.url }}" type="video/mp4">
-                                                                                Your browser does not support the video tag.
-                                                                            </video>
-                                                                            {% elif i.video_url %}
-                                                                            <!-- Display video link URL -->
+                                                                    {% if i.video_url %}
                                                                             <p> <a href="{{ i.video_url }}" target="_blank">{{ i.video_url }}</a></p>
+                                                                            
+                                                                           
                                                                         {% else %}
                                                                             No Video
                                                                         {% endif %}
 
                                                                 
                                                                 </td>
-
-
                                                                 <td>
-                                                                    <!-- Add share button for all items -->
-                                                                    <!-- <button class="btn btn-success btn-sm custom-button" onclick="shareOnWhatsApp('{{ i.date }}', '{{ i.work }}', '{% if i.img %}{{ i.img.url }}{% else %}{% endif %}', '{% if i.video %}{{ i.video.url }}{% else %}{% endif %}', '{{ project.contact_no }}')">
-                                                                        Share
-                                                                    </button> -->
-
-                                                                    
-                                                                        <button class="btn btn-success" onclick="shareProjectScheduleViaWhatsApp('{{ project.id }}')">
-                                                                            Share WhatsApp
-                                                                        </button>
-                                                                    
+                                                                    <a href="#" onclick="sendWhatsAppMessage({{ project_schedule.pk }}); return false;">
+                                                                        <img src="{% static 'assets/icon/whatsapp.png' %}" class="button-img-icon" alt="WhatsApp Icon">
+                                                                    </a>
+                                                                    {% comment %}  or  
+                                                                    <a href="mailto:priyadharshinisundaram.vinsup@gmail.com">
+                                                                        <img src="{% static 'assets/icon/gmail.png' %}" class="button-img-icon" >
+                                                                    </a> {% endcomment %}
                                                                 </td>
-                                                                
-
                                                                 
                                                                 <td>
 
 
 
                                                                     <div class="btn-group" role="group">
-                                                                        <!-- <button class="btn btn-soft-secondary btn-sm me-2" type="button" data-id="{{i.id}}" onclick="openModal('viewModal', '{{ i.id }}')">
-                                                                            <i class="ri-eye-fill align-bottom me-2 text-muted"></i> -->
-                                                                            <!-- History
-                                                                        </button> -->
-    
-                                                                        
-                                                                        {% comment %} <button class="btn btn-soft-primary btn-sm me-2" type="button" onclick="openModal('editModal','{{ i.id }}')">
-                                                                            <!-- <i class="ri-pencil-fill align-bottom me-2 text-muted"></i>  -->
-                                                                            Edit
-                                                                        </button>
-                                                                        <button class="btn btn-soft-danger btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#deleteModal{{ i.id }}">
-                                                                            
-                                                                            Delete
-                                                                        </button>  {% endcomment %}
                                                                         <div class="dropdown">
-                                                                          <button class="btn btn-soft-secondary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton{{i.id}}" data-bs-toggle="dropdown" aria-expanded="false">
-                                                                              ...
-                                                                          </button>
+                                                                            <button class="btn btn-soft-secondary btn-sm dropdown" type="button"
+                                                                            data-bs-toggle="dropdown" aria-expanded="false"><i class="ri-more-fill align-middle"></i></button>
                                                                           <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton{{i.id}}">
                                                                               <li><a class="dropdown-item" href="#" onclick="openModal('editModal', '{{ i.id }}')"><i
                                                                                 class="ri-pencil-fill align-bottom me-2 text-muted"></i>Edit</a></li> 
                                                                               <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#deleteModal{{ i.id }}"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i>Delete</a></li>
                                                                           </ul>
-                                                                      </div>
+                                                                        </div>
           
           
-                                                                        <div class="modal fade" id="editModal_{{ i.id}}" tabindex="-1" aria-labelledby="editModalLabel"
-                                    aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
-                                    <div class="modal-dialog modal-lg">
-                                      <div class="modal-content">
-                                        <div class="modal-header">
-                                          <h5 class="modal-title" id="editModalLabel"> Edit Project Schedule '{{i.work}}'
-                                           </h5>
-                                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
-                                            onclick="CloseModel('editModal','{{i.id}}')"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                          <form id="editForm{{ i.id }}" enctype="multipart/form-data">
-                                            {% csrf_token %}
-                                            <div class="row">
-                                              <div class="col-md-6 mb-3">
-          
-                                              <label for="edit_work" class="form-label">Task Name:</label>
-                                              <input type="text" class="form-control" id="{{i.id}}_work" name="work"
-                                                value="{{i.work}}" />
-          
-                                              <span id="{{i.id}}_workError" class="error-message"></span>
-                                            </div>
-          
-                                            {% comment %} <div class="col-md-6 mb-3">
-                                              <label for="edit_unit"
-                                                  class="form-label">Unit:</label>
-                                              <select class="form-select"
-                                                  aria-label="Default select example"
-                                                  id="{{i.id}}_unit"
-                                                  name="unit">
-          
-                                                  <option value="{{i.unit.id}}"
-                                                      selected>{{i.unit.name}}
-                                                  </option>
-                                                  <option>----------- </option>
-                                                  {% for j in unit %}
-          
-                                                  <option value="{{j.id}}">{{j.name}}
-                                                  </option>
-                                                  {% endfor %}
-                                              </select>
-                                              <span id="{{i.id}}_unitError"
-                                                  class="error-message"></span>
-                                          </div>
-                                            
-          
-                                              <div class="col-md-6 mb-3">
-          
-                                                  <label for="edit_qty" class="form-label">Quantity:</label>
-                                                  <input type="text" class="form-control" id="{{i.id}}_qty" name="qty"
-                                                    value="{{i.qty}}" />
-              
-                                                  <span id="{{i.id}}_qtyError" class="error-message"></span>
-                                                </div> {% endcomment %}
-          
-                                                <div class="col-md-6 mb-3">
-          
-                                                  <label for="edit_date"
-                                                      class="form-label"> Date:</label>
-          
-                                                  <input type="date" class="form-control"
-                                                      id="{{i.id}}_date"
-                                                      name="date"
-                                                      value="{{ i.date|date:'Y-m-d' }}" />
-          
-                                                  <span id="{{i.id}}_dateError"
-                                                      class="error-message"></span>
-          
-                                              </div>
+                                                                        {% comment %} <div class="modal fade" id="editModal_{{ i.id}}" tabindex="-1" aria-labelledby="editModalLabel"
+                                                                            aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+                                                                            <div class="modal-dialog modal-lg">
+                                                                                <div class="modal-content">
+                                                                                    <div class="modal-header">
+                                                                                    <h5 class="modal-title" id="editModalLabel"> Edit Project Schedule '{{i.work}}' </h5>
+                                                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                                                                                    onclick="CloseModel('editModal','{{i.id}}')"></button>
+                                                                                </div>
+                                                                                <div class="modal-body">
+                                                                                    <form id="editForm{{ i.id }}" enctype="multipart/form-data">
+                                                                                        {% csrf_token %}
+                                                                                        <div class="row">
+                                                                                        <div class="col-md-6 mb-3">
+                                                    
+                                                                                        <label for="edit_work" class="form-label">Task Name:</label>
+                                                                                        <input type="text" class="form-control" id="{{i.id}}_work" name="work"
+                                                                                            value="{{i.work}}" />
+                                                    
+                                                                                        <span id="{{i.id}}_workError" class="error-message"></span>
+                                                                                        </div>
+                                                    
+                                                                                        {% comment %} <div class="col-md-6 mb-3">
+                                                                                        <label for="edit_unit"
+                                                                                            class="form-label">Unit:</label>
+                                                                                        <select class="form-select"
+                                                                                            aria-label="Default select example"
+                                                                                            id="{{i.id}}_unit"
+                                                                                            name="unit">
+                                                    
+                                                                                            <option value="{{i.unit.id}}"
+                                                                                                selected>{{i.unit.name}}
+                                                                                            </option>
+                                                                                            <option>----------- </option>
+                                                                                            {% for j in unit %}
+                                                    
+                                                                                            <option value="{{j.id}}">{{j.name}}
+                                                                                            </option>
+                                                                                            {% endfor %}
+                                                                                        </select>
+                                                                                        <span id="{{i.id}}_unitError"
+                                                                                            class="error-message"></span>
+                                                                                    </div>
+                                                                                        
+                                                    
+                                                                                        <div class="col-md-6 mb-3">
+                                                    
+                                                                                            <label for="edit_qty" class="form-label">Quantity:</label>
+                                                                                            <input type="text" class="form-control" id="{{i.id}}_qty" name="qty"
+                                                                                                value="{{i.qty}}" />
+                                                        
+                                                                                            <span id="{{i.id}}_qtyError" class="error-message"></span>
+                                                                                            </div> {% endcomment %}
+                                                    
+                                                                                            {% comment %} <div class="col-md-6 mb-3">
+                                                    
+                                                                                            <label for="edit_date"
+                                                                                                class="form-label"> Date:</label>
+                                                    
+                                                                                            <input type="date" class="form-control"
+                                                                                                id="{{i.id}}_date"
+                                                                                                name="date"
+                                                                                                value="{{ i.date|date:'Y-m-d' }}" />
+                                                    
+                                                                                            <span id="{{i.id}}_dateError"
+                                                                                                class="error-message"></span>
+                                                    
+                                                                                        </div>  {% endcomment %}
 
-                                              <div class="col-md-6 mb-3">
-                                                <label for="edit_img">Image
-                                                    :</label>
-                                                <input type="file" class="form-control mb-2"
-                                                    id="{{i.id}}id_img"
-                                                    name="img"
-                                                    value="{{ i.img }}">
+                                                                                        {% comment %} <div class="col-md-6 mb-3">
+                                                                                            <label for="edit_images">Image
+                                                                                                :</label>
+                                                                                            <input type="file" class="form-control mb-2"
+                                                                                                id="{{i.id}}id_images"
+                                                                                                name="images"
+                                                                                                value="{{ i.images }}">
 
-                                                <span class="file-span">
-                                                    <a target="_blank"
-                                                        href="{{ i.img }}">
-                                                        {{i.img  }}
-                                                        </a></span>
-                                            
-                                            </div>
+                                                                                            <span class="file-span">
+                                                                                                <a target="_blank"
+                                                                                                    href="{{ i.images }}">
+                                                                                                    {{i.images }}
+                                                                                                    </a></span>
+                                                                                        
+                                                                                        </div> {% endcomment %}
 
-                                            <div class="col-md-6 mb-3">
-                                                <label for="edit_video">Video
-                                                    :</label>
-                                                <input type="file" class="form-control mb-2"
-                                                    id="{{i.id}}id_video"
-                                                    name="video"
-                                                    value="{{ i.video }}">
+                                                                                        {% comment %} <div class="col-md-6 mb-3">
+                                                                                            <label for="edit_images">Images:</label>
+                                                                                            <input type="file" class="form-control mb-2" id="{{i.id}}_images" name="images" multiple>
+                                                                                            {% for image in i.images.all %}
+                                                                                                <span class="file-span">
+                                                                                                    <a target="_blank" href="{{ image.image.url }}">{{ image.image.url }}</a>
+                                                                                                </span><br>
+                                                                                            {% empty %}
+                                                                                                <span>No images</span><br>
+                                                                                            {% endfor %}
+                                                                                        </div> {% endcomment %}
 
-                                                <span class="file-span">
-                                                    <a target="_blank"
-                                                        href="{{ i.video }}">
-                                                        {{i.video  }}
-                                                        </a></span>
-                                            
-                                            </div>
+                                                                                        {% comment %} <div class="col-md-6 mb-3">
+                                                                                            <label for="edit_images">Images:</label>
+                                                                                            <input type="file" class="form-control mb-2" id="{{i.id}}_images" name="images" multiple>
+                                                                                            {% for image in i.images.all %}
+                                                                                                <span class="file-span">
+                                                                                                    <a target="_blank" href="{{ image.image.url }}">{{ image.image.url }}</a>
+                                                                                                    <input type="checkbox" name="delete_images" value="{{ image.id }}"> Delete
+                                                                                                </span><br>
+                                                                                            {% empty %}
+                                                                                                <span>No images</span><br>
+                                                                                            {% endfor %}
+                                                                                        </div> {% endcomment %}
 
-                                            <div class="col-md-6 mb-3">
-                                                <label for="edit_video_url" class="form-label">Or Video URL</label>
-                                                <input type="url" name="video_url" class="form-control" value="{{ i.video_url }}" id="{{i.id}}id_video_url" placeholder="https://youtube.com/watch?v=example">
-                                                <span class="file-span">
-                                                    <a target="_blank"
-                                                        href="{{ i.video_url }}">
-                                                        {{i.video_url  }}
-                                                        </a></span>
-                                            </div>
-                                            
-           
+                                                                                        {% comment %} <div class="col-md-6 mb-3">
+                                                                                            <label for="edit_video">Video
+                                                                                                :</label>
+                                                                                            <input type="file" class="form-control mb-2"
+                                                                                                id="{{i.id}}id_video"
+                                                                                                name="video"
+                                                                                                value="{{ i.video }}">
+
+                                                                                            <span class="file-span">
+                                                                                                <a target="_blank"
+                                                                                                    href="{{ i.video }}">
+                                                                                                    {{i.video  }}
+                                                                                                    </a></span>
+                                                                                        
+                                                                                        </div> {% endcomment %}
+
+                                                                                        {% comment %} <div class="col-md-6 mb-3">
+                                                                                            <label for="edit_video_url" class="form-label">Or Video URL</label>
+                                                                                            <input type="url" name="video_url" class="form-control" value="{{ i.video_url }}" id="{{i.id}}id_video_url" placeholder="https://youtube.com/watch?v=example"> 
+                                                                                             <span class="file-span">
+                                                                                                <a target="_blank"
+                                                                                                    href="{{ i.video_url }}">
+                                                                                                    {{i.video_url  }}
+                                                                                                    </a></span> 
+                                                                                        </div>
+                                                                                        
+                                                    
+                                                    
+                                                                                        
+                                                                                        
+                                                                                        </div>
+                                                                                </form>
+                                                                                </div>
+                                                                                <div class="modal-footer">
+                                                                                <button type="button" class="btn btn-secondary" id="" data-bs-dismiss="modal"
+                                                                                    onclick="CloseModel('editModal','{{i.id}}')">
+                                                                                    Cancel
+                                                                                </button>
+                                                                                <button type="button" class="btn btn-primary" id="savecategory"
+                                                                                    onclick="updateFunction(this,'{{i.id}}')">
+                                                                                    Save
+                                                                                </button>
+                                                                                </div>
+                                                                            </div>
+                                                                            </div>
+                                                                        </div>  {% endcomment %}
+
+                                                                        
+
+
+                                                                        <div class="modal fade" id="editModal_{{ i.id }}" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+                                                                            <div class="modal-dialog modal-lg">
+                                                                                <div class="modal-content">
+                                                                                    <div class="modal-header">
+                                                                                        <h5 class="modal-title" id="editModalLabel"> Edit Project Schedule '{{i.work}}' </h5>
+                                                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="CloseModel('editModal','{{i.id}}')"></button>
+                                                                                    </div>
+                                                                                    <div class="modal-body">
+                                                                                        <form id="editForm{{ i.id }}" enctype="multipart/form-data">
+                                                                                            {% csrf_token %}
+                                                                                            <div class="row">
+                                                                                                <div class="col-md-6 mb-3">
+                                                                                                    <label for="edit_work" class="form-label">Task Name:</label>
+                                                                                                    <input type="text" class="form-control" id="{{i.id}}_work" name="work" value="{{i.work}}" />
+                                                                                                    <span id="{{i.id}}_workError" class="error-message"></span>
+                                                                                                </div>
+                                                                        
+                                                                                                <div class="col-md-6 mb-3">
+                                                                                                    <label for="edit_date" class="form-label">Date:</label>
+                                                                                                    <input type="date" class="form-control" id="{{i.id}}_date" name="date" value="{{ i.date|date:'Y-m-d' }}" />
+                                                                                                    <span id="{{i.id}}_dateError" class="error-message"></span>
+                                                                                                </div>
+                                                                        
+                                                                                                <div class="col-md-6 mb-3">
+                                                                                                    <label for="edit_images" class="form-label">Images:</label>
+                                                                                                    <input type="file" class="form-control mb-2" id="{{i.id}}_images" name="images" multiple>
+                                                                                                    {% for image in i.images.all %}
+                                                                                                        <span class="file-span">
+                                                                                                            <a target="_blank" href="{{ image.image.url }}">{{ image.image.url }}</a>
+                                                                                                            <input type="checkbox" name="delete_images" value="{{ image.id }}"> Delete
+                                                                                                        </span><br>
+                                                                                                    {% empty %}
+                                                                                                        <span>No images</span><br>
+                                                                                                    {% endfor %}
+                                                                                                </div>
+                                                                                                
+                                                                        
+                                                                                                <div class="col-md-6 mb-3">
+                                                                                                    <label for="edit_video_url" class="form-label">Or Video URL</label>
+                                                                                                    <input type="url" name="video_url" class="form-control" value="{{ i.video_url }}" id="{{i.id}}_video_url" placeholder="https://youtube.com/watch?v=example">
+                                                                                                    <span class="file-span">
+                                                                                                        <a target="_blank" href="{{ i.video_url }}">{{ i.video_url }}</a>
+                                                                                                    </span>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </form>
+                                                                                    </div>
+                                                                                    <div class="modal-footer">
+                                                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="CloseModel('editModal','{{i.id}}')">Cancel</button>
+                                                                                        <button type="button" class="btn btn-primary" onclick="updateFunction(this,'{{i.id}}')">Save</button>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
           
-                                              
-                                              
-                                            </div>
-                                          </form>
-                                        </div>
-                                        <div class="modal-footer">
-                                          <button type="button" class="btn btn-secondary" id="" data-bs-dismiss="modal"
-                                            onclick="CloseModel('editModal','{{i.id}}')">
-                                            Cancel
-                                          </button>
-                                          <button type="button" class="btn btn-primary" id="savecategory"
-                                            onclick="updateFunction(this,'{{i.id}}')">
-                                            Save
-                                          </button>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
           
-          
-                                                                        <div class="modal fade" id="deleteModal{{ i.id}}" tabindex="-1"
-                                                                                      aria-labelledby="deleteModalLabel-{{ forloop.counter }}" aria-hidden="true">
-                                                                                      <div class="modal-dialog">
-                                                                                          <div class="modal-content">
-                                                                                          <div class="modal-header">
-                                                                                              <h5 class="modal-title" id="deleteModalLabel-{{ forloop.counter }}"> 
-                                                                                              {{i.work}}</h5>
-                                                                                              <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                                                              aria-label="Close"></button>
-                                                                                          </div>
-                                                                                          <div class="modal-body">
-                                                                                              <p> Are you sure you want to delete "{{ i.work }}"? </p>
-                                                                                          </div>
-                                                                                          <div class="modal-footer">
-                                                                                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"> Cancel </button>
-          
-          
-                                                                                              <button type="button" onclick="deleteFunction(this,'{{i.id}}')"
-                                                                                              class="btn btn-danger">Delete</button>
-          
-                                                                                          </div>
-                                                                                          </div>
-                                                                                      </div>
-                                                                                      </div>
+                                                                                    <div class="modal fade" id="deleteModal{{ i.id}}" tabindex="-1"
+                                                                                        aria-labelledby="deleteModalLabel-{{ forloop.counter }}" aria-hidden="true">
+                                                                                        <div class="modal-dialog">
+                                                                                            <div class="modal-content">
+                                                                                                <div class="modal-header">
+                                                                                                    <h5 class="modal-title" id="deleteModalLabel-{{ forloop.counter }}"> 
+                                                                                                    {{i.work}}</h5>
+                                                                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                                                                    aria-label="Close"></button>
+                                                                                                </div>
+                                                                                                <div class="modal-body">
+                                                                                                    <p> Are you sure you want to delete "{{ i.work }}"? </p>
+                                                                                                </div>
+                                                                                                <div class="modal-footer">
+                                                                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"> Cancel </button>
+                                                                                                    <button type="button" onclick="deleteFunction(this,'{{i.id}}')"  class="btn btn-danger">Delete</button>          
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
     </td>
                                                             </tr>
                                                         {% endfor %}
@@ -559,17 +625,14 @@ function createFunction(button, projectScheduleId) {
         //}
 
 
-        var videoFile = formElement.querySelector('input[name="video"]').files[0];
         var videoUrl = formElement.querySelector('input[name="video_url"]').value.trim();
 
-        if (videoFile && videoUrl) {
-            // Display an error if both a file and a URL are provided
-            errors.video = "Please provide either a video file or a video URL, not both.";
-            isValid = false;
-        } else if (videoFile) {
-            formData.append("video", videoFile);
-        } else if (videoUrl) {
+        if (videoUrl) {
             formData.append("video_url", videoUrl);
+        } else {
+            // If neither a video URL nor file is provided, you can consider it an error or just proceed without adding video.
+            // errors.video = "Please provide a video URL.";
+            // isValid = false;
         }
 
         // If form is not valid, display errors and stop the process
@@ -578,7 +641,6 @@ function createFunction(button, projectScheduleId) {
             restoreForm(formId, button);
             return;
         }
-
         $.ajax({
             url: '/add-project-schedulehistory/' + projectScheduleId + '/',
             type: 'POST',
@@ -676,176 +738,256 @@ function createFunction(button, projectScheduleId) {
     
     </script>
 
-<script>
-    function updateFunction(button, saveId) {
+    <script>
 
-        var formId = `editForm${saveId}`;   //change
-        var formElement = document.getElementById(formId);
+
+      
+
+
+       {% comment %} function updateFunction(button, saveId) {
     
-        var isValid = true;
-        var errors = {};
-    
-    
-        try {
-          disableButton(button);
-          clearErrors();
-    
-          const formData = new FormData();
-        formData.append('date', getValueOrDefault(formElement.querySelector('input[name="date"]').value));
-        formData.append('work', getValueOrDefault(formElement.querySelector('input[name="work"]').value));
-        //formData.append('unit', getValueOrDefault(formElement.querySelector('select[name="unit"]').value));
-        //formData.append('qty', getValueOrDefault(formElement.querySelector('input[name="qty"]').value));
+            var formId = `editForm${saveId}`;   //change
+            var formElement = document.getElementById(formId);
         
-        var img = formElement.querySelector('input[name="img"]').files[0];
-            if (img) {
-                formData.append("img", img);
+            var isValid = true;
+            var errors = {};
+        
+        
+            try {
+              disableButton(button);
+              clearErrors();
+        
+              const formData = new FormData();
+            formData.append('date', getValueOrDefault(formElement.querySelector('input[name="date"]').value));
+            formData.append('work', getValueOrDefault(formElement.querySelector('input[name="work"]').value));
+            //formData.append('unit', getValueOrDefault(formElement.querySelector('select[name="unit"]').value));
+            //formData.append('qty', getValueOrDefault(formElement.querySelector('input[name="qty"]').value));
+            
+            var imagesFiles = document.querySelector('#images').files;
 
-                
+            // Check if any image file is selected
+            if (imagesFiles.length > 0) {
+                // Loop through each selected file and append to FormData
+                for (var i = 0; i < imagesFiles.length; i++) {
+                    formData.append("images", imagesFiles[i]); // Append each file to FormData with same key "img"
+                }
             }
-
-
-            var videoFile = formElement.querySelector('input[name="video"]').files[0];
+            
+    
             var videoUrl = formElement.querySelector('input[name="video_url"]').value.trim();
-    
-            if (videoFile && videoUrl) {
-                // Display an error if both a file and a URL are provided
-                errors.video = "Please provide either a video file or a video URL, not both.";
-                isValid = false;
-            } else if (videoFile) {
-                formData.append("video", videoFile);
-            } else if (videoUrl) {
+
+            if (videoUrl) {
                 formData.append("video_url", videoUrl);
+            } else {
+                // If no video URL is provided, handle it according to your requirements
+                // errors.video = "Please provide a video URL.";
+                // isValid = false;
             }
-    
+
             // If form is not valid, display errors and stop the process
             if (!isValid) {
                 handleCreateErrors(errors);
                 restoreForm(formId, button);
                 return;
             }
-    
-          var requiredKeys = ['work',];     //change
-    
-          requiredKeys.forEach(function (key) {
-            var value = formData.get(key);
-            if (!value.trim()) {
-              isValid = false;
-              errors[key] = ['This field may not be blank.'];
-            }
-          });
-    
-          if (!isValid) {
-            enableButton(button);
-            console.log(errors);
-            handleUpdateErrors(saveId, transformErrors(errors));
-            return;
-          } else {
-            $(`#${formId} input, #${formId} button`).prop('disabled', true);
-    
-          }
-    
-    
-          console.log(csrftoken);
-          $.ajax({
-            url: '/update-project-schedule-history/' + saveId + '/',   //change
-            type: 'PUT',
-            headers: {
-              'X-CSRFToken': csrftoken,
-            },
-            processData: false,
-            contentType: false,
-            data: formData,
-            success: function (response, status, xhr) {
-              if (xhr.status === 200) {
-                showToast(updateMessage?.message, '', updateMessage?.bgColor, true);
-                restoreForm(formId, button)
+        
+              var requiredKeys = ['work',];     //change
+        
+              requiredKeys.forEach(function (key) {
+                var value = formData.get(key);
+                if (!value.trim()) {
+                  isValid = false;
+                  errors[key] = ['This field may not be blank.'];
+                }
+              });
+        
+              if (!isValid) {
+                enableButton(button);
+                console.log(errors);
+                handleUpdateErrors(saveId, transformErrors(errors));
+                return;
               } else {
-                showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
-                restoreForm(formId, button)
-    
+                $(`#${formId} input, #${formId} button`).prop('disabled', true);
+        
               }
-            },
-            error: function (xhr, status, error) {
-              console.log(xhr, status, error);
-              if (xhr.status === 400) {
-                if (xhr?.responseJSON || xhr?.responseJSON?.errors) {
-                  handleUpdateErrors(saveId, transformErrors(xhr.responseJSON));
-                  restoreForm(formId, button)
-                } else {
-    
-                  showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
-                  restoreForm(formId, button)
-    
-                }
-              }
-              else if (xhr.status === 401 || 404) {
-                showToast(xhr?.responseJSON?.details, '', errorAlertMessage?.bgColor);
-                restoreForm(formId, button)
-    
-              }
-              else {
-    
-                showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
-                restoreForm(formId, button)
-    
-              }
-            }
-          });
-        } catch (error) {
-          showToast(errorOccured?.message, '', errorOccured?.bgColor);
-          restoreForm(formId, button)
-          console.error(error);
-        }
-      }
-    
-</script>
-
-
-<!-- <script>
-    function shareOnWhatsApp(date, work, imgUrl, videoUrl, clientNumber) {
-        const message = `Date: ${date}\nWork: ${work}\nImage: ${imgUrl ? imgUrl : 'No Image'}\nVideo: ${videoUrl ? videoUrl : 'No Video'}`;
-        const whatsappUrl = `https://api.whatsapp.com/send?phone=${clientNumber}&text=${encodeURIComponent(message)}`;
-        window.open(whatsappUrl, '_blank');
-    }
-    </script> -->
-   
-    <script>
-        function shareProjectScheduleViaWhatsApp(projectId) {
-            // AJAX request to fetch project schedule history details
-            $.ajax({
-                type: 'GET',
-                url: `/api/share-project-schedule-history/${projectId}/`,  // Update with your actual API endpoint
-                success: function(response) {
-                    const { contact_numbers } = response;
-                    
-                    // Ensure there's at least one contact number fetched
-                    if (contact_numbers.length > 0) {
-                        // Use the first contact number (you may adjust this logic)
-                        const contactNo = contact_numbers[0];
-                        
-                        // Construct WhatsApp message
-                        let message = "Project Schedule History:\n";
-                        // Optionally, add details if needed from the response
-                        
-                        // Construct WhatsApp URL
-                        const whatsapp_url = `https://api.whatsapp.com/send?phone=${contactNo}&text=${encodeURIComponent(message)}`;
-                        
-                        // Automatically redirect to WhatsApp URL
-                        window.location.href = whatsapp_url;
-                    } else {
-                        console.error('No contact number found for the project schedule history.');
-                        // Handle case where no contact number is found
-                    }
+        
+        
+              console.log(csrftoken);
+              $.ajax({
+                url: '/update-project-schedule-history/' + saveId + '/',   //change
+                type: 'PUT',
+                headers: {
+                  'X-CSRFToken': csrftoken,
                 },
-                error: function(xhr, status, error) {
-                    console.error('Error fetching project schedule history details:', error);
-                    // Handle error if needed
+                processData: false,
+                contentType: false,
+                data: formData,
+                success: function (response, status, xhr) {
+                  if (xhr.status === 200) {
+                    showToast(updateMessage?.message, '', updateMessage?.bgColor, true);
+                    restoreForm(formId, button)
+                  } else {
+                    showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+                    restoreForm(formId, button)
+        
+                  }
+                },
+                error: function (xhr, status, error) {
+                  console.log(xhr, status, error);
+                  if (xhr.status === 400) {
+                    if (xhr?.responseJSON || xhr?.responseJSON?.errors) {
+                      handleUpdateErrors(saveId, transformErrors(xhr.responseJSON));
+                      restoreForm(formId, button)
+                    } else {
+        
+                      showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+                      restoreForm(formId, button)
+        
+                    }
+                  }
+                  else if (xhr.status === 401 || 404) {
+                    showToast(xhr?.responseJSON?.details, '', errorAlertMessage?.bgColor);
+                    restoreForm(formId, button)
+        
+                  }
+                  else {
+        
+                    showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+                    restoreForm(formId, button)
+        
+                  }
                 }
+              });
+            } catch (error) {
+              showToast(errorOccured?.message, '', errorOccured?.bgColor);
+              restoreForm(formId, button)
+              console.error(error);
+            }
+          } 
+         {% endcomment %}
+
+
+
+
+
+
+
+
+
+
+         function updateFunction(button, saveId) {
+            var formId = `editForm${saveId}`;
+            var formElement = document.getElementById(formId);
+        
+            try {
+                disableButton(button);
+                clearErrors();
+        
+                const formData = new FormData();
+                formData.append('date', getValueOrDefault(formElement.querySelector('input[name="date"]').value));
+                formData.append('work', getValueOrDefault(formElement.querySelector('input[name="work"]').value));
+        
+                // Collect new images
+                var imagesFiles = formElement.querySelector(`input[name="images"]`).files;
+                if (imagesFiles.length > 0) {
+                    for (var i = 0; i < imagesFiles.length; i++) {
+                        formData.append("images", imagesFiles[i]);
+                    }
+                }
+        
+                // Collect IDs of images to be deleted
+                var imagesToDelete = [];
+                formElement.querySelectorAll('input[name="delete_images"]:checked').forEach(function (checkbox) {
+                    imagesToDelete.push(checkbox.value);
+                });
+        
+                if (imagesToDelete.length > 0) {
+                    formData.append("images_to_delete", JSON.stringify(imagesToDelete));
+                }
+
+                var videoUrl = formElement.querySelector('input[name="video_url"]').value.trim();
+
+                if (videoUrl) {
+                    formData.append("video_url", videoUrl);
+                } else {
+                    // If neither a video URL nor file is provided, you can consider it an error or just proceed without adding video.
+                    // errors.video = "Please provide a video URL.";
+                    // isValid = false;
+                }
+        
+                // Validate form and submit
+                $.ajax({
+                    url: '/update-project-schedule-history/' + saveId + '/',
+                    type: 'PUT',
+                    headers: {
+                        'X-CSRFToken': csrftoken,
+                    },
+                    processData: false,
+                    contentType: false,
+                    data: formData,
+                    success: function (response, status, xhr) {
+                        if (xhr.status === 200) {
+                            showToast(updateMessage?.message, '', updateMessage?.bgColor, true);
+                            restoreForm(formId, button);
+                        } else {
+                            showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+                            restoreForm(formId, button);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        if (xhr.status === 400) {
+                            if (xhr?.responseJSON || xhr?.responseJSON?.errors) {
+                                handleUpdateErrors(saveId, transformErrors(xhr.responseJSON));
+                                restoreForm(formId, button);
+                            } else {
+                                showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+                                restoreForm(formId, button);
+                            }
+                        } else if (xhr.status === 401 || 404) {
+                            showToast(xhr?.responseJSON?.details, '', errorAlertMessage?.bgColor);
+                            restoreForm(formId, button);
+                        } else {
+                            showToast(errorAlertMessage?.message, '', errorAlertMessage?.bgColor);
+                            restoreForm(formId, button);
+                        }
+                    }
+                });
+            } catch (error) {
+                showToast(errorOccured?.message, '', errorOccured?.bgColor);
+                restoreForm(formId, button);
+                console.error(error);
+            }
+        }
+        
+
+
+    </script>
+
+   
+    
+    <script>
+        function sendWhatsAppMessage(pk) {
+            fetch(`/send-whatsapp/${pk}/`, {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('WhatsApp message sent successfully!');
+                } else {
+                    alert('Failed to send WhatsApp message.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred.');
             });
         }
     </script>
-    
-
 
 
 {% endblock header2 %}

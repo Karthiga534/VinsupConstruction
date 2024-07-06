@@ -374,10 +374,10 @@ urlpatterns = [
     path('delete-project-schedule-history/<int:pk>/', views.delete_project_schedule_history, name='delete-project-schedule-history'),
     path('update-project-schedule-history/<int:pk>/', views.update_project_schedule_history, name='update-project-schedule-history'),
     # path('api/share-project-schedule-history/<int:project_id>/', views.share_project_schedule_history, name='share_project_schedule_history'),
-    path('api/share-project-schedule-history/', views.share_project_schedule_history, name='share_project_schedule_history'),
+    # path('api/share-project-schedule-history/', views.share_project_schedule_history, name='share_project_schedule_history'),
 
 
-
+    path('send-whatsapp/<int:pk>/', views.send_whatsapp_message, name='send_whatsapp_message'),
  
     #     # employee attendence
     # path('attendance/employee',views.employee_attendance,name= 'employee-labour-attendance'), #render only

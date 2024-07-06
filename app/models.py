@@ -1215,7 +1215,7 @@ class ProjectScheduleHistory(models.Model):
     project_schedule = models.ForeignKey(ProjectSchedule, on_delete=models.CASCADE,null=True,blank=True)
     #img = models.ImageField(upload_to="doc", null=True, blank=True)
     images = models.ManyToManyField('ProjectImage', related_name='project_schedule_history', blank=True)
-    video = models.FileField(upload_to="doc/videos", null=True, blank=True, validators=[validate_video_file])
+    # video = models.FileField(upload_to="doc/videos", null=True, blank=True, validators=[validate_video_file])
     video_url = models.URLField(null=True, blank=True)  # Field to store video links
     work = models.CharField(max_length=100)
     qty = models.IntegerField(default=0, null=True, blank=True)

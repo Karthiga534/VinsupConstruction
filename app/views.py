@@ -3,16 +3,21 @@ from .models import *
 from .serializer import *
 # from contextvars import Token
 from django.db.models import Q
+from twilio.rest import Client
+from twilio.rest import Client
 from django.urls import reverse
 from rest_framework import status
 from django.http import QueryDict
 from django.db import transaction
 from django.db.models import Count
+from pyexpat.errors import messages
 from django.urls import reverse_lazy
 from django.db import IntegrityError
+from django.http import HttpResponse
 from django.core.mail import send_mail
 from .utils import filter_by_date_range
 from datetime import datetime, timedelta
+from django.core.mail import EmailMessage
 from rest_framework.response import Response
 from django.utils.dateparse import parse_date
 from django.http import HttpResponseBadRequest
@@ -26,6 +31,8 @@ from django.utils.crypto import get_random_string
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from django.core.exceptions import ValidationError
+from django.template.loader import render_to_string
+from twilio.base.exceptions import TwilioRestException
 from django.contrib.auth import login,authenticate,logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseNotFound, JsonResponse
@@ -35,9 +42,7 @@ from rest_framework.permissions import IsAuthenticated ,AllowAny
 from django.shortcuts import render, redirect, get_object_or_404
 from rest_framework.decorators import api_view, permission_classes
 from app.decorators import check_user_company,check_valid_user,check_admin
-from app.utils import PaginationAndFilter, customPagination,check_user,get_current_month,filter_by_month_range,get_company
-
-
+from app.utils import PaginationAndFilter, customPagination,check_user,get_current_month,filter_by_month_range,get_company  
 
 paginator = PageNumberPagination()
 date_format = "%Y-%m-%d"
@@ -4103,7 +4108,130 @@ def project_schedulehistory(request, pk):
 
 
 
+# def send_whatsapp_message(request, pk):
+#     # Check if the request is an AJAX request
+#     is_ajax = request.headers.get('x-requested-with') == 'XMLHttpRequest'
 
+#     project_schedule = get_object_or_404(ProjectSchedule, pk=pk)
+#     project_schedule_history = ProjectScheduleHistory.objects.filter(project_schedule=project_schedule).order_by("-id")
+
+#     # Prepare the WhatsApp message content
+#     project_details = f"Project: {project_schedule.project.proj_name}\n"
+#     for history in project_schedule_history:
+#         project_details += (
+#             f"Task: {history.work}\n"
+#             f"Date: {history.date}\n"
+#             f"Video URL: {history.video_url or 'N/A'}\n"
+#             f"Images: {[img.image.url for img in history.images.all()]}\n\n"
+#         )
+
+#     # Split the message into chunks of 1600 characters each
+#     max_length = 1600
+#     message_chunks = [project_details[i:i + max_length] for i in range(0, len(project_details), max_length)]
+
+#     # Twilio credentials (replace with your actual credentials)
+#     account_sid = 'AC91f0afc8e73071dc79c151ad1e872e6e'
+#     auth_token = 'b476471bc8e9ef1664aec49bfd2fee21'
+#     twilio_whatsapp_number = 'whatsapp:+14155238886'  # Your Twilio WhatsApp number (sandbox or production)
+#     client_whatsapp_number = 'whatsapp:+919360994106'  # Ensure correct format (Replace with the client's WhatsApp number)
+
+#     client = Client(account_sid, auth_token)
+
+#     try:
+#         for chunk in message_chunks:
+#             message = client.messages.create(
+#                 body=chunk,
+#                 from_=twilio_whatsapp_number,
+#                 to=client_whatsapp_number
+#             )
+#             print(f"Message SID: {message.sid}")  # Log the Message SID
+#             print(f"Message Status: {message.status}")  # Log the message status
+
+#         if is_ajax:
+#             return JsonResponse({'success': True, 'message': 'WhatsApp messages sent successfully!'})
+#         else:
+#             messages.success(request, 'WhatsApp messages sent successfully!')
+#     except TwilioRestException as e:
+#         print(f"Failed to send WhatsApp message: {e}")  # Log the TwilioRestException
+#         if is_ajax:
+#             return JsonResponse({'success': False, 'message': str(e)})
+#         else:
+#             messages.error(request, f'Failed to send WhatsApp message: {e}')
+
+#     # Redirect back to the project schedule history page
+#     return redirect('project_schedulehistory', pk=pk)
+
+
+def send_whatsapp_message(request, pk):
+    is_ajax = request.headers.get('x-requested-with') == 'XMLHttpRequest'
+
+    # Retrieve the project schedule and its history
+    project_schedule = get_object_or_404(ProjectSchedule, pk=pk)
+    project_schedule_history = ProjectScheduleHistory.objects.filter(project_schedule=project_schedule).order_by("-id")
+
+    # Prepare the WhatsApp message content
+    project_details = f"Project: {project_schedule.project.proj_name}\n"
+    for history in project_schedule_history:
+        project_details += (
+            f"Task: {history.work}\n"
+            f"Date: {history.date}\n"
+            f"Video URL: {history.video_url or 'N/A'}\n"
+        )
+
+    # Twilio credentials (replace with your actual credentials)
+    account_sid = 'AC91f0afc8e73071dc79c151ad1e872e6e'
+    auth_token = 'b476471bc8e9ef1664aec49bfd2fee21'
+    twilio_whatsapp_number = 'whatsapp:+14155238886'  # Your Twilio WhatsApp number
+    client_whatsapp_number = 'whatsapp:+919360994106'  # Client's WhatsApp number
+
+    client = Client(account_sid, auth_token)
+
+    try:
+        # Send the text part of the message (project details)
+        max_length = 1600
+        message_chunks = [project_details[i:i + max_length] for i in range(0, len(project_details), max_length)]
+        
+        for chunk in message_chunks:
+            message = client.messages.create(
+                body=chunk,
+                from_=twilio_whatsapp_number,
+                to=client_whatsapp_number
+            )
+            print(f"Message SID: {message.sid}")  # Log the Message SID
+            print(f"Message Status: {message.status}")  # Log the message status
+
+        # Send the images as separate media messages
+        for history in project_schedule_history:
+            for img in history.images.all():
+                image_url = img.image.url
+                if not image_url.startswith('http'):
+                    print(f"Invalid URL: {image_url}")  # Log invalid URLs
+                    continue  # Skip this image if the URL is not valid
+
+                try:
+                    media_message = client.messages.create(
+                        from_=twilio_whatsapp_number,
+                        to=client_whatsapp_number,
+                        media_url=[image_url]
+                    )
+                    print(f"Media Message SID: {media_message.sid}")  # Log the Media Message SID
+                    print(f"Media Message Status: {media_message.status}")  # Log the media message status
+                except TwilioRestException as e:
+                    print(f"Failed to send image: {image_url} due to {e}")  # Log any exception when sending image
+
+        if is_ajax:
+            return JsonResponse({'success': True, 'message': 'WhatsApp messages sent successfully!'})
+        else:
+            messages.success(request, 'WhatsApp messages sent successfully!')
+    except TwilioRestException as e:
+        print(f"Failed to send WhatsApp message: {e}")  # Log the TwilioRestException
+        if is_ajax:
+            return JsonResponse({'success': False, 'message': str(e)})
+        else:
+            messages.error(request, f'Failed to send WhatsApp message: {e}')
+
+    # Redirect back to the project schedule history page
+    return redirect('project_schedulehistory', pk=pk)
 
 
 # @api_view(['GET', 'POST'])
@@ -4169,7 +4297,7 @@ def add_project_schedulehistory(request, pk):
             'date': request.data.get('date'),
             'video_url': request.data.get('video_url'),
             
-            'video': request.data.get('video'),
+            # 'video': request.data.get('video'),
         }
 
         # Initialize serializer with data
@@ -4243,75 +4371,73 @@ def delete_project_schedule_history(request, pk):
 #         return JsonResponse(serializer.errors, status=400)
 
 
+# @api_view(['PUT'])
+# @login_required(login_url='login')
+# def update_project_schedule_history(request, pk):
+#     user = request.user
 
+#     try:
+#         instance = ProjectScheduleHistory.objects.get(id=pk)
+#     except ProjectScheduleHistory.DoesNotExist:
+#         return JsonResponse({'details': 'Project Schedule object does not exist'}, status=404)
+    
+#     # Parse and handle request data and files
+#     request_data = request.data
+#     images = request.FILES.getlist('images[]')  # Assuming "images[]" is the key used in the FormData
+    
+#     serializer = ProjectScheduleHistorySerializer(instance, data=request_data, partial=True)
+#     if serializer.is_valid():
+#         serializer.save()
+        
+#         # Handle multiple images
+#         if images:
+#             for image_file in images:
+#                 ProjectImage.objects.create(project_schedule_history=instance, image=image_file)
+        
+#         return JsonResponse(serializer.data, status=200)
+#     else:
+#         return JsonResponse(serializer.errors, status=400)   
+
+
+@api_view(['PUT'])
+@login_required(login_url='login')
 def update_project_schedule_history(request, pk):
-    if request.method == 'PUT':
-        # Retrieve delete flags and video URL from request
-        delete_images = json.loads(request.POST.get('delete_images', '[]'))
-        delete_video = request.POST.get('delete_video', False)
-        delete_video_url = request.POST.get('delete_video_url', False)
-        video_url = request.POST.get('video_url', '')
+    user = request.user
 
-        # Get the ProjectScheduleHistory object
-        schedule_history = get_object_or_404(ProjectScheduleHistory, pk=pk)
+    try:
+        instance = ProjectScheduleHistory.objects.get(id=pk)
+    except ProjectScheduleHistory.DoesNotExist:
+        return JsonResponse({'details': 'Project Schedule object does not exist'}, status=404)
 
-        # Update video URL
-        schedule_history.video_url = video_url
+    request_data = request.data.copy()  # Copy to modify data for the serializer
+    images = request.FILES.getlist('images')  # Ensure this matches your form input name
+
+    # Remove images from request_data to prevent serializer conflicts
+    if 'images' in request_data:
+        del request_data['images']
+
+    serializer = ProjectScheduleHistorySerializer(instance, data=request_data, partial=True)
+    if serializer.is_valid():
+        serializer.save()
+
+        # Handle new image uploads
+        if images:
+            for image_file in images:
+                new_image = ProjectImage.objects.create(image=image_file)
+                instance.images.add(new_image)
 
         # Handle image deletions
-        if delete_images:
-            for image_id in delete_images:
-                # Assuming you have a model for images related to schedule history
-                image_to_delete = get_object_or_404(ProjectImage, pk=image_id)
-                image_to_delete.delete()
+        images_to_delete = request_data.get('images_to_delete')
+        if images_to_delete:
+            image_ids = json.loads(images_to_delete)  # Decode the JSON string to a Python list
+            ProjectImage.objects.filter(id__in=image_ids, project_schedule_history=instance).delete()
 
-        # Handle new images addition
-        new_images = request.FILES.getlist('images', [])
-        for image_file in new_images:
-            # Create new image objects or associate with ProjectScheduleHistory
-            new_image = ProjectImage.objects.create(image=image_file, schedule_history=schedule_history)
-            # You might want to add more fields or relationships depending on your model
+        # Prepare updated response data including current images
+        updated_data = serializer.data
+        updated_data['images'] = [
+            {'id': image.id, 'url': image.image.url} for image in instance.images.all()
+        ]
 
-        # Handle video deletion
-        if delete_video:
-            # Assuming you have a field for video in your model
-            schedule_history.video = None
-
-        # Handle video URL deletion
-        if delete_video_url:
-            schedule_history.video_url = ''
-
-        # Save the updated schedule history
-        schedule_history.save()
-
-        return JsonResponse({'message': 'Update successful'}, status=200)
+        return JsonResponse(updated_data, status=200)
     else:
-<<<<<<< HEAD
         return JsonResponse(serializer.errors, status=400)
-    
-
-
-
-
-from django.shortcuts import get_object_or_404
-from django.http import JsonResponse
-from .models import Project, ProjectScheduleHistory
-
-@api_view(['GET'])
-def share_project_schedule_history(request, project_id):
-    # Fetch project and associated schedule history items
-    project = get_object_or_404(Project, id=project_id)
-    project_schedule_history = ProjectScheduleHistory.objects.filter(project=project)
-    
-    # Retrieve unique contact numbers from associated project schedule history
-    contact_numbers = set()  # Using a set to avoid duplicates
-    for history_item in project_schedule_history:
-        contact_numbers.add(history_item.project.contact_no)
-    
-    # Convert set to list for easy manipulation if needed
-    contact_numbers_list = list(contact_numbers)
-    
-    return JsonResponse({'contact_numbers': contact_numbers_list})
-=======
-        return JsonResponse({'error': 'Method not allowed'}, status=405)
->>>>>>> origin/cms
