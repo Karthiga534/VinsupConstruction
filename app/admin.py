@@ -197,3 +197,5 @@ class ProjectDiagramAdmin(admin.ModelAdmin):
     list_display = ('id',) 
 
 admin.site.register(OwnerInfo)
+
+admin.site.register(ProjectImage)

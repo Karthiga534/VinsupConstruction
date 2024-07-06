@@ -369,7 +369,6 @@ urlpatterns = [
 
 
 
-    # path('project-schedulehistory/<int:pk>/', views.project_schedulehistory, name='project_schedulehistory'),
     path('project-schedulehistory/<int:pk>/', views.project_schedulehistory, name='project_schedulehistory'),
     path('add-project-schedulehistory/<int:pk>/', views.add_project_schedulehistory, name='add_project_schedulehistory'),  # Add this line
     path('delete-project-schedule-history/<int:pk>/', views.delete_project_schedule_history, name='delete-project-schedule-history'),
