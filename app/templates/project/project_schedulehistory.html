@@ -2,22 +2,7 @@
 {% load filters %}
 {% load static %}
 
-
 {% block header2 %}
-
-<style>
-    .custom-button {
-        font-size: 0.85rem;
-        /* Increase text size */
-        padding: 0.30rem 1.00rem;
-        /* Increase button size */
-    }
-
-    #create-receipt-btn {
-        margin-right: 20px;
-        /* Adjust the margin-right as needed */
-    }
-</style>
 
 <div id="layout-wrapper">
 
@@ -32,7 +17,7 @@
                             <div class="page-title-right">
                                 <ol class="breadcrumb m-0">
                                     <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
-                                    <li class="breadcrumb-item active">Project Schedule History</li>
+                                    <li class="breadcrumb-item active">Project Schedule</li>
                                 </ol>
                             </div>
                         </div>
@@ -40,56 +25,44 @@
                 </div>
                 <div class="row">
 
-                    <div class="col text-end">
-                        <a class="btn btn-info btn-sm custom-button mr-3" onclick="window.history.back();">
-                            Back
-                        </a> 
-                    </div>
-                    
-                    
-                    
-                    
-                    
-                </div>
-                   <br>
-
 
                     <div class="row">
                         <div class="card">
                             <div class="card-body">
                                 <div class="row">
-                                    {% comment %} <div class="col text-end">
-                                         {% comment %} <a class="btn btn-info btn-sm custom-button mr-3" href="{% url 'project' %}">
-                                            Back </a>  {% endcomment %}
-                                    {% comment %} </div> {% endcomment %} 
+                                    <div class="col text-end">
+                                        <a class="btn btn-info btn-sm custom-button mr-3" href="{% url 'project_schedule' %}">
+                                            Back </a>
+                                    </div>
                                 </div>
-                                <!-- <h4>project Schedule History</h4>
+                                <h4>Project Schedule</h4>
 
-                                <div class="row">
+
+                                 <div class="row">
                                     <div class="col-md-4 mt-2">
-                                        <input type="text" class="form-control" id="" name="client" value="{{project.id}}"  hidden
+                                        <input type="text" class="form-control" id="" name="client" value="{{project_schedule.id}}"  hidden
                                         disabled>
                                         <label for="" class="form-label">Client Name:</label>
-                                        <input type="text" class="form-control" name="client" value="{{project.client}}"
+                                        <input type="text" class="form-control" name="client" value="{{ project_schedule.client }}"
                                             disabled>
                                         <span id="clientError" class="error-message"></span>
                                     </div>
                                     <div class="col-md-4 mt-2">
                                         <label for="" class="form-label">Project Name:</label>
                                         <input type="text" class="form-control" name="proj_name"
-                                            value="{{ project.proj_name }}" disabled>
+                                            value="{{ project_schedule.proj_name }}" disabled>
                                         <span id="projNameError" class="error-message"></span>
                                     </div>
                                     <div class="col-md-4 mt-2">
                                         <label for="" class="form-label">Site Location:</label>
                                         <input type="text" class="form-control" name="site_location"
-                                            value="{{ project.site_location }}" disabled>
+                                            value="{{ project_schedule.site_location }}" disabled>
                                         <span id="siteLocationError" class="error-message"></span>
                                     </div>
                                     <div class="col-md-4 mt-2">
                                         <label for="" class="form-label">Contact No:</label>
                                         <input type="text" class="form-control" name="contact_no"
-                                            value="{{ project.contact_no }}" disabled>
+                                            value="{{ project_schedule.contact_no }}" disabled>
                                         <span id="contactNoError" class="error-message"></span>
                                     </div>
                                     
@@ -97,12 +70,12 @@
                                     <div class="col-md-4 mt-2">
                                         <label for="" class="form-label">Estimation:</label>
                                         <input type="text" class="form-control" name="estimation"
-                                            value="{{ project.estimation }}" disabled>
+                                            value="{{ project_schedule.estimation }}" disabled>
                                         <span id="estimationError" class="error-message"></span>
                                     </div>
-                                </div>
+                                </div> 
 
-                                -->
+
 
 
                                 <div class="col-md-12"> <!-- Use most of the space for the table -->
@@ -119,12 +92,7 @@
                                                         data-bs-toggle="modal" data-bs-target=".bs-example-modal-lg">+
                                                         Add
                                                         </button>
-
-
                                                 </div>
-
-
-
                                             </div>
                                             <div class="row">
                                                 <div class="card">
@@ -134,23 +102,16 @@
                                                             <div class="modal fade bs-example-modal-lg p-5"
                                                                 tabindex="-1" role="dialog"
                                                                 aria-labelledby="myLargeModalLabel" aria-hidden="true">
-                                                                
-                                                             
+                                                                                                                            
                                                                 <div class="modal-dialog modal-lg p-5">
                                                                     
-
                                                                     <div class="modal-content p-4">
                                                                         
-
-
                                                                         <div class="d-flex justify-content-between align-items-center mb-4">
                                                                             <h5 class="modal-title">Create New </h5>
                                                                             <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close" onclick="CloseModel('editModal','{{i.id}}')"></button>
                                                                         </div>
-                                                                        
-                                                                        <!--  -->
-
-
+                                                                                                                                                <!--  -->
                                                                         <div class="row">
 
                                                                             <!-- <form id="createForm"> -->
@@ -302,9 +263,20 @@
                                                                     </button> -->
 
                                                                     
-                                                                        <button class="btn btn-success" onclick="shareProjectScheduleViaWhatsApp('{{ project.id }}')">
+                                                                        <!-- <button class="btn btn-success" onclick="shareProjectScheduleViaWhatsApp('{{ project.id }}')">
                                                                             Share WhatsApp
-                                                                        </button>
+                                                                        </button> -->
+
+
+                                                                        <button class="btn btn-success" onclick="shareProjectScheduleViaWhatsApp('{{ project.id }}')">Share WhatsApp</button>
+
+                                                    
+
+                                                                       
+
+                                                                        <!-- <input type="text" name="contact_number" placeholder="Enter contact number">
+                                                                        <input type="text" name="media_url" placeholder="Enter media URL">
+                                                                        <button type="submit">Send WhatsApp Media</button> -->
                                                                     
                                                                 </td>
                                                                 
@@ -715,6 +687,7 @@ function createFunction(button, projectScheduleId) {
                 formData.append("video", videoFile);
             } else if (videoUrl) {
                 formData.append("video_url", videoUrl);
+
             }
     
             // If form is not valid, display errors and stop the process
@@ -808,42 +781,69 @@ function createFunction(button, projectScheduleId) {
         window.open(whatsappUrl, '_blank');
     }
     </script> -->
-   
+<!--    
     <script>
         function shareProjectScheduleViaWhatsApp(projectId) {
-            // AJAX request to fetch project schedule history details
+            console.log("Project ID:", projectId);
             $.ajax({
-                type: 'GET',
-                url: `/api/share-project-schedule-history/${projectId}/`,  // Update with your actual API endpoint
-                success: function(response) {
-                    const { contact_numbers } = response;
-                    
-                    // Ensure there's at least one contact number fetched
-                    if (contact_numbers.length > 0) {
-                        // Use the first contact number (you may adjust this logic)
-                        const contactNo = contact_numbers[0];
-                        
-                        // Construct WhatsApp message
-                        let message = "Project Schedule History:\n";
-                        // Optionally, add details if needed from the response
-                        
-                        // Construct WhatsApp URL
-                        const whatsapp_url = `https://api.whatsapp.com/send?phone=${contactNo}&text=${encodeURIComponent(message)}`;
-                        
-                        // Automatically redirect to WhatsApp URL
-                        window.location.href = whatsapp_url;
-                    } else {
-                        console.error('No contact number found for the project schedule history.');
-                        // Handle case where no contact number is found
-                    }
+                type: 'POST',
+                url: '{% url "share_project_via_whatsapp" %}',
+                data: {
+                    'project_id': projectId,
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
                 },
-                error: function(xhr, status, error) {
-                    console.error('Error fetching project schedule history details:', error);
-                    // Handle error if needed
+                success: function(response) {
+                    alert('Message sent successfully! SID: ' + response.message_sid);
+                },
+                error: function(response) {
+                    alert('Error sending message.');
                 }
             });
         }
+    </script> -->
+    <script>
+        function getCSRFToken() {
+            let cookieValue = null;
+            const name = 'csrftoken';
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    
+        function shareProjectScheduleViaWhatsApp(projectId) {
+            const csrfToken = getCSRFToken();
+            fetch('/share_project_via_whatsapp/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify({ 'project_id': projectId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alert('Message sent successfully!');
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
     </script>
+    
+    
+    
     
 
 

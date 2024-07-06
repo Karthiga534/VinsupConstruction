@@ -36,7 +36,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from rest_framework.decorators import api_view, permission_classes
 from app.decorators import check_user_company,check_valid_user,check_admin
 from app.utils import PaginationAndFilter, customPagination,check_user,get_current_month,filter_by_month_range,get_company
-
+from twilio.rest import Client
+from django.http import Http404
 
 
 paginator = PageNumberPagination()
@@ -4103,55 +4104,6 @@ def project_schedulehistory(request, pk):
 
 
 
-
-
-
-# @api_view(['GET', 'POST'])
-# def add_project_schedulehistory(request, pk):
-#     project_schedule = get_object_or_404(ProjectSchedule, pk=pk)
-
-#     if request.method == 'POST':
-#         serializer = ProjectScheduleHistorySerializer(data=request.data)
-#         if serializer.is_valid():
-#             serializer.save(project_schedule=project_schedule)
-#             return Response({'status': 'success', 'message': 'Schedule history created successfully'}, status=201)
-#         return Response({'errors': serializer.errors}, status=400)
-
-#     elif request.method == 'GET':
-#         project_schedule_history = ProjectScheduleHistory.objects.filter(project_schedule=project_schedule)
-#         serializer = ProjectScheduleHistorySerializer(project_schedule_history, many=True, context={'request': request})
-#         return Response(serializer.data)
-
-#     return Response({'status': 'error', 'message': 'Invalid request method'}, status=405)
-
-
-# @api_view(['GET', 'POST'])
-# def add_project_schedulehistory(request, pk):
-#     project_schedule = get_object_or_404(ProjectSchedule, pk=pk)
-
-#     if request.method == 'POST':
-#         serializer = ProjectScheduleHistorySerializer(data=request.data)
-
-#         if serializer.is_valid():
-#             # Save project_schedule along with other validated data
-#             serializer.save(project_schedule=project_schedule)
-
-#             # Handle images separately if needed
-#             images = request.FILES.getlist('img')
-#             for img in images:
-#                 # Process each image as required, e.g., save to disk, associate with model instance
-
-#                 return Response({'status': 'success', 'message': 'Schedule history created successfully'}, status=status.HTTP_201_CREATED)
-#         else:
-#             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-#     elif request.method == 'GET':
-#         project_schedule_history = ProjectScheduleHistory.objects.filter(project_schedule=project_schedule)
-#         serializer = ProjectScheduleHistorySerializer(project_schedule_history, many=True, context={'request': request})
-#         return Response(serializer.data)
-
-#     return Response({'status': 'error', 'message': 'Invalid request method'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
-
 @api_view(['POST'])
 def add_project_schedulehistory(request, pk):
     project_schedule = get_object_or_404(ProjectSchedule, pk=pk)
@@ -4286,32 +4238,63 @@ def update_project_schedule_history(request, pk):
 
         return JsonResponse({'message': 'Update successful'}, status=200)
     else:
-<<<<<<< HEAD
-        return JsonResponse(serializer.errors, status=400)
-    
-
-
-
-
-from django.shortcuts import get_object_or_404
-from django.http import JsonResponse
-from .models import Project, ProjectScheduleHistory
-
-@api_view(['GET'])
-def share_project_schedule_history(request, project_id):
-    # Fetch project and associated schedule history items
-    project = get_object_or_404(Project, id=project_id)
-    project_schedule_history = ProjectScheduleHistory.objects.filter(project=project)
-    
-    # Retrieve unique contact numbers from associated project schedule history
-    contact_numbers = set()  # Using a set to avoid duplicates
-    for history_item in project_schedule_history:
-        contact_numbers.add(history_item.project.contact_no)
-    
-    # Convert set to list for easy manipulation if needed
-    contact_numbers_list = list(contact_numbers)
-    
-    return JsonResponse({'contact_numbers': contact_numbers_list})
-=======
         return JsonResponse({'error': 'Method not allowed'}, status=405)
->>>>>>> origin/cms
+    
+
+
+    # views.py
+
+
+
+# def share_project_via_whatsapp(request):
+#     if request.method == 'POST':
+#         project_id = request.POST.get('project_id')
+#         project = get_object_or_404(Project, id=project_id)
+#         contact_no = project.contact_no
+        
+#         # Gather project schedule history data
+#         schedules = ProjectSchedule.objects.filter(project=project)
+#         schedule_details = "\n".join([f"Date: {schedule.date}, Task: {schedule.work}" for schedule in schedules])
+        
+#         account_sid = settings.TWILIO_ACCOUNT_SID
+#         auth_token = settings.TWILIO_AUTH_TOKEN
+#         client = Client(account_sid, auth_token)
+
+#         message = client.messages.create(
+#             from_="whatsapp:+14155238886",
+#             to=f"whatsapp:{contact_no}",
+#             body=f"Project Details:\nClient: {project.client}\nProject: {project.proj_name}\nLocation: {project.site_location}\nEstimation: {project.estimation}\nSchedule History:\n{schedule_details}"
+#         )
+
+#         return JsonResponse({'message_sid': message.sid})
+
+#     return JsonResponse({'error': 'Invalid request'}, status=400)
+
+
+
+
+
+from django.views.decorators.csrf import csrf_exempt
+
+@csrf_exempt
+def share_project_via_whatsapp(request):
+    if request.method == 'POST':
+        try:
+            project_id = request.POST.get('project_id')
+            project = ProjectSchedule.objects.get(id=project_id)
+            contact_no = project.contact_no
+            message = f"Project details: {project.details}"
+            client = Client('your_account_sid', 'your_auth_token')
+            client.messages.create(
+                body=message,
+                from_='whatsapp:+14155238886',
+                to=f'whatsapp:{contact_no}'
+            )
+            return JsonResponse({'status': 'success'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
+    return JsonResponse({'status': 'invalid request method'})
+
+
+
+

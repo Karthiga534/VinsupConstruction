@@ -214,6 +214,15 @@ AUTH_USER_MODEL = "app.CustomUser"
 
 
 
+
+
+
+TWILIO_ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID", "AC91f0afc8e73071dc79c151ad1e872e6e")
+TWILIO_AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN", "b476471bc8e9ef1664aec49bfd2fee21")
+
+
+
+
 # REST_FRAMEWORK = {
 #     'DEFAULT_AUTHENTICATION_CLASSES': [
 #         'rest_framework.authentication.TokenAuthentication',  
