@@ -42,14 +42,7 @@ from rest_framework.permissions import IsAuthenticated ,AllowAny
 from django.shortcuts import render, redirect, get_object_or_404
 from rest_framework.decorators import api_view, permission_classes
 from app.decorators import check_user_company,check_valid_user,check_admin
-<<<<<<< HEAD
-from app.utils import PaginationAndFilter, customPagination,check_user,get_current_month,filter_by_month_range,get_company
-from twilio.rest import Client
-from django.http import Http404
-
-=======
 from app.utils import PaginationAndFilter, customPagination,check_user,get_current_month,filter_by_month_range,get_company  
->>>>>>> origin/cms
 
 paginator = PageNumberPagination()
 date_format = "%Y-%m-%d"
@@ -4115,8 +4108,6 @@ def project_schedulehistory(request, pk):
 
 
 
-<<<<<<< HEAD
-=======
 # def send_whatsapp_message(request, pk):
 #     # Check if the request is an AJAX request
 #     is_ajax = request.headers.get('x-requested-with') == 'XMLHttpRequest'
@@ -4206,18 +4197,16 @@ def send_whatsapp_message(request, pk):
                 from_=twilio_whatsapp_number,
                 to=client_whatsapp_number
             )
-            print(f"Text Message SID: {message.sid}")  # Log the Message SID
-            print(f"Text Message Status: {message.status}")  # Log the message status
+            print(f"Message SID: {message.sid}")  # Log the Message SID
+            print(f"Message Status: {message.status}")  # Log the message status
 
         # Send the images as separate media messages
         for history in project_schedule_history:
             for img in history.images.all():
-                image_url = img.image.url  # Get the URL of the image
-                print(f"Processing image URL: {image_url}")  # Log the image URL being processed
-
+                image_url = img.image.url
                 if not image_url.startswith('http'):
-                    print(f"Invalid URL (skipping): {image_url}")  # Log and skip invalid URLs
-                    continue
+                    print(f"Invalid URL: {image_url}")  # Log invalid URLs
+                    continue  # Skip this image if the URL is not valid
 
                 try:
                     media_message = client.messages.create(
@@ -4291,7 +4280,6 @@ def send_whatsapp_message(request, pk):
 
 #     return Response({'status': 'error', 'message': 'Invalid request method'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
->>>>>>> origin/cms
 @api_view(['POST'])
 def add_project_schedulehistory(request, pk):
     project_schedule = get_object_or_404(ProjectSchedule, pk=pk)
@@ -4452,67 +4440,4 @@ def update_project_schedule_history(request, pk):
 
         return JsonResponse(updated_data, status=200)
     else:
-<<<<<<< HEAD
-        return JsonResponse({'error': 'Method not allowed'}, status=405)
-    
-
-
-    # views.py
-
-
-
-# def share_project_via_whatsapp(request):
-#     if request.method == 'POST':
-#         project_id = request.POST.get('project_id')
-#         project = get_object_or_404(Project, id=project_id)
-#         contact_no = project.contact_no
-        
-#         # Gather project schedule history data
-#         schedules = ProjectSchedule.objects.filter(project=project)
-#         schedule_details = "\n".join([f"Date: {schedule.date}, Task: {schedule.work}" for schedule in schedules])
-        
-#         account_sid = settings.TWILIO_ACCOUNT_SID
-#         auth_token = settings.TWILIO_AUTH_TOKEN
-#         client = Client(account_sid, auth_token)
-
-#         message = client.messages.create(
-#             from_="whatsapp:+14155238886",
-#             to=f"whatsapp:{contact_no}",
-#             body=f"Project Details:\nClient: {project.client}\nProject: {project.proj_name}\nLocation: {project.site_location}\nEstimation: {project.estimation}\nSchedule History:\n{schedule_details}"
-#         )
-
-#         return JsonResponse({'message_sid': message.sid})
-
-#     return JsonResponse({'error': 'Invalid request'}, status=400)
-
-
-
-
-
-from django.views.decorators.csrf import csrf_exempt
-
-@csrf_exempt
-def share_project_via_whatsapp(request):
-    if request.method == 'POST':
-        try:
-            project_id = request.POST.get('project_id')
-            project = ProjectSchedule.objects.get(id=project_id)
-            contact_no = project.contact_no
-            message = f"Project details: {project.details}"
-            client = Client('your_account_sid', 'your_auth_token')
-            client.messages.create(
-                body=message,
-                from_='whatsapp:+14155238886',
-                to=f'whatsapp:{contact_no}'
-            )
-            return JsonResponse({'status': 'success'})
-        except Exception as e:
-            return JsonResponse({'status': 'error', 'message': str(e)})
-    return JsonResponse({'status': 'invalid request method'})
-
-
-
-
-=======
         return JsonResponse(serializer.errors, status=400)
->>>>>>> origin/cms
