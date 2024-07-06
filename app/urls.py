@@ -376,13 +376,17 @@ urlpatterns = [
     path('update-project-schedule-history/<int:pk>/', views.update_project_schedule_history, name='update-project-schedule-history'),
     # path('api/share-project-schedule-history/<int:project_id>/', views.share_project_schedule_history, name='share_project_schedule_history'),
     # path('api/share-project-schedule-history/', views.share_project_schedule_history, name='share_project_schedule_history'),
+<<<<<<< HEAD
 
     
      path('share_project_via_whatsapp/', views.share_project_via_whatsapp, name='share_project_via_whatsapp'),
     #  path('share_project_via_whatsapp/', views.share_project_via_whatsapp, name='share_project_via_whatsapp'),
 
+=======
+>>>>>>> origin/cms
 
 
+    path('send-whatsapp/<int:pk>/', views.send_whatsapp_message, name='send_whatsapp_message'),
  
     #     # employee attendence
     # path('attendance/employee',views.employee_attendance,name= 'employee-labour-attendance'), #render only
