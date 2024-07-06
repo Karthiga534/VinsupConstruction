@@ -4197,16 +4197,18 @@ def send_whatsapp_message(request, pk):
                 from_=twilio_whatsapp_number,
                 to=client_whatsapp_number
             )
-            print(f"Message SID: {message.sid}")  # Log the Message SID
-            print(f"Message Status: {message.status}")  # Log the message status
+            print(f"Text Message SID: {message.sid}")  # Log the Message SID
+            print(f"Text Message Status: {message.status}")  # Log the message status
 
         # Send the images as separate media messages
         for history in project_schedule_history:
             for img in history.images.all():
-                image_url = img.image.url
+                image_url = img.image.url  # Get the URL of the image
+                print(f"Processing image URL: {image_url}")  # Log the image URL being processed
+
                 if not image_url.startswith('http'):
-                    print(f"Invalid URL: {image_url}")  # Log invalid URLs
-                    continue  # Skip this image if the URL is not valid
+                    print(f"Invalid URL (skipping): {image_url}")  # Log and skip invalid URLs
+                    continue
 
                 try:
                     media_message = client.messages.create(
