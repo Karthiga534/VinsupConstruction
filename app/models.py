@@ -449,7 +449,6 @@ class EmpRoles(models.Model):
 class Employee(models.Model):
     company=models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
     user=models.ForeignKey(CustomUser, on_delete=models.CASCADE,null=True,blank=True)
-    img =models.FileField(upload_to="doc",null=True,blank=True)
     name=models.CharField(max_length=50,null=True,blank=True)
     role=models.ForeignKey(EmpRoles, on_delete=models.CASCADE,null=True,blank=True) 
     email=models.EmailField(null=True, blank=True)
@@ -466,6 +465,7 @@ class Employee(models.Model):
 
     aadhaar_card_image = models.FileField(upload_to="aadhaar_images", null=True, blank=True)
     pan_card_image = models.FileField(upload_to="pan_images", null=True, blank=True)
+    img =models.FileField(upload_to="doc",null=True,blank=True)
 
     def __str__(self):
         return self.name
@@ -1016,6 +1016,7 @@ class Project(models.Model):
     proj_id=models.CharField(max_length=100,null=True,blank=True)
     client = models.CharField(max_length=100,null=True,blank=True)
     contact_no = models.CharField(max_length=15,null=True,blank=True)
+    email=models.EmailField(null=True, blank=True)
     address = models.CharField(max_length=255,null=True,blank=True)
     proj_name=models.CharField(max_length=100,null=True,blank=True)
     site_location=models.CharField(max_length=100,null=True,blank=True)

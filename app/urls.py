@@ -183,6 +183,7 @@ urlpatterns = [
     # project category  
     # render
     path('project-category/', api.project_category, name='project-category'), 
+    #path('project-category/', views.procategory, name='project-category'), 
   
     # api
     path('add_project-category/', api.add_project_category, name='add_project-category'),
@@ -233,8 +234,8 @@ urlpatterns = [
     path('employee-salary/',views.employee_salary, name="employee-salary"),
 
     path('contractor-payment/',views.contractor_payment_management, name="contractor-payment"),
-    path('signin/',views.signin, name="SignIn"),            
-   
+    path('signin/',views.signin, name="signin"),            
+    path('index/', views.index_1, name="index_1"),
 #-----------------------------------------------------Expense------------------------------------------------------------
 
     path('expense/', views.expense, name='expense'),
@@ -378,7 +379,8 @@ urlpatterns = [
 
 
     path('send-whatsapp/<int:pk>/', views.send_whatsapp_message, name='send_whatsapp_message'),
- 
+    # path('send-email/', views.send_email, name='send_email'),
+    path('send/<int:pk>/', views.send, name='send'),
     #     # employee attendence
     # path('attendance/employee',views.employee_attendance,name= 'employee-labour-attendance'), #render only
     # path('add_employeeattendance', views.add_employeeattendance, name='add_employeelabourattendance'),

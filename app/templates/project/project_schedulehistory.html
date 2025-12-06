@@ -113,7 +113,7 @@
                                                     <h2>Project History</h2>
                                                 </div>
 
-                                                <div class="col text-end p-2">
+                                                {% comment %} <div class="col text-end p-2">
 
                                                     <button type="button" class="btn btn-primary btn-sm custom-button"
                                                         data-bs-toggle="modal" data-bs-target=".bs-example-modal-lg">+
@@ -121,7 +121,20 @@
                                                         </button>
 
 
+                                                </div> {% endcomment %}
+
+
+                                                <div class="col text-end p-2">
+                                                    <button type="button" class="btn btn-primary btn-sm custom-button"
+                                                            data-bs-toggle="modal" data-bs-target=".bs-example-modal-lg">
+                                                        + Add
+                                                     </button>{% comment %} (or)
+                                                
+                                                    <a href="#" onclick="sendWhatsAppMessage({{ project_schedule.pk }}); return false;">
+                                                        <img src="{% static 'assets/icon/whatsapp.png' %}" class="button-img-icon" alt="WhatsApp Icon">
+                                                    </a> {% endcomment %}
                                                 </div>
+                                                
 
 
 
@@ -275,11 +288,14 @@
                                                                     <a href="#" onclick="sendWhatsAppMessage({{ project_schedule.pk }}); return false;">
                                                                         <img src="{% static 'assets/icon/whatsapp.png' %}" class="button-img-icon" alt="WhatsApp Icon">
                                                                     </a>
-                                                                    {% comment %}  or  
-                                                                    <a href="mailto:priyadharshinisundaram.vinsup@gmail.com">
-                                                                        <img src="{% static 'assets/icon/gmail.png' %}" class="button-img-icon" >
-                                                                    </a> {% endcomment %}
-                                                                </td>
+                                                                      or  
+                                                                      <a href="#" onclick="sendEmailWithTableData({{ history.pk }}); return false;">
+                                                                        <img src="{% static 'assets/icon/gmail.png' %}" class="button-img-icon" alt="Gmail Icon">
+                                                                    </a>
+                                                                    
+
+                                                                    
+                                                                 </td> 
                                                                 
                                                                 <td>
 
@@ -485,8 +501,9 @@
                                                                                                     <input type="file" class="form-control mb-2" id="{{i.id}}_images" name="images" multiple>
                                                                                                     {% for image in i.images.all %}
                                                                                                         <span class="file-span">
-                                                                                                            <a target="_blank" href="{{ image.image.url }}">{{ image.image.url }}</a>
-                                                                                                            <input type="checkbox" name="delete_images" value="{{ image.id }}"> Delete
+                                                                                                            <input type="checkbox" name="delete_images" value="{{ image.id }}"> 
+                                                                                                            <a target="_blank" href="{{ image.image.url }}">{{ image.image.name|cut:"doc/" }}</a>
+                                                                                                            
                                                                                                         </span><br>
                                                                                                     {% empty %}
                                                                                                         <span>No images</span><br>
@@ -965,6 +982,30 @@ function createFunction(button, projectScheduleId) {
 
    
     
+    {% comment %} <script>
+        function sendWhatsAppMessage(pk) {
+            fetch(`/send-whatsapp/${pk}/`, {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('WhatsApp message sent successfully!');
+                } else {
+                    alert('Failed to send WhatsApp message.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred.');
+            });
+        }
+    </script> {% endcomment %}
+
     <script>
         function sendWhatsAppMessage(pk) {
             fetch(`/send-whatsapp/${pk}/`, {
@@ -988,6 +1029,45 @@ function createFunction(button, projectScheduleId) {
             });
         }
     </script>
+
+    <script>
+        function sendEmailWithTableData(pk) {
+            var xhr = new XMLHttpRequest();
+            var url = `/send/${pk}/`;  // Use the correct URL path with the ID
+    
+            xhr.open("GET", url, true);
+            xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken')); // Ensure CSRF token is sent
+    
+            xhr.onload = function() {
+                if (xhr.status == 200) {
+                    alert("Email sent successfully!");
+                } else {
+                    alert("Failed to send email. Please try again.");
+                }
+            };
+    
+            xhr.send();
+        }
+    
+        // Function to fetch CSRF token from cookies
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>
+    
+    
+    
 
 
 {% endblock header2 %}

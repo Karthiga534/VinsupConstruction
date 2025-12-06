@@ -2,8 +2,9 @@ from .forms import *
 from .models import *
 from .serializer import *
 # from contextvars import Token
+from django.core.mail import EmailMultiAlternatives
+
 from django.db.models import Q
-from twilio.rest import Client
 from twilio.rest import Client
 from django.urls import reverse
 from rest_framework import status
@@ -17,6 +18,7 @@ from django.http import HttpResponse
 from django.core.mail import send_mail
 from .utils import filter_by_date_range
 from datetime import datetime, timedelta
+from django.utils.html import strip_tags
 from django.core.mail import EmailMessage
 from rest_framework.response import Response
 from django.utils.dateparse import parse_date
@@ -25,13 +27,12 @@ from django.contrib.auth import get_user_model
 from django.core.validators import URLValidator
 from django.contrib.auth.views import LogoutView
 from rest_framework import status as http_status
-from .models import Project, Employee, Contractor
 from rest_framework.authtoken.models import Token
 from django.utils.crypto import get_random_string
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
-from django.core.exceptions import ValidationError
 from django.template.loader import render_to_string
+from django.views.decorators.csrf import csrf_exempt
 from twilio.base.exceptions import TwilioRestException
 from django.contrib.auth import login,authenticate,logout
 from django.contrib.auth.decorators import login_required
@@ -192,7 +193,6 @@ class CustomLogoutView(LogoutView):
 
 
 @login_required(login_url='login')
-
 @check_admin
 def index(request):
     company, _ = get_company(request.user)
@@ -436,7 +436,7 @@ def delete_emproles(request, id):
 
     
 @check_valid_user
-@check_user_company
+#@check_user_company
 @check_admin
 @login_required(login_url='login')
 def employee(request):
@@ -1376,8 +1376,25 @@ def employee_labour_salary(request,pk):
     return Response(ser.errors,status=400)
 
 def signin(request):
-    return render(request, 'signin.html',{})
+    if request.method == "POST":
+        username = request.POST.get("username")
+        password = request.POST.get("password")
 
+        try:
+            # Check if user exists
+            user = CustomUser.objects.get(name=username, password=password)
+
+            # Successful login
+            login(request, user)
+            return redirect('index')
+
+        except CustomUser.DoesNotExist:
+            # Wrong username or password
+            return render(request, "signin.html", {"error": "Invalid username or password"})
+
+    return render(request, "signin.html")
+def index_1(request):
+    return render(request, "index.html")
 # def viewstock(request):
 #     return render(request, 'viewstock.html')
 
@@ -4108,60 +4125,6 @@ def project_schedulehistory(request, pk):
 
 
 
-# def send_whatsapp_message(request, pk):
-#     # Check if the request is an AJAX request
-#     is_ajax = request.headers.get('x-requested-with') == 'XMLHttpRequest'
-
-#     project_schedule = get_object_or_404(ProjectSchedule, pk=pk)
-#     project_schedule_history = ProjectScheduleHistory.objects.filter(project_schedule=project_schedule).order_by("-id")
-
-#     # Prepare the WhatsApp message content
-#     project_details = f"Project: {project_schedule.project.proj_name}\n"
-#     for history in project_schedule_history:
-#         project_details += (
-#             f"Task: {history.work}\n"
-#             f"Date: {history.date}\n"
-#             f"Video URL: {history.video_url or 'N/A'}\n"
-#             f"Images: {[img.image.url for img in history.images.all()]}\n\n"
-#         )
-
-#     # Split the message into chunks of 1600 characters each
-#     max_length = 1600
-#     message_chunks = [project_details[i:i + max_length] for i in range(0, len(project_details), max_length)]
-
-#     # Twilio credentials (replace with your actual credentials)
-#     account_sid = 'AC91f0afc8e73071dc79c151ad1e872e6e'
-#     auth_token = 'b476471bc8e9ef1664aec49bfd2fee21'
-#     twilio_whatsapp_number = 'whatsapp:+14155238886'  # Your Twilio WhatsApp number (sandbox or production)
-#     client_whatsapp_number = 'whatsapp:+919360994106'  # Ensure correct format (Replace with the client's WhatsApp number)
-
-#     client = Client(account_sid, auth_token)
-
-#     try:
-#         for chunk in message_chunks:
-#             message = client.messages.create(
-#                 body=chunk,
-#                 from_=twilio_whatsapp_number,
-#                 to=client_whatsapp_number
-#             )
-#             print(f"Message SID: {message.sid}")  # Log the Message SID
-#             print(f"Message Status: {message.status}")  # Log the message status
-
-#         if is_ajax:
-#             return JsonResponse({'success': True, 'message': 'WhatsApp messages sent successfully!'})
-#         else:
-#             messages.success(request, 'WhatsApp messages sent successfully!')
-#     except TwilioRestException as e:
-#         print(f"Failed to send WhatsApp message: {e}")  # Log the TwilioRestException
-#         if is_ajax:
-#             return JsonResponse({'success': False, 'message': str(e)})
-#         else:
-#             messages.error(request, f'Failed to send WhatsApp message: {e}')
-
-#     # Redirect back to the project schedule history page
-#     return redirect('project_schedulehistory', pk=pk)
-
-
 def send_whatsapp_message(request, pk):
     is_ajax = request.headers.get('x-requested-with') == 'XMLHttpRequest'
 
@@ -4234,51 +4197,77 @@ def send_whatsapp_message(request, pk):
     return redirect('project_schedulehistory', pk=pk)
 
 
-# @api_view(['GET', 'POST'])
-# def add_project_schedulehistory(request, pk):
+# def send_whatsapp_message(request, pk):
+#     is_ajax = request.headers.get('x-requested-with') == 'XMLHttpRequest'
+
+#     # Retrieve the project schedule and its history
 #     project_schedule = get_object_or_404(ProjectSchedule, pk=pk)
+#     project_schedule_history = ProjectScheduleHistory.objects.filter(project_schedule=project_schedule).order_by("-id")
 
-#     if request.method == 'POST':
-#         serializer = ProjectScheduleHistorySerializer(data=request.data)
-#         if serializer.is_valid():
-#             serializer.save(project_schedule=project_schedule)
-#             return Response({'status': 'success', 'message': 'Schedule history created successfully'}, status=201)
-#         return Response({'errors': serializer.errors}, status=400)
+#     # Prepare the WhatsApp message content
+#     project_details = f"Project: {project_schedule.project.proj_name}\n"
+#     for history in project_schedule_history:
+#         project_details += (
+#             f"Task: {history.work}\n"
+#             f"Date: {history.date}\n"
+#             f"Video URL: {history.video_url or 'N/A'}\n"
+#         )
 
-#     elif request.method == 'GET':
-#         project_schedule_history = ProjectScheduleHistory.objects.filter(project_schedule=project_schedule)
-#         serializer = ProjectScheduleHistorySerializer(project_schedule_history, many=True, context={'request': request})
-#         return Response(serializer.data)
+#     # Twilio credentials (replace with your actual credentials)
+#     account_sid = 'AC91f0afc8e73071dc79c151ad1e872e6e'
+#     auth_token = 'b476471bc8e9ef1664aec49bfd2fee21'
+#     twilio_whatsapp_number = 'whatsapp:+14155238886'  # Your Twilio WhatsApp number
+#     client_whatsapp_number = 'whatsapp:+919360994106'  # Client's WhatsApp number
 
-#     return Response({'status': 'error', 'message': 'Invalid request method'}, status=405)
+#     client = Client(account_sid, auth_token)
 
+#     try:
+#         # Send the text part of the message (project details)
+#         max_length = 1600
+#         message_chunks = [project_details[i:i + max_length] for i in range(0, len(project_details), max_length)]
+        
+#         for chunk in message_chunks:
+#             message = client.messages.create(
+#                 body=chunk,
+#                 from_=twilio_whatsapp_number,
+#                 to=client_whatsapp_number
+#             )
+#             print(f"Message SID: {message.sid}")  # Log the Message SID
+#             print(f"Message Status: {message.status}")  # Log the message status
 
-# @api_view(['GET', 'POST'])
-# def add_project_schedulehistory(request, pk):
-#     project_schedule = get_object_or_404(ProjectSchedule, pk=pk)
+#         # Send the images as separate media messages
+#         for history in project_schedule_history:
+#             for img in history.images.all():
+#                 image_url = request.build_absolute_uri(img.image.url)  # Build absolute URL for the image
+#                 if not image_url.startswith('http'):
+#                     image_url = f"http:{image_url}"  # Ensure URL starts with http if not https
 
-#     if request.method == 'POST':
-#         serializer = ProjectScheduleHistorySerializer(data=request.data)
+#                 try:
+#                     media_message = client.messages.create(
+#                         from_=twilio_whatsapp_number,
+#                         to=client_whatsapp_number,
+#                         media_url=[image_url]
+#                     )
+#                     print(f"Media Message SID: {media_message.sid}")  # Log the Media Message SID
+#                     print(f"Media Message Status: {media_message.status}")  # Log the media message status
+#                 except TwilioRestException as e:
+#                     print(f"Failed to send image: {image_url} due to {e}")  # Log any exception when sending image
 
-#         if serializer.is_valid():
-#             # Save project_schedule along with other validated data
-#             serializer.save(project_schedule=project_schedule)
-
-#             # Handle images separately if needed
-#             images = request.FILES.getlist('img')
-#             for img in images:
-#                 # Process each image as required, e.g., save to disk, associate with model instance
-
-#                 return Response({'status': 'success', 'message': 'Schedule history created successfully'}, status=status.HTTP_201_CREATED)
+#         if is_ajax:
+#             return JsonResponse({'success': True, 'message': 'WhatsApp messages sent successfully!'})
 #         else:
-#             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#             messages.success(request, 'WhatsApp messages sent successfully!')
+#     except TwilioRestException as e:
+#         print(f"Failed to send WhatsApp message: {e}")  # Log the TwilioRestException
+#         if is_ajax:
+#             return JsonResponse({'success': False, 'message': str(e)})
+#         else:
+#             messages.error(request, f'Failed to send WhatsApp message: {e}')
 
-#     elif request.method == 'GET':
-#         project_schedule_history = ProjectScheduleHistory.objects.filter(project_schedule=project_schedule)
-#         serializer = ProjectScheduleHistorySerializer(project_schedule_history, many=True, context={'request': request})
-#         return Response(serializer.data)
+#     # Redirect back to the project schedule history page
+#     return redirect('project_schedulehistory', pk=pk)
 
-#     return Response({'status': 'error', 'message': 'Invalid request method'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
 
 @api_view(['POST'])
 def add_project_schedulehistory(request, pk):
@@ -4304,10 +4293,8 @@ def add_project_schedulehistory(request, pk):
         serializer = ProjectScheduleHistorySerializer(data=data)
 
         if serializer.is_valid():
-            # Save the serializer instance
             instance = serializer.save()
 
-            # Handle img_files separately if they exist
             for img_file in img_files:
                 project_image = ProjectImage(image=img_file)
                 project_image.save()
@@ -4441,3 +4428,46 @@ def update_project_schedule_history(request, pk):
         return JsonResponse(updated_data, status=200)
     else:
         return JsonResponse(serializer.errors, status=400)
+
+
+def send(request, pk):
+    try:
+        # Fetch the ProjectScheduleHistory instance
+        history = get_object_or_404(ProjectScheduleHistory, pk=pk)
+
+        # Prepare context for email template
+        context = {
+            'history': history,
+        }
+
+        # Render email template
+        html_content = render_to_string('project/project_schedule_history_email.html', context)
+        text_content = strip_tags(html_content)
+
+        # Send email
+        to_email = "recipient@example.com"  # Replace with recipient's email address
+        if to_email:
+            email = EmailMessage(
+                subject=f"Project Schedule History for Task: {history.work}",
+                body=text_content,
+                from_email="sender@example.com",
+                to=[to_email],
+            )
+            email.attach_alternative(html_content, "text/html")
+
+            # Attach images to email (if needed)
+            for image in history.images.all():
+                image_path = image.image.path
+                email.attach_file(image_path)
+
+            # Send email
+            email.send()
+            return JsonResponse({"status": "success", "message": "Email sent successfully."}, status=200)
+        else:
+            return JsonResponse({"status": "error", "message": "Recipient email not found."}, status=400)
+
+    except ProjectScheduleHistory.DoesNotExist:
+        return JsonResponse({"status": "error", "message": "Project schedule history not found."}, status=404)
+
+    except Exception as e:
+        return JsonResponse({"status": "error", "message": str(e)}, status=500)

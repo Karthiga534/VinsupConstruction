@@ -112,20 +112,27 @@ WSGI_APPLICATION = 'constructionpro.wsgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 
-local_db =   {
+# local_db =   {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+DATABASES = {
+    'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
+}
 
 
-prod_db =  {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.getenv("psql_database"),
-        'USER': os.getenv('psql_user'),
-        'PASSWORD': os.getenv('psql_password'),
-        'HOST': os.getenv('psql_host'),
-        'PORT': os.getenv('psql_port'),
-    }
+
+# prod_db =  {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': os.getenv("psql_database"),
+#         'USER': os.getenv('psql_user'),
+#         'PASSWORD': os.getenv('psql_password'),
+#         'HOST': os.getenv('psql_host'),
+#         'PORT': os.getenv('psql_port'),
+#     }
 
 # Production = (os.getenv('PROD_DB'))
 
@@ -133,9 +140,9 @@ prod_db =  {
 
 # print(type(Production),Production ==0,Production)
 
-DATABASES = {
-    'default': prod_db 
-}
+# DATABASES = {
+#     'default': prod_db 
+# }
 
 print(os.getenv("psql_database"))
 

@@ -154,28 +154,26 @@ def reset_pin(request):
 @permission_classes([AllowAny])
 def generate_otp(request):
     phone_number = request.data.get('phone_number')
-    pin =request.query_params.get('pin',None)
-    generated_otp = ''.join(random.choices(string.digits, k=4))
-    if pin =="true":
-        msg=f"This is your Mobile PIN Reset OTP {generated_otp} vinsupinfotech."  
-    elif pin =="false":
-        msg=f"This is your password Reset OTP {generated_otp} vinsupinfotech"
-    else:
-        return JsonResponse({'error': 'Invalid Request'}, status=400)
-
     if not phone_number:
-        return JsonResponse({'error': 'Phone number is required in the request'}, status=400)
-    
-    user = get_object_or_404(CustomUser, phone_number=phone_number)
-    otp_obj = OTP.objects.filter(user=user)
-    if otp_obj.count:
-        otp_obj.delete()
-    otp_instance = OTP.objects.create(user=user, otp=generated_otp)
+        return JsonResponse({'error': 'Phone number required'}, status=400)
 
-    is_send = send_sms(phone_number,msg,templateid=False)
-    if not is_send:
-        return JsonResponse({ 'message': message_server_error},status=message_server_error_status)
-    return JsonResponse({ 'message': 'OTP sent successfully'})
+    user = get_object_or_404(CustomUser, phone_number=phone_number)
+
+    # Save user in session for confirm
+    request.session['reset_user_id'] = user.id
+
+    # Delete old OTPs
+    OTP.objects.filter(user=user).delete()
+
+    otp_code = ''.join(random.choices(string.digits, k=4))
+    OTP.objects.create(user=user, otp=otp_code)
+
+    # Send SMS/email here
+    msg = f"Your password reset OTP is {otp_code}"
+    # send_sms(phone_number, msg)  # Uncomment if you have SMS integration
+    print(msg)
+
+    return JsonResponse({'message': 'OTP sent successfully'})
 
 
 
@@ -209,36 +207,24 @@ def verify_otp(request):
 def reset_confirm(request):
     phone_number = request.data.get('phone_number')
     otp = request.data.get('otp')
-    new_pin = request.data.get('new_pin')
-
     new_password = request.data.get('new_password')
 
-    if not (phone_number and otp ):
-        return JsonResponse({'error': 'Phone number, OTP, and new PIN are required in the request'}, status=400)
+    if not (phone_number and otp and new_password):
+        return JsonResponse({'error': 'Phone number, OTP, and new password required'}, status=400)
 
     user = get_object_or_404(CustomUser, phone_number=phone_number)
+    otp_record = OTP.objects.filter(user=user, otp=otp).first()
 
-    # Check if the user has a valid OTP stored
-    user_otp = OTP.objects.filter(user=user).last()
-    if user_otp is None:
-        return JsonResponse({'error': 'No OTP found for the provided phone number'}, status=400)
-    
-    if(not new_pin and not new_password):
-           return JsonResponse({'error': 'Invalid Request'}, status=400)
-    print(user_otp,user)
-    if otp == user_otp.otp:
-        if new_pin:
-            user.pin = new_pin
-        if new_password :
-            user.set_password(new_password)
-        user.save()
-
-        user_otp.delete()
-
-        return JsonResponse({'message': 'reset  confirm successfully'})
-    else:
+    if not otp_record:
         return JsonResponse({'error': 'Invalid OTP'}, status=400)
 
+    # Update password
+    user.set_password(new_password)
+    user.save()
+
+    otp_record.delete()
+
+    return JsonResponse({'message': 'Password reset successfully'})
    
 
 #    ---------------------------- super admin ------------------------------------------
@@ -338,74 +324,83 @@ reset_codes = {}
 
 
 def password_reset_request_view(request):
-    error={}
+    error = {}
     if request.method == "POST":
-        
         form = PasswordResetRequestForm(request.POST)
         if form.is_valid():
-            email = form.cleaned_data["email"]
-            if not email:
-                error['email'] = 'Please Enter Valid Email'
+            email = form.cleaned_data.get("email")
             user = CustomUser.objects.filter(email=email).first()
-            if user:
-                reset_code = get_random_string(length=6)
-                # reset_codes[email] = reset_code
-                send_password_reset_email(request,email,reset_code)
-                # send_mail(
-                #     "Password Reset",
-                #     f"Your reset code is: {reset_code}",
-                #     settings.DEFAULT_FROM_EMAIL,
-                #     [email],
-                #     fail_silently=False,
-                # )
-                OTP.objects.create(user=user,otp=reset_code)
-                return redirect(reverse("password_reset_confirm"))
-            error['email'] = 'Email id with user not found'
+            if not user:
+                error['email'] = "Email not found"
+                return render(request, "password_reset_request.html", {"form": form, "error": error})
+
+            # Generate reset code
+            reset_code = get_random_string(length=6)
+
+            # Save OTP
+            OTP.objects.filter(user=user).delete()
+            OTP.objects.create(user=user, otp=reset_code)
+
+            # Save user in session
+            request.session['reset_user_id'] = user.id
+
+            # Send email
+            send_password_reset_email(email, reset_code)
+
+            return redirect(reverse("password_reset_confirm"))
+        else:
+            error['email'] = "Enter a valid email"
     else:
         form = PasswordResetRequestForm()
-    return render(request, "password_reset_request.html", {"form": form,'error':error})
 
+    return render(request, "password_reset_request.html", {"form": form, "error": error})
 
 
 def password_reset_confirm_view(request):
-    error = {"otp":"","user":""}
-    print(request.method)
+    error = {"otp": "", "confirm_password": "", "user": ""}
+    form = SetPasswordForm(request.POST or None)
+
+    # Get user from session
+    user_id = request.session.get("reset_user_id")
+    user = CustomUser.objects.filter(id=user_id).first() if user_id else None
+
     if request.method == "POST":
-            form = SetPasswordForm(request.POST)
-        # if form.is_valid():
-            print(1)
-            new_password = form.cleaned_data["new_password"]
-            confirm_password = form.cleaned_data["confirm_password"]
-            if new_password != confirm_password : 
-                error['confirm_password'] = "Password does not match"
-                print(2)
-                return render(request, "password_reset_confirm.html", {"form": form,"error":error})
+        if not user:
+            error['user'] = "User session expired. Please request password reset again."
+            return render(request, "password_reset_confirm.html", {"form": form, "error": error})
+
+        if form.is_valid():
+            new_password = form.cleaned_data.get("new_password")
+            confirm_password = form.cleaned_data.get("confirm_password")
+
+            if new_password != confirm_password:
+                error['confirm_password'] = "Passwords do not match"
+                return render(request, "password_reset_confirm.html", {"form": form, "error": error})
+
             code = request.POST.get("code")
-            email = None
-            user = CustomUser.objects.filter(email=email).first()
-            print(3)
-            if user:
-                print(4)
-                otp = OTP.objects.filter(user=user,otp=code)
-                if otp:
-                    user.set_password(new_password)
-                    user.save()
-                    otp.delete()
-                    return redirect(reverse("login"))
-                else:
-                    error['otp'] = "Invalid Code"
-                   
-            else:
-                error['user'] = "User not found"
-        # else:
-        #     print(form.errors)
-                
-    else:
-        print('******************************dddddddddddddddddddddd')
-        form = SetPasswordForm()
+            otp = OTP.objects.filter(user=user, otp=code).first()
 
-    return render(request, "password_reset_confirm.html", {"form": form,'error':error})
+            if not otp:
+                error['otp'] = "Invalid OTP"
+                return render(request, "password_reset_confirm.html", {"form": form, "error": error})
 
+            # Update password
+            user.set_password(new_password)
+            user.save()
+
+            # Delete OTP
+            otp.delete()
+
+            # Clear session
+            if "reset_user_id" in request.session:
+                del request.session["reset_user_id"]
+
+            return redirect("login")
+
+        else:
+            return render(request, "password_reset_confirm.html", {"form": form, "error": error})
+
+    return render(request, "password_reset_confirm.html", {"form": form, "error": error})
 
 
 
@@ -416,8 +411,10 @@ from django.core.mail import send_mail
 
 logger = logging.getLogger("app")
 
-def send_password_reset_email(request, email, reset_code):
-    print('poooooooo')
+# ============================================================
+#               SEND EMAIL
+# ============================================================
+def send_password_reset_email(email, reset_code):
     try:
         send_mail(
             "Password Reset",
@@ -426,7 +423,7 @@ def send_password_reset_email(request, email, reset_code):
             [email],
             fail_silently=False,
         )
-        return HttpResponse('Password reset email sent successfully')
+        print("Password reset email sent successfully")
     except Exception as e:
-        logger.error(f'Error sending password reset email to {email}: {e}')
-        return HttpResponse(f'Error sending password reset email: {e}')
+        logger.error(f"Error sending password reset email to {email}: {e}")
+        raise e

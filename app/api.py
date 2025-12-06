@@ -1018,17 +1018,36 @@ def update_status(request):
 
 @login_required(login_url='login')
 @check_admin
-def project_category(request):  #change name 
-    user=request.user
-    allow,msg= check_user(request,ProjectCategory,instance=False)  # CHANGE model
-    if not allow:
-         context ={"unauthorized":msg}
-         return render(request,"login.html",context)      
-    querysets = ProjectCategory.objects.filter(company=request.user.company).order_by("-id")   #change query
-    queryset,pages,search =customPagination(request,ProjectCategory,querysets)    #change, model
-    context= {'queryset': queryset,"location":"project-category","pages" :pages,"search" :search,}   #change location name 
-    return render(request,"project/procategory.html",context)    #change template name
+def project_category(request):
+    user = request.user
 
+    allow, msg = check_user(request, ProjectCategory, instance=False)
+    if not allow:
+        return render(request, "login.html", {"unauthorized": msg})
+
+    # ---------- Save Category ----------
+    if request.method == "POST":
+        data = request.POST.copy()
+        data["company"] = user.company.id   # MANDATORY
+
+        serializer = ProjectCategorySerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse({"msg": "success"}, status=201)
+        else:
+            return JsonResponse(serializer.errors, status=400)
+
+    # ---------- List Category ----------
+    categories = ProjectCategory.objects.filter(company=user.company).order_by("-id")
+    queryset, pages, search = customPagination(request, ProjectCategory, categories)
+
+    return render(request, "project/procategory.html", {
+        'queryset': queryset,
+        "location": "project-category",
+        "pages": pages,
+        "search": search,
+    })
+    
 @api_view(['POST'])
 @check_valid_user
 @check_user_company
@@ -1753,7 +1772,7 @@ def delete_files(request, pk):
 
 @login_required(login_url='login')
 @check_valid_user
-@check_user_company
+#@check_user_company
 @check_admin
 def profile(request):
     user = request.user

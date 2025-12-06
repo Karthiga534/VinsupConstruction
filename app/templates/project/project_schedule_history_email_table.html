@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Project Schedule History</title>
+    <style>
+        /* Define your CSS styles here */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <h2>Project Schedule History</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>S.No</th>
+                <th>Date</th>
+                <th>Task Name</th>
+                <th>Image</th>
+                <th>Video</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Example in project_schedulehistory.html -->
+
+            {% for history in project_schedule_history %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ history.date }}</td>
+                <td>{{ history.work }}</td>
+                <td>
+                    {% for image in history.images.all %}
+                        <a href="{{ image.image.url }}" target="_blank">
+                            <img src="{{ image.image.url }}" alt="Image {{ image.id }}" class="img-responsive" style="height:40px;width:40px;" />
+                        </a>
+                    {% empty %}
+                        No Image
+                    {% endfor %}
+                </td>
+                <td>
+                    {% if history.video_url %}
+                        <a href="{{ history.video_url }}" target="_blank">{{ history.video_url }}</a>
+                    {% else %}
+                        No Video
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{% url 'send_project_schedule_history_email' history.id %}" class="btn btn-primary">Send Email</a>
+                </td>
+            </tr>
+            {% endfor %}
+
+        </tbody>
+    </table>
+</body>
+</html>

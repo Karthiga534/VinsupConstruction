@@ -70,6 +70,12 @@
 																		class="error-message"></span>
 																</div>
 
+																<div class="col-md-4">
+																	<label for="email" class="form-label">Email <span style="color: red;">*</span></label>
+																	<input type="text" name="email" class="form-control" id="email">
+																	<span id="emailError" class="error-message"></span>
+																  </div>
+
 																
 																<div class="col-md-4">
 																	<label for="" class="form-label">Select Category
@@ -196,7 +202,7 @@
 																		class="error-message"></span>
 																</div>
 
-																<div class="col-md-6 mt-4">
+																<div class="col-md-4 mt-2">
 																	<label for="" class="form-label">Description
 																		:</label>
 																	<textarea rows="3" class="form-control"
@@ -205,7 +211,7 @@
 																		id="descriptionError"></span>
 																</div>
 
-																<div class="col-md-6 mt-4">
+																<div class="col-md-4 mt-2">
 																	<label for="" class="form-label">Terms & Condition
 																		<span style="color: red;">*</span> </label>
 																	<textarea rows="3" class="form-control"
@@ -378,7 +384,7 @@
 													<a 
 													class="btn btn-soft-secondary btn-sm p-0 m-1"
 														href="{% url 'project_schedule' i.id %}">
-														<img src="{% static 'assets/icon/s.jpg' %}" class ='button-img-icon'>
+														<img src="{% static 'assets/icon/s.jpg' %}" class ='button-img-icon'> 
 													</a>
 
 												
@@ -437,7 +443,13 @@
 																			value="{{i.contact_no}}" readonly>
 																	</div>
 
-
+																	<div class="col-md-6 mt-3">
+																		<label for="{{i.id}}_email"
+																			class="form-label">Email:</label>
+																		<input type="text" class="form-control"
+																			id="{{i.id}}_email" name="email"
+																			value="{{i.email}}" readonly>
+																	</div>
 
 																	<div class="col-md-6 mt-3">
 																		<label for="{{i.id}}_proj_name"
@@ -636,6 +648,21 @@
 																				value="{{i.contact_no}}" />
 
 																			<span id="{{i.id}}_contact_noError"
+																				class="error-message"></span>
+
+																		</div>
+
+																		<div class="col-md-6 mb-3">
+
+																			<label for="edit_email"
+																				class="form-label">Contact No:</label>
+
+																			<input type="email" class="form-control"
+																				id="{{i.id}}_email"
+																				name="email"
+																				value="{{i.email}}" />
+
+																			<span id="{{i.id}}_emailError"
 																				class="error-message"></span>
 
 																		</div>
@@ -1014,7 +1041,7 @@
 
 					var requiredKeys = ['proj_category','start_date','end_date','priority','terms_conditions','incharge','proj_name', 'client', 'contact_no', 'site_location', 'estimation'];   //change
 
-
+					formData.append('email', getValueOrDefault(formElement.querySelector('input[name="email"]').value));
 					formData.append('description', getValueOrDefault(formElement.querySelector('textarea[name="description"]').value));              //change
 					formData.append('client', getValueOrDefault(formElement.querySelector('input[name="client"]').value));
 					formData.append('contact_no', getValueOrDefault(formElement.querySelector('input[name="contact_no"]').value));
@@ -1140,7 +1167,7 @@
 					disableButton(button);
 					clearErrors();
 
-					var requiredKeys = ['start_date','end_date','priority','incharge','terms_conditions','description','proj_name', 'client', 'contact_no', 'site_location', 'estimation'];   //change
+					var requiredKeys = ['email','start_date','end_date','priority','incharge','terms_conditions','description','proj_name', 'client', 'contact_no', 'site_location', 'estimation'];   //change
 
 
 					const formData = new FormData();
@@ -1148,6 +1175,7 @@
                     formData.append('terms_conditions', getValueOrDefault(formElement.querySelector('textarea[name="terms_conditions"]').value));
 					formData.append('proj_name', getValueOrDefault(formElement.querySelector('input[name="proj_name"]').value));              //change
 					formData.append('client', getValueOrDefault(formElement.querySelector('input[name="client"]').value));
+					formData.append('email', getValueOrDefault(formElement.querySelector('input[name="email"]').value));
 					formData.append('contact_no', getValueOrDefault(formElement.querySelector('input[name="contact_no"]').value));
 					formData.append('site_location', getValueOrDefault(formElement.querySelector('input[name="site_location"]').value));
 					formData.append('incharge', getValueOrDefault(formElement.querySelector('select[name="incharge"]').value));
