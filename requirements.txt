@@ -1,0 +1,13 @@
+django
+djangorestframework
+django-filter
+django-cors-headers
+gunicorn
+
+psycopg2-binary
+Pillow
+whitenoise
+django-environ
+
+google-generativeai
+pymupdf
