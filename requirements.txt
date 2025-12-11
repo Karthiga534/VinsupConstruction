@@ -3,13 +3,14 @@ djangorestframework
 django-filter
 django-cors-headers
 gunicorn
-
+whitenoise
 psycopg2-binary
 Pillow
-whitenoise
+
 python-dotenv
 django-environ
 
 google-generativeai
 pymupdf
+
 
